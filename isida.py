@@ -117,7 +117,7 @@ while 1:
 				revno = str(readfile(ver_file)).replace('\n','').replace('\r','').replace('\t','').replace(' ','')
 				writefile(ver_file, 'g%s%s' % (revno,id_append))
 				os.system('git log -1 > %s' % updatelog_file)
-				writefile(updatelog_file, unicode(readfile(updatelog_file)).replace('\n\n','\n').replace('\r','').replace('\t',''),id_append)
+				writefile(updatelog_file, unicode(readfile(updatelog_file)).replace('\n\n','\n').replace('\r','').replace('\t',''))
 			else: pass # reserved for mercurial
 		elif mode == 'exit': break
 		elif mode == 'restart': pass
