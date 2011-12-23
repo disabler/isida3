@@ -2163,7 +2163,6 @@ muc_lock_base = set_folder+'muclock.db'
 if os.path.isfile(ver_file):
 	bvers = str(readfile(ver_file)).replace('\n','').replace('\r','').replace('\t','').replace(' ','')
 	botVersion += '.%s' % bvers
-botVersion += '-rc2'
 if 'm' in botVersion.lower(): draw_warning('Launched bot\'s modification!')
 try: tmp = botOs
 except: botOs = os_version()

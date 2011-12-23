@@ -24,6 +24,9 @@
 import os, sys, time, re
 pid_file = 'isida.pid'
 updatelog_file = 'update.log'
+ver_file = 'settings/version'
+USED_REPO = 'svn'
+id_append = '-rc2'
 
 def readfile(filename):
 	fp = file(filename)
@@ -77,10 +80,22 @@ if os.path.isfile(pid_file) and os.name != 'nt':
 writefile(pid_file,str(os.getpid()))
 
 rm('settings/version')
-if os.name == 'nt': os.system('svnversion >> settings/version')
-else: os.system('echo `svnversion` >> settings/version')
+if os.name == 'nt': os.system('svnversion > %s' % ver_file)
+else: os.system('echo `svnversion` > %s' % ver_file)
 rm(updatelog_file)
-os.system('echo Just Started! >> %s' % updatelog_file)
+os.system('echo Just Started! > %s' % updatelog_file)
+
+bvers = str(readfile(ver_file)).replace('\n','').replace('\r','').replace('\t','').replace(' ','')
+if 'unversioned' not in bvers.lower() and 'exported' not in bvers.lower(): writefile(ver_file, 's%s%s' % (bvers,id_append))
+else:
+	USED_REPO = 'git'
+	os.system('git describe --always > %s' % ver_file)
+	revno = str(readfile(ver_file)).replace('\n','').replace('\r','').replace('\t','').replace(' ','')
+	#os.system('git log -1 --date=raw > %s' % ver_file)
+	#date = re.findall('Date:.*?([0-9]+).*?([-+]?[0-9]+)',str(readfile(ver_file)),re.S+re.I+re.U)[0]
+	#date = '%s%s%s-%s%s%s' % time.gmtime(int(date[0])+int(date[1][-2:])*60+int(date[1][:-2])*3600)[:6]
+	#writefile(ver_file, 'g%s-%s%s' % (revno,date[2:],id_append))
+	writefile(ver_file, 'g%s%s' % (revno,id_append))
 
 while 1:
 	try: execfile('kernel.py')
@@ -88,22 +103,26 @@ while 1:
 	except SystemExit, mode:
 		mode = str(mode)
 		if mode == 'update':
-			rm('settings/ver')
-			rm('settings/version')
-			if os.name == 'nt':
-				os.system('svnversion >> settings/ver')
-				os.system('svn up')
-				os.system('svnversion >> settings/version')
-			else:
-				os.system('echo `svnversion` >> settings/ver')
-				os.system('svn up')
-				os.system('echo `svnversion` >> settings/version')
-			try: ver = int(re.findall('[0-9]+',readfile('settings/version'))[0]) - int(re.findall('[0-9]+',readfile('settings/ver'))[0])
-			except: ver = -1
-			rm(updatelog_file)
-			if ver > 0:	 os.system('svn log --limit %s >> %s' % (ver,updatelog_file))
-			elif ver < 0: os.system('echo Failed to detect version! >> %s' % updatelog_file)
-			else: os.system('echo No Updates! >> %s' % updatelog_file)
+			if USED_REPO = 'svn':
+				if os.name == 'nt':
+					os.system('svnversion > settings/ver')
+					os.system('svn up')
+					os.system('svnversion > settings/version')
+				else:
+					os.system('echo `svnversion` > settings/ver')
+					os.system('svn up')
+					os.system('echo `svnversion` > settings/version')
+				try: ver = int(re.findall('[0-9]+',readfile('settings/version'))[0]) - int(re.findall('[0-9]+',readfile('settings/ver'))[0])
+				except: ver = -1
+				if ver > 0:	 os.system('svn log --limit %s > %s' % (ver,updatelog_file))
+				elif ver < 0: os.system('echo Failed to detect version! > %s' % updatelog_file)
+				else: os.system('echo No Updates! > %s' % updatelog_file)
+				writefile(ver_file, 's%s%s' % (str(readfile(ver_file)).replace('\n','').replace('\r','').replace('\t','').replace(' ',''),id_append))
+			elif USED_REPO = 'git':
+				os.system('git describe --always > %s' % ver_file)
+				revno = str(readfile(ver_file)).replace('\n','').replace('\r','').replace('\t','').replace(' ','')
+				writefile(ver_file, 'g%s%s' % (revno,id_append))
+				
 		elif mode == 'exit': break
 		elif mode == 'restart': pass
 		else:
