@@ -57,10 +57,6 @@ def crash(text):
 	printlog(text)
 	sys.exit()
 
-def rm(file):
-	try: os.remove(file)
-	except: pass
-
 if os.name == 'nt': printlog('Warning! Correct work only on *NIX system!')
 
 try: writefile('settings/starttime',str(int(time.time())))
@@ -79,10 +75,8 @@ if os.path.isfile(pid_file) and os.name != 'nt':
 
 writefile(pid_file,str(os.getpid()))
 
-rm('settings/version')
 if os.name == 'nt': os.system('svnversion > %s' % ver_file)
 else: os.system('echo `svnversion` > %s' % ver_file)
-rm(updatelog_file)
 os.system('echo Just Started! > %s' % updatelog_file)
 
 bvers = str(readfile(ver_file)).replace('\n','').replace('\r','').replace('\t','').replace(' ','')
@@ -103,7 +97,7 @@ while 1:
 	except SystemExit, mode:
 		mode = str(mode)
 		if mode == 'update':
-			if USED_REPO = 'svn':
+			if USED_REPO == 'svn':
 				if os.name == 'nt':
 					os.system('svnversion > settings/ver')
 					os.system('svn up')
@@ -118,11 +112,13 @@ while 1:
 				elif ver < 0: os.system('echo Failed to detect version! > %s' % updatelog_file)
 				else: os.system('echo No Updates! > %s' % updatelog_file)
 				writefile(ver_file, 's%s%s' % (str(readfile(ver_file)).replace('\n','').replace('\r','').replace('\t','').replace(' ',''),id_append))
-			elif USED_REPO = 'git':
+			elif USED_REPO == 'git':
 				os.system('git describe --always > %s' % ver_file)
 				revno = str(readfile(ver_file)).replace('\n','').replace('\r','').replace('\t','').replace(' ','')
 				writefile(ver_file, 'g%s%s' % (revno,id_append))
-				
+				os.system('git log -1 > %s' % updatelog_file)
+				writefile(updatelog_file, unicode(readfile(updatelog_file)).replace('\n\n','\n').replace('\r','').replace('\t',''),id_append)
+			else: pass # reserved for mercurial
 		elif mode == 'exit': break
 		elif mode == 'restart': pass
 		else:
