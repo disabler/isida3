@@ -80,7 +80,7 @@ else: os.system('echo `svnversion` > %s' % ver_file)
 os.system('echo Just Started! > %s' % updatelog_file)
 
 bvers = str(readfile(ver_file)).replace('\n','').replace('\r','').replace('\t','').replace(' ','')
-if 'unversioned' not in bvers.lower() and 'exported' not in bvers.lower(): writefile(ver_file, 's%s%s' % (bvers,id_append))
+if 'unversioned' not in bvers.lower() and 'exported' not in bvers.lower() and bvers: writefile(ver_file, 's%s%s' % (bvers,id_append))
 else:
 	USED_REPO = 'git'
 	os.system('git describe --always > %s' % ver_file)
@@ -113,6 +113,7 @@ while 1:
 				else: os.system('echo No Updates! > %s' % updatelog_file)
 				writefile(ver_file, 's%s%s' % (str(readfile(ver_file)).replace('\n','').replace('\r','').replace('\t','').replace(' ',''),id_append))
 			elif USED_REPO == 'git':
+				os.system('git pull')
 				os.system('git describe --always > %s' % ver_file)
 				revno = str(readfile(ver_file)).replace('\n','').replace('\r','').replace('\t','').replace(' ','')
 				writefile(ver_file, 'g%s%s' % (revno,id_append))
