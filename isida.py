@@ -41,29 +41,29 @@ def writefile(filename, data):
 	fp.write(data)
 	fp.close()
 
-def tZ(val):
-	val = str(val)
-	if len(val) == 1: val = '0'+val
-	return val
-
 def printlog(text):
 	print text
 	lt = tuple(time.localtime())
-	fname = 'log/crash_'+tZ(lt[0])+tZ(lt[1])+tZ(lt[2])+'.txt'
-	fbody = tZ(lt[3])+tZ(lt[4])+tZ(lt[5])+'|'+text+'\n'
+	fname = 'log/crash_%04d%02d%02d.txt' % lt[0:3]
+	fbody = '%s|%s\n' % ('%02d%02d%02d' % lt[3:6],text)
 	fl = open(fname, 'a')
 	fl.write(fbody.encode('utf-8'))
 	fl.close()
 
+def crashtext(t):
+	t = '*** %s ***' % t
+	s = '*'*len(t)
+	return '\n%s\n%s\n%s\n' % (s,t,s)
+	
 def crash(text):
-	printlog(text)
+	printlog(crashtext(text))
 	sys.exit()
 
 if os.name == 'nt': printlog('Warning! Correct work only on *NIX system!')
 
 try: writefile('settings/starttime',str(int(time.time())))
 except:
-	printlog('\n'+'*'*50+'\n Isida is crashed! Incorrent launch!\n'+'*'*50+'\n')
+	printlog(crashtext('Isida is crashed! Incorrent launch!'))
 	raise
 
 if os.path.isfile(pid_file) and os.name != 'nt':
@@ -132,6 +132,6 @@ while 1:
 	except Exception, SM:
 		try: SM = str(SM)
 		except: SM = unicode(SM)
-		printlog('\n'+'*'*50+'\n Isida is crashed! It\'s imposible, but You do it!\n'+'*'*50+'\n')
-		printlog(SM+'\n')
+		printlog(crashtext('Isida is crashed! It\'s imposible, but You do it!'))
+		printlog('%s\n' % SM)
 		raise
