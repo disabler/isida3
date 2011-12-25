@@ -1711,7 +1711,7 @@ def msg_afterwork(mess,room,jid,nick,type,back_text,no_comm,access_mode,nowname)
 	if subj != 'None':
 		if '\n' in subj: subj = '\n%s'  % subj
 		subj = L('*** Topic: %s') % subj
-		if len(text) and text != 'None': subj = text
+		if len(text) and text != 'None': subj = text.replace(': ',':\n',1) if '\n' in text else text
 		topics[room],nick = subj,''
 		text = subj
 		not_alowed_flood, no_comm = True, False
