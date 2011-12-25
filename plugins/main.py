@@ -466,6 +466,8 @@ def svn_info(type, jid, nick):
 		try: msg = L('Last update:\n%s') % readfile(ul).decode('utf-8').replace('\n\n','\n')
 		except: msg = L('Error!')
 	else: msg = L('File %s not found!') % ul
+	while msg[-1] in ['\n',' ']: msg = msg[:-1]
+	if msg.count('\n') == 1: msg = msg.replace('\n',' ')
 	send_msg(type, jid, nick, msg[:msg_limit])
 
 def unhtml_raw(page,mode):

@@ -25,7 +25,6 @@ import os, sys, time, re
 pid_file = 'isida.pid'
 updatelog_file = 'update.log'
 ver_file = 'settings/version'
-USED_REPO = 'svn'
 id_append = '-rc2'
 
 def readfile(filename):
@@ -75,13 +74,16 @@ if os.path.isfile(pid_file) and os.name != 'nt':
 
 writefile(pid_file,str(os.getpid()))
 
-if os.name == 'nt': os.system('svnversion > %s' % ver_file)
-else: os.system('echo `svnversion` > %s' % ver_file)
-os.system('echo Just Started! > %s' % updatelog_file)
-
-bvers = str(readfile(ver_file)).replace('\n','').replace('\r','').replace('\t','').replace(' ','')
-if 'unversioned' not in bvers.lower() and 'exported' not in bvers.lower() and bvers: writefile(ver_file, 's%s%s' % (bvers,id_append))
-else:
+dirs = os.listdir('.')+os.listdir('../')
+dirs = []
+if '.svn' in dirs:
+	USED_REPO = 'svn'
+	if os.name == 'nt': os.system('svnversion > %s' % ver_file)
+	else: os.system('echo `svnversion` > %s' % ver_file)
+	os.system('echo Just Started! > %s' % updatelog_file)
+	bvers = str(readfile(ver_file)).replace('\n','').replace('\r','').replace('\t','').replace(' ','')
+	writefile(ver_file, '%sS%s' % (bvers,id_append))
+elif '.git' in dirs:
 	USED_REPO = 'git'
 	os.system('git describe --always > %s' % ver_file)
 	revno = str(readfile(ver_file)).replace('\n','').replace('\r','').replace('\t','').replace(' ','')
@@ -89,7 +91,10 @@ else:
 	#date = re.findall('Date:.*?([0-9]+).*?([-+]?[0-9]+)',str(readfile(ver_file)),re.S+re.I+re.U)[0]
 	#date = '%s%s%s-%s%s%s' % time.gmtime(int(date[0])+int(date[1][-2:])*60+int(date[1][:-2])*3600)[:6]
 	#writefile(ver_file, 'g%s-%s%s' % (revno,date[2:],id_append))
-	writefile(ver_file, 'g%s%s' % (revno,id_append))
+	writefile(ver_file, '%sG%s' % (revno,id_append))
+else:
+	USED_REPO = 'unknown'
+	writefile(ver_file, '%sT%s' % (hex(int(os.path.getctime('../')))[2:],id_append))
 
 while 1:
 	try: execfile('kernel.py')
@@ -119,7 +124,7 @@ while 1:
 				writefile(ver_file, 'g%s%s' % (revno,id_append))
 				os.system('git log -1 > %s' % updatelog_file)
 				writefile(updatelog_file, unicode(readfile(updatelog_file)).replace('\n\n','\n').replace('\r','').replace('\t',''))
-			else: pass # reserved for mercurial
+			else: os.system('echo Update not available! > %s' % updatelog_file)
 		elif mode == 'exit': break
 		elif mode == 'restart': pass
 		else:
