@@ -75,7 +75,7 @@ if os.path.isfile(pid_file) and os.name != 'nt':
 writefile(pid_file,str(os.getpid()))
 
 dirs = os.listdir('.')+os.listdir('../')
-dirs = []
+
 if '.svn' in dirs:
 	USED_REPO = 'svn'
 	if os.name == 'nt': os.system('svnversion > %s' % ver_file)
@@ -124,7 +124,7 @@ while 1:
 				writefile(ver_file, 'g%s%s' % (revno,id_append))
 				os.system('git log -1 > %s' % updatelog_file)
 				writefile(updatelog_file, unicode(readfile(updatelog_file)).replace('\n\n','\n').replace('\r','').replace('\t',''))
-			else: os.system('echo Update not available! > %s' % updatelog_file)
+			else: os.system('echo Update not available! Read wiki at http://isida-bot.com to use SVN/GIT! > %s' % updatelog_file)
 		elif mode == 'exit': break
 		elif mode == 'restart': pass
 		else:
