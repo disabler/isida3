@@ -187,7 +187,7 @@ Not found Api-key for Bing translator	Не знайдено Api-ключ для 
 I can't translate it!	Я не можу цього перекласти!
 Incorrect language settings for translate. tr list - available languages.	Неправильно вказана мова або немає тексту для перекладу. tr list - доступні мови
 Command's format: tr [from] to text	Формат команди: tr [з_якої] на_яку текст
-Bing translator.\nbt [from_language] to_language text - translate text\nbt list - list for available languages for translate\nbt info <reduction> - get info about language reduction\nbt lang <expression> - get languages by expression	Перекладач Bing.\nbt [з_якої_мови] на_яку_мову текст - переклад тексту\nbt list - список мов для перекладу\nbt info <скорочення> - розшифровка скорочення мови\nbt lang <вираз> - знайти мови за виразом
+Bing translator.\nbt [from_language] to_language text - translate text\nbt list - list for available languages for translate\nbt info <reduction> - get info about language reduction	Перекладач Bing.\nbt [з_якої_мови] на_яку_мову текст - переклад тексту\nbt list - список мов для перекладу\nbt info <скорочення> - розшифровка скорочення мови
 
 # file: ../trunk/plugins/blacklist.py
 Leave conference %s\n	Залишила %s\n
@@ -480,18 +480,31 @@ Swahili	суахілі
 Tagalog	тагальська
 Croatian	хорватська
 Creole	креольська
-Translator.\ntr [from_language] to_language text - translate text\ntr list - list for available languages for translate\ntr info <reduction> - get info about language reduction\ntr lang <expression> - get languages by expression	Перекладач.\ntr [з_якої_мови] на_яку_мову текст - переклад тексту\ntr list - список мов для перекладу\ntr info <скорочення> - розшифровка скорочення мови\ntr lang <вираз> - знайти мови за виразом
+Translator.\ntr [from_language] to_language text - translate text\ntr list - list for available languages for translate\ntr info <reduction> - get info about language reduction	Перекладач.\ntr [з_якої_мови] на_яку_мову текст - переклад тексту\ntr list - список мов для перекладу\ntr info <скорочення> - розшифровка скорочення мови
 Search in google	Пошук через google
 Search XEP	Пошук XEP
 Search in en.wikipedia.org	Пошук по ru.wikipedia.org
 
 # file: ../trunk/plugins/googleplus.py
+verb	дієслово
+noun	іменник
+preposition	прийменник
+adverb	прислівник
+adjective	прикметник
+phrase	вислів
+conjunction	сполучник
+abbreviation	абревіатура
 Google Calculator results not found	Калькулятор google не може це підрахувати!
 I don't know!	Хм. Мені про це ніхто не розповідав...
+Unsupported language!	Мова не підтримується!
+Invalid target language!	Невірна цільова мова!
+Invalid source language!	Невірна вихідна мова!
+Command execution error.	Помилка виконання команди.
 Google Calculator	Калькулятор google
 Definition for a word or phrase.\ndefine word - random define of word or phrase\ndefine N word - N-th define of word or phrase\ndefine a-b word - from a to b defines of word or phrase	Визначення для слова чи виразу.\ndefine слово - випадкове визначення слова чи виразу\ndefine N слово - N-нне визначення слова чи виразу\ndefine a-b word - визначення слова чи фрази з номеру a і до b
 Google URL Shortener/Unshortener	Сервіс скорочення посиланнь від Google
 Google QR-code generator	Сервіс генерації QR-кодів від Google
+Google Dictionary\ngdict from_language to_language word	Словник Google\ngdict з_якої на_яку текст
 
 # file: ../trunk/plugins/hideroom.py
 This command available only in private!	Команда доступна лише в приваті!
@@ -803,7 +816,6 @@ Locale not found!	Локалізація не знайдена!
 Locale set to: en	Встановлена локалізація: en
 Current locale: %s	Поточна локалізація: %s
 Command temporary blocked!	Команда тимчасово блокована
-Command execution error.	Помилка виконання команди.
 ok	ок
 Enabled: %s	Увімкнено: %s
 Only conference owner can enable commands!	Ввімкнення команд доступне лише власнику конференції!
@@ -1432,6 +1444,9 @@ Date has already in past!	Дата вже пройшла!
 Calculate count of days for requested date, if the date is holiday, that returned title of holiday.\nSupported date formats: dd.mm.yyyy, dd.mm, dd.mm.yy, yyyy.mm.dd\nSupported splitters: ,-.:/\\ntodate 05.09\ntodate 5/9/2010	Розрахунок кількості днів від поточної дати до заданої, якщо на задану дату припадає свято, то повертається назва свята замість запитуваної дати\nПідтримувані формати дати: dd.mm.yyyy, dd.mm, dd.mm.yy, yyyy.mm.dd\nПідтримувані роздільники: ,-.:/\\ntodate 05.09\ntodate 5/9/2010
 Calculate count of days for requested date.\nSupported date formats: dd.mm.yyyy, dd.mm, dd.mm.yy, yyyy.mm.dd\nSupported splitter: ,-.:/\\ntodate 05.09 before New year remained\ntodate 5/9/2010 before New year remained	Розрахунок кількості днів від поточної дати до заданої з можливістю вставки власного тексту\nПідтримувані формати дати: dd.mm.yyyy, dd.mm, dd.mm.yy, yyyy.mm.dd\nПідтримувані роздільники: ,-.:/\\ntodate 05.09 До Дня Перемоги залишилось\ntodate 5/9/2010 До Дня Перемоги залишилось
 
+# file: ../trunk/plugins/train.py
+Train schedules by Yandex. Example: train city1 - city2	Розклад поїздів від Яндекса. Приклад: train місто1 - місто2
+
 # file: ../trunk/plugins/turn.py
 qwertyuiop[]asdfghjkl;'zxcvbnm,.`QWERTYUIOP{}ASDFGHJKL:"ZXCVBNM<>~	йцукенгшщзхїфівапролджєячсмитьбюёЙЦУКЕНГШЩЗХЇФІВАПРОЛДЖЄЯЧСМИТЬБЮЁqwertyuiop[]asdfghjkl;'zxcvbnm,.`QWERTYUIOP{}ASDFGHJKL:"ZXCVBNM<>~
 QWERTYUIOP{}ASDFGHJKL:"ZXCVBNM<>~qwertyuiop[]asdfghjkl;'zxcvbnm,.`	qwertyuiop[]asdfghjkl;'zxcvbnm,.`QWERTYUIOP{}ASDFGHJKL:"ZXCVBNM<>~йцукенгшщзхїфівапролджєячсмитьбюёЙЦУКЕНГШЩЗХЇФІВАПРОЛДЖЄЯЧСМИТЬБЮЁ
@@ -1484,3 +1499,4 @@ Search weather by code, city, country.	Пошук погоди по коду м�
 
 # file: ../trunk/plugins/youtube.py
 Search at YouTube	Пошук по YouTube
+
