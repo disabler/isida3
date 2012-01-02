@@ -169,47 +169,22 @@ def ddos_info(type, room, nick, text):
 	else: msg = L('Error in parameters. Read the help about command.')
 	send_msg(type, room, nick, msg)
 
-def vacuum_by_time():
-	global deny_vacuum
-	if GT('vacuum_bases') != 'by time': return
-	vh = int(GT('vacuum_bases_hour')[:-1])
-	vm = int(GT('vacuum_bases_minuts')[1:])
-	if not deny_vacuum and time.localtime()[3] == vh and time.localtime()[4] >= vm:
-		deny_vacuum = True
-		pprint(vacuum_bases('by time'),'dark_gray')
-	if deny_vacuum and time.localtime()[3] != vh: deny_vacuum = False
-
-def bot_vacuum_bases(type, jid, nick): send_msg(type, jid, nick, vacuum_bases('by command'))
-
-def vacuum_bases(text):
-	msg = []
-	if text != 'by command': pprint('Start vacuum databases %s' % text,'dark_gray')
-	for tmp in [[agestatbase,L('Age statistic base')],[saytobase,L('SayTo base')],[talkersbase,L('Talkers base')],[wtfbase,L('Base of definitions')],[karmabase,L('Karma base')],[jid_base,L('Jid\'s base')]]:
-		vacuum_time = time.time()
-		was_error = False
-		try: sqlite3.connect(tmp[0],timeout=base_timeout).cursor().execute('vacuum').close()
-		except: was_error = True
-		if not was_error: vacuum_time = '%s %s' % (int((time.time()-vacuum_time)*100000)/100000.0,L('sec.'))
-		else: vacuum_time = L('Error!')
-		msg += ['%s:\t%s' % (tmp[1],vacuum_time)]
-	msg.sort()
-	msg = L('Vacuum databases:\n%s') % '\n'.join(msg)
-	return msg
-
 def atempt_to_shutdown(critical):
 	if not critical:
 		pprint('Close age base','dark_gray')
 		close_age()
-		if GT('vacuum_bases') == 'on shutdown': vacuum_bases('on shutdown')
 	kill_all_threads()
 	flush_stats()
 
 def atempt_to_shutdown_with_reason(text,sleep_time,exit_type,critical):
+	global conn
 	pprint(text,'red')
 	send_presence_all(text)
 	atempt_to_shutdown(critical)
 	if sleep_time: time.sleep(sleep_time)
 	sys.exit(exit_type)
+	conn.commit()
+	conn.close()
 
 def deidna(text):
 	def repl(t): return t.group().lower().decode('idna')
@@ -259,49 +234,6 @@ def show_syslogs(type, jid, nick, text):
 	lsz = 1 if lsz <= 0 else (last_logs_size if lsz > last_logs_size else lsz)
 	msg = '\n'.join([tmp for tmp in last_logs_store if txt in tmp][1:lsz][::-1])
 	send_msg(type, jid, nick, L('Last syslogs: %s') % '\n%s' % msg)
-
-def get_scrobble(type, room, nick, text):
-	def last_time_short(tm):
-		tm = time.localtime(tm)
-		tnow = time.localtime()
-		if tm[0] != tnow[0]: form = '%d.%m.%Y %H:%M'
-		elif tm[1]!=tnow[1] or tm[2]!=tnow[2]: form = '%d.%m %H:%M'
-		else: form = '%H:%M'
-		return str(time.strftime(form,tm))
-	if text == '': text = nick
-	text = text.split()
-	csize = 3
-	if len(text)>1:
-		try: csize = int(text[1])
-		except: pass
-	text = text[0]
-	if csize < 1: csize = 1
-	elif csize > GT('pep_scrobbler_max_count'): csize = GT('pep_scrobbler_max_count')
-	jid = getRoom(get_level(room,text)[1])
-	if jid == 'None': jid = room
-	stb = os.path.isfile(scrobblebase)
-	scrobbase = sqlite3.connect(scrobblebase,timeout=base_timeout)
-	cu_scrobl = scrobbase.cursor()
-	if not stb:
-		cu_scrobl.execute('''create table tune (jid text, song text, length integer, played integer)''')
-		cu_scrobl.execute('''create table nick (jid text, nick text)''')
-		scrobbase.commit()
-	tune = cu_scrobl.execute('select song,length,played from tune where jid=? order by -played',(jid,)).fetchmany(csize)
-	scrobbase.close()
-	if tune:
-		msg = ''
-		for ttune in tune:
-			try:
-				t_time = int(ttune[1])
-				t_min = t_time/60
-				t_sec = t_time - int(t_min)*60
-				t_minsec = '%02d:%02d' % (t_min,t_sec)
-			except: t_minsec = ttune[1]
-			msg += '\n[%s] %s - %s' % (last_time_short(ttune[2]),unescape(ttune[0]),t_minsec)
-		if len(msg): msg = 'PEP Scrobbled:' + msg
-		else: msg = L('Not found!')
-	else: msg = L('Not found!')
-	send_msg(type, room, nick, msg)
 
 def set_locale(type, jid, nick, text):
 	global locales
@@ -433,9 +365,12 @@ def status(type, jid, nick, text):
 			break
 	if is_found:
 		realjid = getRoom(get_level(jid,text)[1])
-		mdb = sqlite3.connect(agestatbase,timeout=base_timeout)
-		cu = mdb.cursor()
-		stat = cu.execute('select message,status from age where jid=? and room=? and nick=?',(realjid,jid,text)).fetchone()
+		conn = psycopg2.connect("dbname='%s' user='%s' host='%s' password='%s'" % (base_name,base_user,base_host,base_pass));
+		cur = conn.cursor()
+		cur.execute('select message,status from age where jid=%s and room=%s and nick=%s',(realjid,jid,text))
+		stat = cur.fetchone()
+		cur.close()
+		conn.close()
 		if stat:
 			if stat[1]: msg = L('leave this room.')
 			else:
@@ -594,33 +529,45 @@ def un_unix(val):
 	return ret
 
 def close_age_null():
-	mdb = sqlite3.connect(agestatbase,timeout=base_timeout)
-	cu = mdb.cursor()
-	cu.execute('delete from age where jid like ?',('<temporary>%',)).fetchall()
-	ccu = cu.execute('select * from age where status=? order by room',(0,)).fetchall()
-	cu.execute('delete from age where status=?', (0,)).fetchall()
-	for ab in ccu: cu.execute('insert into age values (?,?,?,?,?,?,?,?)', (ab[0],ab[1],ab[2],ab[3],ab[4],1,ab[6],ab[7]))
-	mdb.commit()
+	global conn
+	conn = psycopg2.connect("dbname='%s' user='%s' host='%s' password='%s'" % (base_name,base_user,base_host,base_pass));
+	cur = conn.cursor()
+	cur.execute("delete from age where jid like '<temporary>%'")
+	cur.execute('select * from age where status=0 order by room')
+	ccu = cur.fetchall()
+	cur.execute('delete from age where status=0')
+	for ab in ccu: cur.execute('insert into age values (%s,%s,%s,%s,%s,%s,%s,%s)', (ab[0],ab[1],ab[2],ab[3],ab[4],1,ab[6],ab[7]))
+	conn.commit()
+	cur.close()
+	conn.close()
 
 def close_age():
-	mdb = sqlite3.connect(agestatbase,timeout=base_timeout)
-	cu = mdb.cursor()
-	cu.execute('delete from age where jid like ?',('<temporary>%',)).fetchall()
-	ccu = cu.execute('select * from age where status=? order by room',(0,)).fetchall()
-	cu.execute('delete from age where status=?', (0,)).fetchall()
+	global conn
+	conn = psycopg2.connect("dbname='%s' user='%s' host='%s' password='%s'" % (base_name,base_user,base_host,base_pass));
+	cur = conn.cursor()
+	cur.execute('delete from age where jid like %s',('<temporary>%',))
+	cur.execute('select * from age where status=%s order by room',(0,))
+	ccu = cur.fetchall()
+	cur.execute('delete from age where status=%s', (0,))
 	tt = int(time.time())
-	for ab in ccu: cu.execute('insert into age values (?,?,?,?,?,?,?,?)', (ab[0],ab[1],ab[2],tt,ab[4]+(tt-ab[3]),1,ab[6],ab[7]))
-	mdb.commit()
+	for ab in ccu: cur.execute('insert into age values (%s,%s,%s,%s,%s,%s,%s,%s)', (ab[0],ab[1],ab[2],tt,ab[4]+(tt-ab[3]),1,ab[6],ab[7]))
+	conn.commit()
+	cur.close()
+	conn.close()
 
 def close_age_room(room):
-	mdb = sqlite3.connect(agestatbase,timeout=base_timeout)
-	cu = mdb.cursor()
-	cu.execute('delete from age where jid like ?',('<temporary>%',)).fetchall()
-	ccu = cu.execute('select * from age where status=? and room=? order by room',(0,room)).fetchall()
-	cu.execute('delete from age where status=? and room=?',(0,room)).fetchall()
+	global conn
+	conn = psycopg2.connect("dbname='%s' user='%s' host='%s' password='%s'" % (base_name,base_user,base_host,base_pass));
+	cur = conn.cursor()
+	cur.execute('delete from age where jid like %s',('<temporary>%',))
+	cur.execute('select * from age where status=%s and room=%s order by room',(0,room))
+	ccu = cur.fetchall()
+	cur.execute('delete from age where status=%s and room=%s',(0,room))
 	tt = int(time.time())
-	for ab in ccu: cu.execute('insert into age values (?,?,?,?,?,?,?,?)', (ab[0],ab[1],ab[2],tt,ab[4]+(tt-ab[3]),1,ab[6],ab[7]))
-	mdb.commit()
+	for ab in ccu: cur.execute('insert into age values (%s,%s,%s,%s,%s,%s,%s,%s)', (ab[0],ab[1],ab[2],tt,ab[4]+(tt-ab[3]),1,ab[6],ab[7]))
+	conn.commit()
+	cur.close()
+	conn.close()
 
 def sfind(mass,stri):
 	for a in mass:
@@ -1513,31 +1460,25 @@ def configure(type, jid, nick, text):
 	else: msg = L('Unknown item!')
 	send_msg(type, jid, nick, msg)
 
-def open_muc_base():
-	is_acl = os.path.isfile(muc_lock_base)
-	aclb = sqlite3.connect(muc_lock_base,timeout=base_timeout)
-	acur = aclb.cursor()
-	if not is_acl: acur.execute('create table muc (room text, jid text)')
-	return aclb,acur
-
-def close_muc_base(base):
-	base.commit()
-	base.close()
-
 def muc_filter_lock(type, jid, nick, text):
-	mbase,mcur = open_muc_base()
+	global conn
 	realjid = getRoom(get_level(jid,nick)[1])
-	tmp = mcur.execute('select * from muc where room=? and jid=?', (jid,realjid)).fetchall()
+	conn = psycopg2.connect("dbname='%s' user='%s' host='%s' password='%s'" % (base_name,base_user,base_host,base_pass));
+	cur = conn.cursor()
+	cur.execute('select * from muc_lock where room=%s and jid=%s', (jid,realjid))
+	tmp = cur.fetchall()
 	if text in ['on','off']:
-		if tmp: mcur.execute('delete from muc where room=? and jid=?', (jid,realjid)).fetchall()
+		if tmp: cur.execute('delete from muc_lock where room=%s and jid=%s', (jid,realjid))
 		if text == 'on':
-			mcur.execute('insert into muc values (?,?)', (jid, realjid))
+			cur.execute('insert into muc_lock values (%s,%s)', (jid, realjid))
 			st = L('on')
 		else: st = L('off')
 	elif tmp: st = L('on')
 	else: st = L('off')
+	conn.commit()
+	cur.close()
+	conn.close()
 	msg = L('Ignore messages from unaffiliated participants in private - %s') % st
-	close_muc_base(mbase)
 	send_msg(type, jid, nick, msg)
 
 def get_opener(page_name, parameters=None):
@@ -1768,7 +1709,6 @@ owner_prefs = {'syslogs_enable': [L('Logger. Enable system logs'),'b',True],
 				'rss_max_feed_limit':[L('Rss. Maximum rss count'),'i',10],
 				'rss_min_time_limit':[L('Rss. Minimal time for rss check in minutes'),'i',10],
 				'rss_get_timeout':[L('Rss. Timeout for rss request from server in seconds'),'i',15],
-				'pep_scrobbler_max_count':[L('Pep scrobbler. Number of maximum answers for pep-scrobbler'),'i',10],
 				'whereis_time_dec':[L('Whereis. Frequency for answer check for whereis command'),'f',0.5],
 				'watcher_room_activity':[L('Watcher. Try rejoin in rooms with low activity'),'b',True],
 				'watcher_self_ping':[L('Watcher. Allow self ping'),'b',True],
@@ -1807,6 +1747,7 @@ owner_prefs = {'syslogs_enable': [L('Logger. Enable system logs'),'b',True],
 				'html_paste_enable':[L('Paste. Paste as html. Otherwize as text'),'b',True],
 				'yandex_api_key':[L('City. Yandex.Map API-key'),'t128','no api'],
 				'bing_api_key':[L('Bing. Translator API-key'),'t128','no api'],
+				'new_year_text':[L('NewYear. Congratulations text'),'t256',L('Happy New Year!')],
 				'censor_text':[L('Kernel. Text for hide censore'),'t32','[censored]'],
 				'ddos_limit':[L('Kernel. Time of ignore for anti-ddos'),'l10','[1800,1800,1800,1800,1800,600,300,150,60,0]'],
 				'ddos_diff':[L('Kernel. Anti-ddos time delay between messages'),'l10','[30,30,30,30,20,20,15,10,5,0]'],
@@ -1818,9 +1759,6 @@ owner_prefs = {'syslogs_enable': [L('Logger. Enable system logs'),'b',True],
 				'karma_discret':[L('Karma. Difference between two action in karma'),'i',5],
 				'karma_discret_lim_up':[L('Karma. Upper value of karma for control action'),'i',100],
 				'karma_discret_lim_dn':[L('Karma. Lower value of karma for control action'),'i',-100],
-				'vacuum_bases':[L('Kernel. Vacuum databases'),'d','off',['on start','on shutdown','by time','off']],
-				'vacuum_bases_hour':[L('Kernel. Vacuum databases at hour when by time'),'d','04:',['00:','01:','02:','03:','04:','05:','06:','07:','08:','09:','10:','11:','12:','13:','14:','15:','16:','17:','18:','19:','20:','21:','22:','23:']],
-				'vacuum_bases_minuts':[L('Kernel. Vacuum databases at minuts when by time'),'d',':00',[':00',':15',':30',':45']],
 				'disco_exclude':[L('Disco. Exclude from disco by regexps'),'m256e',u'([؀-ݭ)\n(ﭐ-ﻼ])\n(syria|arab)','disco_exclude_update()'],
 				'exclude_messages':[L('Kernel. Exclude symbols from bot\'s messages'),'m256e',u'([؀-ۿ])\n([ݐ-ݿ])\n([ﭐ-﷿])\n([ﹰ-﻿])','message_exclude_update()'],
 				}
@@ -1847,7 +1785,8 @@ owner_group_youtube = [L('Youtube settings'),'#owner-youtube',
 
 owner_group_other = [L('Other settings'),'#owner-other',
 				['anek_private_limit','backup_sleep_time','calendar_default_splitter',
-				'pep_scrobbler_max_count','disco_max_limit','disco_exclude','html_paste_enable','yandex_api_key','bing_api_key']]
+				'disco_max_limit','disco_exclude','html_paste_enable','yandex_api_key','bing_api_key',
+				'new_year_text']]
 
 owner_group_karma = [L('Karma settings'),'#owner-karma',
 				['karma_limit','karma_show_default_limit','karma_show_max_limit','karma_timeout','karma_discret','karma_discret_lim_up','karma_discret_lim_dn']]
@@ -1861,7 +1800,7 @@ owner_group_troll = [L('Antitroll settings'),'#owner-troll',
 owner_group_kernel = [L('Kernel settings'),'#owner-kernel',
 				['censor_text','ddos_limit','ddos_diff','paranoia_mode','reboot_time','schedule_time',
 				'show_loading_by_status','show_loading_by_status_show','show_loading_by_status_message',
-				'show_loading_by_status_percent','kick_ban_notify','kick_ban_notify_jid','vacuum_bases','vacuum_bases_hour','vacuum_bases_minuts',
+				'show_loading_by_status_percent','kick_ban_notify','kick_ban_notify_jid',
 				'ddos_iq_requests','ddos_iq_limit','exclude_messages']]
 
 owner_group_lastfm = [L('LastFM settings'),'#owner-lastfm',
@@ -1900,7 +1839,6 @@ owner_groups = [owner_group_amsg,owner_group_rss,owner_group_clear,
 
 comms = [
 	 (0, 'help', helpme, 2, L('Help system. Helps without commands: about, donation, access')),
-	 (9, 'vacuum', bot_vacuum_bases, 1, L('Vacuum bot\'s databases')),
 	 (9, 'join', bot_join, 2, L('Join conference.\njoin room[@conference.server.ru[/nick]]\n[password]')),
 	 (9, 'leave', bot_leave, 2, L('Leave conference.\nleave room[@conference.server.ru[/nick]]')),
 	 (9, 'rejoin', bot_rejoin, 2, L('Rejoin conference.\nrejoin room[@conference.server.ru[/nick]]\n[password]')),
@@ -1927,7 +1865,6 @@ comms = [
 	 (0, 'status', status, 2, L('Show status.')),
 	 (3, 'prefix', set_prefix, 2, L('Set command prefix. Use \'none\' for disable prefix')),
 	 (9, 'set_locale', set_locale, 2, 'Change bot localization.\nset_locale en|%s' % '|'.join([tmp[:-4] for tmp in os.listdir(loc_folder) if tmp[-4:]=='.txt'])),
-	 (9, 'tune', get_scrobble, 2, L('PEP Scrobbler. Test version')),
 	 (7, 'config', configure, 2, L('Conference configure.\nconfig [show[ status]|help][ item]')),
 	 (4, 'pmlock', muc_filter_lock, 2, L('Deny recieve messages from unaffiliated participants in private')),
 	 (9, 'ddos', ddos_info, 2, L('Temporary ignore with ddos detect.\nddos [show|del jid]'))]

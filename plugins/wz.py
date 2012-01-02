@@ -28,10 +28,12 @@ def check_wz(text):
 	return None
 
 def get_weather(text):
-	cbb = sqlite3.connect(wzbase,timeout=base_timeout)
-	cu = cbb.cursor()
-	wzc = cu.execute('select code from wz where code like ? or city like ? or counry like ?',(text,text,text)).fetchall()
-	cbb.close()
+	conn = psycopg2.connect("dbname='%s' user='%s' host='%s' password='%s'" % (base_name,base_user,base_host,base_pass));
+	cur = conn.cursor()
+	cur.execute('select code from wz where code like %s or city like %s or counry like %s',(text,text,text))
+	wzc = cur.fetchall()
+	cur.close()
+	conn.close()
 	if not wzc: return 'Not Found'
 	if len(wzc) != 1: return 'Not Found'
 	return load_page('http://weather.noaa.gov/pub/data/observations/metar/decoded/%s.TXT' % wzc[0][0].upper())
@@ -116,10 +118,12 @@ def weather_raw(type, jid, nick, text):
 
 def weather_search(type, jid, nick, text):
 	if len(text):
-		cbb = sqlite3.connect(wzbase,timeout=base_timeout)
-		cu = cbb.cursor()
-		wzc = cu.execute('select code,city,counry from wz where code like ? or city like ? or counry like ?',(text,text,text)).fetchall()
-		cbb.close()
+		conn = psycopg2.connect("dbname='%s' user='%s' host='%s' password='%s'" % (base_name,base_user,base_host,base_pass));
+		cur = conn.cursor()
+		cur.execute('select code,city,counry from wz where code like %s or city like %s or counry like %s',(text,text,text))
+		wzc = cur.fetchall()
+		cur.close()
+		conn.close()
 		if not wzc: msg = msg = L('City not found!')
 		else:
 			msg = ''

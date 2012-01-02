@@ -111,9 +111,12 @@ def muc_tempo_ban2(type, jid, nick,text):
 			except: reason = L('No reason!')
 			reason = L('ban on %s since %s because %s') % \
 				(un_unix(tttime), timeadd(tuple(time.localtime())), reason)
-			mdb = sqlite3.connect(agestatbase,timeout=base_timeout)
-			cu = mdb.cursor()
-			fnd = cu.execute('select jid from age where room=? and (nick=? or jid=?) group by jid',(jid,who,who)).fetchall()
+			conn = psycopg2.connect("dbname='%s' user='%s' host='%s' password='%s'" % (base_name,base_user,base_host,base_pass));
+			cur = conn.cursor()
+			cur.execute('select jid from age where room=%s and (nick=%s or jid=%s) group by jid',(jid,who,who))
+			fnd = cur.fetchall()
+			cur.close()
+			conn.close()
 			if len(fnd) == 1: msg, whojid = L('done'), getRoom(unicode(fnd[0][0]))
 			elif len(fnd) > 1:
 				whojid = getRoom(get_level(jid,who)[1])
@@ -188,9 +191,12 @@ def muc_affiliation_past(type, jid, nick, text, aff):
 		skip = None
 		if '\n' in text: who, reason = text.split('\n',1)[0], text.split('\n',1)[1]
 		else: who, reason = text, L('by Isida!')
-		mdb = sqlite3.connect(agestatbase,timeout=base_timeout)
-		cu = mdb.cursor()
-		fnd = cu.execute('select jid from age where room=? and (nick=? or jid=?) group by jid',(jid,who,who)).fetchall()
+		conn = psycopg2.connect("dbname='%s' user='%s' host='%s' password='%s'" % (base_name,base_user,base_host,base_pass));
+		cur = conn.cursor()
+		cur.execute('select jid from age where room=%s and (nick=%s or jid=%s) group by jid',(jid,who,who))
+		fnd = cur.fetchall()
+		cur.close()
+		conn.close()
 		if len(fnd) == 1: msg, whojid = L('done'), getRoom(unicode(fnd[0][0]))
 		elif len(fnd) > 1:
 			whojid = getRoom(get_level(jid,who)[1])

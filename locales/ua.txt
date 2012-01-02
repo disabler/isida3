@@ -187,7 +187,7 @@ Not found Api-key for Bing translator	Не знайдено Api-ключ для 
 I can't translate it!	Я не можу цього перекласти!
 Incorrect language settings for translate. tr list - available languages.	Неправильно вказана мова або немає тексту для перекладу. tr list - доступні мови
 Command's format: tr [from] to text	Формат команди: tr [з_якої] на_яку текст
-Bing translator.\nbt [from_language] to_language text - translate text\nbt list - list for available languages for translate\nbt info <reduction> - get info about language reduction	Перекладач Bing.\nbt [з_якої_мови] на_яку_мову текст - переклад тексту\nbt list - список мов для перекладу\nbt info <скорочення> - розшифровка скорочення мови
+Bing translator.\nbt [from_language] to_language text - translate text\nbt list - list for available languages for translate\nbt info <reduction> - get info about language reduction\nbt lang <expression> - get languages by expression	Перекладач Bing.\nbt [з_якої_мови] на_яку_мову текст - переклад тексту\nbt list - список мов для перекладу\nbt info <скорочення> - розшифровка скорочення мови\nbt lang <вираз> - знайти мови за виразом
 
 # file: ../trunk/plugins/blacklist.py
 Leave conference %s\n	Залишила %s\n
@@ -480,31 +480,18 @@ Swahili	суахілі
 Tagalog	тагальська
 Croatian	хорватська
 Creole	креольська
-Translator.\ntr [from_language] to_language text - translate text\ntr list - list for available languages for translate\ntr info <reduction> - get info about language reduction	Перекладач.\ntr [з_якої_мови] на_яку_мову текст - переклад тексту\ntr list - список мов для перекладу\ntr info <скорочення> - розшифровка скорочення мови
+Translator.\ntr [from_language] to_language text - translate text\ntr list - list for available languages for translate\ntr info <reduction> - get info about language reduction\ntr lang <expression> - get languages by expression	Перекладач.\ntr [з_якої_мови] на_яку_мову текст - переклад тексту\ntr list - список мов для перекладу\ntr info <скорочення> - розшифровка скорочення мови\ntr lang <вираз> - знайти мови за виразом
 Search in google	Пошук через google
 Search XEP	Пошук XEP
 Search in en.wikipedia.org	Пошук по ru.wikipedia.org
 
 # file: ../trunk/plugins/googleplus.py
-verb	дієслово
-noun	іменник
-preposition	прийменник
-adverb	прислівник
-adjective	прикметник
-phrase	вислів
-conjunction	сполучник
-abbreviation	абревіатура
 Google Calculator results not found	Калькулятор google не може це підрахувати!
 I don't know!	Хм. Мені про це ніхто не розповідав...
-Unsupported language!	Мова не підтримується!
-Invalid target language!	Невірна цільова мова!
-Invalid source language!	Невірна вихідна мова!
-Command execution error.	Помилка виконання команди.
 Google Calculator	Калькулятор google
 Definition for a word or phrase.\ndefine word - random define of word or phrase\ndefine N word - N-th define of word or phrase\ndefine a-b word - from a to b defines of word or phrase	Визначення для слова чи виразу.\ndefine слово - випадкове визначення слова чи виразу\ndefine N слово - N-нне визначення слова чи виразу\ndefine a-b word - визначення слова чи фрази з номеру a і до b
 Google URL Shortener/Unshortener	Сервіс скорочення посиланнь від Google
 Google QR-code generator	Сервіс генерації QR-кодів від Google
-Google Dictionary\ngdict from_language to_language word	Словник Google\ngdict з_якої на_яку текст
 
 # file: ../trunk/plugins/hideroom.py
 This command available only in private!	Команда доступна лише в приваті!
@@ -803,19 +790,13 @@ Nov	Лис
 Dec	Гру
 Ignore list: %s	Я не приймаю команди від %s
 Not found: %s	Не знайдено: %s
-Age statistic base	База статистики віку
-SayTo base	База команди sayto
-Talkers base	База базік
-Base of definitions	База визначень
-Karma base	База карми
-Jid's base	База JID'ів
-Vacuum databases:\n%s	Стиснення баз даних:\n%s
 Last syslogs: %s	Останні системні логи: %s
 Locale set to: %s	Встановлена локалізація: %s
 Locale not found!	Локалізація не знайдена!
 Locale set to: en	Встановлена локалізація: en
 Current locale: %s	Поточна локалізація: %s
 Command temporary blocked!	Команда тимчасово блокована
+Command execution error.	Помилка виконання команди.
 ok	ок
 Enabled: %s	Увімкнено: %s
 Only conference owner can enable commands!	Ввімкнення команд доступне лише власнику конференції!
@@ -1156,7 +1137,6 @@ Spy. Time for reaction on spy scan	Spy. Інтервал реакції на с�
 Rss. Maximum rss count	RSS. Максимальна кількість новин
 Rss. Minimal time for rss check in minutes	RSS. мінімальний час для перевірки новин
 Rss. Timeout for rss request from server in seconds	Rss. Таймаут запиту новини з сервера в секунду
-Pep scrobbler. Number of maximum answers for pep-scrobbler	Pep scrobbler. Максимальна кількість повідомлень для pep скроблера
 Whereis. Frequency for answer check for whereis command	Whereis. Частота перевірки відповіді для команди whereis
 Watcher. Try rejoin in rooms with low activity	Watcher. Намагатися перезаходити в малоактивні кімнати
 Watcher. Allow self ping	Watcher. Пінгувати самого себе
@@ -1207,9 +1187,6 @@ Karma. Time for karma change from access level	Karma. Час через який
 Karma. Difference between two action in karma	Karma. Різниця між двома діями карми
 Karma. Upper value of karma for control action	Karma. Верхня межа карми при перевірці правильності значень
 Karma. Lower value of karma for control action	Нижня межа карми при перевірці правильності значень
-Kernel. Vacuum databases	Kernel. Стиснення баз даних
-Kernel. Vacuum databases at hour when by time	Kernel. Стиснення баз даних. Години для стиснення баз даних за часом
-Kernel. Vacuum databases at minuts when by time	Kernel. Стиснення баз даних. Хвилини для стиснення баз даних за часом
 Disco. Exclude from disco by regexps	Disco. Видаляти з обзору по регекспу
 Kernel. Exclude symbols from bot's messages	Kernel. Видалити символи із повідомленнь бота
 Muc-filter settings	Налаштування muc-фільтру
@@ -1231,7 +1208,6 @@ Age settings	Налаштування age
 Sayto settings	Налаштування sayto
 Spy settings	Налаштування spy
 Help system. Helps without commands: about, donation, access	Показує поточні розділи довідкової системи. Розділи довідки без команд: about, donation, доступ
-Vacuum bot's databases	Стиснення баз даних бота
 Join conference.\njoin room[@conference.server.ru[/nick]]\n[password]	Вхід до конференції:\njoin room@conference.server.ru/nick - вхід до конференції room з ніком nick.\njoin room@conference.server.ru - вхід до конференції room з останнім заданим ніком.\njoin room - вхід до конференції room на останньому заданому сервері з останнім заданим ніком.
 Leave conference.\nleave room[@conference.server.ru[/nick]]	Вихід з конференції:\nleave - вихід з поточної конференції.\nleave room - вихід з конференції room на останньому заданому сервері.\nleave room@conference.server.ru - вихід з конференції room
 Rejoin conference.\nrejoin room[@conference.server.ru[/nick]]\n[password]	Перевхід до конференції.\nrejoin - перезайти в поточну конференцію.\nrejoin room - перезайти в конференцію room на останньому заданому сервері.\nrejoin room@conference.server.ru - перезайти в конференцію room
@@ -1256,7 +1232,6 @@ Your identification.	Ваша ідентифікація перед ботом.
 Identification.	Ідентифікація перед ботом.
 Show status.	Показ статусу.
 Set command prefix. Use 'none' for disable prefix	Встановлення префіксу команд. Без параметрів показує поточний статус. Якщо параметром буде none префікс буде відключено
-PEP Scrobbler. Test version	Pep скробблер. Тестова версія
 Conference configure.\nconfig [show[ status]|help][ item]	Налаштування конференції.\nconfig [show[ status]|help][ item]
 Deny recieve messages from unaffiliated participants in private	Заборона прийому повідомлень від учасників без повноважень в приваті
 Temporary ignore with ddos detect.\nddos [show|del jid]	Тимчасовий ігнор при підозрі на ddos.\nddos [show|del jid]
@@ -1455,6 +1430,11 @@ QWERTYUIOP{}ASDFGHJKL:"ZXCVBNM<>~qwertyuiop[]asdfghjkl;'zxcvbnm,.`	qwertyuiop[]a
 Timeout for ask: %s | Timeout for answer: %s | Last ask: %s | Total checks: %s	Таймаут запитів: %s | Таймаут відповідей: %s | Останній запит: %s | Усього перевірок: %s
 Connection activity control.	Контроль активності з'єднання.
 
+# file: ../trunk/plugins/whowas.py
+For a last day i see: %s	Протягом останньої доби я бачила: %s
+All who i see for a last day now is here.	Всі, кого я бачила протягом доби, знаходяться тут.
+Show list of users for last day	Показ списку учасників за добу
+
 # file: ../trunk/plugins/wtf.py
 What need to find?	Що ж будемо шукати?
 Some matches in definitions: %s	Дещо схоже я бачила в: %s
@@ -1499,4 +1479,3 @@ Search weather by code, city, country.	Пошук погоди по коду м�
 
 # file: ../trunk/plugins/youtube.py
 Search at YouTube	Пошук по YouTube
-

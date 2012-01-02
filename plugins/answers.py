@@ -22,13 +22,16 @@
 # --------------------------------------------------------------------------- #
 
 def answers_ie(type, jid, nick, text):
+	global conn
+	conn = psycopg2.connect("dbname='%s' user='%s' host='%s' password='%s'" % (base_name,base_user,base_host,base_pass));
+	cur = conn.cursor()
 	if text.lower().strip().split(' ',1)[0] == 'export':
 		try: fname = text.lower().split(' ',1)[1]
 		except: fname = answers_file
-		mdb = sqlite3.connect(answersbase,timeout=base_timeout)
-		cu = mdb.cursor()
-		base_size = len(cu.execute('select * from answer').fetchall())
-		fnd = cu.execute('select body from answer where body like ? group by body order by body',('%',)).fetchall()
+		cur.execute('select * from answer')
+		base_size = len(cur.fetchall())
+		cur.execute('select body from answer where body like %s group by body order by body',('%',))
+		fnd = cur.fetchall()
 		answer = ''
 		msg = L('Export to file: %s | Total records: %s | Unique records: %s') % (fname,str(base_size),str(len(fnd)))
 		for i in fnd:
@@ -42,16 +45,18 @@ def answers_ie(type, jid, nick, text):
 			answer = answer.split('\n')
 			mdb = sqlite3.connect(answersbase,timeout=base_timeout)
 			cu = mdb.cursor()
-			cu.execute('delete from answer where body like ?',('%',))
+			cur.execute('delete from answer where body like %s',('%',))
 			msg = L('Import from file: %s | Total records: %s') % (fname,str(len(answer)))
 			idx = 1
 			for i in answer:
 				if i != '':
-					cu.execute('insert into answer values (?,?)', (idx,unicode(i.strip())))
+					cur.execute('insert into answer values (%s,%s)', (idx,unicode(i.strip())))
 					idx += 1
-			mdb.commit()
+			conn.commit()
 		else: msg = L('File %s not found!') % fname
 	else: msg = L('What?')
+	cur.close()
+	conn.close()
 	send_msg(type, jid, nick, msg)
 
 global execute

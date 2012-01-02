@@ -24,17 +24,21 @@
 def known(type, jid, nick, text):
 	text = text.strip()
 	if text == '': text = nick
-	mdb = sqlite3.connect(agestatbase,timeout=base_timeout)
-	cu = mdb.cursor()
-	real_jid = cu.execute('select jid from age where room=? and (nick=? or jid=?)',(jid,text,text.lower())).fetchone()
+	conn = psycopg2.connect("dbname='%s' user='%s' host='%s' password='%s'" % (base_name,base_user,base_host,base_pass));
+	cur = conn.cursor()
+	cur.execute('select jid from age where room=%s and (nick=%s or jid=%s)',(jid,text,text.lower()))
+	real_jid = cur.fetchone()
 	if real_jid:
-		nicks = cu.execute('select nick from age where room=? and jid=?',(jid,real_jid[0])).fetchall()
+		cur.execute('select nick from age where room=%s and jid=%s',(jid,real_jid[0]))
+		nicks = cur.fetchall()
 		if text == nick: msg = L('I know you as:') + ' '
 		else: msg = L('I know %s as:') % text + ' '
 		for tmp in nicks:
 			msg += tmp[0] + ', '
 		msg = msg[:-2]
 	else: msg = L('Not found!')
+	cur.close()
+	conn.close()
 	send_msg(type, jid, nick, msg)
 
 global execute

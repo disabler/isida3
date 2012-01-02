@@ -24,10 +24,12 @@
 def true_age_stat(type, jid, nick):
 	try: llim = GT('age_default_limit')
 	except: llim = 10
-	mdb = sqlite3.connect(agestatbase, timeout=base_timeout)
-	cu = mdb.cursor()
-	t_age = cu.execute('select nick,sum(age) from age where room=? group by jid order by -sum(age),-time,-status',(jid,)).fetchmany(llim)
-	mdb.close()
+	conn = psycopg2.connect("dbname='%s' user='%s' host='%s' password='%s'" % (base_name,base_user,base_host,base_pass));
+	cur = conn.cursor()
+	cur.execute('select nick,sum(age) from age where room=%s group by jid order by -sum(age),-time,-status',(jid,))
+	t_age = cur.fetchmany(llim)
+	cur.close()
+	conn.close()
 	msg = L('Age statistic:\n%s') % '\n'.join(['%s\t%s' % (t[0],un_unix(t[1])) for t in t_age])
 	send_msg(type, jid, nick, msg)
 
@@ -46,20 +48,27 @@ def true_age_raw(type, jid, nick, text, xtype):
 	text = text[0]
 	if not text: text = nick
 	if llim > GT('age_max_limit'): llim = GT('age_max_limit')
-	mdb = sqlite3.connect(agestatbase, timeout=base_timeout)
-	cu = mdb.cursor()
-	real_jid = cu.execute('select jid from age where room=? and (nick=? or jid=?) order by -time,-status',(jid,text,text.lower())).fetchone()
+	conn = psycopg2.connect("dbname='%s' user='%s' host='%s' password='%s'" % (base_name,base_user,base_host,base_pass));
+	cur = conn.cursor()
+	cur.execute('select jid from age where room=%s and (nick=%s or jid=%s) order by -time,-status',(jid,text,text.lower()))
+	real_jid = cur.fetchone()
 	if not real_jid:
 		text = '%' + text.lower() + '%'
-		real_jid = cu.execute('select jid from age where room=? and (nick like ? or jid like ?) order by -time,-status',(jid,text,text)).fetchone()
+		cur.execute('select jid from age where room=%s and (nick like %s or jid like %s) order by -time,-status',(jid,text,text))
+		real_jid = cur.fetchone()
 	try:
-		if xtype: sbody = cu.execute('select * from age where room=? and jid=? order by -time,-status',(jid,real_jid[0])).fetchmany(llim)
+		if xtype: 
+			cur.execute('select * from age where room=%s and jid=%s order by -time,-status',(jid,real_jid[0]))
+			sbody = cur.fetchmany(llim)
 		else:
-			t_age = cu.execute('select sum(age) from age where room=? and jid=? order by -time,-status',(jid,real_jid[0])).fetchone()
-			sbody = cu.execute('select * from age where room=? and jid=? order by -time,-status',(jid,real_jid[0])).fetchone()
+			cur.execute('select sum(age) from age where room=%s and jid=%s order by -time,-status',(jid,real_jid[0]))
+			t_age = cur.fetchone()
+			cur.execute('select * from age where room=%s and jid=%s order by -time,-status',(jid,real_jid[0]))
+			sbody = cur.fetchone()
 			sbody = [sbody[:4] + t_age + sbody[5:]]
 	except: sbody = None
-	mdb.close()
+	cur.close()
+	conn.close()
 	if sbody:
 		msg = L('I see:')
 		for cnt, tmp in enumerate(sbody):
@@ -97,17 +106,24 @@ def seen_raw(type, jid, nick, text, xtype):
 	text = text[0]
 	if not text: text = nick
 	if llim > GT('age_max_limit'): llim = GT('age_max_limit')
-	mdb = sqlite3.connect(agestatbase,timeout=base_timeout)
-	cu = mdb.cursor()
-	real_jid = cu.execute('select jid from age where room=? and (nick=? or jid=?) order by status,-time',(jid,text,text.lower())).fetchone()
+	conn = psycopg2.connect("dbname='%s' user='%s' host='%s' password='%s'" % (base_name,base_user,base_host,base_pass));
+	cur = conn.cursor()
+	cur.execute('select jid from age where room=%s and (nick=%s or jid=%s) order by status,-time',(jid,text,text.lower()))
+	real_jid = cur.fetchone()
 	if not real_jid:
-		textt = '%' + text.lower() + '%'
-		real_jid = cu.execute('select jid from age where room=? and (nick like ? or jid like ?) order by status,-time',(jid,textt,textt)).fetchone()
+		textt = '%%%s%%' % text.lower()
+		cur.execute('select jid from age where room=%s and (nick like %s or jid like %s) order by status,-time',(jid,textt,textt))
+		real_jid = cur.fetchone()
 	if real_jid:
-		if xtype: sbody = cu.execute('select * from age where room=? and jid=? order by status,-time',(jid,real_jid[0])).fetchmany(llim)
-		else: sbody = [cu.execute('select * from age where room=? and jid=? order by status,-time',(jid,real_jid[0])).fetchone()]
+		if xtype: 
+			cur.execute('select * from age where room=%s and jid=%s order by status,-time',(jid,real_jid[0]))
+			sbody = cur.fetchmany(llim)
+		else: 
+			cur.execute('select * from age where room=%s and jid=%s order by status,-time',(jid,real_jid[0]))
+			sbody = [cur.fetchone()]
 	else: sbody = None
-	mdb.close()
+	cur.close()
+	conn.close()
 	if sbody:
 		msg = L('I see:')
 		for cnt, tmp in enumerate(sbody):
@@ -144,20 +160,27 @@ def seenjid_raw(type, jid, nick, text, xtype):
 	ztype = None
 	if not text: text = nick
 	if llim > GT('age_max_limit'): llim = GT('age_max_limit')
-	mdb = sqlite3.connect(agestatbase,timeout=base_timeout)
-	cu = mdb.cursor()
-	real_jid = cu.execute('select jid from age where room=? and (nick like ? or jid like ?) group by jid order by status,-time',(jid,text,text.lower())).fetchall()
+	conn = psycopg2.connect("dbname='%s' user='%s' host='%s' password='%s'" % (base_name,base_user,base_host,base_pass));
+	cur = conn.cursor()
+	cur.execute('select jid from age where room=%s and (nick like %s or jid like %s) group by jid order by status,-time',(jid,text,text.lower()))
+	real_jid = cur.fetchall()
 	if not real_jid:
 		txt = '%' + text.lower() + '%'
-		real_jid = cu.execute('select jid from age where room=? and (nick like ? or jid like ?) group by jid order by status,-time',(jid,txt,txt)).fetchall()
+		cur.execute('select jid from age where room=%s and (nick like %s or jid like %s) group by jid order by status,-time',(jid,txt,txt))
+		real_jid = cur.fetchall()
 	sbody = []
 	if real_jid:
 		for rj in real_jid:			
-			if xtype: tmpbody = cu.execute('select * from age where room=? and jid=? order by status, jid',(jid,rj[0])).fetchmany(llim)
-			else: tmpbody = cu.execute('select room, nick, jid, time, sum(age), status, type, message from age where room=? and jid=? group by jid order by status, jid',(jid,rj[0])).fetchmany(llim)
+			if xtype: 
+				cur.execute('select * from age where room=%s and jid=%s order by status, jid',(jid,rj[0]))
+				tmpbody = cur.fetchmany(llim)
+			else: 
+				cur.execute('select room, nick, jid, time, sum(age), status, type, message from age where room=%s and jid=%s group by jid order by status, jid',(jid,rj[0]))
+				tmpbody = cur.fetchmany(llim)
 			if tmpbody:
 				for t in tmpbody: sbody.append(t)
-	mdb.close()
+	cur.close()
+	conn.close()
 	if sbody:
 		ztype = True
 		msg = L('I saw %s:') % text

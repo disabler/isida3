@@ -4,7 +4,7 @@
 # --------------------------------------------------------------------------- #
 #                                                                             #
 #    iSida Jabber Bot                                                         #
-#    Copyright (C) 2011 diSabler <dsy@dsy.name>                               #
+#    Copyright (C) 2012 diSabler <dsy@dsy.name>                               #
 #                                                                             #
 #    This program is free software: you can redistribute it and/or modify     #
 #    it under the terms of the GNU General Public License as published by     #
@@ -42,6 +42,7 @@ import operator
 import os
 import math
 import pdb
+import psycopg2
 import random
 import re
 import simplejson
@@ -511,7 +512,7 @@ def paste_text(text,room,jid):
 def nice_time(ttim):
 	gt=tuple(time.gmtime())
 	lt=tuple(time.localtime(ttim))
-	timeofset = int(time.mktime(lt[:5]+(0,0,0,0))-time.mktime(gt[:5]+(0,0,0,0)))/3600
+	timeofset = int(round(int(time.mktime(lt[:5]+(0,0,0,0))-time.mktime(gt[:5]+(0,0,0,0)))/3600.0))
 	if timeofset < 0: t_gmt = 'GMT%s' % timeofset
 	else: t_gmt = 'GMT+%s' % timeofset
 	gt=timeZero(gt)
@@ -1081,9 +1082,12 @@ def iqCB(sess,iq):
 						skip_owner = getRoom(jid) in ownerbase
 						gr = getRoom(room)
 						if get_tag_item(msg,'message','type') == 'chat' and not skip_owner:
-							mbase,mcur = open_muc_base()
-							tmp = mcur.execute('select * from muc where room=? and jid=?', (room,tojid)).fetchall()
-							close_muc_base(mbase)
+							conn = psycopg2.connect("dbname='%s' user='%s' host='%s' password='%s'" % (base_name,base_user,base_host,base_pass));
+							cur = conn.cursor()
+							cur.execute('select * from muc_lock where room=%s and jid=%s', (room,tojid))
+							tmp = cur.fetchall()
+							cur.close()
+							conn.close()
 							if tmp: mute = True
 						if skip_owner: pass
 						elif get_config(gr,'muc_filter') and not mute:
@@ -1091,10 +1095,12 @@ def iqCB(sess,iq):
 
 							# Mute newbie
 							if get_config(gr,'muc_filter_newbie') and msg and not mute:
-								mdb = sqlite3.connect(agestatbase,timeout=base_timeout)
-								cu = mdb.cursor()
-								in_base = cu.execute('select time,sum(age),status from age where room=? and jid=? order by status',(gr,getRoom(jid))).fetchall()
-								mdb.close()
+								conn = psycopg2.connect("dbname='%s' user='%s' host='%s' password='%s'" % (base_name,base_user,base_host,base_pass));
+								cur = conn.cursor()
+								cur.execute('select time,sum(age),status from age where room=%s and jid=%s order by status',(gr,getRoom(jid)))
+								in_base = cur.fetchall()
+								cur.close()
+								conn.close()
 								if not in_base: nmute = True
 								else:
 									tmp = in_base[0]
@@ -1224,12 +1230,12 @@ def iqCB(sess,iq):
 									else: msg = muc_filter_action(act,jid,room,L('Blocked by raw censor!'))
 
 							# Large message filter
-							if get_config(gr,'muc_filter_large') != 'off' and len(esc_min(body)) > GT('muc_filter_large_message_size') and msg and not mute:
+							if get_config(gr,'muc_filter_large') != 'off' and len(body) > GT('muc_filter_large_message_size') and msg and not mute:
 								act = get_config(gr,'muc_filter_large')
 								pprint('MUC-Filter msg large message (%s): %s [%s] %s' % (act,jid,room,body),'brown')
 								if act == 'paste' or act == 'truncate':
 									url = paste_text(rss_replace(body),room,jid)
-									if act == 'truncate': body = u'%s[…] %s' % (esc_min(body)[:GT('muc_filter_large_message_size')],url)
+									if act == 'truncate': body = u'%s[…] %s' % (body[:GT('muc_filter_large_message_size')],url)
 									else: body = L('Large message%s %s') % (u'…',url)
 									msg = msg.replace(get_tag_full(msg,'body'),'<body>%s</body>' % body)
 								elif act == 'mute': mute = True
@@ -1330,10 +1336,12 @@ def iqCB(sess,iq):
 
 						# Whitelist
 						if get_config(gr,'muc_filter_whitelist') and msg and not mute and newjoin:
-							mdb = sqlite3.connect(agestatbase,timeout=base_timeout)
-							cu = mdb.cursor()
-							in_base = cu.execute('select jid from age where room=? and jid=?',(gr,getRoom(jid))).fetchone()
-							mdb.close()
+							conn = psycopg2.connect("dbname='%s' user='%s' host='%s' password='%s'" % (base_name,base_user,base_host,base_pass));
+							cur = conn.cursor()
+							cur.execute('select jid from age where room=%s and jid=%s',(gr,getRoom(jid)))
+							in_base = cur.fetchone()
+							cur.close()
+							conn.close()
 							if not in_base:
 								pprint('MUC-Filter whitelist: %s/%s %s' % (gr,nick,jid),'brown')
 								msg,mute = unicode(Node('presence', {'from': tojid, 'type': 'error', 'to':jid}, payload = ['replace_it',Node('error', {'type': 'auth','code':'403'}, payload=[Node('forbidden',{'xmlns':'urn:ietf:params:xml:ns:xmpp-stanzas'},[]),Node('text',{'xmlns':'urn:ietf:params:xml:ns:xmpp-stanzas'},[L('Deny by whitelist!')])])])).replace('replace_it',get_tag(msg,'presence')),True
@@ -1563,61 +1571,12 @@ def com_parser(access_mode, nowname, type, room, nick, text, jid):
 				break
 	return no_comm
 
-def to_scrobble(room,mess):
-	item = get_tag(unicode(mess),'item')
-	if 'http://jabber.org/protocol/tune' in item:
-		if '<title' in item:
-			played = True
-			title = get_tag(item,'title')
-			if '<artist' in item:
-				artist = get_tag(item,'artist')
-				if len(artist) and artist != '?': title = artist + ' - ' + title
-			caps_lit = 0
-			for tmp in title:
-				if re.match(u'[A-Z]|[А-Я]',tmp): caps_lit+=1
-			if caps_lit >= len(title)/2:
-				tm,tm1 = title.split(),[]
-				for tmp in tm: tm1.append(tmp.capitalize())
-				title = ' '.join(tm1)
-			if '. ' in title[:10]: title = title.split('. ',1)[1]
-			length = get_tag(item,'length')
-			try:
-				if int(length) > 86400: length = 'stream'
-			except: length = 'unknown'
-			#print '%s - %s [%s]' % (room,title,length)
-		else: played = None
-		stb = os.path.isfile(scrobblebase)
-		scrobbase = sqlite3.connect(scrobblebase,timeout=base_timeout)
-		cu_scrobl = scrobbase.cursor()
-		if not stb:
-			cu_scrobl.execute('''create table tune (jid text, song text, length text, played integer)''')
-			cu_scrobl.execute('''create table nick (jid text, nick text)''')
-			scrobbase.commit()
-		tune = cu_scrobl.execute('select * from tune where jid=? order by -played',(room,)).fetchone()
-		if not tune: tune = ['','','',0]
-		if played:
-			if tune[1] != title or tune[2] != length:
-				if '] ' in title and '[' in title:
-					if title.split('] ',1)[1] != tune[1]: scrb = None
-					else: scrb = True
-				else: scrb = True
-			else: scrb = None
-		else: scrb = True
-		try: tlen = int(length)/2
-		except: tlen = 30
-		if scrb:
-			if (time.time() - tune[3]) < tlen: cu_scrobl.execute('delete from tune where jid=? and song=? and length=? and played=?',tune).fetchall()
-			if played: cu_scrobl.execute('insert into tune values (?,?,?,?)', (room, title, length, int(time.time())))
-		scrobbase.commit()
-		scrobbase.close()
-
 def messageCB(sess,mess):
 	global lfrom, lto, owners, ownerbase, confbase, confs, lastserver, lastnick, comms
 	global ignorebase, ignores, message_in, no_comm, last_hash
 	message_in += 1
 	type=unicode(mess.getType())
 	room=unicode(mess.getFrom().getStripped())
-	#if type == 'headline': to_scrobble(room,mess)
 	text=unicode(mess.getBody())
 	try:
 		code = mess.getTag('x',namespace=NS_MUC_USER).getTagAttr('status','code')
@@ -1870,10 +1829,12 @@ def presenceCB(sess,mess):
 						if tmp_room == room and hashes[tmp] == current_hash:
 							tmp_access,tmp_jid = get_level(room,tmp_nick)
 							if tmp_access <= 3 and tmp_jid != 'None':
-								mdb = sqlite3.connect(agestatbase,timeout=base_timeout)
-								cu = mdb.cursor()
-								in_base = cu.execute('select time,sum(age),status from age where room=? and jid=? order by status',(room,getRoom(tmp_jid))).fetchall()
-								mdb.close()
+								conn = psycopg2.connect("dbname='%s' user='%s' host='%s' password='%s'" % (base_name,base_user,base_host,base_pass));
+								cur = conn.cursor()
+								cur.execute('select time,sum(age),status from age where room=%s and jid=%s order by status',(room,getRoom(tmp_jid)))
+								in_base = cur.fetchall()
+								cur.close()
+								conn.close()
 								if not in_base: nmute = True
 								else:
 									tmp = in_base[0]
@@ -1958,17 +1919,20 @@ def presenceCB(sess,mess):
 			elif al < 4 and get_config(getRoom(room),'censor_action_non_member') != 'off':
 				act = get_config(getRoom(room),'censor_action_non_member')
 				muc_filter_action(act,jid2,getRoom(room),cens_text)
-	mdb = sqlite3.connect(agestatbase,timeout=base_timeout)
-	cu = mdb.cursor()
-	ab = cu.execute('select * from age where room=? and jid=? and nick=?',(room, jid, nick)).fetchone()
+	conn = psycopg2.connect("dbname='%s' user='%s' host='%s' password='%s'" % (base_name,base_user,base_host,base_pass));
+	cur = conn.cursor()
+	cur.execute('select * from age where room=%s and jid=%s and nick=%s',(room, jid, nick))
+	ab = cur.fetchone()
 	ttext = '%s\n%s\n%s\n%s\n%s' % (role,affiliation,priority,show,text)
 	if ab:
-		if type=='unavailable': cu.execute('update age set time=?, age=?, status=?, type=?, message=? where room=? and jid=? and nick=?', (tt,ab[4]+(tt-ab[3]),1,exit_type,exit_message,room, jid, nick))
+		if type=='unavailable': cur.execute('update age set time=%s, age=%s, status=%s, type=%s, message=%s where room=%s and jid=%s and nick=%s', (tt,ab[4]+(tt-ab[3]),1,exit_type,exit_message,room, jid, nick))
 		else:
-			if ab[5]: cu.execute('update age set time=?, status=?, message=? where room=? and jid=? and nick=?', (tt,0,ttext,room, jid, nick))
-			else: cu.execute('update age set status=?, message=? where room=? and jid=? and nick=?', (0,ttext,room, jid, nick))
-	else: cu.execute('insert into age values (?,?,?,?,?,?,?,?)', (room,nick,jid,tt,0,0,'',ttext))
-	mdb.commit()
+			if ab[5]: cur.execute('update age set time=%s, status=%s, message=%s where room=%s and jid=%s and nick=%s', (tt,0,ttext,room, jid, nick))
+			else: cur.execute('update age set status=%s, message=%s where room=%s and jid=%s and nick=%s', (0,ttext,room, jid, nick))
+	else: cur.execute('insert into age values (%s,%s,%s,%s,%s,%s,%s,%s)', (room,nick,jid,tt,0,0,'',ttext))
+	conn.commit()
+	cur.close()
+	conn.close()
 
 def onoff_no_tr(msg):
 	if msg == None or msg == False or msg == 0 or msg == '0': return 'off'
@@ -2034,13 +1998,16 @@ def check_rss():
 
 def talk_count(room,jid,nick,text):
 	jid = getRoom(jid)
-	mdb = sqlite3.connect(talkersbase,timeout=base_timeout)
-	cu = mdb.cursor()
-	ab = cu.execute('select * from talkers where room=? and jid=?',(room,jid)).fetchone()
+	conn = psycopg2.connect("dbname='%s' user='%s' host='%s' password='%s'" % (base_name,base_user,base_host,base_pass));
+	cur = conn.cursor()
+	cur.execute('select * from talkers where room=%s and jid=%s',(room,jid))
+	ab = cur.fetchone()
 	wtext = len(reduce_spaces_all(text).split(' '))
-	if ab: cu.execute('update talkers set nick=?, words=?, frases=? where room=? and jid=?', (nick,ab[3]+wtext,ab[4]+1,room,jid))
-	else: cu.execute('insert into talkers values (?,?,?,?,?)', (room, jid, nick, wtext, 1))
-	mdb.commit()
+	if ab: cur.execute('update talkers set nick=%s, words=%s, frases=%s where room=%s and jid=%s', (nick,ab[3]+wtext,ab[4]+1,room,jid))
+	else: cur.execute('insert into talkers values (%s,%s,%s,%s,%s)', (room, jid, nick, wtext, 1))
+	cur.close()
+	conn.commit()
+	conn.close()
 
 def flush_stats():
 	pprint('Executed threads: %s | Error(s): %s' % (th_cnt,thread_error_count),'bright_blue')
@@ -2095,7 +2062,7 @@ CommandsLog = None					# логгирование команд
 prefix = '_'						# префикс комманд
 msg_limit = 1000					# лимит размера сообщений
 botName = 'Isida-Bot'				# название бота
-botVersion = 'v2.32'				# версия бота
+botVersion = 'v3.0'				# версия бота
 capsVersion = botVersion[1:]		# версия для капса
 disco_config_node = 'http://isida-bot.com/config'
 pres_answer = []					# результаты посылки презенсов
@@ -2138,7 +2105,6 @@ smile_folder = '.smiles'			# папка со смайлами в чатлога�
 smile_descriptor = 'icondef.xml'	# дескриптор смайлов
 last_logs_store = []				# последние записи в логах
 last_logs_size = 20					# максимальное количество последних записей в логах
-deny_vacuum = False
 ddos_ignore = {}					# данные при подозрении на ddos
 ddos_iq = {}
 CURRENT_LOCALE = 'en'
@@ -2155,10 +2121,6 @@ else: timeofset = int(gt[3])-int(lt[3]) + 24
 
 if os.path.isfile(configname): execfile(configname)
 else: errorHandler('%s is missed.' % configname)
-
-#---------------------------
-muc_lock_base = set_folder+'muclock.db'
-#---------------------------
 
 if os.path.isfile(ver_file):
 	bvers = str(readfile(ver_file)).replace('\n','').replace('\r','').replace('\t','').replace(' ','')
@@ -2194,7 +2156,7 @@ pl_folder	= 'plugins/%s'
 execfile(pl_folder % 'main.py')
 
 pliname		= pl_folder % 'ignored.txt'
-gtimer		= [check_rss,check_hash_actions,vacuum_by_time,clean_user_and_server_hash]
+gtimer		= [check_rss,check_hash_actions,clean_user_and_server_hash]
 gpresence	= []
 gmessage	= []
 gactmessage	= []
@@ -2252,8 +2214,6 @@ if os.path.isfile(cens):
 		if '#' not in c and len(c): cn.append(c)
 	censor = cn
 else: censor = []
-
-if GT('vacuum_bases') == 'on start': vacuum_bases('on start')
 
 pprint('*'*50,'blue')
 pprint('*** Name: %s' % botName,'yellow')

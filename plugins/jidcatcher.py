@@ -22,13 +22,14 @@
 # --------------------------------------------------------------------------- #
 
 def info_search(type, jid, nick, text):
+	global conn
 	msg = L('What I must find?')
 	if text != '':
-		mdb = sqlite3.connect(jid_base,timeout=base_timeout)
-		cu = mdb.cursor()
-		cu.execute('delete from jid where server like ?',('<temporary>%',)).fetchall()
-		ttext = '%'+text+'%'
-		tma = cu.execute('select * from jid where login like ? or server like ? or resourse like ? order by login',(ttext,ttext,ttext)).fetchmany(10)
+		conn = psycopg2.connect("dbname='%s' user='%s' host='%s' password='%s'" % (base_name,base_user,base_host,base_pass));
+		cur = conn.cursor()
+		cur.execute('delete from jid where server like %s',('<temporary>%',))
+		ttext = '%%%s%%' % text
+		tma = cur.execute('select * from jid where login like %s or server like %s or resourse like %s order by login',(ttext,ttext,ttext)).fetchmany(10)
 		if len(tma):
 			msg = L('Found:')
 			cnd = 1
@@ -36,19 +37,26 @@ def info_search(type, jid, nick, text):
 				msg += '\n'+str(cnd)+'. '+tt[0]+'@'+tt[1]+'/'+tt[2]
 				cnd += 1
 		else: msg = L('\'%s\' not found!') % text
+		conn.commit()
+		cur.close()
+		conn.close()
 	send_msg(type, jid, nick, msg)
 
 def info_res(type, jid, nick, text):
-	mdb = sqlite3.connect(jid_base,timeout=base_timeout)
-	cu = mdb.cursor()
-	cu.execute('delete from jid where server like ?',('<temporary>%',)).fetchall()
+	conn = psycopg2.connect("dbname='%s' user='%s' host='%s' password='%s'" % (base_name,base_user,base_host,base_pass));
+	cur = conn.cursor()
+	cur.execute('delete from jid where server like %s',('<temporary>%',))
+	conn.commit()
 	if text == 'count':
-		tlen = len(cu.execute('select resourse,count(*) from jid group by resourse order by -count(*)').fetchall())
+		cur.execute('select resourse,count(*) from jid group by resourse order by -count(*)')
+		tlen = len(cur.fetchall())
 		text,jidbase = '',''
 	else:
 		text1 = '%'+text+'%'
-		tlen = len(cu.execute('select resourse,count(*) from jid where resourse like ? group by resourse order by -count(*)',(text1,)).fetchall())
-		jidbase = cu.execute('select resourse,count(*) from jid where resourse like ? group by resourse order by -count(*)',(text1,)).fetchmany(10)
+		cur.execute('select resourse,count(*) from jid where resourse like %s group by resourse order by -count(*)',(text1,))
+		tlen = len(cur.fetchall())
+		cur.execute('select resourse,count(*) from jid where resourse like %s group by resourse order by -count(*)',(text1,))
+		jidbase = cur.fetchmany(10)
 	if not tlen: msg = L('\'%s\' not found!') % text
 	else:
 		if text == '': msg = L('Total resources: %s') % str(tlen)
@@ -60,19 +68,25 @@ def info_res(type, jid, nick, text):
 				msg += str(cnt)+'. '+jj[0]+'\t'+str(jj[1])+' \n'
 				cnt += 1
 			msg = msg[:-2]
+	cur.close()
+	conn.close()
 	send_msg(type, jid, nick, msg)
 
 def info_serv(type, jid, nick, text):
-	mdb = sqlite3.connect(jid_base,timeout=base_timeout)
-	cu = mdb.cursor()
-	cu.execute('delete from jid where server like ?',('<temporary>%',)).fetchall()
+	conn = psycopg2.connect("dbname='%s' user='%s' host='%s' password='%s'" % (base_name,base_user,base_host,base_pass));
+	cur = conn.cursor()
+	cur.execute('delete from jid where server like %s',('<temporary>%',))
+	conn.commit()
 	if text == 'count':
-		tlen = len(cu.execute('select server,count(*) from jid group by server order by -count(*)').fetchall())
+		cur.execute('select server,count(*) from jid group by server order by -count(*)')
+		tlen = len(cur.fetchall())
 		text,jidbase = '',''
 	else:
-		text1 = '%'+text+'%'
-		tlen = len(cu.execute('select server,count(*) from jid where server like ? group by server order by -count(*)',(text1,)).fetchall())
-		jidbase = cu.execute('select server,count(*) from jid where server like ? group by server order by -count(*)',(text1,)).fetchall()
+		text1 = '%%%s%%' % text
+		cur.execute('select server,count(*) from jid where server like %s group by server order by -count(*)',(text1,))
+		tlen = len(cur.fetchall())
+		cur.execute('select server,count(*) from jid where server like %s group by server order by -count(*)',(text1,))
+		jidbase = cur.fetchall()
 	if not tlen: msg = L('\'%s\' not found!') % text
 	else:
 		if text == '': msg = L('Total servers: %s') % str(tlen)
@@ -81,6 +95,8 @@ def info_serv(type, jid, nick, text):
 		if len(jidbase):
 			for jj in jidbase: msg += jj[0]+':'+str(jj[1])+' | '
 			msg = msg[:-2]
+	cur.close()
+	conn.close()
 	send_msg(type, jid, nick, msg)
 
 #room number date
@@ -99,16 +115,21 @@ def info_top(type, jid, nick, text):
 	send_msg(type, jid, nick, msg)
 
 def jidcatcher_presence(room,jid,nick,type,text):
+	global conn
 	if jid != 'None' and jid[:11] != '<temporary>':
 		aa1 = getName(jid)
 		aa2 = getServer(jid)
 		aa3 = getResourse(jid)
 		try:
-			mdb = sqlite3.connect(jid_base,timeout=base_timeout)
-			cu = mdb.cursor()
-			if not cu.execute('select login from jid where login=? and server=? and resourse=?',(aa1,aa2,aa3)).fetchone():
-				cu.execute('insert into jid values (?,?,?)', (aa1,aa2,aa3))
-				mdb.commit()
+			conn = psycopg2.connect("dbname='%s' user='%s' host='%s' password='%s'" % (base_name,base_user,base_host,base_pass));
+			cur = conn.cursor()
+			cur.execute('select login from jid where login=%s and server=%s and resourse=%s',(aa1,aa2,aa3))
+			tmpp = cur.fetchone()
+			if not tmpp:
+				cur.execute('insert into jid values (%s,%s,%s)', (aa1,aa2,aa3))
+				conn.commit()
+			cur.close()
+			conn.close()
 		except: pass
 		tp = getFile(top_base,[])
 		cnt = 0

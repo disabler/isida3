@@ -21,12 +21,10 @@
 #                                                                             #
 # --------------------------------------------------------------------------- #
 
-def_phone_base = '%sdefcodes.db' % set_folder
-
 def phonecode(type, jid, nick, text):
 	if len(text):
-		db = sqlite3.connect(def_phone_base)
-		cu = db.cursor()
+		conn = psycopg2.connect("dbname='%s' user='%s' host='%s' password='%s'" % (base_name,base_user,base_host,base_pass));
+		cur = conn.cursor()
 		def_info,country = L('Not found!'),L('Unknown')
 		if text[0] == '+': text = text[1:]
 		if text.isdigit():
@@ -38,7 +36,8 @@ def phonecode(type, jid, nick, text):
 						pn = text[4:]
 						if len(pn) < 7: pn = pn.ljust(7, '0')
 						elif len(pn) > 11: pn = pn[:7]
-						result = cu.execute('select * from ru_mobile where def=? and begin<=? and end>=?', (dc,pn,pn)).fetchall()
+						cur.execute('select * from def_ru_mobile where def=%s and defbegin<=%s and defend>=%s', (dc,pn,pn))
+						result = cur.fetchall()
 						if result:
 							di = []
 							for res in result: di += ['%s, %s (%s) %s..%s, %s ' % res]
@@ -51,7 +50,8 @@ def phonecode(type, jid, nick, text):
 					text = text[:7] + 'x'*4
 					pos = 7
 					while pos:
-						result = cu.execute('select * from ru_stat where phone like ?', ('%s%%'%text,)).fetchall()
+						cur.execute('select * from def_ru_stat where phone like %s', ('%s%%'%text,))
+						result = cur.fetchall()
 						if result:
 							def_info = []
 							for res in result:
@@ -73,7 +73,8 @@ def phonecode(type, jid, nick, text):
 				text = text[:8]+'x'*4
 				pos = 8
 				while pos > 2:
-					result = cu.execute('select * from ua_stat where phone like ?', ('%s%%'%text,)).fetchall()
+					cur.execute('select * from def_ua_stat where phone like %s', ('%s%%'%text,))
+					result = cur.fetchall()
 					if result:
 						def_info = []
 						for res in result:
@@ -94,7 +95,8 @@ def phonecode(type, jid, nick, text):
 		else:
 			text = '%s%%'%text.lower().capitalize()
 			def_info = []
-			result = cu.execute('select * from ru_stat where city like ?', (text,)).fetchall()
+			cur.execute('select * from def_ru_stat where city like %s', (text,))
+			result = cur.fetchall()
 			if result:
 				di = []
 				for res in result:
@@ -104,7 +106,8 @@ def phonecode(type, jid, nick, text):
 					di += [', '.join(res)]
 				di = '\n'.join(di)
 				def_info += [L('Country: %s\n%s') % (L('Russia'),di)]
-			result = cu.execute('select * from ua_stat where city like ?', (text,)).fetchall()
+			cur.execute('select * from def_ua_stat where city like %s', (text,))
+			result = cur.fetchall()
 			if result:
 				di = []
 				for res in result:
@@ -114,7 +117,7 @@ def phonecode(type, jid, nick, text):
 					di += [', '.join(res)]
 				di = '\n'.join(di)
 				def_info += [L('Country: %s\n%s') % (L('Ukraine'),di)]
-			#result = cu.execute('select * from ru_mobile where provider like ? or region like ?', (text,text)).fetchall()
+			#result = cu.execute('select * from def_ru_mobile where provider like %s or region like %s', (text,text)).fetchall()
 			#if result:
 			#	di = []
 			#	for res in result: di += ['%s, %s (%s) %s..%s, %s ' % res]
@@ -122,8 +125,9 @@ def phonecode(type, jid, nick, text):
 			#	def_info += [L('Country: %s\n%s') % (L('Russia, Mobile'),di)]
 			if def_info: result = '\n\n'.join(def_info)
 			else: result = L('Not found!')
-		db.close()
 		msg = result
+		cur.close()
+		conn.close()
 	else: msg = L('What?')
    	send_msg(type, jid, nick, msg)
 

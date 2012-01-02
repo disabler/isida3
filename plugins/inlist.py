@@ -38,20 +38,22 @@ def inlist_raw_async(type, jid, nick, text, message, iq_stanza):
 	if is_answ.startswith(L('Error!')): msg = is_answ
 	else:
 		bb = [[tmp.getAttr('jid'),['',tmp.getTagData('reason')][tmp.getTagData('reason') != None]] for tmp in iq_stanza[1][0].getTag('query',namespace=xmpp.NS_MUC_ADMIN).getTags('item')]
-		msg = message % str(len(bb))
+		bb.sort()
+		msg = message % len(bb)
 		if text != '':
 			text = text.strip().split()
-			if len(text) == 1: text,nt = text[0], False
-			elif text[0] == '!': text,nt = ' '.join(text[1:]), True
+			if len(text) == 1: text,nt = text[0], 0
+			elif text[0] == '!': text,nt = ' '.join(text[1:]), 1
+			elif text[0] == '=': text,nt = ' '.join(text[1:]), 2
 			else: text,nt = ' '.join(text[1:]), False
 			msg += ', '
 			mmsg, cnt = '', 1
 			for i in bb:
-				if [text.lower() in i[0].lower() or text.lower() in i[1].lower(), text.lower() not in i[0].lower()][nt]:
+				if [text.lower() in i[0].lower() or text.lower() in i[1].lower(), text.lower() not in i[0].lower(),text.lower() == i[0].lower() or text.lower() == i[1].lower()][nt]:
 					mmsg += '\n%s. %s' % (cnt,i[0])
 					if len(i[1]): mmsg += ' - %s' % i[1]
 					cnt += 1
-			if len(mmsg): msg += L('Found:') + mmsg
+			if len(mmsg): msg += L('Found:') + ' %s%s' % (mmsg.count('\n'),mmsg)
 			else: msg += L('no matches!')
 	send_msg(type, jid, nick, msg)
 

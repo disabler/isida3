@@ -21,25 +21,6 @@
 #                                                                             #
 # --------------------------------------------------------------------------- #
 
-karmabasefile = os.path.isfile(karmabase)
-karma_base = sqlite3.connect(karmabase,timeout=base_timeout)
-cu_karmabase = karma_base.cursor()
-
-if not karmabasefile:
-	cu_karmabase.execute('create table karma (room text, jid text, karma int)')
-	cu_karmabase.execute('create table commiters (room text, jid text, karmajid text, last int)')
-	cu_karmabase.execute('create index krj on karma (room,jid)')
-	cu_karmabase.execute('create index crjk on karma (room,jid,karma)')
-
-try: cu_karmabase.execute('select * from limits')
-except Exception, SM:
-	if 'limits' in str(SM):
-		cu_karmabase.execute('create table limits (room text, jid text, log text)')
-		cu_karmabase.execute('create index lrj on limits (room,jid)')
-
-karma_base.commit()
-karma_base.close()
-
 def karma(type, jid, nick, text):
 	arg = text.split(' ',1)
 	try: arg1 = arg[1]
@@ -61,11 +42,16 @@ def karma_top(jid, nick, text, order):
 	except: lim = GT('karma_show_default_limit')
 	if lim < 1: lim = 1
 	elif lim > GT('karma_show_max_limit'): lim = GT('karma_show_max_limit')
-	karma_base = sqlite3.connect(karmabase,timeout=base_timeout)
-	cu_karmabase = karma_base.cursor()
-	if order: stat = cu_karmabase.execute('select jid,karma from karma where room=? order by karma',(jid,)).fetchall()
-	else: stat = cu_karmabase.execute('select jid,karma from karma where room=? order by -karma',(jid,)).fetchall()
-	karma_base.close()
+	conn = psycopg2.connect("dbname='%s' user='%s' host='%s' password='%s'" % (base_name,base_user,base_host,base_pass));
+	cur = conn.cursor()
+	if order:
+		cur.execute('select jid,karma from karma where room=%s order by karma',(jid,))
+		stat = cur.fetchall()
+	else: 
+		cur.execute('select jid,karma from karma where room=%s order by -karma',(jid,))
+		stat = cur.fetchall()
+	cur.close()
+	conn.close()
 	if stat == None: return L('In this room karma is not changed!')
 	msg, cnt = '', 1
 	for tmp in stat:
@@ -86,9 +72,12 @@ def karma_get_limit(room,nick):
 	room = getRoom(room)
 	(acclvl, jid) = get_level(room,nick)
 	if acclvl >= 7: return -1,-1
-	karma_base = sqlite3.connect(karmabase,timeout=base_timeout)
-	cu_karmabase = karma_base.cursor()
-	k_log = cu_karmabase.execute('select log from limits where room=? and jid=?',(room,getRoom(jid))).fetchone()
+	conn = psycopg2.connect("dbname='%s' user='%s' host='%s' password='%s'" % (base_name,base_user,base_host,base_pass));
+	cur = conn.cursor()
+	cur.execute('select log from karma_limits where room=%s and jid=%s',(room,getRoom(jid)))
+	k_log = cur.fetchone()
+	cur.close()
+	conn.close()
 	k_size = get_config(room,'karma_limit_size')
 	if ''.join(re.findall('[-0-9, []]*', k_size)) != k_size: k_size = karma_size_wrong(room)
 	if len(json.loads(k_size)) != 2: k_size = karma_size_wrong(room)
@@ -101,7 +90,6 @@ def karma_get_limit(room,nick):
 			if time.time() - tmp < 86400: k_val -= 1
 			k_log.sort()
 	else: k_log = [0]
-	karma_base.close()
 	return k_val, k_limit, k_log[0]
 
 def karma_show(jid, nick, text):
@@ -114,14 +102,17 @@ def karma_show(jid, nick, text):
 		if get_config(getRoom(jid),'karma_limit'):
 			k_val = karma_get_limit(jid,text)[0]
 			if k_val >= 0: lim_text = '. ' + L('Karma limit is %s') % k_val
-		karma_base = sqlite3.connect(karmabase,timeout=base_timeout)
-		cu_karmabase = karma_base.cursor()
-		stat = cu_karmabase.execute('select karma from karma where room=? and jid=?',(jid,karmajid)).fetchone()
-		karma_base.close()
+		conn = psycopg2.connect("dbname='%s' user='%s' host='%s' password='%s'" % (base_name,base_user,base_host,base_pass));
+		cur = conn.cursor()
+		cur.execute('select karma from karma where room=%s and jid=%s',(jid,karmajid))
+		stat = cur.fetchone()
+		cur.close()
+		conn.close()
 		if stat == None: return L('%s have a clear karma') % atext + lim_text
 		else: return L('%s karma is %s') % (atext, karma_val(int(stat[0]))) + lim_text
 
 def karma_set(jid, nick, text):
+	global conn
 	cof = getFile(conoff,[])
 	if (jid,'karma') in cof: return
 	k_acc = get_level(jid,nick)[0]
@@ -134,18 +125,20 @@ def karma_set(jid, nick, text):
 			if karmajid == getRoom(selfjid): return
 			elif karmajid == 'None': return L('You can\'t change karma in outdoor conference!')
 			else:
-				karma_base = sqlite3.connect(karmabase,timeout=base_timeout)
-				cu_karmabase = karma_base.cursor()
-				cu_karmabase.execute('delete from karma where room=? and jid=?',(jid,karmajid)).fetchall()
-				cu_karmabase.execute('insert into karma values (?,?,?)',(jid,karmajid,val)).fetchall()
-				karma_base.commit()
-				karma_base.close()
+				conn = psycopg2.connect("dbname='%s' user='%s' host='%s' password='%s'" % (base_name,base_user,base_host,base_pass));
+				cur = conn.cursor()
+				cur.execute('delete from karma where room=%s and jid=%s',(jid,karmajid))
+				cur.execute('insert into karma values (%s,%s,%s)',(jid,karmajid,val))
+				conn.commit()
+				cur.close()
+				conn.close()
 				val = karma_val(val)
 				return L('You changes %s\'s karma to %s') % (text,val)
 		else: return L('You can\'t change karma!')
 	except: return L('incorrect digital parameter').capitalize()
 
 def karma_clear(jid, nick, text):
+	global conn
 	cof = getFile(conoff,[])
 	if (jid,'karma') in cof: return
 	k_acc = get_level(jid,nick)[0]
@@ -157,21 +150,24 @@ def karma_clear(jid, nick, text):
 		elif karmajid == 'None': return L('You can\'t change karma in outdoor conference!')
 		else:
 			if param in ['','all','karma','limits']:
-				karma_base = sqlite3.connect(karmabase,timeout=base_timeout)
-				cu_karmabase = karma_base.cursor()
-				if param in ['','all','karma']: cu_karmabase.execute('delete from karma where room=? and jid=?',(jid,karmajid)).fetchall()
-				if param in ['all','limits']: cu_karmabase.execute('delete from limits where room=? and jid=?',(jid,karmajid)).fetchall()
-				karma_base.commit()
-				karma_base.close()
+				conn = psycopg2.connect("dbname='%s' user='%s' host='%s' password='%s'" % (base_name,base_user,base_host,base_pass));
+				cur = conn.cursor()
+				if param in ['','all','karma']: cur.execute('delete from karma where room=%s and jid=%s',(jid,karmajid))
+				if param in ['all','limits']: cur.execute('delete from karma_limits where room=%s and jid=%s',(jid,karmajid))
+				conn.commit()
+				cur.close()
+				conn.close()
 				return L('You clear karma for %s') % text
 			else: return L('Wrong arguments!')
 	else: return L('You can\'t change karma!')
 
 def karma_get_access(room,jid):
-	karma_base = sqlite3.connect(karmabase,timeout=base_timeout)
-	cu_karmabase = karma_base.cursor()
-	stat = cu_karmabase.execute('select karma from karma where room=? and jid=?',(room,jid)).fetchone()
-	karma_base.close()
+	conn = psycopg2.connect("dbname='%s' user='%s' host='%s' password='%s'" % (base_name,base_user,base_host,base_pass));
+	cur = conn.cursor()
+	cur.execute('select karma from karma where room=%s and jid=%s',(room,jid))
+	stat = cur.fetchone()
+	cur.close()
+	conn.close()
 	if stat == None: return None
 	if int(stat[0]) < GT('karma_limit'): return None
 	return True
@@ -220,6 +216,7 @@ def karma_action_do(room,text,action):
 	act[action]('chat',room,nick,'%s\n%s' % (text,get_config(room,'karma_action_reason')),action.replace('kick','none'),0)
 
 def karma_change(room,jid,nick,type,text,value):
+	global conn
 	if type == 'chat': msg = L('You can\'t change karma in private!')
 	else:
 		cof = getFile(conoff,[])
@@ -237,15 +234,17 @@ def karma_change(room,jid,nick,type,text,value):
 			elif karmajid == jid: msg = L('You can\'t change own karma!')
 			elif get_config(getRoom(jid),'karma_limit') and karma_get_limit(room,nick)[0] == 0: msg = L('Karma limit is %s') % L('over') + '. ' + L('Please wait: %s') % un_unix(int(86400-(time.time() - karma_get_limit(room,nick)[2])))
 			else:
-				karma_base = sqlite3.connect(karmabase,timeout=base_timeout)
-				cu_karmabase = karma_base.cursor()
-				stat = cu_karmabase.execute('select last from commiters where room=? and jid=? and karmajid=?',(room,jid,karmajid)).fetchone()
+				conn = psycopg2.connect("dbname='%s' user='%s' host='%s' password='%s'" % (base_name,base_user,base_host,base_pass));
+				cur = conn.cursor()
+				cur.execute('select last from karma_commiters where room=%s and jid=%s and karmajid=%s',(room,jid,karmajid))
+				stat = cur.fetchone()
 				karma_valid, karma_time = None, int(time.time())
 				if stat == None: karma_valid = True
 				elif karma_time - int(stat[0]) >= GT('karma_timeout')[k_acc]: karma_valid = True
 				if karma_valid:
 					if k_acc < 7:
-						k_log = cu_karmabase.execute('select log from limits where room=? and jid=?',(room,jid)).fetchone()
+						cur.execute('select log from karma_limits where room=%s and jid=%s',(room,jid))
+						k_log = cur.fetchone()
 						k_size = get_config(room,'karma_limit_size')
 						if ''.join(re.findall('[-0-9, []]*', k_size)) != k_size: k_size = karma_size_wrong(room)
 						if len(json.loads(k_size)) != 2: k_size = karma_size_wrong(room)
@@ -257,18 +256,20 @@ def karma_change(room,jid,nick,type,text,value):
 							for tmp in k_log:
 								if time.time() - tmp < 86400: k_val -= 1
 							k_log = str([karma_time] + k_log[:k_limit-1])
-							cu_karmabase.execute('update limits set log=? where room=? and jid=?',(k_log,room,jid))
-						else: cu_karmabase.execute('insert into limits values (?,?,?)',(room,jid,'[%s]' % karma_time))
-					if stat: cu_karmabase.execute('update commiters set last=? where room=? and jid=? and karmajid=?',(karma_time,room,jid,karmajid))
-					else: cu_karmabase.execute('insert into commiters values (?,?,?,?)',(room,jid,karmajid,karma_time))
-					stat = cu_karmabase.execute('select karma from karma where room=? and jid=?',(room,karmajid)).fetchone()
+							cur.execute('update karma_limits set log=%s where room=%s and jid=%s',(k_log,room,jid))
+						else: cur.execute('insert into karma_limits values (%s,%s,%s)',(room,jid,'[%s]' % karma_time))
+					if stat: cur.execute('update karma_commiters set last=%s where room=%s and jid=%s and karmajid=%s',(karma_time,room,jid,karmajid))
+					else: cur.execute('insert into karma_commiters values (%s,%s,%s,%s)',(room,jid,karmajid,karma_time))
+					cur.execute('select karma from karma where room=%s and jid=%s',(room,karmajid))
+					stat = cur.fetchone()
 					if stat:
 						stat = stat[0]+value
-						cu_karmabase.execute('delete from karma where room=? and jid=?',(room,karmajid)).fetchall()
+						cur.execute('delete from karma where room=%s and jid=%s',(room,karmajid))
 					else: stat = value
-					cu_karmabase.execute('insert into karma values (?,?,?)',(room,karmajid,stat)).fetchall()
+					cur.execute('insert into karma values (%s,%s,%s)',(room,karmajid,stat))
+					cur.fetchall()
 					msg = L('You changes %s\'s karma to %s. Next time to change across: %s') % (text,karma_val(stat),un_unix(GT('karma_timeout')[k_acc]))
-					karma_base.commit()
+					conn.commit()
 					pprint('karma change in %s for %s to %s' % (room,text,stat),'green')
 					am = None
 					if get_config(room,'karma_action'):
@@ -282,10 +283,11 @@ def karma_change(room,jid,nick,type,text,value):
 							karma_action_do(*am)
 							pprint('karma action in %s for %s is %s' % am,'bright_green')
 				else: msg = L('Time from last change %s\'s karma is very small. Please wait %s') % (text,un_unix(int(stat[0])+GT('karma_timeout')[k_acc]-karma_time))
-				karma_base.close()
 				if get_config(room,'karma_limit'):
 					k_val = karma_get_limit(room,nick)[0]
 					if k_val >= 0: msg += '. ' + L('Karma limit is %s') % [L('over'), k_val][k_val > 0]
+				cur.close()
+				conn.close()
 		else: msg = L('You can\'t change karma!')
 	send_msg(type, room, nick, msg)
 

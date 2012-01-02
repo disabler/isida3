@@ -24,48 +24,62 @@
 def wtfsearch(type, jid, nick, text):
 	msg = L('What need to find?')
 	if len(text):
-		mdb = sqlite3.connect(wtfbase,timeout=base_timeout)
-		cu = mdb.cursor()
-		text = '%'+text+'%'
-		ww = cu.execute('select * from wtf where (room=? or room=? or room=?) and (room like ? or jid like ? or nick like ? or wtfword like ? or wtftext like ? or time like ?)',(jid,'global','import',text,text,text,text,text,text)).fetchall()
+		text = '%%%s%%' % text
+		conn = psycopg2.connect("dbname='%s' user='%s' host='%s' password='%s'" % (base_name,base_user,base_host,base_pass));
+		cur = conn.cursor()
+		cur.execute('select * from wtf where (room=%s or room=%s or room=%s) and (room like %s or jid like %s or nick like %s or wtfword like %s or wtftext like %s or time like %s)',(jid,'global','import',text,text,text,text,text,text))
+		ww = cur.fetchall()
+		cur.close()
+		conn.close()
 		msg = ''
-		for www in ww: msg += www[4]+', '
+		for www in ww: msg += www[4].decode('utf-8')+', '
 		if len(msg): msg = L('Some matches in definitions: %s') % msg[:-2]
 		else: msg = L('No matches.')
 	send_msg(type, jid, nick, msg)
 
 def wtfrand(type, jid, nick):
-	mdb = sqlite3.connect(wtfbase,timeout=base_timeout)
-	cu = mdb.cursor()
-	ww = cu.execute('select * from wtf where room=? or room=? or room=?',(jid,'global','import')).fetchall()
+	conn = psycopg2.connect("dbname='%s' user='%s' host='%s' password='%s'" % (base_name,base_user,base_host,base_pass));
+	cur = conn.cursor()
+	cur.execute('select * from wtf where room=%s or room=%s or room=%s',(jid,'global','import'))
+	ww = cur.fetchall()
+	cur.close()
+	conn.close()
 	tlen = len(ww)
 	ww = ww[randint(0,tlen-1)]
 	msg = L('I know that %s is %s') % (ww[4],ww[5])
 	send_msg(type, jid, nick, msg)
 
 def wtfnames(type, jid, nick, text):
-	mdb = sqlite3.connect(wtfbase,timeout=base_timeout)
-	cu = mdb.cursor()
-	if text == 'all': cu.execute('select * from wtf where room=? or room=? or room=?',(jid,'global','import'))
-	elif text == 'global': cu.execute('select * from wtf where room=?',('global',))
-	elif text == 'import': cu.execute('select * from wtf where room=?',('import',))
-	else: cu.execute('select * from wtf where room=?',(jid,))
+	conn = psycopg2.connect("dbname='%s' user='%s' host='%s' password='%s'" % (base_name,base_user,base_host,base_pass));
+	cur = conn.cursor()
+	if text == 'all': cur.execute('select * from wtf where room=%s or room=%s or room=%s',(jid,'global','import'))
+	elif text == 'global': cur.execute('select * from wtf where room=%s',('global',))
+	elif text == 'import': cur.execute('select * from wtf where room=%s',('import',))
+	else: cur.execute('select * from wtf where room=%s',(jid,))
+	tmp = cur.fetchall()
+	cur.close()
+	conn.close()
 	msg = ''
-	for ww in cu: msg += ww[4]+', '
+	for ww in tmp: msg += ww[4].decode('utf-8')+', '
 	if len(msg): msg = L('All I know is: %s') % msg[:-2]
 	else: msg = L('No matches.')
 	send_msg(type, jid, nick, msg)
 
 def wtfcount(type, jid, nick):
-	mdb = sqlite3.connect(wtfbase,timeout=base_timeout)
-	cu = mdb.cursor()
-	tlen = len(cu.execute('select * from wtf where 1=1').fetchall())
-	cnt = len(cu.execute('select * from wtf where room=?',(jid,)).fetchall())
-	glb = len(cu.execute('select * from wtf where room=?',('global',)).fetchall())
-	imp = len(cu.execute('select * from wtf where room=?',('import',)).fetchall())
-	msg = L('Locale definition: %s\nGlobal: %s\nImported: %s\nTotal: %s') % (str(cnt),str(glb),str(imp),str(tlen))
+	conn = psycopg2.connect("dbname='%s' user='%s' host='%s' password='%s'" % (base_name,base_user,base_host,base_pass));
+	cur = conn.cursor()
+	cur.execute('select * from wtf where 1=1')
+	tlen = len(cur.fetchall())
+	cur.execute('select * from wtf where room=%s',(jid,))
+	cnt = len(cur.fetchall())
+	cur.execute('select * from wtf where room=%s',('global',))
+	glb = len(cur.fetchall())
+	cur.execute('select * from wtf where room=%s',('import',))
+	imp = len(cur.fetchall())
+	msg = L('Locale definition: %s\nGlobal: %s\nImported: %s\nTotal: %s') % (cnt,glb,imp,tlen)
+	cur.close()
+	conn.close()
 	send_msg(type, jid, nick, msg)
-	mdb.close()
 
 def wtf(type, jid, nick, text):
 	wtf_get(0,type, jid, nick, text)
@@ -94,34 +108,33 @@ def wtfp(type, jid, nick, text):
 
 def wtf_get(ff,type, jid, nick, text):
 	if len(text):
-		mdb = sqlite3.connect(wtfbase,timeout=base_timeout)
-		cu = mdb.cursor()
-		tlen = len(cu.execute('select * from wtf where (room=? or room=? or room=?) and wtfword=?',(jid,'global','import',text)).fetchall())
-		cu.execute('select * from wtf where (room=? or room=? or room=?) and wtfword=?',(jid,'global','import',text))
-
-		if tlen:
-			for aa in cu: ww=aa[1:]
+		conn = psycopg2.connect("dbname='%s' user='%s' host='%s' password='%s'" % (base_name,base_user,base_host,base_pass));
+		cur = conn.cursor()
+		cur.execute('select * from wtf where (room=%s or room=%s or room=%s) and wtfword=%s',(jid,'global','import',text))
+		ww = cur.fetchone()
+		if ww:
 			msg = L('I know that %s is %s') % (text,ww[4])
 			if ff == 1: msg += L('\nfrom: %s %s') % (ww[2],'['+ww[5]+']')
 			elif ff == 2: msg = L('I know that %s was defined by %s %s %s') % (text,ww[2],'('+ww[1]+')','['+ww[5]+']')
 		else: msg = L('I don\'t know!')
+		cur.close()
+		conn.close()
 	else: msg = L('What search?')
 	send_msg(type, jid, nick, msg)
 
 def dfn(type, jid, nick, text):
-	global wbase, wtfbase
+	global conn
 	if len(text) and '=' in text:
 		ta = get_level(jid,nick)
 		realjid =ta[1]
 		al = ta[0]
-
 		ti = text.index('=')
 		what = del_space_end(text[:ti])
 		text = del_space_begin(text[ti+1:])
-
-		mdb = sqlite3.connect(wtfbase,timeout=base_timeout)
-		cu = mdb.cursor()
-		matches = cu.execute('select * from wtf where (room=? or room=? or room=?) and wtfword=? order by lim',(jid,'global','import',what)).fetchone()
+		conn = psycopg2.connect("dbname='%s' user='%s' host='%s' password='%s'" % (base_name,base_user,base_host,base_pass));
+		cur = conn.cursor()
+		cur.execute('select * from wtf where (room=%s or room=%s or room=%s) and wtfword=%s order by lim',(jid,'global','import',what))
+		matches = cur.fetchone()
 		if matches:
 			if matches[7] > al:
 				msg,text = L('Not enough rights!'),''
@@ -130,32 +143,34 @@ def dfn(type, jid, nick, text):
 			elif matches[1] == 'global': msg, text = L('This is global definition and not allowed to change!'), ''
 			elif text == '':
 				msg = L('Definition removed!')
-				cu.execute('delete from wtf where wtfword=? and room=?',(what,jid))
+				cur.execute('delete from wtf where wtfword=%s and room=%s',(what,jid))
 			else:
 				msg = L('Definition updated!')
-				cu.execute('delete from wtf where wtfword=? and room=?',(what,jid))
+				cur.execute('delete from wtf where wtfword=%s and room=%s',(what,jid))
 		elif text == '': msg = L('Nothing to remove!')
 		else: msg = L('Definition saved!')
-		idx = len(cu.execute('select * from wtf where 1=1').fetchall())
-		if text != '': cu.execute('insert into wtf values (?,?,?,?,?,?,?,?)', (idx, jid, realjid, nick, what, text, timeadd(tuple(time.localtime())),al))
-		mdb.commit()
+		cur.execute('select * from wtf where 1=1')
+		idx = len(cur.fetchall())
+		if text != '': cur.execute('insert into wtf values (%s,%s,%s,%s,%s,%s,%s,%s)', (idx, jid, realjid, nick, what, text, timeadd(tuple(time.localtime())),al))
+		conn.commit()
+		cur.close()
+		conn.close()
 	else: msg = L('What need to remember?')
 	send_msg(type, jid, nick, msg)
 
 def gdfn(type, jid, nick, text):
-	global wbase, wtfbase
+	global conn
 	if len(text) and '=' in text:
 		ta = get_level(jid,nick)
 		realjid =ta[1]
 		al = ta[0]
-
 		ti = text.index('=')
 		what = del_space_end(text[:ti])
 		text = del_space_begin(text[ti+1:])
-
-		mdb = sqlite3.connect(wtfbase,timeout=base_timeout)
-		cu = mdb.cursor()
-		matches = cu.execute('select * from wtf where (room=? or room=? or room=?) and wtfword=? order by lim',(jid,'global','import',what)).fetchone()
+		conn = psycopg2.connect("dbname='%s' user='%s' host='%s' password='%s'" % (base_name,base_user,base_host,base_pass));
+		cur = conn.cursor()
+		cur.execute('select * from wtf where (room=%s or room=%s or room=%s) and wtfword=%s order by lim',(jid,'global','import',what))
+		matches = cur.fetchone()
 		if matches:
 			if matches[7] > al:
 				msg,text = L('Not enough rights!'),''
@@ -163,15 +178,18 @@ def gdfn(type, jid, nick, text):
 				except: pass
 			elif text == '':
 				msg = L('Definition removed!')
-				cu.execute('delete from wtf where wtfword=?',(what,))
+				cur.execute('delete from wtf where wtfword=%s',(what,))
 			else:
 				msg = L('Definition updated!')
-				cu.execute('delete from wtf where wtfword=?',(what,))
+				cur.execute('delete from wtf where wtfword=%s',(what,))
 		elif text == '': msg = L('Nothing to remove!')
 		else: msg = L('Definition saved!')
-		idx = len(cu.execute('select * from wtf where 1=1').fetchall())
-		if text != '': cu.execute('insert into wtf values (?,?,?,?,?,?,?,?)', (idx, 'global', realjid, nick, what, text, timeadd(tuple(time.localtime())),al))
-		mdb.commit()
+		cur.execute('select * from wtf where 1=1')
+		idx = len(cur.fetchall())
+		if text != '': cur.execute('insert into wtf values (%s,%s,%s,%s,%s,%s,%s,%s)', (idx, 'global', realjid, nick, what, text, timeadd(tuple(time.localtime())),al))
+		conn.commit()
+		cur.close()
+		conn.close()
 	else: msg = L('What need to remember?')
 	send_msg(type, jid, nick, msg)
 

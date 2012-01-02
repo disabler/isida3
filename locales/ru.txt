@@ -187,7 +187,7 @@ Not found Api-key for Bing translator	Не найден Api-ключ для пе
 I can't translate it!	Я не могу это перевести!
 Incorrect language settings for translate. tr list - available languages.	Неправильно указан язык или нет текста для перевода. tr list - доступные языки
 Command's format: tr [from] to text	Формат команды: tr [с_какого] на_какой текст
-Bing translator.\nbt [from_language] to_language text - translate text\nbt list - list for available languages for translate\nbt info <reduction> - get info about language reduction	Переводчик Bing.\nbt [с_какого_языка] на_какой_язык текст - перевод текста\nbt list - список языков для перевода\nbt info <сокращение> - расшифровка сокращения языка
+Bing translator.\nbt [from_language] to_language text - translate text\nbt list - list for available languages for translate\nbt info <reduction> - get info about language reduction\nbt lang <expression> - get languages by expression	Переводчик Bing.\nbt [с_какого_языка] на_какой_язык текст - перевод текста\nbt list - список языков для перевода\nbt info <сокращение> - расшифровка сокращения языка\nbt lang <выражение> - найти языки за выражением
 
 # file: ../trunk/plugins/blacklist.py
 Leave conference %s\n	Свалила из %s\n
@@ -480,31 +480,18 @@ Swahili	суахили
 Tagalog	тагальский
 Croatian	хорватский
 Creole	креольский
-Translator.\ntr [from_language] to_language text - translate text\ntr list - list for available languages for translate\ntr info <reduction> - get info about language reduction	Переводчик.\ntr [с_какого_языка] на_какой_язык текст - перевод текста\ntr list - список языков для перевода\ntr info <сокращение> - расшифровка сокращения языка
+Translator.\ntr [from_language] to_language text - translate text\ntr list - list for available languages for translate\ntr info <reduction> - get info about language reduction\ntr lang <expression> - get languages by expression	Переводчик.\ntr [с_какого_языка] на_какой_язык текст - перевод текста\ntr list - список языков для перевода\ntr info <сокращение> - расшифровка сокращения языка\ntr lang <выражение> - найти языки за выражением
 Search in google	Поиск через google
 Search XEP	Поиск XEP
 Search in en.wikipedia.org	Поиск по ru.wikipedia.org
 
 # file: ../trunk/plugins/googleplus.py
-verb	глагол
-noun	существительное
-preposition	предлог
-adverb	наречие
-adjective	прилагательное
-phrase	выражение
-conjunction	сопряжение
-abbreviation	аббревиатура
 Google Calculator results not found	Калькулятор google не может это просчитать!
 I don't know!	Хм. Мне про это никто не рассказывал...
-Unsupported language!	Неподдерживаемый язык!
-Invalid target language!	Неверный целевой язык!
-Invalid source language!	Неверный исходный язык!
-Command execution error.	Ошибка выполнения команды.
 Google Calculator	Калькулятор google
 Definition for a word or phrase.\ndefine word - random define of word or phrase\ndefine N word - N-th define of word or phrase\ndefine a-b word - from a to b defines of word or phrase	Определение слова или фразы.\ndefine слово - случайное определение\ndefine N слово - N-нное определение\ndefine a-b слово - определения слова с номера a до b
 Google URL Shortener/Unshortener	Сервис сокращения ссылок от Google
 Google QR-code generator	Сервис генерации QR-кодов от Google
-Google Dictionary\ngdict from_language to_language word	Словарь Google\ngdict с_языка на_язык слово
 
 # file: ../trunk/plugins/hideroom.py
 This command available only in private!	Команда доступна только в привате!
@@ -803,19 +790,13 @@ Nov	Ноя
 Dec	Дек
 Ignore list: %s	Я не принимаю команды от: %s
 Not found: %s	Не найдено: %s
-Age statistic base	База статистики возрастов
-SayTo base	База команды sayto
-Talkers base	База болтунов
-Base of definitions	База определений
-Karma base	База кармы
-Jid's base	База Jid'ов
-Vacuum databases:\n%s	Сжатие баз данных\n%s
 Last syslogs: %s	Последние системные логи: %s
 Locale set to: %s	Установлена локализация: %s
 Locale not found!	Локализация не найдена!
 Locale set to: en	Установлена локализация: en
 Current locale: %s	Текущая локализация: %s
 Command temporary blocked!	Команда временно блокирована!
+Command execution error.	Ошибка выполнения команды.
 ok	ок
 Enabled: %s	Включено: %s
 Only conference owner can enable commands!	Включение команд доступно только владельцу конференции!
@@ -1156,7 +1137,6 @@ Spy. Time for reaction on spy scan	Spy. Интервал реакции на с�
 Rss. Maximum rss count	Rss. Максимальное количество новостей
 Rss. Minimal time for rss check in minutes	Rss. Минимальное время проверки rss в минутах
 Rss. Timeout for rss request from server in seconds	Rss. Таймаут запроса новости с сервера в секундах
-Pep scrobbler. Number of maximum answers for pep-scrobbler	Pep scrobbler. Максимальное количество ответов для pep скробблера
 Whereis. Frequency for answer check for whereis command	Whereis. Частота проверки ответа для команды whereis
 Watcher. Try rejoin in rooms with low activity	Watcher. Пробовать перезаходить в малоактивные конференции
 Watcher. Allow self ping	Watcher. Пинговать самого себя
@@ -1196,6 +1176,8 @@ Muc-filter. Timeout for repeat message	Muc-filter. Таймаут повтора
 Paste. Paste as html. Otherwize as text	Paste. Html размещение, иначе в виде текста
 City. Yandex.Map API-key	City. Yandex.Map API-ключ
 Bing. Translator API-key	Bing. Api-ключ переводчика
+NewYear. Congratulations text	NewYear. Текст поздравления с Новым годом
+Happy New Year!	С Новым годом!
 Kernel. Text for hide censore	Kernel. Текст для закрытия мата
 Kernel. Time of ignore for anti-ddos	Kernel. Время игнора при ddos'е в зависимости от уровня доступа
 Kernel. Anti-ddos time delay between messages	Kernel. Промежуток между сообщениями для включения анти-ddos
@@ -1207,9 +1189,6 @@ Karma. Time for karma change from access level	Karma. Время, через к�
 Karma. Difference between two action in karma	Karma. Разница между двумя действиями кармы
 Karma. Upper value of karma for control action	Karma. Верхний предел кармы при проверки правильности значений
 Karma. Lower value of karma for control action	Karma. Нижний предел кармы при проверки правильности значений
-Kernel. Vacuum databases	Kernel. Сжатие баз данных
-Kernel. Vacuum databases at hour when by time	Kernel. Сжатие баз данных. Часы для сжатия баз по времени
-Kernel. Vacuum databases at minuts when by time	Kernel. Сжатие баз данных. Минуты для сжатия баз по времени
 Disco. Exclude from disco by regexps	Disco. Исключать из обзора по регекспу
 Kernel. Exclude symbols from bot's messages	Kernel. Исключить символы из сообщений бота
 Muc-filter settings	Настройки muc-фильтра
@@ -1231,7 +1210,6 @@ Age settings	Настройки age
 Sayto settings	Настройки sayto
 Spy settings	Настройки spy
 Help system. Helps without commands: about, donation, access	Показывает текущие разделы справочной системы. Разделы справки без команд: about, donation, доступ
-Vacuum bot's databases	Сжатие баз данных бота
 Join conference.\njoin room[@conference.server.ru[/nick]]\n[password]	Вход в конференцию:\njoin room@conference.server.ru/nick - вход в конференцию room с ником nick.\njoin room@conference.server.ru - вход в конференцию room с последним заданным ником.\njoin room - вход в конференцию room на последнем заданном сервере с последним заданным ником.\njoin room@conference.server.ru/nick\npassword - перезайти в конференцию room с паролем password
 Leave conference.\nleave room[@conference.server.ru[/nick]]	Выход из конференции:\nleave - выход из текущей конференции.\nleave room - выход из конференции room на последнем заданном сервере.\nleave room@conference.server.ru - выход из конференции room
 Rejoin conference.\nrejoin room[@conference.server.ru[/nick]]\n[password]	Перезаход в конференцию.\nrejoin - перезайти в текущую конференцию.\nrejoin room - перезайти в конференцию room на последнем заданном сервере.\nrejoin room@conference.server.ru - перезайти в конференцию room\nrejoin room@conference.server.ru/nick\npassword - перезайти в конференцию room с паролем password
@@ -1256,7 +1234,6 @@ Your identification.	Ваша идентификация перед ботом.
 Identification.	Идентификация перед ботом.
 Show status.	Показ статуса.
 Set command prefix. Use 'none' for disable prefix	Указание префикса команд. Без параметра показывает текущий префикс. Если параметром будет none - префикс будет отключен.
-PEP Scrobbler. Test version	PEP Скробблер. Тестовая версия
 Conference configure.\nconfig [show[ status]|help][ item]	Настройка конференции.\nconfig [show[ status]|help][ item]
 Deny recieve messages from unaffiliated participants in private	Запрет приёма сообщений от участников без полномочий в привате
 Temporary ignore with ddos detect.\nddos [show|del jid]	Временный игнор при подозрении на ddos.\nddos [show|del jid]
@@ -1455,6 +1432,11 @@ QWERTYUIOP{}ASDFGHJKL:"ZXCVBNM<>~qwertyuiop[]asdfghjkl;'zxcvbnm,.`	ё1234567890-
 Timeout for ask: %s | Timeout for answer: %s | Last ask: %s | Total checks: %s	Таймаут запросов: %s | Таймаут ответов: %s | Последний запрос: %s | Всего проверок: %s
 Connection activity control.	Контроль активности соединения.
 
+# file: ../trunk/plugins/whowas.py
+For a last day i see: %s	За последние сутки я видела: %s
+All who i see for a last day now is here.	Все, кого я видела за сутки, находятся тут.
+Show list of users for last day	Показ списка участников за сутки
+
 # file: ../trunk/plugins/wtf.py
 What need to find?	Чего искать то будем?
 Some matches in definitions: %s	Нечто похожее я видела в: %s
@@ -1499,4 +1481,3 @@ Search weather by code, city, country.	Поиск погоды по коду г�
 
 # file: ../trunk/plugins/youtube.py
 Search at YouTube	Поиск по YouTube
-
