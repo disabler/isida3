@@ -42,17 +42,6 @@ muc_lock_base = set_folder % 'muclock.db'
 
 configname = 'settings/config.py'
 
-def values_validator(tp):
-	ins_vals = []
-	for t in tp:
-		ud = '%s' % t
-		val = ["'%s'" % t,ud][ud == ''.join(re.findall('([-]?[0-9]+)',ud))]
-		if "'" in val[1:-1]: val = val[0] + val[1:-1].replace("'","''") + val[-1]
-		if not len(val): val = "''"
-		val = val.replace('\\','\\\\')
-		ins_vals.append(val)
-	return ','.join(ins_vals)
-
 def convert_base(filename,from_base,to_base):
 	global conn
 	if os.path.isfile(filename):
@@ -63,8 +52,8 @@ def convert_base(filename,from_base,to_base):
 		s_conn.close()
 		if tmp:
 			for t in tmp:
-				req = 'insert into %s values(%s);' % (to_base,values_validator(t))
-				cur.execute(req)
+				req = 'insert into %s values(%s);' % (to_base,','.join(['%'+a for a in 's'*len(t)]))
+				cur.execute(req,t)
 		conn.commit()
 	
 print 'Updater for Isida Jabber Bot from 2.x to 3.x'
