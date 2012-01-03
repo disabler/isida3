@@ -84,7 +84,6 @@ def acl_add_del(jid,text,flag):
 			msg = [L('Removed:'),L('Updated:')][flag]
 		else: msg = [L('Not found:'),L('Added:')][flag]
 		if flag: cur_execute('insert into acl values (%s,%s,%s,%s,%s,%s)', (jid, acl_cmd, acl_sub_act, text[0], ' '.join(text[1:]).replace('%20','\ '), atime))
-		conn.commit()
 		if atime: msg += ' [%s] %s %s %s -> %s' % (time.ctime(atime),acl_cmd, acl_sub_act, text[0], ' '.join(text[1:]).replace('%20','\ ').replace('\n',' // '))
 		else: msg += ' %s %s %s -> %s' % (acl_cmd, acl_sub_act, text[0], ' '.join(text[1:]).replace('%20','\ ').replace('\n',' // '))
 		if not reduce_spaces_all(msg).split('->',1)[1]: msg = msg.split('->',1)[0]
@@ -138,7 +137,7 @@ def acl_message(room,jid,nick,type,text):
 		for tmp in a:
 			if tmp[4] <= time.time() and tmp[4]: 
 				cur_execute('delete from acl where jid=%s and action=%s and type=%s and text=%s',(room,tmp[0],tmp[1],tmp[2]))
-				conn.commit()
+
 			if tmp[1] == 'exp' and re.match(tmp[2].replace('*','*?'),text,re.I+re.S+re.U):
 				no_comm = acl_action(tmp[3],nick,jid,room,text)
 				break
@@ -177,7 +176,7 @@ def acl_presence(room,jid,nick,type,mass):
 	if a:
 		for tmp in a:
 			if tmp[0] == 'age':
-				in_base = cur_execute_fetchall('select time,sum(age),status from age where room=%s and jid=%s',(room,getRoom(jid)))
+				in_base = cur_execute_fetchall('select time,sum(age),status from age where room=%s and jid=%s group by time,status',(room,getRoom(jid)))
 				if not in_base: r_age = 0
 				else:
 					try:
@@ -203,7 +202,6 @@ def acl_presence(room,jid,nick,type,mass):
 			itm = ''
 			if tmp[4] <= time.time() and tmp[4]:
 				cur_execute('delete from acl where jid=%s and action=%s and type=%s and text=%s',(room,tmp[0],tmp[1],tmp[2]))
-				conn.commit()
 			if tmp[0].split('_')[0] in ['presence','prs'] and (('_join' in tmp[0] and was_joined) or ('_change' in tmp[0] and not was_joined) or ('_join' not in tmp[0] and '_change' not in tmp[0])): itm = mass[0]
 			elif tmp[0].split('_')[0] == 'nick' and (('_join' in tmp[0] and was_joined) or ('_change' in tmp[0] and not was_joined) or ('_join' not in tmp[0] and '_change' not in tmp[0])): itm = nick
 			elif tmp[0].split('_')[0] == 'role' and (('_join' in tmp[0] and was_joined) or ('_change' in tmp[0] and not was_joined) or ('_join' not in tmp[0] and '_change' not in tmp[0])): itm = mass[1]

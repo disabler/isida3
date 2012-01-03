@@ -119,7 +119,6 @@ def dfn(type, jid, nick, text):
 		else: msg = L('Definition saved!')
 		idx = len(cur_execute_fetchall('select * from wtf where 1=1'))
 		if text != '': cur_execute('insert into wtf values (%s,%s,%s,%s,%s,%s,%s,%s)', (idx, jid, realjid, nick, what, text, timeadd(tuple(time.localtime())),al))
-		conn.commit()
 	else: msg = L('What need to remember?')
 	send_msg(type, jid, nick, msg)
 
@@ -147,7 +146,6 @@ def gdfn(type, jid, nick, text):
 		else: msg = L('Definition saved!')
 		idx = len(cur_execute_fetchall('select * from wtf where 1=1'))
 		if text != '': cur_execute('insert into wtf values (%s,%s,%s,%s,%s,%s,%s,%s)', (idx, 'global', realjid, nick, what, text, timeadd(tuple(time.localtime())),al))
-		conn.commit()
 	else: msg = L('What need to remember?')
 	send_msg(type, jid, nick, msg)
 

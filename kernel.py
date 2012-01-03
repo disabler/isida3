@@ -91,43 +91,37 @@ class KThread(threading.Thread):
 	def kill(self): self.killed = True
 
 def cur_execute(*params):
-	try: cur.execute(*params)
-	except:
-		conn.rollback()
-		cur.execute(*params)
+	cur = conn.cursor()
+	psycopg2.extensions.register_type(psycopg2.extensions.UNICODE, cur)
+	cur.execute(*params)
+	cur.close()
 
 def cur_execute_fetchone(*params):
-	try: 
-		cur.execute(*params)
-		return cur.fetchone()
-	except:
-		conn.rollback()
-		cur.execute(*params)
-		wait(cur.connection)
-		try: return cur.fetchone()
-		except: return None
+	cur = conn.cursor()
+	psycopg2.extensions.register_type(psycopg2.extensions.UNICODE, cur)
+	cur.execute(*params)
+	try: par = cur.fetchone()
+	except: par = None
+	cur.close()
+	return par
 	
 def cur_execute_fetchall(*params):
-	try: 
-		cur.execute(*params)
-		return cur.fetchall()
-	except:
-		conn.rollback()
-		cur.execute(*params)
-		wait(cur.connection)
-		try: return cur.fetchall()
-		except: return None
+	cur = conn.cursor()
+	psycopg2.extensions.register_type(psycopg2.extensions.UNICODE, cur)
+	cur.execute(*params)
+	try: par = cur.fetchall()
+	except: par = None
+	cur.close()
+	return par
 	
 def cur_execute_fetchmany(*params):
-	try: 
-		cur.execute(params[:-1])
-		return cur.fetchmany(params[-1])
-	except:
-		conn.rollback()
-		cur.execute(params[:-1])
-		wait(cur.connection)
-		try: return cur.fetchmany(params[-1])
-		except: return None
+	cur = conn.cursor()
+	psycopg2.extensions.register_type(psycopg2.extensions.UNICODE, cur)
+	cur.execute(params[:-1])
+	try: par = cur.fetchmany(params[-1])
+	except: par = None
+	cur.close()
+	return par
 	
 def get_color(c):
 	color = os.environ.has_key('TERM')
@@ -1948,7 +1942,6 @@ def presenceCB(sess,mess):
 			if ab[5]: cur_execute('update age set time=%s, status=%s, message=%s where room=%s and jid=%s and nick=%s', (tt,0,ttext,room, jid, nick))
 			else: cur_execute('update age set status=%s, message=%s where room=%s and jid=%s and nick=%s', (0,ttext,room, jid, nick))
 	else: cur_execute('insert into age values (%s,%s,%s,%s,%s,%s,%s,%s)', (room,nick,jid,tt,0,0,'',ttext))
-	conn.commit()
 
 def onoff_no_tr(msg):
 	if msg == None or msg == False or msg == 0 or msg == '0': return 'off'
@@ -2018,7 +2011,6 @@ def talk_count(room,jid,nick,text):
 	wtext = len(reduce_spaces_all(text).split(' '))
 	if ab: cur_execute('update talkers set nick=%s, words=%s, frases=%s where room=%s and jid=%s', (nick,ab[3]+wtext,ab[4]+1,room,jid))
 	else: cur_execute('insert into talkers values (%s,%s,%s,%s,%s)', (room, jid, nick, wtext, 1))
-	conn.commit()
 
 def flush_stats():
 	pprint('Executed threads: %s | Error(s): %s' % (th_cnt,thread_error_count),'bright_blue')
@@ -2063,17 +2055,17 @@ def draw_warning(wt):
 	pprint('!'*len(wt),'bright_red')
 
 def wait(conn):
-    while 1:
-        state = conn.poll()
-        if state == psycopg2.extensions.POLL_OK:
-            break
-        elif state == psycopg2.extensions.POLL_WRITE:
-            select.select([], [conn.fileno()], [])
-        elif state == psycopg2.extensions.POLL_READ:
-            select.select([conn.fileno()], [], [])
-        else:
-            raise psycopg2.OperationalError("poll() returned %s" % state)
-	
+	tt = time.time() + 10
+	while tt > time.time():
+		state = conn.poll()
+		if state == psycopg2.extensions.POLL_OK:
+			break
+		elif state == psycopg2.extensions.POLL_WRITE:
+			select.select([], [conn.fileno()], [])
+		elif state == psycopg2.extensions.POLL_READ:
+			select.select([conn.fileno()], [], [])
+		else:
+			raise psycopg2.OperationalError("poll() returned %s" % state)
 # --------------------- Иницилизация переменных ----------------------
 
 nmbrs = ['0','1','2','3','4','5','6','7','8','9','.']
@@ -2164,10 +2156,7 @@ if(sys.argv[0]) != 'isida.py':
 	draw_warning('Ugly launch detect! Read wiki!')
 	sys.exit('exit')
 
-conn = psycopg2.connect(database=base_name, user=base_user, host=base_host, password=base_pass, async=1)
-wait(conn)
-cur = conn.cursor()
-psycopg2.extensions.register_type(psycopg2.extensions.UNICODE, cur)
+conn = psycopg2.connect(database=base_name, user=base_user, host=base_host, password=base_pass)
 
 pprint('*** Loading localization','white')
 locales = {}
