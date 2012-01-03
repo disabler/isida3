@@ -102,7 +102,8 @@ def cur_execute_fetchone(*params):
 	except:
 		conn.rollback()
 		cur.execute(*params)
-		return cur.fetchone()
+		try: return cur.fetchone()
+		except: return None
 	
 def cur_execute_fetchall(*params):
 	try: 
@@ -111,7 +112,8 @@ def cur_execute_fetchall(*params):
 	except:
 		conn.rollback()
 		cur.execute(*params)
-		return cur.fetchall()
+		try: return cur.fetchall()
+		except: return None
 	
 def cur_execute_fetchmany(*params):
 	try: 
@@ -120,7 +122,8 @@ def cur_execute_fetchmany(*params):
 	except:
 		conn.rollback()
 		cur.execute(params[:-1])
-		return cur.fetchmany(params[-1])
+		try: return cur.fetchmany(params[-1])
+		except: return None
 	
 def get_color(c):
 	color = os.environ.has_key('TERM')
