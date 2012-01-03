@@ -85,15 +85,15 @@ if '.svn' in dirs:
 	else: os.system('echo `svnversion` > %s' % ver_file)
 	os.system('echo Just Started! > %s' % updatelog_file)
 	bvers = str(readfile(ver_file)).replace('\n','').replace('\r','').replace('\t','').replace(' ','')
-	writefile(ver_file, svn_ver_format % (bvers,id_append))
+	writefile(ver_file, unicode(svn_ver_format % (bvers,id_append)).encode('utf-8'))
 elif '.git' in dirs:
 	USED_REPO = 'git'
 	os.system('git describe --always > %s' % ver_file)
 	revno = str(readfile(ver_file)).replace('\n','').replace('\r','').replace('\t','').replace(' ','')
-	writefile(ver_file, git_ver_format % (revno,id_append))
+	writefile(ver_file, unicode(git_ver_format % (revno,id_append)).encode('utf-8'))
 else:
 	USED_REPO = 'unknown'
-	writefile(ver_file, time_ver_format % (hex(int(os.path.getctime('../')))[2:],id_append))
+	writefile(ver_file, unicode(time_ver_format % (hex(int(os.path.getctime('../')))[2:],id_append)).encode('utf-8'))
 
 while 1:
 	try: execfile('kernel.py')
@@ -115,12 +115,12 @@ while 1:
 				if ver > 0:	 os.system('svn log --limit %s > %s' % (ver,updatelog_file))
 				elif ver < 0: os.system('echo Failed to detect version! > %s' % updatelog_file)
 				else: os.system('echo No Updates! > %s' % updatelog_file)
-				writefile(ver_file, svn_ver_format % (str(readfile(ver_file)).replace('\n','').replace('\r','').replace('\t','').replace(' ',''),id_append))
+				writefile(ver_file, unicode(svn_ver_format % (str(readfile(ver_file)).replace('\n','').replace('\r','').replace('\t','').replace(' ',''),id_append)).encode('utf-8'))
 			elif USED_REPO == 'git':
 				os.system('git pull')
 				os.system('git describe --always > %s' % ver_file)
 				revno = str(readfile(ver_file)).replace('\n','').replace('\r','').replace('\t','').replace(' ','')
-				writefile(ver_file, git_ver_format % (revno,id_append))
+				writefile(ver_file, unicode(git_ver_format % (revno,id_append)).encode('utf-8'))
 				os.system('git log -1 > %s' % updatelog_file)
 				writefile(updatelog_file, unicode(readfile(updatelog_file)).replace('\n\n','\n').replace('\r','').replace('\t',''))
 			else: os.system('echo Update not available! Read wiki at http://isida-bot.com to use SVN/GIT! > %s' % updatelog_file)

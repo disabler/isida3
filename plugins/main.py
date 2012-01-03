@@ -173,17 +173,17 @@ def atempt_to_shutdown(critical):
 	if not critical:
 		pprint('Close age base','dark_gray')
 		close_age()
+	conn.commit()
+	conn.close()
 	kill_all_threads()
 	flush_stats()
 
 def atempt_to_shutdown_with_reason(text,sleep_time,exit_type,critical):
-	global conn
 	pprint(text,'red')
 	send_presence_all(text)
 	atempt_to_shutdown(critical)
 	if sleep_time: time.sleep(sleep_time)
 	sys.exit(exit_type)
-
 
 def deidna(text):
 	def repl(t): return t.group().lower().decode('idna')

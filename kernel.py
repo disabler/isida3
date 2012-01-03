@@ -93,33 +93,46 @@ class KThread(threading.Thread):
 def cur_execute(*params):
 	cur = conn.cursor()
 	psycopg2.extensions.register_type(psycopg2.extensions.UNICODE, cur)
-	cur.execute(*params)
+	try: cur.execute(*params)
+	except: rollback()
 	cur.close()
 
 def cur_execute_fetchone(*params):
 	cur = conn.cursor()
 	psycopg2.extensions.register_type(psycopg2.extensions.UNICODE, cur)
-	cur.execute(*params)
-	try: par = cur.fetchone()
-	except: par = None
+	try:
+		cur.execute(*params)
+		try: par = cur.fetchone()
+		except: par = None
+	except:
+		conn.rollback()
+		par = None
 	cur.close()
 	return par
 	
 def cur_execute_fetchall(*params):
 	cur = conn.cursor()
 	psycopg2.extensions.register_type(psycopg2.extensions.UNICODE, cur)
-	cur.execute(*params)
-	try: par = cur.fetchall()
-	except: par = None
+	try:
+		cur.execute(*params)
+		try: par = cur.fetchall()
+		except: par = None
+	except:
+		conn.rollback()
+		par = None
 	cur.close()
 	return par
 	
 def cur_execute_fetchmany(*params):
 	cur = conn.cursor()
 	psycopg2.extensions.register_type(psycopg2.extensions.UNICODE, cur)
-	cur.execute(params[0],params[1])
-	try: par = cur.fetchmany(params[-1])
-	except: par = None
+	try:
+		cur.execute(params[0],params[1])
+		try: par = cur.fetchmany(params[-1])
+		except: par = None
+	except:
+		conn.rollback()
+		par = None
 	cur.close()
 	return par
 	
@@ -2077,8 +2090,8 @@ CommandsLog = None					# логгирование команд
 prefix = '_'						# префикс комманд
 msg_limit = 1000					# лимит размера сообщений
 botName = 'Isida-Bot'				# название бота
-botVersion = 'v3.0'				# версия бота
-capsVersion = botVersion[1:]		# версия для капса
+botVersion = u'v3.0β'				# версия бота
+capsVersion = botVersion[1:-1]		# версия для капса
 disco_config_node = 'http://isida-bot.com/config'
 pres_answer = []					# результаты посылки презенсов
 iq_request = {}						# iq запросы
@@ -2138,7 +2151,7 @@ if os.path.isfile(configname): execfile(configname)
 else: errorHandler('%s is missed.' % configname)
 
 if os.path.isfile(ver_file):
-	bvers = str(readfile(ver_file)).replace('\n','').replace('\r','').replace('\t','').replace(' ','')
+	bvers = readfile(ver_file).decode('utf-8').replace('\n','').replace('\r','').replace('\t','').replace(' ','')
 	botVersion += '.%s' % bvers
 if 'm' in botVersion.lower(): draw_warning('Launched bot\'s modification!')
 try: tmp = botOs
