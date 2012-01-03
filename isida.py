@@ -117,7 +117,7 @@ while 1:
 				else: os.system('echo No Updates! > %s' % updatelog_file)
 				writefile(ver_file, unicode(svn_ver_format % (str(readfile(ver_file)).replace('\n','').replace('\r','').replace('\t','').replace(' ',''),id_append)).encode('utf-8'))
 			elif USED_REPO == 'git':
-				os.system('git pull git@github.com:disabler/isida3.git')
+				os.system('git pull git://github.com/disabler/isida3.git')
 				os.system('git describe --always > %s' % ver_file)
 				revno = str(readfile(ver_file)).replace('\n','').replace('\r','').replace('\t','').replace(' ','')
 				writefile(ver_file, unicode(git_ver_format % (revno,id_append)).encode('utf-8'))
