@@ -117,7 +117,7 @@ def cur_execute_fetchall(*params):
 def cur_execute_fetchmany(*params):
 	cur = conn.cursor()
 	psycopg2.extensions.register_type(psycopg2.extensions.UNICODE, cur)
-	cur.execute(params[:-1])
+	cur.execute(params[0],params[1])
 	try: par = cur.fetchmany(params[-1])
 	except: par = None
 	cur.close()

@@ -179,7 +179,7 @@ def acl_presence(room,jid,nick,type,mass):
 				past_age = cur_execute_fetchone('select sum(age) from age where room=%s and jid=%s and status=%s',(room,getRoom(jid),1))
 				now_age  = cur_execute_fetchone('select time,age from age where room=%s and jid=%s and status=%s',(room,getRoom(jid),0))
 				r_age = 0
-				if past_age and now_age:
+				if past_age or now_age:
 					try: r_age += past_age[0]
 					except: pass
 					try: r_age += int(time.time())-now_age[0]+now_age[1]

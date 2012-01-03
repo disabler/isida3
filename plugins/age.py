@@ -48,10 +48,10 @@ def true_age_raw(type, jid, nick, text, xtype):
 		text = '%%%s%%' % text.lower()
 		real_jid = cur_execute_fetchone('select jid from age where room=%s and (nick like %s or jid like %s) order by -time,-status',(jid,text,text))
 	try:
-		if xtype: sbody = cur_execute_fetchmany('select * from age where room=%s and jid=%s',(jid,real_jid[0]),llim)
+		if xtype: sbody = cur_execute_fetchmany('select * from age where room=%s and jid=%s order by -time,-status',(jid,real_jid[0]),llim)
 		else:
 			t_age = cur_execute_fetchone('select sum(age) from age where room=%s and jid=%s',(jid,real_jid[0]))
-			sbody = cur_execute_fetchone('select * from age where room=%s and jid=%s',(jid,real_jid[0]))
+			sbody = cur_execute_fetchone('select * from age where room=%s and jid=%s order by -time,-status',(jid,real_jid[0]))
 			sbody = [sbody[:4] + t_age + sbody[5:]]
 	except:
 		sbody = None
