@@ -33,8 +33,7 @@ def sayto(type, jid, nick, text):
 		ga = get_level(jid, nick)
 		if ga[0] != 9: msg = L('You access level is to low!')
 		else:
-			cur_execute('select * from sayto')
-			cm = cur.fetchall()
+			cm = cur_execute_fetchall('select * from sayto')
 			if len(cm):
 				msg = ''
 				for cc in cm:
@@ -53,8 +52,7 @@ def sayto(type, jid, nick, text):
 		else: splitter = ' '
 		to,what = text.split(splitter,1)[0],text.split(splitter,1)[1]
 		frm = nick + '\n' + str(int(time.time()))
-		cur_execute('select status, jid from age where room=%s and nick=%s group by jid',(jid,to))
-		fnd = cur.fetchall()
+		fnd = cur_execute_fetchall('select status, jid from age where room=%s and nick=%s group by jid',(jid,to))
 		if len(fnd) == 1:
 			fnd = fnd[0]
 			if fnd[0]:
@@ -72,8 +70,7 @@ def sayto(type, jid, nick, text):
 			else: msg = L('All people with this nickname are here!')
 		else:
 			if '@' in to:
-				cur_execute('select status, jid from age where room=%s and jid=%s group by jid',(jid,to))
-				fnd = cur.fetchall()
+				fnd = cur_execute_fetchall('select status, jid from age where room=%s and jid=%s group by jid',(jid,to))
 				if fnd:
 					off_count = 0
 					for tmp in fnd:
@@ -93,8 +90,7 @@ def sayto(type, jid, nick, text):
 def sayto_presence(room,jid,nick,type,text):
 	global conn
 	if nick != '':
-		cur_execute('select * from sayto where room=%s and (jid=%s or jid=%s)',(room, getRoom(jid), nick))
-		cm = cur.fetchall()
+		cm = cur_execute_fetchall('select * from sayto where room=%s and (jid=%s or jid=%s)',(room, getRoom(jid), nick))
 		if len(cm):
 			cur_execute('delete from sayto where room=%s and (jid=%s or jid=%s)',(room, getRoom(jid), nick))
 			for cc in cm:
@@ -109,8 +105,7 @@ def cleanup_sayto_base():
 	ctime = int(time.time())
 	if ctime-last_cleanup_sayto_base > GT('sayto_cleanup_time'):
 		last_cleanup_sayto_base = ctime
-		cur_execute('select who, room, jid from sayto')
-		cm = cur.fetchall()
+		cm = cur_execute_fetchall('select who, room, jid from sayto')
 		if len(cm):
 			for cc in cm:
 				if '\n' in cc[0]:

@@ -26,7 +26,7 @@ def info_search(type, jid, nick, text):
 	if text != '':
 		cur_execute('delete from jid where server like %s',('<temporary>%',))
 		ttext = '%%%s%%' % text
-		tma = cur_execute('select * from jid where login like %s or server like %s or resourse like %s order by login',(ttext,ttext,ttext)).fetchmany(10)
+		tma = cur_execute_fetchmany('select * from jid where login like %s or server like %s or resourse like %s order by login',(ttext,ttext,ttext),10)
 		if len(tma):
 			msg = L('Found:')
 			cnd = 1
@@ -41,15 +41,12 @@ def info_res(type, jid, nick, text):
 	cur_execute('delete from jid where server like %s',('<temporary>%',))
 	conn.commit()
 	if text == 'count':
-		cur_execute('select resourse,count(*) from jid group by resourse order by -count(*)')
-		tlen = len(cur.fetchall())
+		tlen = len(cur_execute_fetchall('select resourse,count(*) from jid group by resourse order by -count(*)'))
 		text,jidbase = '',''
 	else:
-		text1 = '%'+text+'%'
-		cur_execute('select resourse,count(*) from jid where resourse like %s group by resourse order by -count(*)',(text1,))
-		tlen = len(cur.fetchall())
-		cur_execute('select resourse,count(*) from jid where resourse like %s group by resourse order by -count(*)',(text1,))
-		jidbase = cur.fetchmany(10)
+		text1 = '%%%s%%' % text
+		tlen = len(cur_execute_fetchall('select resourse,count(*) from jid where resourse like %s group by resourse order by -count(*)',(text1,)))
+		jidbase = cur_execute_fetchmany('select resourse,count(*) from jid where resourse like %s group by resourse order by -count(*)',(text1,),10)
 	if not tlen: msg = L('\'%s\' not found!') % text
 	else:
 		if text == '': msg = L('Total resources: %s') % str(tlen)
@@ -67,15 +64,12 @@ def info_serv(type, jid, nick, text):
 	cur_execute('delete from jid where server like %s',('<temporary>%',))
 	conn.commit()
 	if text == 'count':
-		cur_execute('select server,count(*) from jid group by server order by -count(*)')
-		tlen = len(cur.fetchall())
+		tlen = len(cur_execute_fetchall('select server,count(*) from jid group by server order by -count(*)'))
 		text,jidbase = '',''
 	else:
 		text1 = '%%%s%%' % text
-		cur_execute('select server,count(*) from jid where server like %s group by server order by -count(*)',(text1,))
-		tlen = len(cur.fetchall())
-		cur_execute('select server,count(*) from jid where server like %s group by server order by -count(*)',(text1,))
-		jidbase = cur.fetchall()
+		tlen = len(cur_execute_fetchall('select server,count(*) from jid where server like %s group by server order by -count(*)',(text1,)))
+		jidbase = cur_execute_fetchall('select server,count(*) from jid where server like %s group by server order by -count(*)',(text1,))
 	if not tlen: msg = L('\'%s\' not found!') % text
 	else:
 		if text == '': msg = L('Total servers: %s') % str(tlen)
@@ -107,8 +101,7 @@ def jidcatcher_presence(room,jid,nick,type,text):
 		aa2 = getServer(jid)
 		aa3 = getResourse(jid)
 		try:
-			cur_execute('select login from jid where login=%s and server=%s and resourse=%s',(aa1,aa2,aa3))
-			tmpp = cur.fetchone()
+			cur_execute_fetchone('select login from jid where login=%s and server=%s and resourse=%s',(aa1,aa2,aa3))
 			if not tmpp:
 				cur_execute('insert into jid values (%s,%s,%s)', (aa1,aa2,aa3))
 				conn.commit()

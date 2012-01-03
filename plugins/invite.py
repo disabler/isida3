@@ -28,8 +28,7 @@ def call_body(type, jid, nick, text):
 			reason = text.split('\n')[1]
 			text = text.split('\n')[0]
 		except: reason = None
-		cur_execute('select jid from age where room=%s and (nick=%s or jid=%s) group by jid',(jid,text,text))
-		fnd = cur.fetchall()
+		fnd = cur_execute_fetchall('select jid from age where room=%s and (nick=%s or jid=%s) group by jid',(jid,text,text))
 		if len(fnd) == 1:
 			whojid = getRoom(unicode(fnd[0][0]))
 			is_found = 0

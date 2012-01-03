@@ -36,8 +36,7 @@ def phonecode(type, jid, nick, text):
 						pn = text[4:]
 						if len(pn) < 7: pn = pn.ljust(7, '0')
 						elif len(pn) > 11: pn = pn[:7]
-						cur.execute('select * from def_ru_mobile where def=%s and defbegin<=%s and defend>=%s', (dc,pn,pn))
-						result = cur.fetchall()
+						result = cur_execute_fetchall('select * from def_ru_mobile where def=%s and defbegin<=%s and defend>=%s', (dc,pn,pn))
 						if result:
 							di = []
 							for res in result: di += ['%s, %s (%s) %s..%s, %s ' % res]
@@ -50,8 +49,7 @@ def phonecode(type, jid, nick, text):
 					text = text[:7] + 'x'*4
 					pos = 7
 					while pos:
-						cur.execute('select * from def_ru_stat where phone like %s', ('%s%%'%text,))
-						result = cur.fetchall()
+						result = cur_execute_fetchall('select * from def_ru_stat where phone like %s', ('%s%%'%text,))
 						if result:
 							def_info = []
 							for res in result:
@@ -73,8 +71,7 @@ def phonecode(type, jid, nick, text):
 				text = text[:8]+'x'*4
 				pos = 8
 				while pos > 2:
-					cur.execute('select * from def_ua_stat where phone like %s', ('%s%%'%text,))
-					result = cur.fetchall()
+					result = cur_execute_fetchall('select * from def_ua_stat where phone like %s', ('%s%%'%text,))
 					if result:
 						def_info = []
 						for res in result:
@@ -95,8 +92,7 @@ def phonecode(type, jid, nick, text):
 		else:
 			text = '%s%%'%text.lower().capitalize()
 			def_info = []
-			cur.execute('select * from def_ru_stat where city like %s', (text,))
-			result = cur.fetchall()
+			result = cur_execute_fetchall('select * from def_ru_stat where city like %s', (text,))
 			if result:
 				di = []
 				for res in result:
@@ -106,8 +102,7 @@ def phonecode(type, jid, nick, text):
 					di += [', '.join(res)]
 				di = '\n'.join(di)
 				def_info += [L('Country: %s\n%s') % (L('Russia'),di)]
-			cur.execute('select * from def_ua_stat where city like %s', (text,))
-			result = cur.fetchall()
+			result = cur_execute_fetchall('select * from def_ua_stat where city like %s', (text,))
 			if result:
 				di = []
 				for res in result:

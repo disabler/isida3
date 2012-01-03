@@ -60,18 +60,15 @@ def flood_actions(type, room, nick, answ, msg):
 
 def addAnswerToBase(tx):
 	if not len(tx) or tx.count(' ') == len(tx): return
-	cur_execute('select ind from answer')
-	lent = len(cur.fetchall())+1
+	lent = len(cur_execute_fetchall('select ind from answer'))+1
 	cur_execute('insert into answer values (%s,%s)', (lent,tx))
 	conn.commit()
 
 def getRandomAnswer(tx,room):
 	if not tx.strip(): return None
-	cur_execute('select ind from answer')
-	lent = len(cur.fetchall())
+	lent = len(cur_execute_fetchall('select ind from answer'))
 	mrand = randint(1,lent)
-	cur_execute('select body from answer where ind=%s', (mrand,))
-	answ = to_censore(cur.fetchone()[0],room)
+	answ = to_censore(cur_execute_fetchone('select body from answer where ind=%s', (mrand,))[0],room)
 	return answ
 
 def getSmartAnswer(type, room, nick, text):

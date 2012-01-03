@@ -42,12 +42,8 @@ def karma_top(jid, nick, text, order):
 	except: lim = GT('karma_show_default_limit')
 	if lim < 1: lim = 1
 	elif lim > GT('karma_show_max_limit'): lim = GT('karma_show_max_limit')
-	if order:
-		cur_execute('select jid,karma from karma where room=%s order by karma',(jid,))
-		stat = cur.fetchall()
-	else: 
-		cur_execute('select jid,karma from karma where room=%s order by -karma',(jid,))
-		stat = cur.fetchall()
+	if order: stat = cur_execute_fetchall('select jid,karma from karma where room=%s order by karma',(jid,))
+	else: stat = cur_execute_fetchall('select jid,karma from karma where room=%s order by -karma',(jid,))
 	if stat == None: return L('In this room karma is not changed!')
 	msg, cnt = '', 1
 	for tmp in stat:
@@ -68,8 +64,7 @@ def karma_get_limit(room,nick):
 	room = getRoom(room)
 	(acclvl, jid) = get_level(room,nick)
 	if acclvl >= 7: return -1,-1
-	cur_execute('select log from karma_limits where room=%s and jid=%s',(room,getRoom(jid)))
-	k_log = cur.fetchone()
+	k_log = cur_execute_fetchone('select log from karma_limits where room=%s and jid=%s',(room,getRoom(jid)))
 	k_size = get_config(room,'karma_limit_size')
 	if ''.join(re.findall('[-0-9, []]*', k_size)) != k_size: k_size = karma_size_wrong(room)
 	if len(json.loads(k_size)) != 2: k_size = karma_size_wrong(room)
@@ -94,8 +89,7 @@ def karma_show(jid, nick, text):
 		if get_config(getRoom(jid),'karma_limit'):
 			k_val = karma_get_limit(jid,text)[0]
 			if k_val >= 0: lim_text = '. ' + L('Karma limit is %s') % k_val
-		cur_execute('select karma from karma where room=%s and jid=%s',(jid,karmajid))
-		stat = cur.fetchone()
+		stat = cur_execute_fetchone('select karma from karma where room=%s and jid=%s',(jid,karmajid))
 		if stat == None: return L('%s have a clear karma') % atext + lim_text
 		else: return L('%s karma is %s') % (atext, karma_val(int(stat[0]))) + lim_text
 
@@ -142,8 +136,7 @@ def karma_clear(jid, nick, text):
 	else: return L('You can\'t change karma!')
 
 def karma_get_access(room,jid):
-	cur_execute('select karma from karma where room=%s and jid=%s',(room,jid))
-	stat = cur.fetchone()
+	stat = cur_execute_fetchone('select karma from karma where room=%s and jid=%s',(room,jid))
 	if stat == None: return None
 	if int(stat[0]) < GT('karma_limit'): return None
 	return True
@@ -210,15 +203,13 @@ def karma_change(room,jid,nick,type,text,value):
 			elif karmajid == jid: msg = L('You can\'t change own karma!')
 			elif get_config(getRoom(jid),'karma_limit') and karma_get_limit(room,nick)[0] == 0: msg = L('Karma limit is %s') % L('over') + '. ' + L('Please wait: %s') % un_unix(int(86400-(time.time() - karma_get_limit(room,nick)[2])))
 			else:
-				cur_execute('select last from karma_commiters where room=%s and jid=%s and karmajid=%s',(room,jid,karmajid))
-				stat = cur.fetchone()
+				stat = cur_execute_fetchone('select last from karma_commiters where room=%s and jid=%s and karmajid=%s',(room,jid,karmajid))
 				karma_valid, karma_time = None, int(time.time())
 				if stat == None: karma_valid = True
 				elif karma_time - int(stat[0]) >= GT('karma_timeout')[k_acc]: karma_valid = True
 				if karma_valid:
 					if k_acc < 7:
-						cur_execute('select log from karma_limits where room=%s and jid=%s',(room,jid))
-						k_log = cur.fetchone()
+						k_log = cur_execute_fetchone('select log from karma_limits where room=%s and jid=%s',(room,jid))
 						k_size = get_config(room,'karma_limit_size')
 						if ''.join(re.findall('[-0-9, []]*', k_size)) != k_size: k_size = karma_size_wrong(room)
 						if len(json.loads(k_size)) != 2: k_size = karma_size_wrong(room)
@@ -234,14 +225,12 @@ def karma_change(room,jid,nick,type,text,value):
 						else: cur_execute('insert into karma_limits values (%s,%s,%s)',(room,jid,'[%s]' % karma_time))
 					if stat: cur_execute('update karma_commiters set last=%s where room=%s and jid=%s and karmajid=%s',(karma_time,room,jid,karmajid))
 					else: cur_execute('insert into karma_commiters values (%s,%s,%s,%s)',(room,jid,karmajid,karma_time))
-					cur_execute('select karma from karma where room=%s and jid=%s',(room,karmajid))
-					stat = cur.fetchone()
+					stat = cur_execute_fetchone('select karma from karma where room=%s and jid=%s',(room,karmajid))
 					if stat:
 						stat = stat[0]+value
 						cur_execute('delete from karma where room=%s and jid=%s',(room,karmajid))
 					else: stat = value
 					cur_execute('insert into karma values (%s,%s,%s)',(room,karmajid,stat))
-					cur.fetchall()
 					msg = L('You changes %s\'s karma to %s. Next time to change across: %s') % (text,karma_val(stat),un_unix(GT('karma_timeout')[k_acc]))
 					conn.commit()
 					pprint('karma change in %s for %s to %s' % (room,text,stat),'green')

@@ -364,8 +364,7 @@ def status(type, jid, nick, text):
 			break
 	if is_found:
 		realjid = getRoom(get_level(jid,text)[1])
-		cur_execute('select message,status from age where jid=%s and room=%s and nick=%s',(realjid,jid,text))
-		stat = cur.fetchone()
+		stat = cur_execute_fetchone('select message,status from age where jid=%s and room=%s and nick=%s',(realjid,jid,text))
 		if stat:
 			if stat[1]: msg = L('leave this room.')
 			else:
@@ -525,16 +524,14 @@ def un_unix(val):
 
 def close_age_null():
 	cur_execute("delete from age where jid like '<temporary>%'")
-	cur_execute('select * from age where status=0 order by room')
-	ccu = cur.fetchall()
+	ccu = cur_execute_fetchall('select * from age where status=0 order by room')
 	cur_execute('delete from age where status=0')
 	for ab in ccu: cur_execute('insert into age values (%s,%s,%s,%s,%s,%s,%s,%s)', (ab[0],ab[1],ab[2],ab[3],ab[4],1,ab[6],ab[7]))
 	conn.commit()
 
 def close_age():
 	cur_execute('delete from age where jid like %s',('<temporary>%',))
-	cur_execute('select * from age where status=%s order by room',(0,))
-	ccu = cur.fetchall()
+	ccu = cur_execute_fetchall('select * from age where status=%s order by room',(0,))
 	cur_execute('delete from age where status=%s', (0,))
 	tt = int(time.time())
 	for ab in ccu: cur_execute('insert into age values (%s,%s,%s,%s,%s,%s,%s,%s)', (ab[0],ab[1],ab[2],tt,ab[4]+(tt-ab[3]),1,ab[6],ab[7]))
@@ -542,8 +539,7 @@ def close_age():
 
 def close_age_room(room):
 	cur_execute('delete from age where jid like %s',('<temporary>%',))
-	cur_execute('select * from age where status=%s and room=%s order by room',(0,room))
-	ccu = cur.fetchall()
+	ccu = cur_execute_fetchall('select * from age where status=%s and room=%s order by room',(0,room))
 	cur_execute('delete from age where status=%s and room=%s',(0,room))
 	tt = int(time.time())
 	for ab in ccu: cur_execute('insert into age values (%s,%s,%s,%s,%s,%s,%s,%s)', (ab[0],ab[1],ab[2],tt,ab[4]+(tt-ab[3]),1,ab[6],ab[7]))
@@ -1442,8 +1438,7 @@ def configure(type, jid, nick, text):
 
 def muc_filter_lock(type, jid, nick, text):
 	realjid = getRoom(get_level(jid,nick)[1])
-	cur_execute('select * from muc_lock where room=%s and jid=%s', (jid,realjid))
-	tmp = cur.fetchall()
+	tmp = cur_execute_fetchall('select * from muc_lock where room=%s and jid=%s', (jid,realjid))
 	if text in ['on','off']:
 		if tmp: cur_execute('delete from muc_lock where room=%s and jid=%s', (jid,realjid))
 		if text == 'on':

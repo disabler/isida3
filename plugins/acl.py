@@ -29,8 +29,7 @@ acl_actions = ['show','del'] + acl_acts
 acl_ver_tmp = {}
 
 def acl_show(jid):
-	cur_execute('select * from acl where jid=%s',(jid,))
-	a = cur.fetchall()
+	a = cur_execute_fetchall('select * from acl where jid=%s',(jid,))
 	if len(a):
 		msg = L('Acl:')
 		for tmp in a:
@@ -79,8 +78,7 @@ def acl_add_del(jid,text,flag):
 					no_command = False
 					break
 			if no_command: return L('Unknown command: %s') % text[1]
-		cur_execute('select * from acl where jid=%s and action=%s and type=%s and text=%s',(jid,acl_cmd, acl_sub_act, text[0]))
-		tmp = cur.fetchall()
+		tmp = cur_execute_fetchall('select * from acl where jid=%s and action=%s and type=%s and text=%s',(jid,acl_cmd, acl_sub_act, text[0]))
 		if tmp:
 			cur_execute('delete from acl where jid=%s and action=%s and type=%s and text=%s',(jid,acl_cmd, acl_sub_act, text[0]))
 			msg = [L('Removed:'),L('Updated:')][flag]
@@ -134,8 +132,7 @@ def acl_message(room,jid,nick,type,text):
 	#if not no_comm: return
 	if get_level(room,nick)[0] < 0: return
 	if getRoom(jid) == getRoom(Settings['jid']): return
-	cur_execute('select action,type,text,command,time from acl where jid=%s and (action=%s or action=%s or action like %s)',(room,'msg','message','all%'))
-	a = cur.fetchall()
+	a = cur_execute_fetchall('select action,type,text,command,time from acl where jid=%s and (action=%s or action=%s or action like %s)',(room,'msg','message','all%'))
 	no_comm = True
 	if a:
 		for tmp in a:
@@ -176,13 +173,11 @@ def acl_presence(room,jid,nick,type,mass):
 		return
 	# actions only on joins
 	#if was_joined: return
-	cur_execute('select action,type,text,command,time from acl where jid=%s and (action like %s or action like %s or action like %s or action like %s or action like %s or action like %s or action=%s or action=%s or action=%s or action=%s or action=%s or action=%s)',(room,'prs%','presence%','nick%','all%','role%','affiliation%','jid','jidfull','res','age','ver','version'))
-	a = cur.fetchall()
+	a = cur_execute_fetchall('select action,type,text,command,time from acl where jid=%s and (action like %s or action like %s or action like %s or action like %s or action like %s or action like %s or action=%s or action=%s or action=%s or action=%s or action=%s or action=%s)',(room,'prs%','presence%','nick%','all%','role%','affiliation%','jid','jidfull','res','age','ver','version'))
 	if a:
 		for tmp in a:
 			if tmp[0] == 'age':
-				cur_execute('select time,sum(age),status from age where room=%s and jid=%s order by status',(room,getRoom(jid)))
-				in_base = cur.fetchall()
+				in_base = cur_execute_fetchall('select time,sum(age),status from age where room=%s and jid=%s order by status',(room,getRoom(jid)))
 				if not in_base: r_age = 0
 				else:
 					try:

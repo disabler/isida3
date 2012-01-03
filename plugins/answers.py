@@ -25,10 +25,8 @@ def answers_ie(type, jid, nick, text):
 	if text.lower().strip().split(' ',1)[0] == 'export':
 		try: fname = text.lower().split(' ',1)[1]
 		except: fname = answers_file
-		cur_execute('select * from answer')
-		base_size = len(cur.fetchall())
-		cur_execute('select body from answer where body like %s group by body order by body',('%',))
-		fnd = cur.fetchall()
+		base_size = len(cur_execute_fetchall('select * from answer'))
+		fnd = cur_execute_fetchall('select body from answer where body like %s group by body order by body',('%',))
 		answer = ''
 		msg = L('Export to file: %s | Total records: %s | Unique records: %s') % (fname,str(base_size),str(len(fnd)))
 		for i in fnd:

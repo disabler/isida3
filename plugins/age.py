@@ -24,8 +24,7 @@
 def true_age_stat(type, jid, nick):
 	try: llim = GT('age_default_limit')
 	except: llim = 10
-	cur_execute('select nick,sum(age) from age where room=%s group by jid order by -sum(age),-time,-status',(jid,))
-	t_age = cur.fetchmany(llim)
+	t_age = cur_execute_fetchmany('select nick,sum(age) from age where room=%s group by jid order by -sum(age),-time,-status',(jid,),llim)
 	msg = L('Age statistic:\n%s') % '\n'.join(['%s\t%s' % (t[0],un_unix(t[1])) for t in t_age])
 	send_msg(type, jid, nick, msg)
 
@@ -44,21 +43,15 @@ def true_age_raw(type, jid, nick, text, xtype):
 	text = text[0]
 	if not text: text = nick
 	if llim > GT('age_max_limit'): llim = GT('age_max_limit')
-	cur_execute('select jid from age where room=%s and (nick=%s or jid=%s) order by -time,-status',(jid,text,text.lower()))
-	real_jid = cur.fetchone()
+	real_jid = cur_execute_fetchone('select jid from age where room=%s and (nick=%s or jid=%s) order by -time,-status',(jid,text,text.lower()))
 	if not real_jid:
 		text = '%%%s%%' % text.lower()
-		cur_execute('select jid from age where room=%s and (nick like %s or jid like %s) order by -time,-status',(jid,text,text))
-		real_jid = cur.fetchone()
+		real_jid = cur_execute_fetchone('select jid from age where room=%s and (nick like %s or jid like %s) order by -time,-status',(jid,text,text))
 	try:
-		if xtype: 
-			cur_execute('select * from age where room=%s and jid=%s',(jid,real_jid[0]))
-			sbody = cur.fetchmany(llim)
+		if xtype: sbody = cur_execute_fetchmany('select * from age where room=%s and jid=%s',(jid,real_jid[0]),llim)
 		else:
-			cur_execute('select sum(age) from age where room=%s and jid=%s',(jid,real_jid[0]))
-			t_age = cur.fetchone()
-			cur_execute('select * from age where room=%s and jid=%s',(jid,real_jid[0]))
-			sbody = cur.fetchone()
+			t_age = cur_execute_fetchone('select sum(age) from age where room=%s and jid=%s',(jid,real_jid[0]))
+			sbody = cur_execute_fetchone('select * from age where room=%s and jid=%s',(jid,real_jid[0]))
 			sbody = [sbody[:4] + t_age + sbody[5:]]
 	except:
 		sbody = None
@@ -100,19 +93,13 @@ def seen_raw(type, jid, nick, text, xtype):
 	text = text[0]
 	if not text: text = nick
 	if llim > GT('age_max_limit'): llim = GT('age_max_limit')
-	cur_execute('select jid from age where room=%s and (nick=%s or jid=%s) order by status,-time',(jid,text,text.lower()))
-	real_jid = cur.fetchone()
+	real_jid = cur_execute_fetchone('select jid from age where room=%s and (nick=%s or jid=%s) order by status,-time',(jid,text,text.lower()))
 	if not real_jid:
 		textt = '%%%s%%' % text.lower()
-		cur_execute('select jid from age where room=%s and (nick like %s or jid like %s) order by status,-time',(jid,textt,textt))
-		real_jid = cur.fetchone()
+		real_jid = cur_execute_fetchone('select jid from age where room=%s and (nick like %s or jid like %s) order by status,-time',(jid,textt,textt))
 	if real_jid:
-		if xtype: 
-			cur_execute('select * from age where room=%s and jid=%s order by status,-time',(jid,real_jid[0]))
-			sbody = cur.fetchmany(llim)
-		else: 
-			cur_execute('select * from age where room=%s and jid=%s order by status,-time',(jid,real_jid[0]))
-			sbody = [cur.fetchone()]
+		if xtype: sbody = cur_execute_fetchmany('select * from age where room=%s and jid=%s order by status,-time',(jid,real_jid[0]),llim)
+		else: sbody = [cur_execute_fetchone('select * from age where room=%s and jid=%s order by status,-time',(jid,real_jid[0]))]
 	else: sbody = None
 	if sbody:
 		msg = L('I see:')
@@ -150,21 +137,15 @@ def seenjid_raw(type, jid, nick, text, xtype):
 	ztype = None
 	if not text: text = nick
 	if llim > GT('age_max_limit'): llim = GT('age_max_limit')
-	cur_execute('select jid from age where room=%s and (nick like %s or jid like %s) group by jid order by status,-time',(jid,text,text.lower()))
-	real_jid = cur.fetchall()
+	real_jid = cur_execute_fetchall('select jid from age where room=%s and (nick like %s or jid like %s) group by jid order by status,-time',(jid,text,text.lower()))
 	if not real_jid:
-		txt = '%' + text.lower() + '%'
-		cur_execute('select jid from age where room=%s and (nick like %s or jid like %s) group by jid order by status,-time',(jid,txt,txt))
-		real_jid = cur.fetchall()
+		txt = '%%%s%%' % text.lower()
+		real_jid = cur_execute_fetchall('select jid from age where room=%s and (nick like %s or jid like %s) group by jid order by status,-time',(jid,txt,txt))
 	sbody = []
 	if real_jid:
 		for rj in real_jid:			
-			if xtype: 
-				cur_execute('select * from age where room=%s and jid=%s order by status, jid',(jid,rj[0]))
-				tmpbody = cur.fetchmany(llim)
-			else: 
-				cur_execute('select room, nick, jid, time, sum(age), status, type, message from age where room=%s and jid=%s group by jid order by status, jid',(jid,rj[0]))
-				tmpbody = cur.fetchmany(llim)
+			if xtype: tmpbody = cur_execute_fetchmany('select * from age where room=%s and jid=%s order by status, jid',(jid,rj[0]),llim)
+			else: tmpbody = cur_execute_fetchmany('select room, nick, jid, time, sum(age), status, type, message from age where room=%s and jid=%s group by jid order by status, jid',(jid,rj[0]),llim)
 			if tmpbody:
 				for t in tmpbody: sbody.append(t)
 	if sbody:

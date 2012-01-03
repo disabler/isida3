@@ -46,10 +46,10 @@ def gweather_raw(type, jid, nick, text, fully):
 
 	if len(text.strip()):
 		text = text.lower()
-		wzc = cur_execute('select * from gis where code like %s or lcity like %s',(text,text)).fetchall()
+		wzc = cur_execute_fetchall('select * from gis where code like %s or lcity like %s',(text,text))
 		if not wzc:
 			text = '%%%s%%' % text
-			wzc = cur_execute('select * from gis where code like %s or lcity like %s',(text,text)).fetchall()
+			wzc = cur_execute_fetchall('select * from gis where code like %s or lcity like %s',(text,text))
 		if wzc:
 			if len(wzc) == 1:
 				text = wzc[0][0]

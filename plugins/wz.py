@@ -28,8 +28,7 @@ def check_wz(text):
 	return None
 
 def get_weather(text):
-	cur_execute('select code from wz where code like %s or city like %s or counry like %s',(text,text,text))
-	wzc = cur.fetchall()
+	wzc = cur_execute_fetchall('select code from wz where code like %s or city like %s or counry like %s',(text,text,text))
 	if not wzc: return 'Not Found'
 	if len(wzc) != 1: return 'Not Found'
 	return load_page('http://weather.noaa.gov/pub/data/observations/metar/decoded/%s.TXT' % wzc[0][0].upper())
@@ -114,8 +113,7 @@ def weather_raw(type, jid, nick, text):
 
 def weather_search(type, jid, nick, text):
 	if len(text):
-		cur_execute('select code,city,counry from wz where code like %s or city like %s or counry like %s',(text,text,text))
-		wzc = cur.fetchall()
+		wzc = cur_execute_fetchall('select code,city,counry from wz where code like %s or city like %s or counry like %s',(text,text,text))
 		if not wzc: msg = msg = L('City not found!')
 		else:
 			msg = ''

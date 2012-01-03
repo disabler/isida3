@@ -25,8 +25,7 @@ def wtfsearch(type, jid, nick, text):
 	msg = L('What need to find?')
 	if len(text):
 		text = '%%%s%%' % text
-		cur_execute('select * from wtf where (room=%s or room=%s or room=%s) and (room like %s or jid like %s or nick like %s or wtfword like %s or wtftext like %s or time like %s)',(jid,'global','import',text,text,text,text,text,text))
-		ww = cur.fetchall()
+		ww = cur_execute_fetchall('select * from wtf where (room=%s or room=%s or room=%s) and (room like %s or jid like %s or nick like %s or wtfword like %s or wtftext like %s or time like %s)',(jid,'global','import',text,text,text,text,text,text))
 		msg = ''
 		for www in ww: msg += www[4]+', '
 		if len(msg): msg = L('Some matches in definitions: %s') % msg[:-2]
@@ -34,19 +33,17 @@ def wtfsearch(type, jid, nick, text):
 	send_msg(type, jid, nick, msg)
 
 def wtfrand(type, jid, nick):
-	cur_execute('select * from wtf where room=%s or room=%s or room=%s',(jid,'global','import'))
-	ww = cur.fetchall()
+	ww = cur_execute_fetchall('select * from wtf where room=%s or room=%s or room=%s',(jid,'global','import'))
 	tlen = len(ww)
 	ww = ww[randint(0,tlen-1)]
 	msg = L('I know that %s is %s') % (ww[4],ww[5])
 	send_msg(type, jid, nick, msg)
 
 def wtfnames(type, jid, nick, text):
-	if text == 'all': cur_execute('select * from wtf where room=%s or room=%s or room=%s',(jid,'global','import'))
-	elif text == 'global': cur_execute('select * from wtf where room=%s',('global',))
-	elif text == 'import': cur_execute('select * from wtf where room=%s',('import',))
-	else: cur_execute('select * from wtf where room=%s',(jid,))
-	tmp = cur.fetchall()
+	if text == 'all': tmp = cur_execute_fetchall('select * from wtf where room=%s or room=%s or room=%s',(jid,'global','import'))
+	elif text == 'global': tmp = cur_execute_fetchall('select * from wtf where room=%s',('global',))
+	elif text == 'import': tmp = cur_execute_fetchall('select * from wtf where room=%s',('import',))
+	else: tmp = cur_execute_fetchall('select * from wtf where room=%s',(jid,))
 	msg = ''
 	for ww in tmp: msg += ww[4]+', '
 	if len(msg): msg = L('All I know is: %s') % msg[:-2]
@@ -54,14 +51,10 @@ def wtfnames(type, jid, nick, text):
 	send_msg(type, jid, nick, msg)
 
 def wtfcount(type, jid, nick):
-	cur_execute('select * from wtf where 1=1')
-	tlen = len(cur.fetchall())
-	cur_execute('select * from wtf where room=%s',(jid,))
-	cnt = len(cur.fetchall())
-	cur_execute('select * from wtf where room=%s',('global',))
-	glb = len(cur.fetchall())
-	cur_execute('select * from wtf where room=%s',('import',))
-	imp = len(cur.fetchall())
+	tlen = len(cur_execute_fetchall('select * from wtf where 1=1'))
+	cnt = len(cur_execute_fetchall('select * from wtf where room=%s',(jid,)))
+	glb = len(cur_execute_fetchall('select * from wtf where room=%s',('global',)))
+	imp = len(cur_execute_fetchall('select * from wtf where room=%s',('import',)))
 	msg = L('Locale definition: %s\nGlobal: %s\nImported: %s\nTotal: %s') % (cnt,glb,imp,tlen)
 	send_msg(type, jid, nick, msg)
 
@@ -92,8 +85,7 @@ def wtfp(type, jid, nick, text):
 
 def wtf_get(ff,type, jid, nick, text):
 	if len(text):
-		cur_execute('select * from wtf where (room=%s or room=%s or room=%s) and wtfword=%s',(jid,'global','import',text))
-		ww = cur.fetchone()
+		ww = cur_execute_fetchone('select * from wtf where (room=%s or room=%s or room=%s) and wtfword=%s',(jid,'global','import',text))
 		if ww:
 			msg = L('I know that %s is %s') % (text,ww[4])
 			if ff == 1: msg += L('\nfrom: %s %s') % (ww[2],'['+ww[5]+']')
@@ -110,8 +102,7 @@ def dfn(type, jid, nick, text):
 		ti = text.index('=')
 		what = del_space_end(text[:ti])
 		text = del_space_begin(text[ti+1:])
-		cur_execute('select * from wtf where (room=%s or room=%s or room=%s) and wtfword=%s order by lim',(jid,'global','import',what))
-		matches = cur.fetchone()
+		matches = cur_execute_fetchone('select * from wtf where (room=%s or room=%s or room=%s) and wtfword=%s order by lim',(jid,'global','import',what))
 		if matches:
 			if matches[7] > al:
 				msg,text = L('Not enough rights!'),''
@@ -126,8 +117,7 @@ def dfn(type, jid, nick, text):
 				cur_execute('delete from wtf where wtfword=%s and room=%s',(what,jid))
 		elif text == '': msg = L('Nothing to remove!')
 		else: msg = L('Definition saved!')
-		cur_execute('select * from wtf where 1=1')
-		idx = len(cur.fetchall())
+		idx = len(cur_execute_fetchall('select * from wtf where 1=1'))
 		if text != '': cur_execute('insert into wtf values (%s,%s,%s,%s,%s,%s,%s,%s)', (idx, jid, realjid, nick, what, text, timeadd(tuple(time.localtime())),al))
 		conn.commit()
 	else: msg = L('What need to remember?')
@@ -141,8 +131,7 @@ def gdfn(type, jid, nick, text):
 		ti = text.index('=')
 		what = del_space_end(text[:ti])
 		text = del_space_begin(text[ti+1:])
-		cur_execute('select * from wtf where (room=%s or room=%s or room=%s) and wtfword=%s order by lim',(jid,'global','import',what))
-		matches = cur.fetchone()
+		matches = cur_execute_fetchone('select * from wtf where (room=%s or room=%s or room=%s) and wtfword=%s order by lim',(jid,'global','import',what))
 		if matches:
 			if matches[7] > al:
 				msg,text = L('Not enough rights!'),''
@@ -156,8 +145,7 @@ def gdfn(type, jid, nick, text):
 				cur_execute('delete from wtf where wtfword=%s',(what,))
 		elif text == '': msg = L('Nothing to remove!')
 		else: msg = L('Definition saved!')
-		cur_execute('select * from wtf where 1=1')
-		idx = len(cur.fetchall())
+		idx = len(cur_execute_fetchall('select * from wtf where 1=1'))
 		if text != '': cur_execute('insert into wtf values (%s,%s,%s,%s,%s,%s,%s,%s)', (idx, 'global', realjid, nick, what, text, timeadd(tuple(time.localtime())),al))
 		conn.commit()
 	else: msg = L('What need to remember?')

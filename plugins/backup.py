@@ -86,8 +86,7 @@ def conf_backup(type, jid, nick, text):
 				setup = getFile(c_file,{})
 				try: backup_async[back_id]['bot_config'] = setup[jid]
 				except: backup_async[back_id]['bot_config'] = ''
-				cur_execute('select action,type,text,command,time from acl where jid=%s',(jid,))
-				backup_async[back_id]['acl'] = cur.fetchall()
+				backup_async[back_id]['acl'] = cur_execute_fetchall('select action,type,text,command,time from acl where jid=%s',(jid,))
 				backup_async[back_id]['rss'] = [tmp[0:4]+[tmp[5]] for tmp in getFile(feeds,[]) if tmp[4]==jid]
 				
 				msg = L('Copying completed!')
@@ -136,8 +135,7 @@ def conf_backup(type, jid, nick, text):
 							if [jid]+tmp not in aliases: aliases.append([jid]+tmp)
 						writefile(alfile,str(aliases))
 						for tmp in raw_back['acl']:
-							cur_execute('select action,type,text,command,time from acl where jid=%s and action=%s and type=%s and text=%s',(jid,tmp[0],tmp[1],tmp[2]))
-							isit = cur.fetchall()
+							isit = cur_execute_fetchall('select action,type,text,command,time from acl where jid=%s and action=%s and type=%s and text=%s',(jid,tmp[0],tmp[1],tmp[2]))
 							if not isit: cur_execute('insert into acl values (%s,%s,%s,%s,%s,%s)', tuple([jid]+list(tmp)))
 							conn.commit()
 						feedbase = getFile(feeds,[])

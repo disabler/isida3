@@ -94,6 +94,33 @@ def cur_execute(*params):
 	except:
 		conn.rollback()
 		cur.execute(*params)
+
+def cur_execute_fetchone(*params):
+	try: 
+		cur.execute(*params)
+		return cur.fetchone()
+	except:
+		conn.rollback()
+		cur.execute(*params)
+		return cur.fetchone()
+	
+def cur_execute_fetchall(*params):
+	try: 
+		cur.execute(*params)
+		return cur.fetchall()
+	except:
+		conn.rollback()
+		cur.execute(*params)
+		return cur.fetchall()
+	
+def cur_execute_fetchmany(*params,count):
+	try: 
+		cur.execute(*params)
+		return cur.fetchmany(count)
+	except:
+		conn.rollback()
+		cur.execute(*params)
+		return cur.fetchmany(count)
 	
 def get_color(c):
 	color = os.environ.has_key('TERM')
@@ -1089,8 +1116,7 @@ def iqCB(sess,iq):
 						skip_owner = getRoom(jid) in ownerbase
 						gr = getRoom(room)
 						if get_tag_item(msg,'message','type') == 'chat' and not skip_owner:
-							cur_execute('select * from muc_lock where room=%s and jid=%s', (room,tojid))
-							tmp = cur.fetchall()
+							tmp = cur_execute_fetchall('select * from muc_lock where room=%s and jid=%s', (room,tojid))
 							if tmp: mute = True
 						if skip_owner: pass
 						elif get_config(gr,'muc_filter') and not mute:
@@ -1098,8 +1124,7 @@ def iqCB(sess,iq):
 
 							# Mute newbie
 							if get_config(gr,'muc_filter_newbie') and msg and not mute:
-								cur_execute('select time,sum(age),status from age where room=%s and jid=%s order by status',(gr,getRoom(jid)))
-								in_base = cur.fetchall()
+								in_base = cur_execute('select time,sum(age),status from age where room=%s and jid=%s order by status',(gr,getRoom(jid)))
 								if not in_base: nmute = True
 								else:
 									tmp = in_base[0]
@@ -1335,8 +1360,7 @@ def iqCB(sess,iq):
 
 						# Whitelist
 						if get_config(gr,'muc_filter_whitelist') and msg and not mute and newjoin:
-							cur_execute('select jid from age where room=%s and jid=%s',(gr,getRoom(jid)))
-							in_base = cur.fetchone()
+							in_base = cur_execute_fetchone('select jid from age where room=%s and jid=%s',(gr,getRoom(jid)))
 							if not in_base:
 								pprint('MUC-Filter whitelist: %s/%s %s' % (gr,nick,jid),'brown')
 								msg,mute = unicode(Node('presence', {'from': tojid, 'type': 'error', 'to':jid}, payload = ['replace_it',Node('error', {'type': 'auth','code':'403'}, payload=[Node('forbidden',{'xmlns':'urn:ietf:params:xml:ns:xmpp-stanzas'},[]),Node('text',{'xmlns':'urn:ietf:params:xml:ns:xmpp-stanzas'},[L('Deny by whitelist!')])])])).replace('replace_it',get_tag(msg,'presence')),True
@@ -1824,8 +1848,7 @@ def presenceCB(sess,mess):
 						if tmp_room == room and hashes[tmp] == current_hash:
 							tmp_access,tmp_jid = get_level(room,tmp_nick)
 							if tmp_access <= 3 and tmp_jid != 'None':
-								cur_execute('select time,sum(age),status from age where room=%s and jid=%s order by status',(room,getRoom(tmp_jid)))
-								in_base = cur.fetchall()
+								in_base = cur_execute('select time,sum(age),status from age where room=%s and jid=%s order by status',(room,getRoom(tmp_jid)))
 								if not in_base: nmute = True
 								else:
 									tmp = in_base[0]
@@ -1910,8 +1933,7 @@ def presenceCB(sess,mess):
 			elif al < 4 and get_config(getRoom(room),'censor_action_non_member') != 'off':
 				act = get_config(getRoom(room),'censor_action_non_member')
 				muc_filter_action(act,jid2,getRoom(room),cens_text)
-	cur_execute('select * from age where room=%s and jid=%s and nick=%s',(room, jid, nick))
-	ab = cur.fetchone()
+	ab = cur_execute_fetchone('select * from age where room=%s and jid=%s and nick=%s',(room, jid, nick))
 	ttext = '%s\n%s\n%s\n%s\n%s' % (role,affiliation,priority,show,text)
 	if ab:
 		if type=='unavailable': cur_execute('update age set time=%s, age=%s, status=%s, type=%s, message=%s where room=%s and jid=%s and nick=%s', (tt,ab[4]+(tt-ab[3]),1,exit_type,exit_message,room, jid, nick))
@@ -1985,8 +2007,7 @@ def check_rss():
 
 def talk_count(room,jid,nick,text):
 	jid = getRoom(jid)
-	cur_execute('select * from talkers where room=%s and jid=%s',(room,jid))
-	ab = cur.fetchone()
+	ab = cur_execute('select * from talkers where room=%s and jid=%s',(room,jid))
 	wtext = len(reduce_spaces_all(text).split(' '))
 	if ab: cur_execute('update talkers set nick=%s, words=%s, frases=%s where room=%s and jid=%s', (nick,ab[3]+wtext,ab[4]+1,room,jid))
 	else: cur_execute('insert into talkers values (%s,%s,%s,%s,%s)', (room, jid, nick, wtext, 1))
