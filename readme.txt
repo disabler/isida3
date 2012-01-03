@@ -1,6 +1,16 @@
 short howto for isida-bot
 
-- installation -
+
+-------- depends --------
+
+1. python-psycopg2 >= 2.4.2
+2. python >= 2.7
+3. git-core >= 1.7.1
+4. postresql >= 8.4
+5. openssl >= 1.0.0e
+
+
+-------- installation --------
 
 #download by svn in any folder from official repository by:
 git clone git://github.com/disabler/isida3.git isida
@@ -12,7 +22,8 @@ createdb isidabot -E UTF8 -T template0
 psql -U isidabot isidabot -f pgsql.schema
 exit
 
-- launch -
+
+-------- launch --------
 
 1. rename defaul_config.py to config.py and fill look inside
 2. create startup databases with "python create_databases.py" command
@@ -21,7 +32,7 @@ exit
 5. type in console: "sh launch.sh &" for launch
 
 
-- fast install and launch -
+-------- fast install and launch --------
 
 git clone git://github.com/disabler/isida3.git isida
 cd isida
