@@ -121,8 +121,6 @@ def phonecode(type, jid, nick, text):
 			if def_info: result = '\n\n'.join(def_info)
 			else: result = L('Not found!')
 		msg = result
-		cur.close()
-		conn.close()
 	else: msg = L('What?')
    	send_msg(type, jid, nick, msg)
 

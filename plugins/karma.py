@@ -109,7 +109,6 @@ def karma_set(jid, nick, text):
 			else:
 				cur_execute('delete from karma where room=%s and jid=%s',(jid,karmajid))
 				cur_execute('insert into karma values (%s,%s,%s)',(jid,karmajid,val))
-				conn.commit()
 				val = karma_val(val)
 				return L('You changes %s\'s karma to %s') % (text,val)
 		else: return L('You can\'t change karma!')
@@ -130,7 +129,6 @@ def karma_clear(jid, nick, text):
 			if param in ['','all','karma','limits']:
 				if param in ['','all','karma']: cur_execute('delete from karma where room=%s and jid=%s',(jid,karmajid))
 				if param in ['all','limits']: cur_execute('delete from karma_limits where room=%s and jid=%s',(jid,karmajid))
-				conn.commit()
 				return L('You clear karma for %s') % text
 			else: return L('Wrong arguments!')
 	else: return L('You can\'t change karma!')
@@ -232,7 +230,6 @@ def karma_change(room,jid,nick,type,text,value):
 					else: stat = value
 					cur_execute('insert into karma values (%s,%s,%s)',(room,karmajid,stat))
 					msg = L('You changes %s\'s karma to %s. Next time to change across: %s') % (text,karma_val(stat),un_unix(GT('karma_timeout')[k_acc]))
-					conn.commit()
 					pprint('karma change in %s for %s to %s' % (room,text,stat),'green')
 					am = None
 					if get_config(room,'karma_action'):

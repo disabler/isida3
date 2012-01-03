@@ -183,7 +183,7 @@ def atempt_to_shutdown_with_reason(text,sleep_time,exit_type,critical):
 	atempt_to_shutdown(critical)
 	if sleep_time: time.sleep(sleep_time)
 	sys.exit(exit_type)
-	conn.commit()
+
 
 def deidna(text):
 	def repl(t): return t.group().lower().decode('idna')
@@ -527,7 +527,6 @@ def close_age_null():
 	ccu = cur_execute_fetchall('select * from age where status=0 order by room')
 	cur_execute('delete from age where status=0')
 	for ab in ccu: cur_execute('insert into age values (%s,%s,%s,%s,%s,%s,%s,%s)', (ab[0],ab[1],ab[2],ab[3],ab[4],1,ab[6],ab[7]))
-	conn.commit()
 
 def close_age():
 	cur_execute('delete from age where jid like %s',('<temporary>%',))
@@ -535,7 +534,7 @@ def close_age():
 	cur_execute('delete from age where status=%s', (0,))
 	tt = int(time.time())
 	for ab in ccu: cur_execute('insert into age values (%s,%s,%s,%s,%s,%s,%s,%s)', (ab[0],ab[1],ab[2],tt,ab[4]+(tt-ab[3]),1,ab[6],ab[7]))
-	conn.commit()
+
 
 def close_age_room(room):
 	cur_execute('delete from age where jid like %s',('<temporary>%',))
@@ -543,7 +542,7 @@ def close_age_room(room):
 	cur_execute('delete from age where status=%s and room=%s',(0,room))
 	tt = int(time.time())
 	for ab in ccu: cur_execute('insert into age values (%s,%s,%s,%s,%s,%s,%s,%s)', (ab[0],ab[1],ab[2],tt,ab[4]+(tt-ab[3]),1,ab[6],ab[7]))
-	conn.commit()
+
 
 def sfind(mass,stri):
 	for a in mass:
@@ -1447,7 +1446,6 @@ def muc_filter_lock(type, jid, nick, text):
 		else: st = L('off')
 	elif tmp: st = L('on')
 	else: st = L('off')
-	conn.commit()
 	msg = L('Ignore messages from unaffiliated participants in private - %s') % st
 	send_msg(type, jid, nick, msg)
 

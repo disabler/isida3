@@ -137,7 +137,6 @@ def conf_backup(type, jid, nick, text):
 						for tmp in raw_back['acl']:
 							isit = cur_execute_fetchall('select action,type,text,command,time from acl where jid=%s and action=%s and type=%s and text=%s',(jid,tmp[0],tmp[1],tmp[2]))
 							if not isit: cur_execute('insert into acl values (%s,%s,%s,%s,%s,%s)', tuple([jid]+list(tmp)))
-							conn.commit()
 						feedbase = getFile(feeds,[])
 						for tmp in raw_back['rss']:
 							isit = False

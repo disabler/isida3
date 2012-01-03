@@ -45,7 +45,6 @@ def answers_ie(type, jid, nick, text):
 				if i != '':
 					cur_execute('insert into answer values (%s,%s)', (idx,unicode(i.strip())))
 					idx += 1
-			conn.commit()
 		else: msg = L('File %s not found!') % fname
 	else: msg = L('What?')
 	send_msg(type, jid, nick, msg)

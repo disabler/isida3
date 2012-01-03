@@ -65,7 +65,6 @@ def sayto(type, jid, nick, text):
 				if tmp[0]:
 					cu.execute('insert into sayto values (%s,%s,%s,%s)', (frm, jid, tmp[1], what))
 					off_count += 1
-			conn.commit()
 			if off_count: msg = L('I seen some people with this nick, and I can convey is incorrect. Coincidence: %s, and count convey messages: %s') % (str(len(fnd)), str(off_count))
 			else: msg = L('All people with this nickname are here!')
 		else:
@@ -84,21 +83,19 @@ def sayto(type, jid, nick, text):
 					cur_execute('insert into sayto values (%s,%s,%s,%s)', (frm, jid, to, what))
 			else: msg = L('I didn\'t see user with nick %s. You can use jid.') % to
 	else: msg = L('What convey to?')
-	conn.commit()
 	send_msg(type, jid, nick, msg)
 
 def sayto_presence(room,jid,nick,type,text):
 	global conn
 	if nick != '':
 		cm = cur_execute_fetchall('select * from sayto where room=%s and (jid=%s or jid=%s)',(room, getRoom(jid), nick))
-		if len(cm):
+		if cm:
 			cur_execute('delete from sayto where room=%s and (jid=%s or jid=%s)',(room, getRoom(jid), nick))
 			for cc in cm:
 				if '\n' in cc[0]:
 					zz = cc[0].split('\n')
 					send_msg('chat', room, nick, L('%s (%s ago) convey for you: %s') % (zz[0], un_unix(time.time()-int(zz[1])), cc[3]))
 				else: send_msg('chat', room, nick, L('%s convey for you: %s') % (cc[3], cc[0]))
-			conn.commit()
 
 def cleanup_sayto_base():
 	global last_cleanup_sayto_base
@@ -112,7 +109,6 @@ def cleanup_sayto_base():
 					tim = int(cc[0].split('\n')[1])
 					if ctime-tim > GT('sayto_timeout'): cur_execute('delete from sayto where room=%s and jid=%s',(cc[1], cc[2]))
 				else: cur_execute('delete from sayto where room=%s and jid=%s',(cc[1], cc[2]))
-			conn.commit()
 
 def sayjid(type, jid, nick, text):
 	try:
