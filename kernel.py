@@ -46,6 +46,7 @@ import psycopg2
 import psycopg2.extensions
 import random
 import re
+import select
 import simplejson
 import socket
 import sqlite3
@@ -102,6 +103,7 @@ def cur_execute_fetchone(*params):
 	except:
 		conn.rollback()
 		cur.execute(*params)
+		wait(cur.connection)
 		try: return cur.fetchone()
 		except: return None
 	
@@ -112,6 +114,7 @@ def cur_execute_fetchall(*params):
 	except:
 		conn.rollback()
 		cur.execute(*params)
+		wait(cur.connection)
 		try: return cur.fetchall()
 		except: return None
 	
@@ -122,6 +125,7 @@ def cur_execute_fetchmany(*params):
 	except:
 		conn.rollback()
 		cur.execute(params[:-1])
+		wait(cur.connection)
 		try: return cur.fetchmany(params[-1])
 		except: return None
 	
@@ -2058,6 +2062,18 @@ def draw_warning(wt):
 	pprint(wt,'bright_red')
 	pprint('!'*len(wt),'bright_red')
 
+def wait(conn):
+    while 1:
+        state = conn.poll()
+        if state == psycopg2.extensions.POLL_OK:
+            break
+        elif state == psycopg2.extensions.POLL_WRITE:
+            select.select([], [conn.fileno()], [])
+        elif state == psycopg2.extensions.POLL_READ:
+            select.select([conn.fileno()], [], [])
+        else:
+            raise psycopg2.OperationalError("poll() returned %s" % state)
+	
 # --------------------- Иницилизация переменных ----------------------
 
 nmbrs = ['0','1','2','3','4','5','6','7','8','9','.']
@@ -2148,7 +2164,8 @@ if(sys.argv[0]) != 'isida.py':
 	draw_warning('Ugly launch detect! Read wiki!')
 	sys.exit('exit')
 
-conn = psycopg2.connect(database=base_name, user=base_user, host=base_host, password=base_pass)
+conn = psycopg2.connect(database=base_name, user=base_user, host=base_host, password=base_pass, async=1)
+wait(conn)
 cur = conn.cursor()
 psycopg2.extensions.register_type(psycopg2.extensions.UNICODE, cur)
 
