@@ -43,6 +43,7 @@ import os
 import math
 import pdb
 import psycopg2
+import psycopg2.extensions
 import random
 import re
 import simplejson
@@ -88,6 +89,12 @@ class KThread(threading.Thread):
 
 	def kill(self): self.killed = True
 
+def cur_execute(*params):
+	try: cur_execute(*params)
+	except:
+		conn.rollback()
+		cur_execute(*params)
+	
 def get_color(c):
 	color = os.environ.has_key('TERM')
 	colors = {'clear':'[0m','blue':'[34m','red':'[31m','magenta':'[35m','green':'[32m','cyan':'[36m','brown':'[33m','light_gray':'[37m','black':'[30m','bright_blue':'[34;1m','bright_red':'[31;1m','purple':'[35;1m','bright_green':'[32;1m','bright_cyan':'[36;1m','yellow':'[33;1m','dark_gray':'[30;1m','white':'[37;1m'}
@@ -1082,12 +1089,8 @@ def iqCB(sess,iq):
 						skip_owner = getRoom(jid) in ownerbase
 						gr = getRoom(room)
 						if get_tag_item(msg,'message','type') == 'chat' and not skip_owner:
-							conn = psycopg2.connect("dbname='%s' user='%s' host='%s' password='%s'" % (base_name,base_user,base_host,base_pass));
-							cur = conn.cursor()
-							cur.execute('select * from muc_lock where room=%s and jid=%s', (room,tojid))
+							cur_execute('select * from muc_lock where room=%s and jid=%s', (room,tojid))
 							tmp = cur.fetchall()
-							cur.close()
-							conn.close()
 							if tmp: mute = True
 						if skip_owner: pass
 						elif get_config(gr,'muc_filter') and not mute:
@@ -1095,12 +1098,8 @@ def iqCB(sess,iq):
 
 							# Mute newbie
 							if get_config(gr,'muc_filter_newbie') and msg and not mute:
-								conn = psycopg2.connect("dbname='%s' user='%s' host='%s' password='%s'" % (base_name,base_user,base_host,base_pass));
-								cur = conn.cursor()
-								cur.execute('select time,sum(age),status from age where room=%s and jid=%s order by status',(gr,getRoom(jid)))
+								cur_execute('select time,sum(age),status from age where room=%s and jid=%s order by status',(gr,getRoom(jid)))
 								in_base = cur.fetchall()
-								cur.close()
-								conn.close()
 								if not in_base: nmute = True
 								else:
 									tmp = in_base[0]
@@ -1336,12 +1335,8 @@ def iqCB(sess,iq):
 
 						# Whitelist
 						if get_config(gr,'muc_filter_whitelist') and msg and not mute and newjoin:
-							conn = psycopg2.connect("dbname='%s' user='%s' host='%s' password='%s'" % (base_name,base_user,base_host,base_pass));
-							cur = conn.cursor()
-							cur.execute('select jid from age where room=%s and jid=%s',(gr,getRoom(jid)))
+							cur_execute('select jid from age where room=%s and jid=%s',(gr,getRoom(jid)))
 							in_base = cur.fetchone()
-							cur.close()
-							conn.close()
 							if not in_base:
 								pprint('MUC-Filter whitelist: %s/%s %s' % (gr,nick,jid),'brown')
 								msg,mute = unicode(Node('presence', {'from': tojid, 'type': 'error', 'to':jid}, payload = ['replace_it',Node('error', {'type': 'auth','code':'403'}, payload=[Node('forbidden',{'xmlns':'urn:ietf:params:xml:ns:xmpp-stanzas'},[]),Node('text',{'xmlns':'urn:ietf:params:xml:ns:xmpp-stanzas'},[L('Deny by whitelist!')])])])).replace('replace_it',get_tag(msg,'presence')),True
@@ -1829,12 +1824,8 @@ def presenceCB(sess,mess):
 						if tmp_room == room and hashes[tmp] == current_hash:
 							tmp_access,tmp_jid = get_level(room,tmp_nick)
 							if tmp_access <= 3 and tmp_jid != 'None':
-								conn = psycopg2.connect("dbname='%s' user='%s' host='%s' password='%s'" % (base_name,base_user,base_host,base_pass));
-								cur = conn.cursor()
-								cur.execute('select time,sum(age),status from age where room=%s and jid=%s order by status',(room,getRoom(tmp_jid)))
+								cur_execute('select time,sum(age),status from age where room=%s and jid=%s order by status',(room,getRoom(tmp_jid)))
 								in_base = cur.fetchall()
-								cur.close()
-								conn.close()
 								if not in_base: nmute = True
 								else:
 									tmp = in_base[0]
@@ -1919,20 +1910,16 @@ def presenceCB(sess,mess):
 			elif al < 4 and get_config(getRoom(room),'censor_action_non_member') != 'off':
 				act = get_config(getRoom(room),'censor_action_non_member')
 				muc_filter_action(act,jid2,getRoom(room),cens_text)
-	conn = psycopg2.connect("dbname='%s' user='%s' host='%s' password='%s'" % (base_name,base_user,base_host,base_pass));
-	cur = conn.cursor()
-	cur.execute('select * from age where room=%s and jid=%s and nick=%s',(room, jid, nick))
+	cur_execute('select * from age where room=%s and jid=%s and nick=%s',(room, jid, nick))
 	ab = cur.fetchone()
 	ttext = '%s\n%s\n%s\n%s\n%s' % (role,affiliation,priority,show,text)
 	if ab:
-		if type=='unavailable': cur.execute('update age set time=%s, age=%s, status=%s, type=%s, message=%s where room=%s and jid=%s and nick=%s', (tt,ab[4]+(tt-ab[3]),1,exit_type,exit_message,room, jid, nick))
+		if type=='unavailable': cur_execute('update age set time=%s, age=%s, status=%s, type=%s, message=%s where room=%s and jid=%s and nick=%s', (tt,ab[4]+(tt-ab[3]),1,exit_type,exit_message,room, jid, nick))
 		else:
-			if ab[5]: cur.execute('update age set time=%s, status=%s, message=%s where room=%s and jid=%s and nick=%s', (tt,0,ttext,room, jid, nick))
-			else: cur.execute('update age set status=%s, message=%s where room=%s and jid=%s and nick=%s', (0,ttext,room, jid, nick))
-	else: cur.execute('insert into age values (%s,%s,%s,%s,%s,%s,%s,%s)', (room,nick,jid,tt,0,0,'',ttext))
+			if ab[5]: cur_execute('update age set time=%s, status=%s, message=%s where room=%s and jid=%s and nick=%s', (tt,0,ttext,room, jid, nick))
+			else: cur_execute('update age set status=%s, message=%s where room=%s and jid=%s and nick=%s', (0,ttext,room, jid, nick))
+	else: cur_execute('insert into age values (%s,%s,%s,%s,%s,%s,%s,%s)', (room,nick,jid,tt,0,0,'',ttext))
 	conn.commit()
-	cur.close()
-	conn.close()
 
 def onoff_no_tr(msg):
 	if msg == None or msg == False or msg == 0 or msg == '0': return 'off'
@@ -1998,16 +1985,12 @@ def check_rss():
 
 def talk_count(room,jid,nick,text):
 	jid = getRoom(jid)
-	conn = psycopg2.connect("dbname='%s' user='%s' host='%s' password='%s'" % (base_name,base_user,base_host,base_pass));
-	cur = conn.cursor()
-	cur.execute('select * from talkers where room=%s and jid=%s',(room,jid))
+	cur_execute('select * from talkers where room=%s and jid=%s',(room,jid))
 	ab = cur.fetchone()
 	wtext = len(reduce_spaces_all(text).split(' '))
-	if ab: cur.execute('update talkers set nick=%s, words=%s, frases=%s where room=%s and jid=%s', (nick,ab[3]+wtext,ab[4]+1,room,jid))
-	else: cur.execute('insert into talkers values (%s,%s,%s,%s,%s)', (room, jid, nick, wtext, 1))
-	cur.close()
+	if ab: cur_execute('update talkers set nick=%s, words=%s, frases=%s where room=%s and jid=%s', (nick,ab[3]+wtext,ab[4]+1,room,jid))
+	else: cur_execute('insert into talkers values (%s,%s,%s,%s,%s)', (room, jid, nick, wtext, 1))
 	conn.commit()
-	conn.close()
 
 def flush_stats():
 	pprint('Executed threads: %s | Error(s): %s' % (th_cnt,thread_error_count),'bright_blue')
@@ -2140,8 +2123,12 @@ pprint('-'*50,'blue')
 if(sys.argv[0]) != 'isida.py':
 	draw_warning('Ugly launch detect! Read wiki!')
 	sys.exit('exit')
-pprint('*** Loading localization','white')
 
+conn = psycopg2.connect(database=base_name, user=base_user, host=base_host, password=base_pass)
+cur = conn.cursor()
+psycopg2.extensions.register_type(psycopg2.extensions.UNICODE, cur)
+
+pprint('*** Loading localization','white')
 locales = {}
 if os.path.isfile(loc_file):
 	CURRENT_LOCALE = getFile(loc_file,'\'en\'')
