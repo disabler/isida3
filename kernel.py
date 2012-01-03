@@ -90,10 +90,10 @@ class KThread(threading.Thread):
 	def kill(self): self.killed = True
 
 def cur_execute(*params):
-	try: cur_execute(*params)
+	try: cur.execute(*params)
 	except:
 		conn.rollback()
-		cur_execute(*params)
+		cur.execute(*params)
 	
 def get_color(c):
 	color = os.environ.has_key('TERM')
