@@ -29,12 +29,8 @@ acl_actions = ['show','del'] + acl_acts
 acl_ver_tmp = {}
 
 def acl_show(jid):
-	conn = psycopg2.connect("dbname='%s' user='%s' host='%s' password='%s'" % (base_name,base_user,base_host,base_pass));
-	cur = conn.cursor()
-	cur.execute('select * from acl where jid=%s',(jid,))
+	cur_execute('select * from acl where jid=%s',(jid,))
 	a = cur.fetchall()
-	cur.close()
-	conn.close()
 	if len(a):
 		msg = L('Acl:')
 		for tmp in a:
@@ -83,21 +79,17 @@ def acl_add_del(jid,text,flag):
 					no_command = False
 					break
 			if no_command: return L('Unknown command: %s') % text[1]
-		conn = psycopg2.connect("dbname='%s' user='%s' host='%s' password='%s'" % (base_name,base_user,base_host,base_pass));
-		cur = conn.cursor()
-		cur.execute('select * from acl where jid=%s and action=%s and type=%s and text=%s',(jid,acl_cmd, acl_sub_act, text[0]))
+		cur_execute('select * from acl where jid=%s and action=%s and type=%s and text=%s',(jid,acl_cmd, acl_sub_act, text[0]))
 		tmp = cur.fetchall()
 		if tmp:
-			cur.execute('delete from acl where jid=%s and action=%s and type=%s and text=%s',(jid,acl_cmd, acl_sub_act, text[0]))
+			cur_execute('delete from acl where jid=%s and action=%s and type=%s and text=%s',(jid,acl_cmd, acl_sub_act, text[0]))
 			msg = [L('Removed:'),L('Updated:')][flag]
 		else: msg = [L('Not found:'),L('Added:')][flag]
-		if flag: cur.execute('insert into acl values (%s,%s,%s,%s,%s,%s)', (jid, acl_cmd, acl_sub_act, text[0], ' '.join(text[1:]).replace('%20','\ '), atime))
+		if flag: cur_execute('insert into acl values (%s,%s,%s,%s,%s,%s)', (jid, acl_cmd, acl_sub_act, text[0], ' '.join(text[1:]).replace('%20','\ '), atime))
 		conn.commit()
 		if atime: msg += ' [%s] %s %s %s -> %s' % (time.ctime(atime),acl_cmd, acl_sub_act, text[0], ' '.join(text[1:]).replace('%20','\ ').replace('\n',' // '))
 		else: msg += ' %s %s %s -> %s' % (acl_cmd, acl_sub_act, text[0], ' '.join(text[1:]).replace('%20','\ ').replace('\n',' // '))
 		if not reduce_spaces_all(msg).split('->',1)[1]: msg = msg.split('->',1)[0]
-		cur.close()
-		conn.close()
 	if silent: return L('done')
 	else: return msg
 
@@ -142,15 +134,13 @@ def acl_message(room,jid,nick,type,text):
 	#if not no_comm: return
 	if get_level(room,nick)[0] < 0: return
 	if getRoom(jid) == getRoom(Settings['jid']): return
-	conn = psycopg2.connect("dbname='%s' user='%s' host='%s' password='%s'" % (base_name,base_user,base_host,base_pass));
-	cur = conn.cursor()
-	cur.execute('select action,type,text,command,time from acl where jid=%s and (action=%s or action=%s or action like %s)',(room,'msg','message','all%'))
+	cur_execute('select action,type,text,command,time from acl where jid=%s and (action=%s or action=%s or action like %s)',(room,'msg','message','all%'))
 	a = cur.fetchall()
 	no_comm = True
 	if a:
 		for tmp in a:
 			if tmp[4] <= time.time() and tmp[4]: 
-				cur.execute('delete from acl where jid=%s and action=%s and type=%s and text=%s',(room,tmp[0],tmp[1],tmp[2]))
+				cur_execute('delete from acl where jid=%s and action=%s and type=%s and text=%s',(room,tmp[0],tmp[1],tmp[2]))
 				conn.commit()
 			if tmp[1] == 'exp' and re.match(tmp[2].replace('*','*?'),text,re.I+re.S+re.U):
 				no_comm = acl_action(tmp[3],nick,jid,room,text)
@@ -164,8 +154,6 @@ def acl_message(room,jid,nick,type,text):
 			elif text.lower() == tmp[2].lower():
 				no_comm = acl_action(tmp[3],nick,jid,room,text)
 				break
-	cur.close()
-	conn.close()
 	return not no_comm
 
 def bool_compare(a,b,c):
@@ -188,14 +176,12 @@ def acl_presence(room,jid,nick,type,mass):
 		return
 	# actions only on joins
 	#if was_joined: return
-	conn = psycopg2.connect("dbname='%s' user='%s' host='%s' password='%s'" % (base_name,base_user,base_host,base_pass));
-	cur = conn.cursor()
-	cur.execute('select action,type,text,command,time from acl where jid=%s and (action like %s or action like %s or action like %s or action like %s or action like %s or action like %s or action=%s or action=%s or action=%s or action=%s or action=%s or action=%s)',(room,'prs%','presence%','nick%','all%','role%','affiliation%','jid','jidfull','res','age','ver','version'))
+	cur_execute('select action,type,text,command,time from acl where jid=%s and (action like %s or action like %s or action like %s or action like %s or action like %s or action like %s or action=%s or action=%s or action=%s or action=%s or action=%s or action=%s)',(room,'prs%','presence%','nick%','all%','role%','affiliation%','jid','jidfull','res','age','ver','version'))
 	a = cur.fetchall()
 	if a:
 		for tmp in a:
 			if tmp[0] == 'age':
-				cur.execute('select time,sum(age),status from age where room=%s and jid=%s order by status',(room,getRoom(jid)))
+				cur_execute('select time,sum(age),status from age where room=%s and jid=%s',(room,getRoom(jid)))
 				in_base = cur.fetchall()
 				if not in_base: r_age = 0
 				else:
@@ -221,7 +207,7 @@ def acl_presence(room,jid,nick,type,mass):
 		for tmp in a:
 			itm = ''
 			if tmp[4] <= time.time() and tmp[4]:
-				cur.execute('delete from acl where jid=%s and action=%s and type=%s and text=%s',(room,tmp[0],tmp[1],tmp[2]))
+				cur_execute('delete from acl where jid=%s and action=%s and type=%s and text=%s',(room,tmp[0],tmp[1],tmp[2]))
 				conn.commit()
 			if tmp[0].split('_')[0] in ['presence','prs'] and (('_join' in tmp[0] and was_joined) or ('_change' in tmp[0] and not was_joined) or ('_join' not in tmp[0] and '_change' not in tmp[0])): itm = mass[0]
 			elif tmp[0].split('_')[0] == 'nick' and (('_join' in tmp[0] and was_joined) or ('_change' in tmp[0] and not was_joined) or ('_join' not in tmp[0] and '_change' not in tmp[0])): itm = nick
@@ -248,9 +234,7 @@ def acl_presence(room,jid,nick,type,mass):
 				elif itm.lower() == tmp[2].lower() or (tmp[0] == 'all' and tmp[2].lower() in (jid.lower(),nick.lower(),mass[0].lower())):
 					acl_action(tmp[3],nick,jid,room,None)
 					break
-	cur.close()
-	conn.close()
-
+	
 def acl_version_async(a, nick, jid, room, mass, is_answ):
 	global acl_ver_tmp
 	isa = is_answ[1]

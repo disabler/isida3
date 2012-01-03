@@ -24,12 +24,13 @@ exit
 - fast install and launch -
 
 git clone git://github.com/disabler/isida3.git isida
+cd isida
 su postgres
 createuser -P isidabot
 createdb isidabot -E UTF8 -T template0
 psql -U isidabot isidabot -f pgsql.schema
 exit
-cd isida/settings
+cd settings
 cp demo_config.py config.py
 nano config.py
 cd ..
