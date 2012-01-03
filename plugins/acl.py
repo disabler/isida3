@@ -177,7 +177,7 @@ def acl_presence(room,jid,nick,type,mass):
 	if a:
 		for tmp in a:
 			if tmp[0] == 'age':
-				in_base = cur_execute_fetchall('select time,sum(age),status from age where room=%s and jid=%s order by status',(room,getRoom(jid)))
+				in_base = cur_execute_fetchall('select time,sum(age),status from age where room=%s and jid=%s',(room,getRoom(jid)))
 				if not in_base: r_age = 0
 				else:
 					try:
