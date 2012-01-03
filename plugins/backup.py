@@ -86,12 +86,8 @@ def conf_backup(type, jid, nick, text):
 				setup = getFile(c_file,{})
 				try: backup_async[back_id]['bot_config'] = setup[jid]
 				except: backup_async[back_id]['bot_config'] = ''
-				conn = psycopg2.connect("dbname='%s' user='%s' host='%s' password='%s'" % (base_name,base_user,base_host,base_pass));
-				cur = conn.cursor()
-				cur.execute('select action,type,text,command,time from acl where jid=%s',(jid,))
+				cur_execute('select action,type,text,command,time from acl where jid=%s',(jid,))
 				backup_async[back_id]['acl'] = cur.fetchall()
-				cur.close()
-				conn.close()
 				backup_async[back_id]['rss'] = [tmp[0:4]+[tmp[5]] for tmp in getFile(feeds,[]) if tmp[4]==jid]
 				
 				msg = L('Copying completed!')
@@ -140,14 +136,10 @@ def conf_backup(type, jid, nick, text):
 							if [jid]+tmp not in aliases: aliases.append([jid]+tmp)
 						writefile(alfile,str(aliases))
 						for tmp in raw_back['acl']:
-							conn = psycopg2.connect("dbname='%s' user='%s' host='%s' password='%s'" % (base_name,base_user,base_host,base_pass));
-							cur = conn.cursor()
-							cur.execute('select action,type,text,command,time from acl where jid=%s and action=%s and type=%s and text=%s',(jid,tmp[0],tmp[1],tmp[2]))
+							cur_execute('select action,type,text,command,time from acl where jid=%s and action=%s and type=%s and text=%s',(jid,tmp[0],tmp[1],tmp[2]))
 							isit = cur.fetchall()
-							if not isit: cur.execute('insert into acl values (%s,%s,%s,%s,%s,%s)', tuple([jid]+list(tmp)))
+							if not isit: cur_execute('insert into acl values (%s,%s,%s,%s,%s,%s)', tuple([jid]+list(tmp)))
 							conn.commit()
-							cur.close()
-							conn.close()
 						feedbase = getFile(feeds,[])
 						for tmp in raw_back['rss']:
 							isit = False

@@ -46,14 +46,10 @@ def gweather_raw(type, jid, nick, text, fully):
 
 	if len(text.strip()):
 		text = text.lower()
-		conn = psycopg2.connect("dbname='%s' user='%s' host='%s' password='%s'" % (base_name,base_user,base_host,base_pass));
-		cur = conn.cursor()
-		wzc = cur.execute('select * from gis where code like %s or lcity like %s',(text,text)).fetchall()
+		wzc = cur_execute('select * from gis where code like %s or lcity like %s',(text,text)).fetchall()
 		if not wzc:
-			text = '%'+text+'%'
-			wzc = cur.execute('select * from gis where code like %s or lcity like %s',(text,text)).fetchall()
-		cur.close()
-		conn.close()
+			text = '%%%s%%' % text
+			wzc = cur_execute('select * from gis where code like %s or lcity like %s',(text,text)).fetchall()
 		if wzc:
 			if len(wzc) == 1:
 				text = wzc[0][0]

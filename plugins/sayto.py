@@ -23,10 +23,7 @@
 
 last_cleanup_sayto_base = 0
 
-def sayto(type, jid, nick, text):
-	conn = psycopg2.connect("dbname='%s' user='%s' host='%s' password='%s'" % (base_name,base_user,base_host,base_pass));
-	cur = conn.cursor()
-	
+def sayto(type, jid, nick, text):	
 	while len(text) and text[0] == '\n': text=text[1:]
 	while len(text) and (text[-1] == '\n' or text[-1] == ' '): text=text[:-1]
 	
@@ -36,7 +33,7 @@ def sayto(type, jid, nick, text):
 		ga = get_level(jid, nick)
 		if ga[0] != 9: msg = L('You access level is to low!')
 		else:
-			cur.execute('select * from sayto')
+			cur_execute('select * from sayto')
 			cm = cur.fetchall()
 			if len(cm):
 				msg = ''
@@ -56,13 +53,13 @@ def sayto(type, jid, nick, text):
 		else: splitter = ' '
 		to,what = text.split(splitter,1)[0],text.split(splitter,1)[1]
 		frm = nick + '\n' + str(int(time.time()))
-		cur.execute('select status, jid from age where room=%s and nick=%s group by jid',(jid,to))
+		cur_execute('select status, jid from age where room=%s and nick=%s group by jid',(jid,to))
 		fnd = cur.fetchall()
 		if len(fnd) == 1:
 			fnd = fnd[0]
 			if fnd[0]:
 				msg = L('I will convey your message.')
-				cur.execute('insert into sayto values (%s,%s,%s,%s)', (frm, jid, fnd[1], what))				
+				cur_execute('insert into sayto values (%s,%s,%s,%s)', (frm, jid, fnd[1], what))				
 			else: msg = L('Or am I a fool or %s is here.') % to
 		elif len(fnd) > 1:
 			off_count = 0
@@ -75,62 +72,52 @@ def sayto(type, jid, nick, text):
 			else: msg = L('All people with this nickname are here!')
 		else:
 			if '@' in to:
-				cur.execute('select status, jid from age where room=%s and jid=%s group by jid',(jid,to))
+				cur_execute('select status, jid from age where room=%s and jid=%s group by jid',(jid,to))
 				fnd = cur.fetchall()
 				if fnd:
 					off_count = 0
 					for tmp in fnd:
 						if tmp[0]:
-							cur.execute('insert into sayto values (%s,%s,%s,%s)', (frm, jid, tmp[1], what))
+							cur_execute('insert into sayto values (%s,%s,%s,%s)', (frm, jid, tmp[1], what))
 							off_count += 1
 					if off_count: msg = L('I will convey your message.')
 					else: msg = L('This jid is here!')
 				else:
 					msg = L('I didn\'t seen user with jid %s, but if he join here I convey your message.') % to
-					cur.execute('insert into sayto values (%s,%s,%s,%s)', (frm, jid, to, what))
+					cur_execute('insert into sayto values (%s,%s,%s,%s)', (frm, jid, to, what))
 			else: msg = L('I didn\'t see user with nick %s. You can use jid.') % to
 	else: msg = L('What convey to?')
 	conn.commit()
-	cur.close()
-	conn.close()
 	send_msg(type, jid, nick, msg)
 
 def sayto_presence(room,jid,nick,type,text):
 	global conn
 	if nick != '':
-		conn = psycopg2.connect("dbname='%s' user='%s' host='%s' password='%s'" % (base_name,base_user,base_host,base_pass));
-		cur = conn.cursor()
-		cur.execute('select * from sayto where room=%s and (jid=%s or jid=%s)',(room, getRoom(jid), nick))
+		cur_execute('select * from sayto where room=%s and (jid=%s or jid=%s)',(room, getRoom(jid), nick))
 		cm = cur.fetchall()
 		if len(cm):
-			cur.execute('delete from sayto where room=%s and (jid=%s or jid=%s)',(room, getRoom(jid), nick))
+			cur_execute('delete from sayto where room=%s and (jid=%s or jid=%s)',(room, getRoom(jid), nick))
 			for cc in cm:
 				if '\n' in cc[0]:
 					zz = cc[0].split('\n')
 					send_msg('chat', room, nick, L('%s (%s ago) convey for you: %s') % (zz[0], un_unix(time.time()-int(zz[1])), cc[3]))
 				else: send_msg('chat', room, nick, L('%s convey for you: %s') % (cc[3], cc[0]))
 			conn.commit()
-		cur.close()
-		conn.close()
 
 def cleanup_sayto_base():
-	global last_cleanup_sayto_base,conn
+	global last_cleanup_sayto_base
 	ctime = int(time.time())
 	if ctime-last_cleanup_sayto_base > GT('sayto_cleanup_time'):
 		last_cleanup_sayto_base = ctime
-		conn = psycopg2.connect("dbname='%s' user='%s' host='%s' password='%s'" % (base_name,base_user,base_host,base_pass));
-		cur = conn.cursor()
-		cur.execute('select who, room, jid from sayto')
+		cur_execute('select who, room, jid from sayto')
 		cm = cur.fetchall()
 		if len(cm):
 			for cc in cm:
 				if '\n' in cc[0]:
 					tim = int(cc[0].split('\n')[1])
-					if ctime-tim > GT('sayto_timeout'): cur.execute('delete from sayto where room=%s and jid=%s',(cc[1], cc[2]))
-				else: cur.execute('delete from sayto where room=%s and jid=%s',(cc[1], cc[2]))
+					if ctime-tim > GT('sayto_timeout'): cur_execute('delete from sayto where room=%s and jid=%s',(cc[1], cc[2]))
+				else: cur_execute('delete from sayto where room=%s and jid=%s',(cc[1], cc[2]))
 			conn.commit()
-		cur.close()
-		conn.close()
 
 def sayjid(type, jid, nick, text):
 	try:

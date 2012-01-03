@@ -24,16 +24,12 @@
 def whowas(type, jid, nick, text):
 	period = int(time.time()-86400)
 	text = '%%%s%%' % text if text else '%'
-	conn = psycopg2.connect("dbname='%s' user='%s' host='%s' password='%s'" % (base_name,base_user,base_host,base_pass));
-	cur = conn.cursor()
-	cur.execute('select nick from age where room=%s\
+	cur_execute('select nick from age where room=%s\
 										  and time>%s\
 										  and status=1\
 										  and (nick like %s or jid like %s)\
 										  group by jid,nick order by nick;',(jid,period,text,text))
 	was_here = cur.fetchall()
-	cur.close()
-	conn.close()
 	if was_here: msg = L('For a last day i see: %s') % ', '.join([t[0] for t in was_here])
 	else:msg = L('All who i see for a last day now is here.')
 	send_msg(type, jid, nick, msg)

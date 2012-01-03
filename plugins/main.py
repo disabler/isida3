@@ -184,7 +184,6 @@ def atempt_to_shutdown_with_reason(text,sleep_time,exit_type,critical):
 	if sleep_time: time.sleep(sleep_time)
 	sys.exit(exit_type)
 	conn.commit()
-	conn.close()
 
 def deidna(text):
 	def repl(t): return t.group().lower().decode('idna')
@@ -365,12 +364,8 @@ def status(type, jid, nick, text):
 			break
 	if is_found:
 		realjid = getRoom(get_level(jid,text)[1])
-		conn = psycopg2.connect("dbname='%s' user='%s' host='%s' password='%s'" % (base_name,base_user,base_host,base_pass));
-		cur = conn.cursor()
-		cur.execute('select message,status from age where jid=%s and room=%s and nick=%s',(realjid,jid,text))
+		cur_execute('select message,status from age where jid=%s and room=%s and nick=%s',(realjid,jid,text))
 		stat = cur.fetchone()
-		cur.close()
-		conn.close()
 		if stat:
 			if stat[1]: msg = L('leave this room.')
 			else:
@@ -529,45 +524,30 @@ def un_unix(val):
 	return ret
 
 def close_age_null():
-	global conn
-	conn = psycopg2.connect("dbname='%s' user='%s' host='%s' password='%s'" % (base_name,base_user,base_host,base_pass));
-	cur = conn.cursor()
-	cur.execute("delete from age where jid like '<temporary>%'")
-	cur.execute('select * from age where status=0 order by room')
+	cur_execute("delete from age where jid like '<temporary>%'")
+	cur_execute('select * from age where status=0 order by room')
 	ccu = cur.fetchall()
-	cur.execute('delete from age where status=0')
-	for ab in ccu: cur.execute('insert into age values (%s,%s,%s,%s,%s,%s,%s,%s)', (ab[0],ab[1],ab[2],ab[3],ab[4],1,ab[6],ab[7]))
+	cur_execute('delete from age where status=0')
+	for ab in ccu: cur_execute('insert into age values (%s,%s,%s,%s,%s,%s,%s,%s)', (ab[0],ab[1],ab[2],ab[3],ab[4],1,ab[6],ab[7]))
 	conn.commit()
-	cur.close()
-	conn.close()
 
 def close_age():
-	global conn
-	conn = psycopg2.connect("dbname='%s' user='%s' host='%s' password='%s'" % (base_name,base_user,base_host,base_pass));
-	cur = conn.cursor()
-	cur.execute('delete from age where jid like %s',('<temporary>%',))
-	cur.execute('select * from age where status=%s order by room',(0,))
+	cur_execute('delete from age where jid like %s',('<temporary>%',))
+	cur_execute('select * from age where status=%s order by room',(0,))
 	ccu = cur.fetchall()
-	cur.execute('delete from age where status=%s', (0,))
+	cur_execute('delete from age where status=%s', (0,))
 	tt = int(time.time())
-	for ab in ccu: cur.execute('insert into age values (%s,%s,%s,%s,%s,%s,%s,%s)', (ab[0],ab[1],ab[2],tt,ab[4]+(tt-ab[3]),1,ab[6],ab[7]))
+	for ab in ccu: cur_execute('insert into age values (%s,%s,%s,%s,%s,%s,%s,%s)', (ab[0],ab[1],ab[2],tt,ab[4]+(tt-ab[3]),1,ab[6],ab[7]))
 	conn.commit()
-	cur.close()
-	conn.close()
 
 def close_age_room(room):
-	global conn
-	conn = psycopg2.connect("dbname='%s' user='%s' host='%s' password='%s'" % (base_name,base_user,base_host,base_pass));
-	cur = conn.cursor()
-	cur.execute('delete from age where jid like %s',('<temporary>%',))
-	cur.execute('select * from age where status=%s and room=%s order by room',(0,room))
+	cur_execute('delete from age where jid like %s',('<temporary>%',))
+	cur_execute('select * from age where status=%s and room=%s order by room',(0,room))
 	ccu = cur.fetchall()
-	cur.execute('delete from age where status=%s and room=%s',(0,room))
+	cur_execute('delete from age where status=%s and room=%s',(0,room))
 	tt = int(time.time())
-	for ab in ccu: cur.execute('insert into age values (%s,%s,%s,%s,%s,%s,%s,%s)', (ab[0],ab[1],ab[2],tt,ab[4]+(tt-ab[3]),1,ab[6],ab[7]))
+	for ab in ccu: cur_execute('insert into age values (%s,%s,%s,%s,%s,%s,%s,%s)', (ab[0],ab[1],ab[2],tt,ab[4]+(tt-ab[3]),1,ab[6],ab[7]))
 	conn.commit()
-	cur.close()
-	conn.close()
 
 def sfind(mass,stri):
 	for a in mass:
@@ -1461,23 +1441,18 @@ def configure(type, jid, nick, text):
 	send_msg(type, jid, nick, msg)
 
 def muc_filter_lock(type, jid, nick, text):
-	global conn
 	realjid = getRoom(get_level(jid,nick)[1])
-	conn = psycopg2.connect("dbname='%s' user='%s' host='%s' password='%s'" % (base_name,base_user,base_host,base_pass));
-	cur = conn.cursor()
-	cur.execute('select * from muc_lock where room=%s and jid=%s', (jid,realjid))
+	cur_execute('select * from muc_lock where room=%s and jid=%s', (jid,realjid))
 	tmp = cur.fetchall()
 	if text in ['on','off']:
-		if tmp: cur.execute('delete from muc_lock where room=%s and jid=%s', (jid,realjid))
+		if tmp: cur_execute('delete from muc_lock where room=%s and jid=%s', (jid,realjid))
 		if text == 'on':
-			cur.execute('insert into muc_lock values (%s,%s)', (jid, realjid))
+			cur_execute('insert into muc_lock values (%s,%s)', (jid, realjid))
 			st = L('on')
 		else: st = L('off')
 	elif tmp: st = L('on')
 	else: st = L('off')
 	conn.commit()
-	cur.close()
-	conn.close()
 	msg = L('Ignore messages from unaffiliated participants in private - %s') % st
 	send_msg(type, jid, nick, msg)
 

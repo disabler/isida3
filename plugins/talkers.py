@@ -22,17 +22,13 @@
 # --------------------------------------------------------------------------- #
 
 def gtalkers(type, jid, nick, text):
-	conn = psycopg2.connect("dbname='%s' user='%s' host='%s' password='%s'" % (base_name,base_user,base_host,base_pass));
-	cur = conn.cursor()
 	if text:
 		ttext = '%%%s%%' % text
-		cur.execute('select * from talkers where (jid like %s or nick like %s or room like %s) order by -words',(ttext,ttext,ttext))
+		cur_execute('select * from talkers where (jid like %s or nick like %s or room like %s) order by -words',(ttext,ttext,ttext))
 		tma = cur.fetchmany(10)
 	else:
-		cur.execute('select * from talkers order by -words')
+		cur_execute('select * from talkers order by -words')
 		tma = cur.fetchmany(10)
-	cur.close()
-	conn.close()
 	if tma:
 		msg = '%s\n' % L('Talkers:\nNick\t\tWords\tPhrases\tEffect\tConf.')
 		msg += '\n'.join(['%s. %s\t\t%s\t%s\t%s\t%s' % (cnd + 1, tt[2], tt[3], tt[4], round(tt[3]/float(tt[4]), 2),'%s@%s.%s' % (getName(tt[0]),'.'.join([tmp[0] for tmp in tt[0].split('@')[1].split('.')[:-1]]),tt[0].split('.')[-1])) for cnd, tt in enumerate(tma)])
@@ -40,17 +36,13 @@ def gtalkers(type, jid, nick, text):
 	send_msg(type, jid, nick, msg)
 
 def talkers(type, jid, nick, text):
-	conn = psycopg2.connect("dbname='%s' user='%s' host='%s' password='%s'" % (base_name,base_user,base_host,base_pass));
-	cur = conn.cursor()
 	if text:
 		ttext = '%%%s%%' % text
-		cur.execute('select * from talkers where room=%s and (jid like %s or nick like %s) order by -words',(jid,ttext,ttext))
+		cur_execute('select * from talkers where room=%s and (jid like %s or nick like %s) order by -words',(jid,ttext,ttext))
 		tma = cur.fetchmany(10)
 	else: 
-		cur.execute('select * from talkers where room=%s order by -words',(jid,))
+		cur_execute('select * from talkers where room=%s order by -words',(jid,))
 		tma = cur.fetchmany(10)
-	cur.close()
-	conn.close()
 	if tma:
 		msg = '%s\n' % L('Talkers:\nNick\t\tWords\tPhrases\tEffect')
 		msg += '\n'.join(['%s. %s\t\t%s\t%s\t%s' % (cnd + 1, tt[2], tt[3], tt[4], round(tt[3]/float(tt[4]), 2)) for cnd, tt in enumerate(tma)])

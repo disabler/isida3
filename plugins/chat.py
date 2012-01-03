@@ -59,23 +59,19 @@ def flood_actions(type, room, nick, answ, msg):
 	if text: com_parser(access_mode, nowname, type, room, nick, text, jid)
 
 def addAnswerToBase(tx):
-	global conn
 	if not len(tx) or tx.count(' ') == len(tx): return
-	conn = psycopg2.connect("dbname='%s' user='%s' host='%s' password='%s'" % (base_name,base_user,base_host,base_pass));
-	cur = conn.cursor()
-	cur.execute('insert into answer values (%s,%s)', (len(cur.execute('select ind from answer').fetchall())+1,tx))
-	cur.close()
+	cur_execute('select ind from answer')
+	lent = len(cur.fetchall())+1
+	cur_execute('insert into answer values (%s,%s)', (lent,tx))
 	conn.commit()
-	conn.close()
 
 def getRandomAnswer(tx,room):
 	if not tx.strip(): return None
-	conn = psycopg2.connect("dbname='%s' user='%s' host='%s' password='%s'" % (base_name,base_user,base_host,base_pass));
-	cur = conn.cursor()
-	mrand = randint(1,len(cur.execute('select ind from answer').fetchall()))
-	answ = to_censore(cur.execute('select body from answer where ind=%s', (mrand,)).fetchone()[0],room)
-	cur.close()
-	conn.close()
+	cur_execute('select ind from answer')
+	lent = len(cur.fetchall())
+	mrand = randint(1,lent)
+	cur_execute('select body from answer where ind=%s', (mrand,))
+	answ = to_censore(cur.fetchone()[0],room)
 	return answ
 
 def getSmartAnswer(type, room, nick, text):

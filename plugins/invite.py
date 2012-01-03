@@ -28,12 +28,8 @@ def call_body(type, jid, nick, text):
 			reason = text.split('\n')[1]
 			text = text.split('\n')[0]
 		except: reason = None
-		conn = psycopg2.connect("dbname='%s' user='%s' host='%s' password='%s'" % (base_name,base_user,base_host,base_pass));
-		cur = conn.cursor()
-		cur.execute('select jid from age where room=%s and (nick=%s or jid=%s) group by jid',(jid,text,text))
+		cur_execute('select jid from age where room=%s and (nick=%s or jid=%s) group by jid',(jid,text,text))
 		fnd = cur.fetchall()
-		cur.close()
-		conn.close()
 		if len(fnd) == 1:
 			whojid = getRoom(unicode(fnd[0][0]))
 			is_found = 0
