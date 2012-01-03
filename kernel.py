@@ -113,14 +113,14 @@ def cur_execute_fetchall(*params):
 		cur.execute(*params)
 		return cur.fetchall()
 	
-def cur_execute_fetchmany(*params,count):
+def cur_execute_fetchmany(*params):
 	try: 
-		cur.execute(*params)
-		return cur.fetchmany(count)
+		cur.execute(params[:-1])
+		return cur.fetchmany(params[-1])
 	except:
 		conn.rollback()
-		cur.execute(*params)
-		return cur.fetchmany(count)
+		cur.execute(params[:-1])
+		return cur.fetchmany(params[-1])
 	
 def get_color(c):
 	color = os.environ.has_key('TERM')
