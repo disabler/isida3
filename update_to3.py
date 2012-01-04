@@ -64,12 +64,12 @@ else:
 	print '%s is missed.' % configname
 	sys.exit()
 	
-try: _,_,_,_ = base_name,base_user,base_host,base_pass
+try: _,_,_,_,_ = base_name,base_user,base_host,base_pass,base_port
 except:
 	print 'Missed settings for PostgreSQL!'
 	sys.exit()
 
-conn=psycopg2.connect("dbname='%s' user='%s' host='%s' password='%s'" % (base_name,base_user,base_host,base_pass));
+conn=psycopg2.connect(database=base_name, user=base_user, host=base_host, password=base_pass, port=base_port)
 cur = conn.cursor()
 
 bases_arr = [[agestat,'age','age'],[jidbase,'jid','jid'],[talkers,'talkers','talkers'],[wtfbase,'wtf','wtf'],
