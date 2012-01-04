@@ -2171,7 +2171,7 @@ if(sys.argv[0]) != 'isida.py':
 	draw_warning('Ugly launch detect! Read wiki!')
 	sys.exit('exit')
 
-conn = psycopg2.connect(database=base_name, user=base_user, host=base_host, password=base_pass)
+conn = psycopg2.connect(database=base_name, user=base_user, host=base_host, password=base_pass, port=base_port)
 
 pprint('*** Loading localization','white')
 locales = {}
