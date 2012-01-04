@@ -137,17 +137,18 @@ def seenjid_raw(type, jid, nick, text, xtype):
 	ztype = None
 	if not text: text = nick
 	if llim > GT('age_max_limit'): llim = GT('age_max_limit')
-	real_jid = cur_execute_fetchall('select jid from age where room=%s and (nick ilike %s or jid ilike %s) group by jid order by status,-time',(jid,text,text.lower()))
+	real_jid = cur_execute_fetchall('select jid from age where room=%s and (nick ilike %s or jid ilike %s) group by jid,status,time order by status,-time',(jid,text,text.lower()))
 	if not real_jid:
 		txt = '%%%s%%' % text.lower()
-		real_jid = cur_execute_fetchall('select jid from age where room=%s and (nick ilike %s or jid ilike %s) group by jid order by status,-time',(jid,txt,txt))
+		real_jid = cur_execute_fetchall('select jid from age where room=%s and (nick ilike %s or jid ilike %s) group by jid,status,time order by status,-time',(jid,txt,txt))
 	sbody = []
 	if real_jid:
 		for rj in real_jid:			
 			if xtype: tmpbody = cur_execute_fetchmany('select * from age where room=%s and jid=%s order by status, jid',(jid,rj[0]),llim)
-			else: tmpbody = cur_execute_fetchmany('select room, nick, jid, time, sum(age), status, type, message from age where room=%s and jid=%s group by jid order by status, jid',(jid,rj[0]),llim)
+			else: tmpbody = [cur_execute_fetchone('select * from age where room=%s and jid=%s order by status',(jid,rj[0]))]
 			if tmpbody:
-				for t in tmpbody: sbody.append(t)
+				for t in tmpbody:
+					if t not in sbody: sbody.append(t)
 	if sbody:
 		ztype = True
 		msg = L('I saw %s:') % text

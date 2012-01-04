@@ -93,8 +93,10 @@ class KThread(threading.Thread):
 def cur_execute(*params):
 	cur = conn.cursor()
 	psycopg2.extensions.register_type(psycopg2.extensions.UNICODE, cur)
-	try: cur.execute(*params)
-	except: rollback()
+	try:
+		cur.execute(*params)
+		if 'update' in params[0] or 'insert' in params[0] or 'delete' in params[0]: conn.commit()
+	except: conn.rollback()
 	cur.close()
 
 def cur_execute_fetchone(*params):
