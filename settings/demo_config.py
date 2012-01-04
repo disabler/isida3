@@ -31,6 +31,13 @@ CommandsLog		=	True										# Логгирование команд бота
 #thread_type	=	None										# тип тредов thread/threading. по умолчанию - threading
 #ENABLE_TLS		=	None										# если бот падает при обзоре сервисов jid'а в ростере - надо принудительно отключить TLS
 
+#----- Настройка баз данных -----
+base_name = 'isidabot'  # название базы для PostgreSQL
+base_user = 'isidabot'  # пользователь базы для PostgreSQL
+base_host = 'localhost' # хост базы для PostgreSQL
+base_pass = '******'    # пароль базы для PostgreSQL
+base_port = '5432'		# порт для подключения к PostgreSQL
+
 #-------------- Файлы, пути к файлам -----------#
 slog_folder = 'log/'							# папка системных логов
 set_folder 	= 'settings/'						# папка настроек
