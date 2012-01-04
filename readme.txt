@@ -12,7 +12,7 @@ short howto for isida-bot
 
 -------- installation --------
 
-#download by svn in any folder from official repository by:
+#download by git in any folder from official repository by:
 git clone git://github.com/disabler/isida3.git isida
 
 #create bases:
