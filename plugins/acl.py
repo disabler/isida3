@@ -245,7 +245,7 @@ def acl_version_async(a, nick, jid, room, mass, is_answ):
 	isa = is_answ[1]
 	if len(isa) == 3: itm = '%s %s // %s' % isa
 	else: itm = ' '.join(isa)
-	acl_ver_tmp['%s/%s' % (room,nick)] = itm
+	acl_ver_tmp['%s/%s' % (room,nick)] = itm.replace('\r','[LF]').replace('\n','[CR]').replace('\t','[TAB]')
 	for tmp in a:
 		if tmp[0] in ['ver','version']:
 			if tmp[1] == 'exp' and re.match(tmp[2].replace('*','*?'),itm,re.I+re.S+re.U): acl_action(tmp[3],nick,jid,room,None)

@@ -241,12 +241,17 @@ Clean by %s messages in approximately %s sec.	Начинаю зачистку! �
 Cleaned!	Стерильно!!!
 Hidden cleaning of conference history.	Скрытая очистка истории сообщений. По умолчанию будет послано 20 скрытых + 1 сообщение в конференцию. Можно задать свой параметр от 2 до 100.
 
+# file: ../trunk/plugins/clients.py
+Error! %s	Ошибка! %s
+Client statistic:\n%s	Статистика клиентов:\n%s
+Clients statistic not available.	Статистика клиентов не доступна.
+Show clients statistic when available.	Статистика клиентов, если доступна
+
 # file: ../trunk/plugins/convert.py
 Available values:\n%s	Допустимые значения:\n%s
 Currency converter\nconvert from to count\nconvert list	Конвертер валют\nconvert из в сумма\nconvert list
 
 # file: ../trunk/plugins/disco.py
-Error! %s	Ошибка! %s
 - Unknown feature: %s	- Неизвестная фича: %s
 Features list:\n%s	Список фич:\n%s
 Unable to get features list	Не получается показать список фич

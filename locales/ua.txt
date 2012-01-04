@@ -241,12 +241,14 @@ Clean by %s messages in approximately %s sec.	Розпочинаю зачист�
 Cleaned!	Стерильно!
 Hidden cleaning of conference history.	Прихована очистка історії повідомлень. По замовчуванню буде послано 20 прихованих + 1 повідомлення в конференцію. Можна задати свій параметр від 2 до 100.
 
+# file: ../trunk/plugins/clients.py
+Error! %s	Помилка! %s
+
 # file: ../trunk/plugins/convert.py
 Available values:\n%s	Допустимі значення:\n%s
 Currency converter\nconvert from to count\nconvert list	Конвертор валют\nconvert з до сума\nconvert list
 
 # file: ../trunk/plugins/disco.py
-Error! %s	Помилка! %s
 - Unknown feature: %s	- Невідома фіча: %s
 Features list:\n%s	Список фіч:\n%s
 Unable to get features list	Не вдається показати список фіч
