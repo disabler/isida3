@@ -87,9 +87,9 @@ def wtf_get(ff,type, jid, nick, text):
 	if len(text):
 		ww = cur_execute_fetchone('select * from wtf where (room=%s or room=%s or room=%s) and wtfword=%s',(jid,'global','import',text))
 		if ww:
-			msg = L('I know that %s is %s') % (text,ww[4])
-			if ff == 1: msg += L('\nfrom: %s %s') % (ww[2],'['+ww[5]+']')
-			elif ff == 2: msg = L('I know that %s was defined by %s %s %s') % (text,ww[2],'('+ww[1]+')','['+ww[5]+']')
+			msg = L('I know that %s is %s') % (text,ww[5])
+			if ff == 1: msg += L('\nfrom: %s %s') % (ww[3],'['+ww[6]+']')
+			elif ff == 2: msg = L('I know that %s was defined by %s %s %s') % (text,ww[3],'('+ww[2]+')','['+ww[6]+']')
 		else: msg = L('I don\'t know!')
 	else: msg = L('What search?')
 	send_msg(type, jid, nick, msg)
