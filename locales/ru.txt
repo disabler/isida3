@@ -245,7 +245,7 @@ Hidden cleaning of conference history.	Скрытая очистка истор�
 Error! %s	Ошибка! %s
 Client statistic:\n%s	Статистика клиентов:\n%s
 Clients statistic not available.	Статистика клиентов не доступна.
-Show clients statistic when available.	Статистика клиентов, если доступна
+Show clients statistic when available.\nclients [total|global|all[-short]] [string]	Статистика клиентов, если доступна.\nclients [total|global|all[-short]] [строка]
 
 # file: ../trunk/plugins/convert.py
 Available values:\n%s	Допустимые значения:\n%s
