@@ -49,7 +49,7 @@ def phonecode(type, jid, nick, text):
 					text = text[:7] + 'x'*4
 					pos = 7
 					while pos:
-						result = cur_execute_fetchall('select * from def_ru_stat where phone like %s', ('%s%%'%text,))
+						result = cur_execute_fetchall('select * from def_ru_stat where phone ilike %s', ('%s%%'%text,))
 						if result:
 							def_info = []
 							for res in result:
@@ -71,7 +71,7 @@ def phonecode(type, jid, nick, text):
 				text = text[:8]+'x'*4
 				pos = 8
 				while pos > 2:
-					result = cur_execute_fetchall('select * from def_ua_stat where phone like %s', ('%s%%'%text,))
+					result = cur_execute_fetchall('select * from def_ua_stat where phone ilike %s', ('%s%%'%text,))
 					if result:
 						def_info = []
 						for res in result:
@@ -92,7 +92,7 @@ def phonecode(type, jid, nick, text):
 		else:
 			text = '%s%%'%text.lower().capitalize()
 			def_info = []
-			result = cur_execute_fetchall('select * from def_ru_stat where city like %s', (text,))
+			result = cur_execute_fetchall('select * from def_ru_stat where city ilike %s', (text,))
 			if result:
 				di = []
 				for res in result:
@@ -102,7 +102,7 @@ def phonecode(type, jid, nick, text):
 					di += [', '.join(res)]
 				di = '\n'.join(di)
 				def_info += [L('Country: %s\n%s') % (L('Russia'),di)]
-			result = cur_execute_fetchall('select * from def_ua_stat where city like %s', (text,))
+			result = cur_execute_fetchall('select * from def_ua_stat where city ilike %s', (text,))
 			if result:
 				di = []
 				for res in result:
@@ -112,7 +112,7 @@ def phonecode(type, jid, nick, text):
 					di += [', '.join(res)]
 				di = '\n'.join(di)
 				def_info += [L('Country: %s\n%s') % (L('Ukraine'),di)]
-			#result = cu.execute('select * from def_ru_mobile where provider like %s or region like %s', (text,text)).fetchall()
+			#result = cu.execute('select * from def_ru_mobile where provider ilike %s or region ilike %s', (text,text)).fetchall()
 			#if result:
 			#	di = []
 			#	for res in result: di += ['%s, %s (%s) %s..%s, %s ' % res]

@@ -24,9 +24,9 @@
 def info_search(type, jid, nick, text):
 	msg = L('What I must find?')
 	if text != '':
-		cur_execute('delete from jid where server like %s',('<temporary>%',))
+		cur_execute('delete from jid where server ilike %s',('<temporary>%',))
 		ttext = '%%%s%%' % text
-		tma = cur_execute_fetchmany('select * from jid where login like %s or server like %s or resourse like %s order by login',(ttext,ttext,ttext),10)
+		tma = cur_execute_fetchmany('select * from jid where login ilike %s or server ilike %s or resourse ilike %s order by login',(ttext,ttext,ttext),10)
 		if len(tma):
 			msg = L('Found:')
 			cnd = 1
@@ -38,15 +38,15 @@ def info_search(type, jid, nick, text):
 	send_msg(type, jid, nick, msg)
 
 def info_res(type, jid, nick, text):
-	cur_execute('delete from jid where server like %s',('<temporary>%',))
+	cur_execute('delete from jid where server ilike %s',('<temporary>%',))
 	conn.commit()
 	if text == 'count':
 		tlen = len(cur_execute_fetchall('select resourse,count(*) from jid group by resourse order by -count(*)'))
 		text,jidbase = '',''
 	else:
 		text1 = '%%%s%%' % text
-		tlen = len(cur_execute_fetchall('select resourse,count(*) from jid where resourse like %s group by resourse order by -count(*)',(text1,)))
-		jidbase = cur_execute_fetchmany('select resourse,count(*) from jid where resourse like %s group by resourse order by -count(*)',(text1,),10)
+		tlen = len(cur_execute_fetchall('select resourse,count(*) from jid where resourse ilike %s group by resourse order by -count(*)',(text1,)))
+		jidbase = cur_execute_fetchmany('select resourse,count(*) from jid where resourse ilike %s group by resourse order by -count(*)',(text1,),10)
 	if not tlen: msg = L('\'%s\' not found!') % text
 	else:
 		if text == '': msg = L('Total resources: %s') % str(tlen)
@@ -61,15 +61,15 @@ def info_res(type, jid, nick, text):
 	send_msg(type, jid, nick, msg)
 
 def info_serv(type, jid, nick, text):
-	cur_execute('delete from jid where server like %s',('<temporary>%',))
+	cur_execute('delete from jid where server ilike %s',('<temporary>%',))
 	conn.commit()
 	if text == 'count':
 		tlen = len(cur_execute_fetchall('select server,count(*) from jid group by server order by -count(*)'))
 		text,jidbase = '',''
 	else:
 		text1 = '%%%s%%' % text
-		tlen = len(cur_execute_fetchall('select server,count(*) from jid where server like %s group by server order by -count(*)',(text1,)))
-		jidbase = cur_execute_fetchall('select server,count(*) from jid where server like %s group by server order by -count(*)',(text1,))
+		tlen = len(cur_execute_fetchall('select server,count(*) from jid where server ilike %s group by server order by -count(*)',(text1,)))
+		jidbase = cur_execute_fetchall('select server,count(*) from jid where server ilike %s group by server order by -count(*)',(text1,))
 	if not tlen: msg = L('\'%s\' not found!') % text
 	else:
 		if text == '': msg = L('Total servers: %s') % str(tlen)

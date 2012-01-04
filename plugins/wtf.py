@@ -25,7 +25,7 @@ def wtfsearch(type, jid, nick, text):
 	msg = L('What need to find?')
 	if len(text):
 		text = '%%%s%%' % text
-		ww = cur_execute_fetchall('select * from wtf where (room=%s or room=%s or room=%s) and (room like %s or jid like %s or nick like %s or wtfword like %s or wtftext like %s or time like %s)',(jid,'global','import',text,text,text,text,text,text))
+		ww = cur_execute_fetchall('select * from wtf where (room=%s or room=%s or room=%s) and (room ilike %s or jid ilike %s or nick ilike %s or wtfword ilike %s or wtftext ilike %s or time ilike %s)',(jid,'global','import',text,text,text,text,text,text))
 		msg = ''
 		for www in ww: msg += www[4]+', '
 		if len(msg): msg = L('Some matches in definitions: %s') % msg[:-2]

@@ -24,7 +24,7 @@
 def gtalkers(type, jid, nick, text):
 	if text:
 		ttext = '%%%s%%' % text
-		tma = cur_execute_fetchmany('select * from talkers where (jid like %s or nick like %s or room like %s) order by -words',(ttext,ttext,ttext),10)
+		tma = cur_execute_fetchmany('select * from talkers where (jid ilike %s or nick ilike %s or room ilike %s) order by -words',(ttext,ttext,ttext),10)
 	else: tma = cur_execute_fetchmany('select * from talkers order by -words',10)
 	if tma:
 		msg = '%s\n' % L('Talkers:\nNick\t\tWords\tPhrases\tEffect\tConf.')
@@ -35,7 +35,7 @@ def gtalkers(type, jid, nick, text):
 def talkers(type, jid, nick, text):
 	if text:
 		ttext = '%%%s%%' % text
-		tma = cur_execute_fetchmany('select * from talkers where room=%s and (jid like %s or nick like %s) order by -words',(jid,ttext,ttext),10)
+		tma = cur_execute_fetchmany('select * from talkers where room=%s and (jid ilike %s or nick ilike %s) order by -words',(jid,ttext,ttext),10)
 	else: tma = cur_execute_fetchmany('select * from talkers where room=%s order by -words',(jid,),10)
 	if tma:
 		msg = '%s\n' % L('Talkers:\nNick\t\tWords\tPhrases\tEffect')

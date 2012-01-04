@@ -26,7 +26,7 @@ def answers_ie(type, jid, nick, text):
 		try: fname = text.lower().split(' ',1)[1]
 		except: fname = answers_file
 		base_size = len(cur_execute_fetchall('select * from answer'))
-		fnd = cur_execute_fetchall('select body from answer where body like %s group by body order by body',('%',))
+		fnd = cur_execute_fetchall('select body from answer where body ilike %s group by body order by body',('%',))
 		answer = ''
 		msg = L('Export to file: %s | Total records: %s | Unique records: %s') % (fname,str(base_size),str(len(fnd)))
 		for i in fnd:
@@ -38,7 +38,7 @@ def answers_ie(type, jid, nick, text):
 		if os.path.isfile(fname):
 			answer = readfile(fname).decode('utf-8')
 			answer = answer.split('\n')
-			cur_execute('delete from answer where body like %s',('%',))
+			cur_execute('delete from answer where body ilike %s',('%',))
 			msg = L('Import from file: %s | Total records: %s') % (fname,str(len(answer)))
 			idx = 1
 			for i in answer:

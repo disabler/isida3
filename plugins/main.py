@@ -523,13 +523,13 @@ def un_unix(val):
 	return ret
 
 def close_age_null():
-	cur_execute("delete from age where jid like '<temporary>%'")
+	cur_execute("delete from age where jid ilike '<temporary>%'")
 	ccu = cur_execute_fetchall('select * from age where status=0 order by room')
 	cur_execute('delete from age where status=0')
 	for ab in ccu: cur_execute('insert into age values (%s,%s,%s,%s,%s,%s,%s,%s)', (ab[0],ab[1],ab[2],ab[3],ab[4],1,ab[6],ab[7]))
 
 def close_age():
-	cur_execute('delete from age where jid like %s',('<temporary>%',))
+	cur_execute('delete from age where jid ilike %s',('<temporary>%',))
 	ccu = cur_execute_fetchall('select * from age where status=%s order by room',(0,))
 	cur_execute('delete from age where status=%s', (0,))
 	tt = int(time.time())
@@ -537,7 +537,7 @@ def close_age():
 
 
 def close_age_room(room):
-	cur_execute('delete from age where jid like %s',('<temporary>%',))
+	cur_execute('delete from age where jid ilike %s',('<temporary>%',))
 	ccu = cur_execute_fetchall('select * from age where status=%s and room=%s order by room',(0,room))
 	cur_execute('delete from age where status=%s and room=%s',(0,room))
 	tt = int(time.time())

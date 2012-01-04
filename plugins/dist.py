@@ -56,7 +56,7 @@ def city(type, jid, nick, text):
 			if len(tmp) == 2:
 				coords = re.sub('[^-\.\d]+', ' ', tmp[1]).strip().split()
 				if abs(float(coords[0])) < 90 and abs(float(coords[1])) < 180:
-					if not cur_execute_fetchone('select * from dist_user where point like %s',(place,)):
+					if not cur_execute_fetchone('select * from dist_user where point ilike %s',(place,)):
 						cur_execute('insert into dist_user values (%s,%s,%s)',(place,coords[1],coords[0]))
 						conn.commit()
 						msg = L('Added!')
@@ -67,7 +67,7 @@ def city(type, jid, nick, text):
 				j = simplejson.loads(load_page(url))
 				place_ext = j['response']['GeoObjectCollection']['featureMember'][0]['GeoObject']['metaDataProperty']['GeocoderMetaData']['text']
 				coords = j['response']['GeoObjectCollection']['featureMember'][0]['GeoObject']['Point']['pos'].split()
-				if not cur_execute_fetchone('select * from dist_user where point like %s',(place,)):
+				if not cur_execute_fetchone('select * from dist_user where point ilike %s',(place,)):
 					cur_execute('insert into dist_user values (%s,%s,%s)',(place,coords[1],coords[0]))
 					conn.commit()
 					msg = L('Added: ') + place_ext.decode('utf-8') + L(' as ') + '"%s"' % place
@@ -75,14 +75,14 @@ def city(type, jid, nick, text):
 			else: msg = L('Not found Yandex.Map API. Get API-key on http://api.yandex.ru/maps/form.xml')
 		except: msg = L('What?')
 	elif parameters[0] == 'del' and get_level(jid,nick)[0] == 9:
-		if cur_execute_fetchone('select * from dist_user where point like %s',(parameters[1].lower(),)):
+		if cur_execute_fetchone('select * from dist_user where point ilike %s',(parameters[1].lower(),)):
 			cur_execute('delete from dist_user where point=%s',(parameters[1].lower(),))
 			conn.commit()
 			msg = L('Deleted!')
 		else: msg = L('This point isn\'t in database!')
 	elif parameters[0] == 'map':
-		t = cur_execute_fetchone('select * from dist_user where point like %s',(parameters[1].lower(),))
-		if not t: t = cu.execute_fetchone('select * from dist where point like %s',(parameters[1].lower(),))
+		t = cur_execute_fetchone('select * from dist_user where point ilike %s',(parameters[1].lower(),))
+		if not t: t = cu.execute_fetchone('select * from dist where point ilike %s',(parameters[1].lower(),))
 		if t:
 			tmp = 'http://maps.google.com/maps?ll=%s,%s&spn=0.01,0.01&t=h&q=%s,%s' % (t[1], t[2], t[1], t[2])
 			try: msg = city_capitalize(parameters[1]) + L(' on the map: ') + goo_gl_raw(tmp, False)
@@ -112,9 +112,9 @@ def city(type, jid, nick, text):
 			else: msg = L('Not found!')
 		else: msg = L('Not found Yandex.Map API. Get API-key on http://api.yandex.ru/maps/form.xml')
 	else:
-		t = cur_execute_fetchone('select * from dist_user where point like %s',(text.strip().lower(),))
+		t = cur_execute_fetchone('select * from dist_user where point ilike %s',(text.strip().lower(),))
 		if not t:
-			t = cur_execute_fetchone('select * from dist where point like %s',(text.strip().lower(),))
+			t = cur_execute_fetchone('select * from dist where point ilike %s',(text.strip().lower(),))
 			if t: msg = L(u'%s - latitude: %s, longtitude: %s') % (city_capitalize(t[0]), t[1], t[2])
 			else: msg = L('Not found!')
 		else: msg = L('What?')
@@ -127,8 +127,8 @@ def dist(type, jid, nick, text):
 			dist_count = int(text.split(' ',2)[2])
 			dist_count = 1 if dist_count < 1 else dist_max_search_limit if dist_count > dist_max_search_limit else dist_count
 		except: dist_count = dist_default_search_count
-		tmp = cur_execute_fetchmany('select point from dist_user where point like %s order by point',('%%%s%%' % text.split(' ',2)[1].lower(),),dist_count)
-		if not tmp: tmp = cur_execute_fetchmany('select point from dist where point like %s order by point',('%%%s%%' % text.split(' ',2)[1].lower(),),dist_count)
+		tmp = cur_execute_fetchmany('select point from dist_user where point ilike %s order by point',('%%%s%%' % text.split(' ',2)[1].lower(),),dist_count)
+		if not tmp: tmp = cur_execute_fetchmany('select point from dist where point ilike %s order by point',('%%%s%%' % text.split(' ',2)[1].lower(),),dist_count)
 		if tmp: msg = L('Found: %s') % ', '.join(map(city_capitalize, [t[0] for t in tmp]))
 		else: msg = L('City %s not found') % city_capitalize(text.split(' ',2)[1])
 	else:
@@ -137,11 +137,11 @@ def dist(type, jid, nick, text):
 				points,splitted = text.split(tmp),True
 				break
 		if splitted and len(points)==2:
-			t1 = cur_execute_fetchone('select * from dist_user where point like %s',(points[0].lower(),))
-			t2 = cur_execute_fetchone('select * from dist_user where point like %s',(points[1].lower(),))
+			t1 = cur_execute_fetchone('select * from dist_user where point ilike %s',(points[0].lower(),))
+			t2 = cur_execute_fetchone('select * from dist_user where point ilike %s',(points[1].lower(),))
 			if not t1 or not t2:
-				if not t1: t1 = cur_execute_fetchone('select * from dist where point like %s',(points[0].lower(),))
-				if not t2: t2 = cur_execute_fetchone('select * from dist where point like %s',(points[1].lower(),))
+				if not t1: t1 = cur_execute_fetchone('select * from dist where point ilike %s',(points[0].lower(),))
+				if not t2: t2 = cur_execute_fetchone('select * from dist where point ilike %s',(points[1].lower(),))
 			if t1 and t2: msg = L('%s km') % points2distance((float(t1[1]), float(t1[2])), (float(t2[1]), float(t2[2])))
 			elif t1: msg = L('City %s not found') % city_capitalize(points[1])
 			elif t2: msg = L('City %s not found') % city_capitalize(points[0])

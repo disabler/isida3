@@ -140,7 +140,7 @@ def acl_message(room,jid,nick,type,text):
 	#if not no_comm: return
 	if get_level(room,nick)[0] < 0: return
 	if getRoom(jid) == getRoom(Settings['jid']): return
-	a = cur_execute_fetchall('select action,type,text,command,time from acl where jid=%s and (action=%s or action=%s or action like %s)',(room,'msg','message','all%'))
+	a = cur_execute_fetchall('select action,type,text,command,time from acl where jid=%s and (action=%s or action=%s or action ilike %s)',(room,'msg','message','all%'))
 	no_comm = True
 	if a:
 		for tmp in a:
@@ -181,7 +181,7 @@ def acl_presence(room,jid,nick,type,mass):
 		return
 	# actions only on joins
 	#if was_joined: return
-	a = cur_execute_fetchall('select action,type,text,command,time from acl where jid=%s and (action like %s or action like %s or action like %s or action like %s or action like %s or action like %s or action=%s or action=%s or action=%s or action=%s or action=%s or action=%s)',(room,'prs%','presence%','nick%','all%','role%','affiliation%','jid','jidfull','res','age','ver','version'))
+	a = cur_execute_fetchall('select action,type,text,command,time from acl where jid=%s and (action ilike %s or action ilike %s or action ilike %s or action ilike %s or action ilike %s or action ilike %s or action=%s or action=%s or action=%s or action=%s or action=%s or action=%s)',(room,'prs%','presence%','nick%','all%','role%','affiliation%','jid','jidfull','res','age','ver','version'))
 	if a: acl_selector(a,room,jid,nick,mass,was_joined)
 
 def acl_selector(a,room,jid,nick,mass,was_joined):
