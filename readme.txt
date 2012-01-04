@@ -10,12 +10,13 @@ short howto for isida-bot
 5. openssl >= 1.0.0e
 
 
--------- installation --------
+-------- download --------
 
-#download by git in any folder from official repository by:
 git clone git://github.com/disabler/isida3.git isida
 
-#create bases:
+
+--------- create bases --------
+
 su postgres
 createuser -P isidabot
 createdb isidabot -E UTF8 -T template0
