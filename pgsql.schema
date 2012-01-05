@@ -260,7 +260,8 @@ CREATE TABLE versions (
 	jid text,
 	client text,
 	version text,
-	os text
+	os text,
+	time integer
 );
 
 CREATE INDEX versions_rj ON versions (room,jid);

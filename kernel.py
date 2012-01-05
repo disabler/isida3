@@ -657,7 +657,7 @@ def iqCB(sess,iq):
 				for t in [ver_client,ver_version,ver_os]:
 					if not t: t = 'None'
 				t = cur_execute_fetchone('select * from versions where room=%s and jid=%s and client=%s and version=%s and os=%s',(getRoom(room),tjid,ver_client,ver_version,ver_os))
-				if not t: cur_execute('insert into versions values (%s,%s,%s,%s,%s)',(getRoom(room),tjid,ver_client,ver_version,ver_os))
+				if not t: cur_execute('insert into versions values (%s,%s,%s,%s,%s,%s)',(getRoom(room),tjid,ver_client,ver_version,ver_os,int(time.time())))
 				iq_async(id,time.time(),ver_client,ver_version,ver_os)
 			elif nspace == NS_TIME: iq_async(id,time.time(),query.getTagData(tag='display'),query.getTagData(tag='utc'),query.getTagData(tag='tz'))
 			elif iq.getTag('time',namespace=xmpp.NS_URN_TIME): iq_async(id,time.time(),iq.getTag('time').getTagData(tag='utc'),iq.getTag('time').getTagData(tag='tzo'))
