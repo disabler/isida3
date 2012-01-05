@@ -1861,16 +1861,13 @@ def presenceCB(sess,mess):
 						if tmp_room == room and hashes[tmp] == current_hash:
 							tmp_access,tmp_jid = get_level(room,tmp_nick)
 							if tmp_access <= 3 and tmp_jid != 'None':
-								in_base = cur_execute('select time,sum(age),status from age where room=%s and jid=%s order by status',(room,getRoom(tmp_jid)))
+								in_base = cur_execute_fetchone('select sum(%s-time+age) from age where room=%s and jid=%s and status=0',(int(time.time()),room,getRoom(tmp_jid)))
 								if not in_base: nmute = True
 								else:
-									tmp = in_base[0]
-									if tmp[2]: r_age = tmp[1]
-									else: r_age = int(time.time())-tmp[0]+tmp[1]
 									newbie_time = get_config(room,'muc_filter_newbie_time')
 									if newbie_time.isdigit(): newbie_time = int(newbie_time)
 									else: newbie_time = 60
-									if r_age < newbie_time: nmute = True
+									if in_base[0] < newbie_time: nmute = True
 									else: nmute = False
 								if nmute:
 									pprint('MUC-Filter flush by hash: %s %s' % (room,tmp_jid),'brown')
@@ -2019,7 +2016,7 @@ def check_rss():
 
 def talk_count(room,jid,nick,text):
 	jid = getRoom(jid)
-	ab = cur_execute('select * from talkers where room=%s and jid=%s',(room,jid))
+	ab = cur_execute_fetchone('select * from talkers where room=%s and jid=%s',(room,jid))
 	wtext = len(reduce_spaces_all(text).split(' '))
 	if ab: cur_execute('update talkers set nick=%s, words=%s, frases=%s where room=%s and jid=%s', (nick,ab[3]+wtext,ab[4]+1,room,jid))
 	else: cur_execute('insert into talkers values (%s,%s,%s,%s,%s)', (room, jid, nick, wtext, 1))
