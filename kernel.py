@@ -1970,6 +1970,7 @@ def onoff(msg): return L(onoff_no_tr(msg))
 def getName(jid):
 	jid = unicode(jid)
 	if jid == 'None': return jid
+	if '@' not in jid: return ''
 	return jid[:jid.find('@')].lower()
 
 def getServer(jid):
@@ -1987,7 +1988,8 @@ def getResourse(jid):
 def getRoom(jid):
 	jid = unicode(jid)
 	if jid == 'None': return jid
-	return '%s@%s' % (getName(jid),getServer(jid))
+	if '@' in jid: return '%s@%s' % (getName(jid),getServer(jid))
+	else: return getServer(jid)
 
 def now_schedule():
 	while not game_over:
