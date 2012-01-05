@@ -650,8 +650,16 @@ def iqCB(sess,iq):
 			except: nspace = 'None'
 			if nspace == NS_MUC_ADMIN: iq_async(id,time.time(),iq)
 			elif nspace == NS_MUC_OWNER: iq_async(id,time.time(),iq)
-			elif nspace == NS_VERSION: iq_async(id,time.time(),iq.getTag('query').getTagData(tag='name'),iq.getTag('query').getTagData(tag='version'),iq.getTag('query').getTagData(tag='os'))
-			elif nspace == NS_TIME: iq_async(id,time.time(),iq.getTag('query').getTagData(tag='display'),iq.getTag('query').getTagData(tag='utc'),iq.getTag('query').getTagData(tag='tz'))
+			elif nspace == NS_VERSION:
+				ver_client = query.getTagData(tag='name')
+				ver_version = query.getTagData(tag='version')
+				ver_os = query.getTagData(tag='os')
+				for t in [ver_client,ver_version,ver_os]:
+					if not t: t = 'None'
+				t = cur_execute_fetchone('select * from versions where room=%s and jid=%s and client=%s and version=%s and os=%s',(getRoom(room),tjid,ver_client,ver_version,ver_os))
+				if not t: cur_execute('insert into versions values (%s,%s,%s,%s,%s)',(getRoom(room),tjid,ver_client,ver_version,ver_os))
+				iq_async(id,time.time(),ver_client,ver_version,ver_os)
+			elif nspace == NS_TIME: iq_async(id,time.time(),query.getTagData(tag='display'),query.getTagData(tag='utc'),query.getTagData(tag='tz'))
 			elif iq.getTag('time',namespace=xmpp.NS_URN_TIME): iq_async(id,time.time(),iq.getTag('time').getTagData(tag='utc'),iq.getTag('time').getTagData(tag='tzo'))
 			elif iq.getTag('ping',namespace=xmpp.NS_URN_PING): iq_async(id,time.time(),unicode(iq))
 			else: iq_async(id,time.time(),unicode(iq),iq)

@@ -94,8 +94,8 @@ CREATE TABLE answer (
 	body text
 );
 
-INSERT INTO answer VALUES(1,';-)');
-INSERT INTO answer VALUES(2,'Hi!');
+-- INSERT INTO answer VALUES(1,';-)');
+-- INSERT INTO answer VALUES(2,'Hi!');
 CREATE INDEX answer_id ON answer (ind);
 
 
@@ -233,7 +233,8 @@ CREATE INDEX def_ru_mobile_ph ON def_ru_mobile (def,defbegin,defend);
 CREATE TABLE wz (
 	code text,
 	city text,
-	counry text);
+	counry text
+);
 	
 CREATE INDEX wz_ccc ON wz (code,city,counry);
 
@@ -242,8 +243,29 @@ CREATE INDEX wz_ccc ON wz (code,city,counry);
 -- Muc-filter lock base
 --
 
-CREATE TABLE muc_lock (room text, jid text);
+CREATE TABLE muc_lock (
+	room text,
+	jid text
+);
+
 CREATE INDEX muc_lock_rj ON muc_lock (room,jid);
+
+
+--
+-- Versions base
+--
+
+CREATE TABLE versions (
+	room text,
+	jid text,
+	client text,
+	version text,
+	os text
+);
+
+CREATE INDEX versions_rj ON versions (room,jid);
+CREATE INDEX versions_cvo ON versions (client,version,os);
+CREATE INDEX versions_rjcvo ON versions (room,jid,client,version,os);
 
 --
 -- THE END
