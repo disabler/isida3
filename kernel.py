@@ -1140,16 +1140,13 @@ def iqCB(sess,iq):
 
 							# Mute newbie
 							if get_config(gr,'muc_filter_newbie') and msg and not mute:
-								in_base = cur_execute('select time,sum(age),status from age where room=%s and jid=%s order by status',(gr,getRoom(jid)))
+								in_base = cur_execute_fetchone('select sum(%s-time+age) from age where room=%s and jid=%s and status=0',(int(time.time()),gr,getRoom(jid)))
 								if not in_base: nmute = True
 								else:
-									tmp = in_base[0]
-									if tmp[2]: r_age = tmp[1]
-									else: r_age = int(time.time())-tmp[0]+tmp[1]
 									newbie_time = get_config(gr,'muc_filter_newbie_time')
 									if newbie_time.isdigit(): newbie_time = int(newbie_time)
 									else: newbie_time = 60
-									if r_age < newbie_time: nmute = True
+									if in_base[0] < newbie_time: nmute = True
 									else: nmute = False
 								if nmute:
 									pprint('MUC-Filter mute newbie: %s %s %s' % (gr,jid,body),'brown')
