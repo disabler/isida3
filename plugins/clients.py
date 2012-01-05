@@ -25,15 +25,16 @@ def clients_stats(type, jid, nick, text):
 	text = reduce_spaces_all(text).lower().split()
 	if text:
 		is_short = 'short' in text
+		is_os = 'os' in text
 		is_global = 'global' in text or 'total' in text or 'all' in text
-		if is_short or is_global:
-			for t in ['all','total','global','short']:
+		if is_short or is_global or is_os:
+			for t in ['all','total','global','short','os']:
 				if t in text: text.remove(t)
 		if text: match = '%%\r%%%s%%' % ' '.join(text)
 		else: match = '%\r%' 
 	else:
 		match = '%\r%'
-		is_short = is_global = False
+		is_short = is_global = is_os = False
 	if is_global: req,par = 'select message from age where message ilike %s',(match,)
 	else: req,par = 'select message from age where room=%s and message ilike %s',(jid,match)
 	st = cur_execute_fetchall(req,par)
@@ -41,8 +42,14 @@ def clients_stats(type, jid, nick, text):
 		ns = {}
 		et = L('Error! %s')%''
 		for t in st:
-			k = t[0].split('\r',1)[1].split(' // ')[0].replace('\r','[LF]').replace('\n','[CR]').replace('\t','[TAB]')
-			if is_short: k = k.split()[0]
+			if is_os:
+				k = t[0].split('\r',1)[1].split(' // ',1)
+				if len(k) == 2: k = k[1]
+				else: k = ''
+			else: k = t[0].split('\r',1)[1].split(' // ',1)[0]
+			k = k.replace('\r','[LF]').replace('\n','[CR]').replace('\t','[TAB]')
+			if is_short and k: k = k.split()[0]
+			if not k or k == 'None': k = 'Unknown'
 			if not k.startswith(et.strip()):
 				if ns.has_key(k): ns[k] += 1
 				else: ns[k] = 1
@@ -54,4 +61,4 @@ def clients_stats(type, jid, nick, text):
 
 global execute
 
-execute = [(4, 'clients', clients_stats, 2, L('Show clients statistic when available.\nclients [total|global|all[ short]] [string]'))]
+execute = [(4, 'clients', clients_stats, 2, L('Show clients statistic when available.\nclients [total|global|all[ short][ os]] [string]'))]
