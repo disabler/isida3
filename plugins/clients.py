@@ -55,7 +55,7 @@ def clients_stats_old(type, jid, nick, text):
 				else: ns[k] = 1
 		ns = [(ns[t],t) for t in ns.keys()]
 		ns.sort(reverse=True)
-		msg = L('Client statistic:%s') % '\n%s' % '\n'.join(['%s. %s\t - %s' % (ns.index(t)+1,t[1],t[0]) for t in ns[:10]])
+		msg = L('Client statistic:%s') % '\n%s' % '\n'.join(['%s. %s\t- %s' % (ns.index(t)+1,t[1],t[0]) for t in ns[:10]])
 	else: msg = L('Clients statistic not available.')
 	send_msg(type, jid, nick, msg)
 
@@ -94,15 +94,21 @@ def clients_stats(type, jid, nick, text):
 		for t in st:
 			if is_os: k = t[2]
 			else: k = '%s %s' % (t[:2])
-			k = k.replace('\r','[LF]').replace('\n','[CR]').replace('\t','[TAB]')
-			if is_short and k: k = k.split()[0]
+			
+			if is_short:
+				if is_os: k = k.split()[0]
+				else: k = t[0]
+
+			k = k.replace('\r','[LF]').replace('\n','[CR]').replace('\t','[TAB]')			
 			if not k or k == 'None': k = 'Unknown'
 			if ns.has_key(k): ns[k] += 1
 			else: ns[k] = 1
 		ns = [(ns[t],t) for t in ns.keys()]
 		ns.sort(reverse=True)
-		if is_user: msg = L('Client statistic:%s') % ' %s' % ', '.join([t[1] for t in ns])
-		else: msg = L('Client statistic:%s') % '\n%s' % '\n'.join(['%s. %s\t - %s' % (ns.index(t)+1,t[1],t[0]) for t in ns[:10]])
+		if is_user:
+			if is_short: msg = L('Client statistic:%s') % ' %s' % ', '.join(['%s (%s)' % (t[1],t[0]) for t in ns])
+			else: msg = L('Client statistic:%s') % ' %s' % ', '.join([t[1] for t in ns])
+		else: msg = L('Client statistic:%s') % '\n%s' % '\n'.join(['%s. %s\t- %s' % (ns.index(t)+1,t[1],t[0]) for t in ns[:10]])
 	else: msg = L('Clients statistic not available.')
 	send_msg(type, jid, nick, msg)
 
