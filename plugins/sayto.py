@@ -52,7 +52,7 @@ def sayto(type, jid, nick, text):
 		else: splitter = ' '
 		to,what = text.split(splitter,1)[0],text.split(splitter,1)[1]
 		frm = nick + '\n' + str(int(time.time()))
-		fnd = cur_execute_fetchall('select status, jid from age where room=%s and nick=%s group by jid',(jid,to))
+		fnd = cur_execute_fetchall('select status, jid from age where room=%s and nick=%s',(jid,to))
 		if len(fnd) == 1:
 			fnd = fnd[0]
 			if fnd[0]:
@@ -69,7 +69,7 @@ def sayto(type, jid, nick, text):
 			else: msg = L('All people with this nickname are here!')
 		else:
 			if '@' in to:
-				fnd = cur_execute_fetchall('select status, jid from age where room=%s and jid=%s group by jid',(jid,to))
+				fnd = cur_execute_fetchall('select status, jid from age where room=%s and jid=%s',(jid,to))
 				if fnd:
 					off_count = 0
 					for tmp in fnd:
