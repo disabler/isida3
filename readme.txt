@@ -5,7 +5,7 @@ short howto for isida-bot
 
 1. python-psycopg2 >= 2.4.2
 2. python >= 2.7
-3. git-core >= 1.7.1
+3. git-core >= 1.7.1 
 4. postresql >= 8.4
 5. openssl >= 1.0.0e
 
@@ -26,11 +26,19 @@ exit
 
 -------- launch --------
 
-1. rename demo_config.py to config.py and fill look inside
+1. copy demo_config.py to config.py and fill look inside
 2. create startup databases with "python create_databases.py" command
 3. indexate databases "python indexate_databases.py"
 4. python update_to3.py
 5. type in console: "sh launch.sh &" for launch
+
+
+-------- update to 3rd version --------
+
+1. copy all files from old_bots_version/settings/ to isida3/settings/
+2. copy demo_config.py to config.py and fill look inside
+3. python update_to3.py
+4. type in console: "sh launch.sh &" for launch
 
 
 -------- fast install and launch --------
