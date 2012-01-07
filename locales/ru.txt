@@ -245,6 +245,7 @@ Hidden cleaning of conference history.	Скрытая очистка истор�
 Error! %s	Ошибка! %s
 Client statistic:%s	Статистика клиентов:%s
 Clients statistic not available.	Статистика клиентов не доступна.
+I could be wrong, but %s not is here...	Я могу ошибаться, но %s тут нету...
 Show clients statistic when available.\nclients [total|global|all[ short][ os]] [string]	Статистика клиентов, если доступна.\nclients [total|global|all[ short][ os]] [строка]
 
 # file: ../trunk/plugins/convert.py
@@ -424,7 +425,6 @@ Added	Добавила
 I can't add it! No keyword "NICK"!	Не могу добавить! Нет ключевого слова "NICK"!
 Masochist? 8-D	Самотык? 8-D
 I ban a ip for such jokes!	Ща зобаню по ip за такие шутки!
-I could be wrong, but %s not is here...	Я могу ошибаться, но %s тут нету...
 You live %s years or %s days or %s hours or %s minutes or %s seconds.\nYou slept %s hours, or %s days.\nYou blink about %s times.\nYour heart pumped %s liters of blood and made %s strikes.\nYou drank %s liters of water and drank it %s hours.\nYou have increased by %s centimeters in my head of hair, dropped %s pieces, all of the hair %s kilometers.\nYou grew up in the hands %s centimeters and in the feet %s centimeters nails.\nYou breathed %s liters of air a total weight of %s kilograms.\nYou have stood out %s liters of sweat, and %s liters of urine, and %s liters of saliva.\nYou lost %s billion nerve cells.\nYou laughed %s times.\nYou've gone %s kilometers	Ты живешь %s лет, или %s дней, или %s часов, или %s минут, или %s секунд.\nТы спал(а) %s часов, или %s суток.\nТы моргнул(а) примерно %s раз.\nТвоё сердце перекачало %s литров крови и сделало %s ударов.\nТы выпил(а) %s литров воды и пил(а) её %s часов.\nУ тебя выросло на голове %s сантиметров волос, выпало %s штук, все волосы %s километров.\nУ тебя выросло на руках %s сантиметров и на ногах %s сантиметров ногтей.\nТы вдохнул(а) %s литров воздуха общим весом %s килограммов.\nУ тебя выделилось %s литров пота, %s литров мочи и %s литров слюны.\nТы потерял(а) %s миллионов нервных клеток.\nТы смеялся(лась) %s раз.\nТы прошёл(ла) %s километров
 Smoke help about command!	Курим помощь по команде!
 Just funny poem	Просто смешное стихотворение

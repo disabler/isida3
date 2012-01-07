@@ -243,6 +243,7 @@ Hidden cleaning of conference history.	Прихована очистка іст�
 
 # file: ../trunk/plugins/clients.py
 Error! %s	Помилка! %s
+I could be wrong, but %s not is here...	Я можу помилятися, але %s тут немає...
 
 # file: ../trunk/plugins/convert.py
 Available values:\n%s	Допустимі значення:\n%s
@@ -421,7 +422,6 @@ Added	Додала
 I can't add it! No keyword "NICK"!	Не можу додати! Немає ключового слова "NICK"!
 Masochist? 8-D	Самотик? 8-D
 I ban a ip for such jokes!	Ща зобаню по ip за такі жарти!
-I could be wrong, but %s not is here...	Я можу помилятися, але %s тут немає...
 You live %s years or %s days or %s hours or %s minutes or %s seconds.\nYou slept %s hours, or %s days.\nYou blink about %s times.\nYour heart pumped %s liters of blood and made %s strikes.\nYou drank %s liters of water and drank it %s hours.\nYou have increased by %s centimeters in my head of hair, dropped %s pieces, all of the hair %s kilometers.\nYou grew up in the hands %s centimeters and in the feet %s centimeters nails.\nYou breathed %s liters of air a total weight of %s kilograms.\nYou have stood out %s liters of sweat, and %s liters of urine, and %s liters of saliva.\nYou lost %s billion nerve cells.\nYou laughed %s times.\nYou've gone %s kilometers	Ти живеш %s років, або %s днів, або %s годин, або %s хвилин, або %s секунд.\nТи спав(ла) %s годин, або %s діб.\nТи моргнув(ла) приблизно %s разів.\nТвоє серце перекачало %s літрів крові та зробило %s ударів.\nТи випив(ла) %s літрів води і пив(ла) її %s годин.\nУ тебе виросло на голові %s сантиметрів волосся, випало %s штук, все волосся %s кілометрів.\nУ тебе виросло на руках %s сантиметрів і на ногах %s сантиметрів нігтів.\nТи вдихнув(ла) %s літрів повітря загальною вагою %s кілограмів.\nУ тебе виділилося %s літрів поту, %s літрів сечі та %s літрів слини.\nТи втратив(ла) %s мільйонів нервових клітин.\nТи сміявся(лась) %s раз.\nТи прошов(ла) %s кілометрів
 Smoke help about command!	Читаємо довідку по команді!
 Just funny poem	Просто смішний вірш
@@ -1178,6 +1178,8 @@ Muc-filter. Timeout for repeat message	Muc-filter. Таймаут повторі
 Paste. Paste as html. Otherwize as text	Paste. Html розмічення, інакше в вигляді тексту
 City. Yandex.Map API-key	City. Yandex.Map API-ключ
 Bing. Translator API-key	Bing. Api-ключ перекладача
+NewYear. Congratulations text	NewYear. Текст вітання з Новим роком
+Happy New Year!	З Новим роком!
 Kernel. Text for hide censore	Kernel. Текст для закриття мату
 Kernel. Time of ignore for anti-ddos	Kernel. Час ігнору при ddos'і в залежності від рівня доступу
 Kernel. Anti-ddos time delay between messages	Kernel. Проміжок між повідомленнями для вмикання анти-ddos
