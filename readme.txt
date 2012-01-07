@@ -26,7 +26,7 @@ exit
 
 -------- launch --------
 
-1. rename defaul_config.py to config.py and fill look inside
+1. rename demo_config.py to config.py and fill look inside
 2. create startup databases with "python create_databases.py" command
 3. indexate databases "python indexate_databases.py"
 4. python update_to3.py
