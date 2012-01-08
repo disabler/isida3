@@ -96,7 +96,10 @@ def clients_stats(type, jid, nick, text):
 			else: k = '%s %s' % (t[:2])
 			
 			if is_short:
-				if k and is_os: k = k.split()[0]
+				if k and is_os:
+					if '/' in k: k = k.split('/')[0]
+					else: k = k.split()[0]
+					if '=' in k: k = k.split('=')[1]
 				else: k = t[0]
 				
 			if not k or k == 'None': k = 'Unknown'
