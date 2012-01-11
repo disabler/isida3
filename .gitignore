@@ -7,7 +7,6 @@ settings/*.back
 log/*.txt
 backup/*.ru
 backup/*.com
-*.png
 isida.pid
 logs/chatlogs/*.ru
 logs/chatlogs/*.com
