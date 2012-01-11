@@ -21,16 +21,17 @@
 #                                                                             #
 # --------------------------------------------------------------------------- #
 
+# translate: verb,noun,preposition,adverb,adjective,phrase,conjunction,abbreviation
+
 def gcalc(type, jid, nick, text):
 	if not text.strip(): msg = L('What?')
 	else:
 		try:
-			data = load_page('http://www.google.ru/search?', {'q':text.encode('utf-8'),'hl':GT('youtube_default_lang')})
+			data = load_page('http://www.google.ru/search?', {'q': text.encode('utf-8'), 'hl': GT('youtube_default_lang')})
 			result = re.search('<h2 class=r style="font-size:138%"><b>(.+?)</b>', data).group(1)
-			msg = result.replace("<font size=-2> </font>",",").replace(" &#215; 10<sup>","E").replace("</sup>","").replace('<sup>','^').decode('utf-8', 'ignore')
+			msg = result.replace("<font size=-2> </font>", ",").replace(" &#215; 10<sup>", "E").replace("</sup>", "").replace('<sup>', '^').decode('utf-8', 'ignore')
 		except: msg = L('Google Calculator results not found')
 	send_msg(type, jid, nick, msg)
-
 
 def define(type, jid, nick, text):
 	text = text.strip()
@@ -43,38 +44,52 @@ def define(type, jid, nick, text):
 		if target:
 			try: n1 = n2 = int(target)
 			except: n1, n2 = map(int, target.split('-'))
-			if n1+n2 == 0: define_silent,n1,n2 = True,1,1
-		if not result: msg = [L('I don\'t know!'),''][define_silent]
+			if n1 + n2 == 0: define_silent, n1, n2 = True, 1, 1
+		if not result: msg = [L('I don\'t know!'), ''][define_silent]
 		else:
 			if target:
 				msg = ''
 				if 0 < n1 <= n2 <= len(result):
-					for k in xrange(n1-1,n2): msg += '%s\n%s\n\n' % (result[k][0], urllib.unquote(result[k][1].replace('%25', '%').encode('utf8')).decode('utf8'))
-				else: msg = [L('I don\'t know!'),''][define_silent]
+					for k in xrange(n1 - 1, n2): msg += '%s\n%s\n\n' % (result[k][0], urllib.unquote(result[k][1].replace('%25', '%').encode('utf8')).decode('utf8'))
+				else: msg = [L('I don\'t know!'), ''][define_silent]
 			else:
 				result = random.choice(result)
 				msg = result[0] + '\n' + urllib.unquote(result[1].replace('%25', '%').encode('utf8')).decode('utf8')
 			if '<' in msg and '>' in msg: msg = unhtml_hard(msg)
 	if msg: send_msg(type, jid, nick, msg)
 
-def define_message(room,jid,nick,type,text):
-	s = get_config(room,'parse_define')
+def define_message(room, jid, nick, type, text):
+	s = get_config(room, 'parse_define')
 	if s != 'off':
-		cof = getFile(conoff,[])
-		if (room,'define') in cof: return
+		cof = getFile(conoff, [])
+		if (room, 'define') in cof: return
 		tmppos = arr_semi_find(confbase, room)
 		nowname = getResourse(confbase[tmppos])
 		text = re.sub('^%s[,:]\ ' % re.escape(nowname), '', text.strip())
-		what = re.search([u'^(?:(?:что такое)|(?:кто такой)) ([^?]+?)\?$',u'(?:(?:что такое)|(?:кто такой)) ([^?]+?)\?'][s=='partial'], text, re.I+re.U+re.S)
+		what = re.search([u'^(?:(?:что такое)|(?:кто такой)|(?:кто такая)) ([^?]+?)\?$', u'(?:(?:что такое)|(?:кто такой)) ([^?]+?)\?'][s == 'partial'], text, re.I + re.U + re.S)
 		if what:
-			access_mode = get_level(room,nick)[0]
+			access_mode = get_level(room, nick)[0]
 			text = 'define 0 ' + what.group(1)
 			com_parser(access_mode, nowname, type, room, nick, text, jid)
 			return True
 
+def gdict(type, jid, nick, text):
+	text = reduce_spaces_all(text.encode('utf-8')).split(' ')
+	if 2 <= len(text) <= 3:
+		try: sl, tl, text = text
+		except: sl, tl, text = [''] + text
+		data = html_encode(load_page('http://translate.google.ru/translate_a/t?', {'client': 'x', 'text': text, 'hl': 'en', 'sl': sl, 'tl': tl}))
+		try:
+			data = json.loads(data)
+			if 'dict' in data: msg = '\n%s' % '\n'.join(['%s: %s' % (L(i['pos']).upper(), ', '.join(i['terms'])) for i in data['dict'] if i['pos']])
+			else: msg = L('I can\'t translate it!')
+		except: msg = L('Command execution error.')
+	else: msg = L('Error in parameters. Read the help about command.')
+	send_msg(type, jid, nick, msg)
+
 def goo_gl_raw(text, is_qr):
 	url = text.strip().encode('utf-8')
-	if '://' not in url[:10] and not is_qr: url = 'http://'+url
+	if '://' not in url[:10] and not is_qr: url = 'http://' + url
 	if is_qr: regex = 'http://goo\.gl/[a-zA-Z0-9]+?\.qr\Z'
 	else: regex = 'http://goo\.gl/[a-zA-Z0-9]+?\Z'
 	if not url: msg = L('What?')
@@ -84,7 +99,7 @@ def goo_gl_raw(text, is_qr):
 		if L('Error! %s') % '' in f: msg = f
 		else: msg = urllib.unquote(f.geturl().encode('utf8')).decode('utf8')
 	else:
-		data = load_page(urllib2.Request('http://goo.gl/api/url','url=%s' % urllib.quote(url)))
+		data = load_page(urllib2.Request('http://goo.gl/api/url', 'url=%s' % urllib.quote(url)))
 		if L('Error! %s') % '' in data: msg = data
 		else:
 			msg = simplejson.loads(data)['short_url']
@@ -102,4 +117,5 @@ message_act_control = [define_message]
 execute = [(3, 'gcalc', gcalc, 2, L('Google Calculator')),
 	(3, 'define', define, 2, L('Definition for a word or phrase.\ndefine word - random define of word or phrase\ndefine N word - N-th define of word or phrase\ndefine a-b word - from a to b defines of word or phrase')),
 	(3, 'ggl', goo_gl, 2, L('Google URL Shortener/Unshortener')),
-	(3, 'qr', goo_gl_qr, 2, L('Google QR-code generator'))]
+	(3, 'qr', goo_gl_qr, 2, L('Google QR-code generator')),
+	(3, 'gdict', gdict, 2, L('Google Dictionary\ngdict [from_language] to_language word'))]

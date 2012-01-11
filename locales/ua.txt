@@ -241,15 +241,12 @@ Clean by %s messages in approximately %s sec.	Розпочинаю зачист�
 Cleaned!	Стерильно!
 Hidden cleaning of conference history.	Прихована очистка історії повідомлень. По замовчуванню буде послано 20 прихованих + 1 повідомлення в конференцію. Можна задати свій параметр від 2 до 100.
 
-# file: ../trunk/plugins/clients.py
-Error! %s	Помилка! %s
-I could be wrong, but %s not is here...	Я можу помилятися, але %s тут немає...
-
 # file: ../trunk/plugins/convert.py
 Available values:\n%s	Допустимі значення:\n%s
 Currency converter\nconvert from to count\nconvert list	Конвертор валют\nconvert з до сума\nconvert list
 
 # file: ../trunk/plugins/disco.py
+Error! %s	Помилка! %s
 - Unknown feature: %s	- Невідома фіча: %s
 Features list:\n%s	Список фіч:\n%s
 Unable to get features list	Не вдається показати список фіч
@@ -422,6 +419,7 @@ Added	Додала
 I can't add it! No keyword "NICK"!	Не можу додати! Немає ключового слова "NICK"!
 Masochist? 8-D	Самотик? 8-D
 I ban a ip for such jokes!	Ща зобаню по ip за такі жарти!
+I could be wrong, but %s not is here...	Я можу помилятися, але %s тут немає...
 You live %s years or %s days or %s hours or %s minutes or %s seconds.\nYou slept %s hours, or %s days.\nYou blink about %s times.\nYour heart pumped %s liters of blood and made %s strikes.\nYou drank %s liters of water and drank it %s hours.\nYou have increased by %s centimeters in my head of hair, dropped %s pieces, all of the hair %s kilometers.\nYou grew up in the hands %s centimeters and in the feet %s centimeters nails.\nYou breathed %s liters of air a total weight of %s kilograms.\nYou have stood out %s liters of sweat, and %s liters of urine, and %s liters of saliva.\nYou lost %s billion nerve cells.\nYou laughed %s times.\nYou've gone %s kilometers	Ти живеш %s років, або %s днів, або %s годин, або %s хвилин, або %s секунд.\nТи спав(ла) %s годин, або %s діб.\nТи моргнув(ла) приблизно %s разів.\nТвоє серце перекачало %s літрів крові та зробило %s ударів.\nТи випив(ла) %s літрів води і пив(ла) її %s годин.\nУ тебе виросло на голові %s сантиметрів волосся, випало %s штук, все волосся %s кілометрів.\nУ тебе виросло на руках %s сантиметрів і на ногах %s сантиметрів нігтів.\nТи вдихнув(ла) %s літрів повітря загальною вагою %s кілограмів.\nУ тебе виділилося %s літрів поту, %s літрів сечі та %s літрів слини.\nТи втратив(ла) %s мільйонів нервових клітин.\nТи сміявся(лась) %s раз.\nТи прошов(ла) %s кілометрів
 Smoke help about command!	Читаємо довідку по команді!
 Just funny poem	Просто смішний вірш
@@ -488,12 +486,22 @@ Search XEP	Пошук XEP
 Search in en.wikipedia.org	Пошук по ru.wikipedia.org
 
 # file: ../trunk/plugins/googleplus.py
+verb	дієслово
+noun	іменник
+preposition	прийменник
+adverb	прислівник
+adjective	прикметник
+phrase	вислів
+conjunction	сполучник
+abbreviation	абревіатура
 Google Calculator results not found	Калькулятор google не може це підрахувати!
 I don't know!	Хм. Мені про це ніхто не розповідав...
+Command execution error.	Помилка виконання команди.
 Google Calculator	Калькулятор google
 Definition for a word or phrase.\ndefine word - random define of word or phrase\ndefine N word - N-th define of word or phrase\ndefine a-b word - from a to b defines of word or phrase	Визначення для слова чи виразу.\ndefine слово - випадкове визначення слова чи виразу\ndefine N слово - N-нне визначення слова чи виразу\ndefine a-b word - визначення слова чи фрази з номеру a і до b
 Google URL Shortener/Unshortener	Сервіс скорочення посиланнь від Google
 Google QR-code generator	Сервіс генерації QR-кодів від Google
+Google Dictionary\ngdict [from_language] to_language word	Словник Google\ngdict [з_мови] на_мову слово
 
 # file: ../trunk/plugins/hideroom.py
 This command available only in private!	Команда доступна лише в приваті!
@@ -792,13 +800,19 @@ Nov	Лис
 Dec	Гру
 Ignore list: %s	Я не приймаю команди від %s
 Not found: %s	Не знайдено: %s
+Age statistic base	База статистики віку
+SayTo base	База команди sayto
+Talkers base	База базік
+Base of definitions	База визначень
+Karma base	База карми
+Jid's base	База JID'ів
+Vacuum databases:\n%s	Стиснення баз даних:\n%s
 Last syslogs: %s	Останні системні логи: %s
 Locale set to: %s	Встановлена локалізація: %s
 Locale not found!	Локалізація не знайдена!
 Locale set to: en	Встановлена локалізація: en
 Current locale: %s	Поточна локалізація: %s
 Command temporary blocked!	Команда тимчасово блокована
-Command execution error.	Помилка виконання команди.
 ok	ок
 Enabled: %s	Увімкнено: %s
 Only conference owner can enable commands!	Ввімкнення команд доступне лише власнику конференції!
@@ -1139,6 +1153,7 @@ Spy. Time for reaction on spy scan	Spy. Інтервал реакції на с�
 Rss. Maximum rss count	RSS. Максимальна кількість новин
 Rss. Minimal time for rss check in minutes	RSS. мінімальний час для перевірки новин
 Rss. Timeout for rss request from server in seconds	Rss. Таймаут запиту новини з сервера в секунду
+Pep scrobbler. Number of maximum answers for pep-scrobbler	Pep scrobbler. Максимальна кількість повідомлень для pep скроблера
 Whereis. Frequency for answer check for whereis command	Whereis. Частота перевірки відповіді для команди whereis
 Watcher. Try rejoin in rooms with low activity	Watcher. Намагатися перезаходити в малоактивні кімнати
 Watcher. Allow self ping	Watcher. Пінгувати самого себе
@@ -1191,6 +1206,9 @@ Karma. Time for karma change from access level	Karma. Час через який
 Karma. Difference between two action in karma	Karma. Різниця між двома діями карми
 Karma. Upper value of karma for control action	Karma. Верхня межа карми при перевірці правильності значень
 Karma. Lower value of karma for control action	Нижня межа карми при перевірці правильності значень
+Kernel. Vacuum databases	Kernel. Стиснення баз даних
+Kernel. Vacuum databases at hour when by time	Kernel. Стиснення баз даних. Години для стиснення баз даних за часом
+Kernel. Vacuum databases at minuts when by time	Kernel. Стиснення баз даних. Хвилини для стиснення баз даних за часом
 Disco. Exclude from disco by regexps	Disco. Видаляти з обзору по регекспу
 Kernel. Exclude symbols from bot's messages	Kernel. Видалити символи із повідомленнь бота
 Muc-filter settings	Налаштування muc-фільтру
@@ -1212,6 +1230,7 @@ Age settings	Налаштування age
 Sayto settings	Налаштування sayto
 Spy settings	Налаштування spy
 Help system. Helps without commands: about, donation, access	Показує поточні розділи довідкової системи. Розділи довідки без команд: about, donation, доступ
+Vacuum bot's databases	Стиснення баз даних бота
 Join conference.\njoin room[@conference.server.ru[/nick]]\n[password]	Вхід до конференції:\njoin room@conference.server.ru/nick - вхід до конференції room з ніком nick.\njoin room@conference.server.ru - вхід до конференції room з останнім заданим ніком.\njoin room - вхід до конференції room на останньому заданому сервері з останнім заданим ніком.
 Leave conference.\nleave room[@conference.server.ru[/nick]]	Вихід з конференції:\nleave - вихід з поточної конференції.\nleave room - вихід з конференції room на останньому заданому сервері.\nleave room@conference.server.ru - вихід з конференції room
 Rejoin conference.\nrejoin room[@conference.server.ru[/nick]]\n[password]	Перевхід до конференції.\nrejoin - перезайти в поточну конференцію.\nrejoin room - перезайти в конференцію room на останньому заданому сервері.\nrejoin room@conference.server.ru - перезайти в конференцію room
@@ -1236,6 +1255,7 @@ Your identification.	Ваша ідентифікація перед ботом.
 Identification.	Ідентифікація перед ботом.
 Show status.	Показ статусу.
 Set command prefix. Use 'none' for disable prefix	Встановлення префіксу команд. Без параметрів показує поточний статус. Якщо параметром буде none префікс буде відключено
+PEP Scrobbler. Test version	Pep скробблер. Тестова версія
 Conference configure.\nconfig [show[ status]|help][ item]	Налаштування конференції.\nconfig [show[ status]|help][ item]
 Deny recieve messages from unaffiliated participants in private	Заборона прийому повідомлень від учасників без повноважень в приваті
 Temporary ignore with ddos detect.\nddos [show|del jid]	Тимчасовий ігнор при підозрі на ddos.\nddos [show|del jid]

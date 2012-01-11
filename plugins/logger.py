@@ -31,7 +31,7 @@ if not os.path.exists(log_folder): os.mkdir(log_folder)
 if not os.path.exists(public_log): os.mkdir(public_log)
 if not os.path.exists(system_log) and GT('syslogs_enable'): os.mkdir(system_log)
 
-for smilepack in smiles_dirs:
+for smilepack in smiles_dirs_case:
 	smile_dictionary[smilepack] = {}
 	if smilepack[0] != '.':
 		data = readfile(os.path.join(sm_f,smilepack,smile_descriptor))
@@ -41,7 +41,7 @@ for smilepack in smiles_dirs:
 
 def smile_replace(room, text):
 	global smile_dictionary
-	smilepack = get_config(getRoom(room),'smiles')
+	smilepack = smiles_dirs_case[smiles_dirs.index(get_config(getRoom(room),'smiles'))]
 	newtext = ' %s ' % text.replace('<br>',' <br> ').replace('&nbsp;', ' ')
 	for smile in sorted(smile_dictionary[smilepack], key = lambda x: len(x))[::-1]:
 		tmp_smile = ' %s ' % html_escape(smile.decode('utf-8')).replace('&amp;', '&')

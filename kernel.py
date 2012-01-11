@@ -2164,8 +2164,10 @@ try: tmp = botOs
 except: botOs = os_version()
 
 sm_f = os.path.join(public_log,smile_folder)
-if os.path.isdir(sm_f): smiles_dirs = [sd for sd in os.listdir(sm_f) if sd[0] != '.' and os.path.isfile(os.path.join(sm_f,sd,smile_descriptor))]
-else: smiles_dirs = []
+if os.path.isdir(sm_f):
+	smiles_dirs_case = [sd for sd in os.listdir(sm_f) if sd[0] != '.' and os.path.isfile(os.path.join(sm_f,sd,smile_descriptor))]
+	smiles_dirs = [sd.lower() for sd in smiles_dirs_case]
+else: smiles_dirs, smiles_dirs_case = [], []
 
 logging.basicConfig(filename=LOG_FILENAME,level=logging.DEBUG,)	# включение логгирования
 capsNode = 'http://isida-bot.com'
