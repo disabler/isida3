@@ -23,6 +23,9 @@
 # --------------------------------------------------------------------------- #
 
 last_url_watch = ''
+url_watch_ignore = ['pdf','sig','spl','class','ps','torrent','dvi','gz','pac','swf','tar','tgz','tar','zip','mp3','m3u','wma',\
+					'wax','ogg','wav','gif','jar','jpg','jpeg','png','xbm','xpm','xwd','css','asc','c','cpp','log','conf','text',\
+					'txt','dtd','xml','mpeg','mpg','mov','qt','avi','asf','asx','wmv','bz2','tbz','tar']
 
 def netheader(type, jid, nick, text):
 	if text:
@@ -75,9 +78,11 @@ def parse_url_in_message(room,jid,nick,type,text):
 	try:
 		link = re.findall(r'(http[s]?://.*)',text)[0].split(' ')[0]
 		if link and last_url_watch != link and pasteurl not in link:
+			for t in url_watch_ignore:
+				if link.endswith('.%s' % t): return
 			last_url_watch = link = enidna(link)
 			pprint('Show url-title: %s in %s' % (link,room))
-			original_page = load_page(urllib2.Request(link))
+			original_page = load_page(urllib2.Request(link))[:4192]
 			page = html_encode(original_page)
 			if '<title' in page: tag = 'title'
 			elif '<TITLE' in page: tag = 'TITLE'
