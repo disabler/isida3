@@ -151,7 +151,7 @@ def presence_logger(room,jid,nick,type,mass,mode,logfile):
 		if type == 'unavailable':
 			log_body += ['*** %s','<span class="unavailable">%s'][GT('html_logs_enable')] % nick
 			if mode and jid != 'None': log_body += ' ('+jid+')'
-			if len(exit_type): log_body += ' '+exit_type.lower()
+			if len(exit_type): log_body += ' '+exit_type
 			else: log_body += ' '+L('leave')
 			if exit_message != '': log_body += ' ('+exit_message+')'
 			if mode and '\r' in mass[4]: log_body += ', %s %s' % (L('Client:'),mass[4].split('\r')[1])

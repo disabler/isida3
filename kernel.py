@@ -1778,7 +1778,8 @@ def presenceCB(sess,mess):
 	show=unicode(mess.getShow())
 	reason=unicode(mess.getReason())
 	status=unicode(mess.getStatusCode())
-	chg_nick = [None,rss_replace(get_valid_tag(mss,'nick'))][status == '303']
+	try: chg_nick = [None,mess.getTag('x',namespace=xmpp.NS_MUC_USER).getTagAttr('item','nick')][status == '303']
+	except: chg_nick = None
 	actor=unicode(mess.getActor())
 	to=unicode(mess.getTo())
 	id = mess.getID()
@@ -1891,10 +1892,10 @@ def presenceCB(sess,mess):
 		if nowname == '': nowname = Settings['nickname']
 	not_found,exit_type,exit_message = 0,'',''
 	if type=='unavailable':
-		if status=='307': exit_type,exit_message = L('Kicked'),reason
-		elif status=='301': exit_type,exit_message = L('Banned'),reason
-		elif status=='303': exit_type,exit_message = L('Change nick to %s') % chg_nick,''
-		else: exit_type,exit_message = L('Leave'),text
+		if status=='307': exit_type,exit_message = L('kicked'),reason
+		elif status=='301': exit_type,exit_message = L('banned'),reason
+		elif status=='303': exit_type,exit_message = L('change nick to %s') % chg_nick,''
+		else: exit_type,exit_message = L('leave'),text
 		if exit_message == 'None': exit_message = ''
 		try: exit_message += '\r' + acl_ver_tmp['%s/%s' % (room,nick)]
 		except: pass

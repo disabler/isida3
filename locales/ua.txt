@@ -55,10 +55,10 @@ whitelist	білий список
 lock by hash	блок по хешу
 off	вимк
 /me detect bad stanza from %s	/me дивиться на %s і гадає: "Факін розумник детектед!"
-Kicked	Вигнали
-Banned	Забанили
-Change nick to %s	Змінив(ла) нік на %s
-Leave	Вийшов
+kicked	вигнали
+banned	забанили
+change nick to %s	змінив(ла) нік на %s
+leave	вийшов
 banned in	забанено в
 kicked from	вигнали з
 Bot was %s %s with reason: %s	Бота %s %s з приводу: %s
