@@ -58,7 +58,7 @@ def initial_log_users(room,ott):
 	log_body = ['[%s] ' % ott,'<p><a id="%s" name="%s" href="#%s" class="time">%s</a> ' % (ott,ott,ott,ott)][GT('html_logs_enable')]
 	log_body += ['*** ','<span class="status">'][GT('html_logs_enable')]
 	log_body += L('Users: %s (%s)') % (', '.join(txt),len(txt))
-	log_body += ['','</span></p>'][GT('html_logs_enable')] + '\n'
+	log_body += '\n%s' % ['','</span></p>'][GT('html_logs_enable')]
 	return log_body
 
 def append_message_to_log(room,jid,nick,type,text):
@@ -70,7 +70,7 @@ def append_message_to_log(room,jid,nick,type,text):
 			if get_config(getRoom(room),'smiles') != 'off': ptext = smile_replace(room, text)
 			else: ptext = text
 			msg_logger(room,jid,nick,type,ptext,public_log)
-		if type == 'chat' and text != 'None': nick = 'chat | '+nick
+		if type == 'chat' and text != 'None': nick = 'chat >>> %s' % nick
 		if text != 'None' and GT('syslogs_enable'): msg_logger(room,jid,nick,type,text,system_log)
 
 def write_log_with_end(curr_path,curr_file,log_body,log_he):
@@ -95,13 +95,13 @@ def write_log_with_end(curr_path,curr_file,log_body,log_he):
 
 def msg_logger(room,jid,nick,type,text,logfile):
 	lt = tuple(time.localtime())
-	curr_path = logfile+'/'+room
+	curr_path = '%s/%s' % (logfile,room)
 	if not os.path.exists(curr_path): os.mkdir(curr_path)
-	curr_path = curr_path+'/'+str(lt[0])
+	curr_path = '%s/%s' % (curr_path,lt[0])
 	if not os.path.exists(curr_path): os.mkdir(curr_path)
-	curr_path += '/%02d' % lt[1]
+	curr_path = '%s/%02d' % (curr_path,lt[1])
 	if not os.path.exists(curr_path): os.mkdir(curr_path)
-	curr_file = curr_path + '/%02d' % lt[2] + ['.txt','.html'][GT('html_logs_enable')]
+	curr_file = ['%s/%02d.txt','%s/%02d.html'][GT('html_logs_enable')] % (curr_path,lt[2])
 	ott = onlytimeadd(tuple(time.localtime()))
 	log_body = ['[%s] ' % ott,'<p><a id="%s" name="%s" href="#%s" class="time">%s</a> ' % (ott,ott,ott,ott)][GT('html_logs_enable')]
 	if nick == '': log_body += ['*** %s\n','<span class="topic">%s</span></p>'][GT('html_logs_enable')] % text
@@ -139,37 +139,37 @@ def presence_logger(room,jid,nick,type,mass,mode,logfile):
 		if not_found == 1 and not GT('aff_role_logs_enable'): return
 		if not_found == 2 and not GT('status_logs_enable'): return
 		lt = tuple(time.localtime())
-		curr_path = logfile+'/'+room
+		curr_path = '%s/%s' % (logfile,room)
 		if not os.path.exists(curr_path): os.mkdir(curr_path)
-		curr_path = curr_path+'/'+str(lt[0])
+		curr_path = '%s/%s' % (curr_path,lt[0])
 		if not os.path.exists(curr_path): os.mkdir(curr_path)
-		curr_path += '/%02d' % lt[1]
+		curr_path = '%s/%02d' % (curr_path,lt[1])
 		if not os.path.exists(curr_path): os.mkdir(curr_path)
-		curr_file = curr_path + '/%02d' % lt[2] + ['.txt','.html'][GT('html_logs_enable')]
+		curr_file = ['%s/%02d.txt','%s/%02d.html'][GT('html_logs_enable')] % (curr_path,lt[2])
 		ott = onlytimeadd(tuple(time.localtime()))
 		log_body = ['[%s] ' % ott,'<p><a id="%s" name="%s" href="#%s" class="time">%s</a> ' % (ott,ott,ott,ott)][GT('html_logs_enable')]
 		if type == 'unavailable':
 			log_body += ['*** %s','<span class="unavailable">%s'][GT('html_logs_enable')] % nick
-			if mode and jid != 'None': log_body += ' ('+jid+')'
-			if len(exit_type): log_body += ' '+exit_type
-			else: log_body += ' '+L('leave')
-			if exit_message != '': log_body += ' ('+exit_message+')'
+			if mode and jid != 'None': log_body += ' (%s)' % jid
+			if len(exit_type): log_body += ' %s' % exit_type
+			else: log_body += ' %s' % L('leave')
+			if exit_message != '': log_body += ' (%s)' % exit_message
 			if mode and '\r' in mass[4]: log_body += ', %s %s' % (L('Client:'),mass[4].split('\r')[1])
-			log_body += ['','</span></p>'][GT('html_logs_enable')] + '\n'
+			log_body += '%s\n' % ['','</span></p>'][GT('html_logs_enable')]
 		else:
 			log_body += ['*** %s','<span class="status">%s'][GT('html_logs_enable')] % nick
 			if not_found == 0:
-				if mode and jid != 'None': log_body += ' ('+jid+')'
-				log_body += ' '+L('join as')+' '+L(role+'/'+affiliation)
-			elif not_found == 1: log_body += ' '+L('now is')+' '+L(role+'/'+affiliation)
-			elif not_found == 2: log_body += ' '+L('now is')+' '
+				if mode and jid != 'None': log_body += ' (%s)' % jid
+				log_body += ' %s %s' % (L('join as'),L('%s/%s' % (role,affiliation)))
+			elif not_found == 1: log_body += ' %s %s'  % (L('now is'),L('%s/%s' % (role,affiliation)))
+			elif not_found == 2: log_body += ' %s ' % L('now is')
 			if not_found == 0 or not_found == 2:
-				if show != 'None': log_body += ' '+show
+				if show != 'None': log_body += '%s ' % show
 				else: log_body += ' online'
-				if priority != 'None': log_body += ' ['+priority+']'
+				if priority != 'None': log_body += ' [%s]' % priority
 				else:  log_body += ' [0]'
-				if text != 'None':  log_body += ' ('+text+')'
-			log_body += ['','</span></p>'][GT('html_logs_enable')] + '\n'
+				if text != 'None':  log_body += ' (%s)' % text
+			log_body += '%s\n' % ['','</span></p>'][GT('html_logs_enable')]
 		lht = '%s - %02d/%02d/%02d' % (room,lt[0],lt[1],lt[2])
 		log_he = ['%s\t\thttp://isida-bot.com\n\n' % lht,log_header+lht+'</title></head><body><div class="main"><div class="top"><div class="heart"><a href="http://isida-bot.com">http://isida-bot.com</a></div><div class="conference">'+lht+'</div></div><div class="container">\n'][GT('html_logs_enable')]
 		try: log_he += initial_log_users(room,ott) + ['[%s] ' % ott,'<p><a id="%s" name="%s" href="#%s" class="time">%s</a> ' % (ott,ott,ott,ott)][GT('html_logs_enable')] + ['*** %s\n','<span class="topic">%s</span></p>'][GT('html_logs_enable')] % [topics[room],html_escape(topics[room]).replace('\n','<br>')][GT('html_logs_enable')]
@@ -191,7 +191,7 @@ def log_room(type, jid, nick, text):
 		if hmode == 'show':
 			if len(hr):
 				msg = L('Logged conferences:')
-				for tmp in hr: msg += '\n'+tmp
+				for tmp in hr: msg += '\n%s' % tmp
 			else: msg = L('Logs are turned off in all conferences.')
 		elif hmode == 'add':
 			if not match_room(hroom): msg = L('I am not in the %s') % hroom
