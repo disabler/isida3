@@ -30,7 +30,7 @@ def sokr(type, jid, nick, text):
 		if re.match('[a-zA-Z]+\Z', text):
 			data = load_page('http://www.abbreviations.com/bs2.aspx?st=%s&o=p' % text)
 			results = re.findall('<td class="dsc">(.+?)</td>', data)
-			results = list(set(results))
+			results = [i for k,i in enumerate(results) if results.index(i) == k]
 		else:
 			data = load_page("http://www.sokr.ru/search/?", {'abbr': text.encode('utf-8'), 'abbr_exact': '1'})
 			results = re.findall('em class="got_clear">.+?</em></a>.+?<p class="value">(.+?)</p>' , data, re.S)
@@ -45,7 +45,7 @@ def sokr(type, jid, nick, text):
 			except: n1, n2 = map(int, target.split('-'))
 			if 0 < n1 <= n2 <= cr:
 				msg = L('Total found %s matches. Result(s) %s:\n') % (cr, target)
-				msg += '\n'.join(['%s) %s' % (i[0]+n1, i[1]) for i in enumerate(results[n1-1: n2])]).decode('utf8')
+				msg += '\n'.join(['%s. %s' % (i[0]+n1, i[1]) for i in enumerate(results[n1-1: n2])]).decode('utf8')
 				msg = msg.replace('<br>', '')
 			else: msg = L('I don\'t know!')
 	send_msg(type, jid, nick, msg)
