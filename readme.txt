@@ -6,7 +6,7 @@ short howto for isida-bot
 1. python-psycopg2 >= 2.4.2
 2. python >= 2.7
 3. git-core >= 1.7.1 
-4. postresql >= 8.4
+4. postgresql >= 8.4
 5. openssl >= 1.0.0e
 
 
