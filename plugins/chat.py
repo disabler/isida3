@@ -120,7 +120,9 @@ def flood_action(room,jid,nick,type,text):
 			FLOOD_STATS[room][2] += 1
 
 		if FLOOD_STATS.has_key(room) and FLOOD_STATS[room][2] >= get_config_int(room,'floodcount') and tm - FLOOD_STATS[room][1] > get_config_int(room,'floodtime'):
+			pprint('Send msg human: %s/%s [%s] <<< %s' % (room,nick,type,text),'dark_gray')
 			msg = getAnswer(type, room, nick, text)
+			pprint('Send msg human: %s/%s [%s] >>> %s' % (room,nick,type,msg),'dark_gray')
 			send_msg(type, room, nick, msg)
 			return True
 	return False

@@ -87,7 +87,9 @@ def autoturn(room,jid,nick,type,text):
 				if not re.findall('\s+(svn|http[s]?|ftp)(://)',tt,re.S+re.U) and not re.findall(u'\s+[A-ZА-Я\d\']{2,}$',tt,re.U): count_two += sum([1 for k in two_en if k in tt])
 			if len(tmp.split()) < count_two:
 				to_turn = turner_raw(text,room,nick)
-				if to_turn and to_turn != text: send_msg(type, room, '', to_turn)
+				if to_turn and to_turn != text:
+					pprint('Autoturn text: %s/%s [%s] %s > %s' % (room,nick,jid,text,to_turn),'dark_gray')
+					send_msg(type, room, '', to_turn)
 				return True
 
 global execute, message_act_control

@@ -1720,17 +1720,22 @@ def msg_afterwork(mess,room,jid,nick,type,back_text,no_comm,access_mode,nowname)
 		if room != selfjid: is_flood = get_config(getRoom(room),'flood') not in ['off',False]
 		else: is_flood = None
 		if selfjid != jid and access_mode >= 0 and (back_text[:len(nowname)+2] == nowname+': ' or back_text[:len(nowname)+2] == nowname+', ' or type == 'chat') and is_flood:
-			if len(back_text)>100: send_msg(type, room, nick, L('Too many letters!'))
+			pprint('Send msg human: %s/%s [%s] <<< %s' % (room,nick,type,text),'dark_gray')
+			if len(back_text)>100:
+				taxt = L('Too many letters!')
+				pprint('Send msg human: %s/%s [%s] >>> %s' % (room,nick,type,text),'dark_gray')
+				send_msg(type, room, nick, text)
 			else:
 				if back_text[:len(nowname)] == nowname: back_text = back_text[len(nowname)+2:]
 				try:
 					text = getAnswer(type, room, nick, back_text)
-					if text: thr(send_msg_human,(type, room, nick, text),'msg_human')
+					if text:
+						pprint('Send msg human: %s/%s [%s] >>> %s' % (room,nick,type,text),'dark_gray')
+						thr(send_msg_human,(type, room, nick, text),'msg_human')
 				except: pass
 
 def send_msg_human(type, room, nick, text):
-	if text: time.sleep(len(text)/2.5+randint(0,5))
-	else: text = L('What?')
+	time.sleep(len(text)/4.0+randint(0,3))
 	send_msg(type, room, nick, text)
 
 def to_censore(text,room):
