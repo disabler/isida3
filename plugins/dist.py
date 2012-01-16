@@ -64,7 +64,7 @@ def city(type, jid, nick, text):
 			elif len(GT('yandex_api_key')) > 60:
 				text = place.encode('utf-8')
 				url = 'http://geocode-maps.yandex.ru/1.x/?geocode=%s&key=%s&format=json&results=1' % (urllib.quote_plus(text), GT('yandex_api_key'))
-				j = simplejson.loads(load_page(url))
+				j = json.loads(load_page(url))
 				place_ext = j['response']['GeoObjectCollection']['featureMember'][0]['GeoObject']['metaDataProperty']['GeocoderMetaData']['text']
 				coords = j['response']['GeoObjectCollection']['featureMember'][0]['GeoObject']['Point']['pos'].split()
 				if not cur_execute_fetchone('select * from dist_user where point ilike %s',(place,)):
@@ -103,7 +103,7 @@ def city(type, jid, nick, text):
 				text = text_tmp[1]
 			else: results, skip = '5', '0'
 			url = 'http://geocode-maps.yandex.ru/1.x/?geocode=%s&key=%s&format=json&results=%s&skip=%s' % (urllib.quote_plus(text), GT('yandex_api_key'), results, skip)
-			j = simplejson.loads(load_page(url))
+			j = json.loads(load_page(url))
 			msg = ''
 			for object in j['response']['GeoObjectCollection']['featureMember']:
 				msg += object['GeoObject']['metaDataProperty']['GeocoderMetaData']['text']

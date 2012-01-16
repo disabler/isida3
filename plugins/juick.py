@@ -67,7 +67,7 @@ def juick(type, jid, nick, text):
 
 def juick_user(type, jid, nick, text):
 	if text[0] == '@': text = text[1:]
-	try: result = simplejson.loads(html_encode(load_page(JUICK_MESSAGES_REQUEST, {'user_id':str(simplejson.loads(html_encode(load_page(JUICK_USERS, {'uname': text})).replace('\t',' '*8))[0]['uid'])})).replace('\t',' '*8))
+	try: result = json.loads(html_encode(load_page(JUICK_MESSAGES_REQUEST, {'user_id':str(json.loads(html_encode(load_page(JUICK_USERS, {'uname': text})).replace('\t',' '*8))[0]['uid'])})).replace('\t',' '*8))
 	except:
 		send_msg(type, jid, nick, L('User @%s not found!') % text)
 		return
@@ -82,7 +82,7 @@ def juick_user(type, jid, nick, text):
 	send_msg(type, jid, nick, msg)
 
 def juick_search(type, jid, nick, text):
-	result = simplejson.loads(html_encode(load_page(JUICK_MESSAGES_REQUEST, {'search': text})).replace('\t',' '*8))
+	result = json.loads(html_encode(load_page(JUICK_MESSAGES_REQUEST, {'search': text})).replace('\t',' '*8))
 	tp = []
 	for t in result[:GT('juick_user_post_limit')]:
 		tm = '#%s @%s: %s' % (t['mid'],replacer(t['user']['uname']),replacer(t['body'][:GT('juick_user_post_size')].replace('\n',' \\ ')+['',u'…'][len(t['body']) > GT('juick_user_post_size')]))
@@ -95,9 +95,9 @@ def juick_search(type, jid, nick, text):
 def juick_tags(type, jid, nick, text):
 	if text[0] == '@': text = text[1:]
 	try:
-		if text: hdr,url,params = L('Popular tags of @%s:') % text,JUICK_TAGS_USER,{'user_id':str(simplejson.loads(html_encode(load_page(JUICK_USERS, {'uname': text})).replace('\t',' '*8))[0]['uid'])}
+		if text: hdr,url,params = L('Popular tags of @%s:') % text,JUICK_TAGS_USER,{'user_id':str(json.loads(html_encode(load_page(JUICK_USERS, {'uname': text})).replace('\t',' '*8))[0]['uid'])}
 		else: hdr,url,params = L('Popular tags:'),JUICK_TAGS,{}
-		result = simplejson.loads(html_encode(load_page(url,params)).replace('\t',' '*8))
+		result = json.loads(html_encode(load_page(url,params)).replace('\t',' '*8))
 		tags = [((t['messages'],replacer(t['tag']))) for t in result]
 		tags.sort(reverse=True)
 		msg = '%s %s' % (hdr,', '.join(['%s [%s]' % (t[1],t[0]) for t in tags[:GT('juick_user_tags_limit')]]))
@@ -114,7 +114,7 @@ def juick_msg(type, jid, nick, text):
 	else: j_rid = 0
 	try: j_replies = int(text.split()[1])
 	except: j_replies = GT('juick_msg_answers_default')
-	try: result = simplejson.loads(html_encode(load_page(JUICK_THREAD, {'mid': j_mid})).replace('\t',' '*8))
+	try: result = json.loads(html_encode(load_page(JUICK_THREAD, {'mid': j_mid})).replace('\t',' '*8))
 	except:
 		send_msg(type, jid, nick, L('Message #%s is not found!') % j_mid)
 		return

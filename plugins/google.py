@@ -33,9 +33,9 @@ def xep_show(type, jid, nick,text):
 	ntext = 'xep '+text+' inurl:xmpp.org'
 	url = 'http://ajax.googleapis.com/ajax/services/search/web?'
 	search_results = html_encode(load_page(url, {'v': '1.0', 'q': ntext.encode("utf-8")}))
-	json = simplejson.loads(search_results)
+	jsonl = json.loads(search_results)
 	try:
-		results = json['responseData']['results']
+		results = jsonl['responseData']['results']
 		title = results[0]['title']
 		content = results[0]['content']
 		noh_title = replace_bold(title,'','')
@@ -57,8 +57,8 @@ def google(type, jid, nick, text):
 		try:
 			url = 'http://ajax.googleapis.com/ajax/services/search/web?'
 			search_results = html_encode(load_page(url, {'v': '1.0', 'q': text.encode("utf-8")}))
-			json = simplejson.loads(search_results)
-			data = json['responseData']['results']
+			jsonl = json.loads(search_results)
+			data = jsonl['responseData']['results']
 			first = data[0]
 			if google_last_res.has_key(jid): google_last_res[jid].update({nick: data[1:]})
 			else: google_last_res[jid] = {nick: data[1:]}
@@ -112,9 +112,9 @@ def translate(type, jid, nick, text):
 															 'hl':lfrom,\
 															 'sl':lfrom,\
 															 'tl':lto}))
-				try: json = simplejson.loads(search_results)['sentences']
-				except ValueError: json = None
-				if json: msg = rss_replace(''.join(f['trans'] for f in json))
+				try: jsonl = json.loads(search_results)['sentences']
+				except ValueError: jsonl = None
+				if jsonl: msg = rss_replace(''.join(f['trans'] for f in jsonl))
 				else: msg = L('I can\'t translate it!')
 			else: msg = L('Incorrect language settings for translate. tr list - available languages.')
 		else: msg = L('Command\'s format: tr [from] to text')

@@ -102,7 +102,7 @@ def goo_gl_raw(text, is_qr):
 		data = load_page(urllib2.Request('http://goo.gl/api/url', 'url=%s' % urllib.quote(url)))
 		if L('Error! %s') % '' in data: msg = data
 		else:
-			msg = simplejson.loads(data)['short_url']
+			msg = json.loads(data)['short_url']
 			if is_qr: msg += '.qr'
 	return msg
 

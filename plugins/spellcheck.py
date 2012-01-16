@@ -28,7 +28,7 @@ def spell(type, jid, nick, text):
 		if len(tmp) == 2 and re.match('((uk)|(en)|(ru))(,((uk)|(en)|(ru)))*?$', langs): text = tmp[1].encode('utf-8')
 		else: text, langs = text.encode('utf-8'), ''
 		url = 'http://speller.yandex.net/services/spellservice.json/checkText?text=%s&lang=%s&options=7' % (urllib.quote_plus(text), langs)
-		j = simplejson.loads(load_page(url),encoding='utf-8')
+		j = json.loads(load_page(url),encoding='utf-8')
 		msg = text.decode('utf-8')
 		deltapos = 0
 		for err in j:

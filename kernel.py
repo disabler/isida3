@@ -47,7 +47,6 @@ import psycopg2.extensions
 import random
 import re
 import select
-import simplejson
 import socket
 import sqlite3
 import subprocess
