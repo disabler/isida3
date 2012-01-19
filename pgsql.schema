@@ -31,7 +31,8 @@ CREATE TABLE age (
 	age integer,
 	status integer,
 	type text,
-	message text
+	message text,
+	no_case_nick text
 );
 
 CREATE INDEX age_rj ON age (room,jid);

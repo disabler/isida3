@@ -1963,7 +1963,7 @@ def presenceCB(sess,mess):
 		else:
 			if ab[5]: cur_execute('update age set time=%s, status=%s, message=%s where room=%s and jid=%s and nick=%s', (tt,0,ttext,room, jid, nick))
 			else: cur_execute('update age set status=%s, message=%s where room=%s and jid=%s and nick=%s', (0,ttext,room, jid, nick))
-	else: cur_execute('insert into age values (%s,%s,%s,%s,%s,%s,%s,%s)', (room,nick,jid,tt,0,0,'',ttext))
+	else: cur_execute('insert into age values (%s,%s,%s,%s,%s,%s,%s,%s,%s)', (room,nick,jid,tt,0,0,'',ttext,nick.lower()))
 
 def onoff_no_tr(msg):
 	if msg == None or msg == False or msg == 0 or msg == '0': return 'off'

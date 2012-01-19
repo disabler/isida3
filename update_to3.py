@@ -72,12 +72,25 @@ except:
 conn=psycopg2.connect(database=base_name, user=base_user, host=base_host, password=base_pass, port=base_port)
 cur = conn.cursor()
 
-bases_arr = [[agestat,'age','age'],[jidbase,'jid','jid'],[talkers,'talkers','talkers'],[wtfbase,'wtf','wtf'],
+bases_arr = [[jidbase,'jid','jid'],[talkers,'talkers','talkers'],[wtfbase,'wtf','wtf'],
 			 [answers,'answer','answer'],[saytobase,'st','sayto'],[distbase,'dist','dist'],[distbase_user,'dist','dist_user'],
 			 [karmabase,'karma','karma'],[karmabase,'commiters','karma_commiters'],[karmabase,'limits','karma_limits'],
 			 [acl_base,'acl','acl'],[wzbase,'wz','wz'],[gisbase,'gis','gis'],[def_phone_base,'ru_stat','def_ru_stat'],
 			 [def_phone_base,'ua_stat','def_ua_stat'],[def_phone_base,'ru_mobile','def_ru_mobile'],[muc_lock_base,'muc','muc_lock']]
 
+from_base = to_base = 'age'
+if os.path.isfile(agestat):
+	s_conn = sqlite3.connect(agestat)
+	s_cur = s_conn.cursor()
+	tmp = s_cur.execute('select * from %s' % from_base).fetchall()
+	print 'Import %s, Base %s->%s, %s records' % (agestat, from_base, to_base, len(tmp))
+	s_conn.close()
+	if tmp:
+		for t in tmp:
+			req = 'insert into %s values(%s);' % (to_base,','.join(['%'+a for a in 's'*9]))
+			cur.execute(req,list(t)+[t[1].lower()])
+	conn.commit()
+			 
 for t in bases_arr: convert_base(t[0],t[1],t[2])
 
 cur.close()

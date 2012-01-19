@@ -43,10 +43,10 @@ def true_age_raw(type, jid, nick, text, xtype):
 	text = text[0]
 	if not text: text = nick
 	if llim > GT('age_max_limit'): llim = GT('age_max_limit')
-	real_jid = cur_execute_fetchone('select jid from age where room=%s and (nick=%s or jid=%s) order by -time,-status',(jid,text,text.lower()))
+	real_jid = cur_execute_fetchone('select jid from age where room=%s and (no_case_nick=%s or jid=%s) order by -time,-status',(jid,text,text.lower()))
 	if not real_jid:
 		text = '%%%s%%' % text.lower()
-		real_jid = cur_execute_fetchone('select jid from age where room=%s and (nick ilike %s or jid ilike %s) order by -time,-status',(jid,text,text))
+		real_jid = cur_execute_fetchone('select jid from age where room=%s and (no_case_nick ilike %s or jid ilike %s) order by -time,-status',(jid,text,text))
 	try:
 		if xtype: sbody = cur_execute_fetchmany('select * from age where room=%s and jid=%s order by -time,-status',(jid,real_jid[0]),llim)
 		else:
@@ -93,10 +93,10 @@ def seen_raw(type, jid, nick, text, xtype):
 	text = text[0]
 	if not text: text = nick
 	if llim > GT('age_max_limit'): llim = GT('age_max_limit')
-	real_jid = cur_execute_fetchone('select jid from age where room=%s and (nick=%s or jid=%s) order by status,-time',(jid,text,text.lower()))
+	real_jid = cur_execute_fetchone('select jid from age where room=%s and (no_case_nick=%s or jid=%s) order by status,-time',(jid,text,text.lower()))
 	if not real_jid:
 		textt = '%%%s%%' % text.lower()
-		real_jid = cur_execute_fetchone('select jid from age where room=%s and (nick ilike %s or jid ilike %s) order by status,-time',(jid,textt,textt))
+		real_jid = cur_execute_fetchone('select jid from age where room=%s and (no_case_nick ilike %s or jid ilike %s) order by status,-time',(jid,textt,textt))
 	if real_jid:
 		if xtype: sbody = cur_execute_fetchmany('select * from age where room=%s and jid=%s order by status,-time',(jid,real_jid[0]),llim)
 		else: sbody = [cur_execute_fetchone('select * from age where room=%s and jid=%s order by status,-time',(jid,real_jid[0]))]
@@ -137,10 +137,10 @@ def seenjid_raw(type, jid, nick, text, xtype):
 	ztype = None
 	if not text: text = nick
 	if llim > GT('age_max_limit'): llim = GT('age_max_limit')
-	real_jid = cur_execute_fetchall('select jid from age where room=%s and (nick ilike %s or jid ilike %s) group by jid,status,time order by status,-time',(jid,text,text.lower()))
+	real_jid = cur_execute_fetchall('select jid from age where room=%s and (no_case_nick ilike %s or jid ilike %s) group by jid,status,time order by status,-time',(jid,text,text.lower()))
 	if not real_jid:
 		txt = '%%%s%%' % text.lower()
-		real_jid = cur_execute_fetchall('select jid from age where room=%s and (nick ilike %s or jid ilike %s) group by jid,status,time order by status,-time',(jid,txt,txt))
+		real_jid = cur_execute_fetchall('select jid from age where room=%s and (no_case_nick ilike %s or jid ilike %s) group by jid,status,time order by status,-time',(jid,txt,txt))
 	sbody = []
 	if real_jid:
 		for rj in real_jid:			
