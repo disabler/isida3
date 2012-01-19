@@ -63,7 +63,7 @@ def sayto(type, jid, nick, text):
 			off_count = 0
 			for tmp in fnd:
 				if tmp[0]:
-					cu.execute('insert into sayto values (%s,%s,%s,%s)', (frm, jid, tmp[1], what))
+					cur_execute('insert into sayto values (%s,%s,%s,%s)', (frm, jid, tmp[1], what))
 					off_count += 1
 			if off_count: msg = L('I seen some people with this nick, and I can convey is incorrect. Coincidence: %s, and count convey messages: %s') % (str(len(fnd)), str(off_count))
 			else: msg = L('All people with this nickname are here!')
