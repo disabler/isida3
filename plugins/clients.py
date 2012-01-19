@@ -110,7 +110,7 @@ def clients_stats(type, jid, nick, text):
 		ns.sort(reverse=True)
 		if is_user:
 			if is_short: msg = L('Client statistic:%s') % ' %s' % ', '.join(['%s (%s)' % (t[1],t[0]) for t in ns])
-			else: msg = L('Client statistic:%s') % ' %s' % ', '.join([t[1] for t in ns])
+			else: msg = L('Client statistic:%s') % '\n%s' % '\n'.join([t[1] for t in ns])
 		else: msg = L('Client statistic:%s') % '\n%s' % '\n'.join(['%s. %s\t- %s' % (ns.index(t)+1,t[1],t[0]) for t in ns[:10]])
 	else: msg = L('Clients statistic not available.')
 	send_msg(type, jid, nick, msg)
