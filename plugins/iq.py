@@ -164,8 +164,8 @@ def iq_utime_get(type, jid, nick, text, mode):
 	sender(i)
 
 def utime_async(type, jid, nick, text, mode, is_answ):
-	isa,ert = is_answ[1],L('Error! %s')%''
-	if isa[0][:len(ert)] == ert: msg = isa[0]
+	isa = is_answ[1]
+	if isa[0].startswith(L('Error! %s')%''): msg = isa[0]
 	else:
 		try:
 			ttup,tt = isa[0].replace('T','-').replace('Z','').replace(':','-').split('-')+['0','0',str(tuple(time.localtime())[8])],[]
@@ -210,8 +210,8 @@ def iq_stats_raw(type, jid, nick, text, flag):
 	sender(i)
 
 def stats_async(type, jid, nick, text, flag, is_answ):
-	isa,ert = is_answ[1],L('Error! %s')%''
-	if isa[0][:len(ert)] == ert: msg = isa[0]
+	isa = is_answ[1]
+	if isa[0].startswith(L('Error! %s')%''): msg = isa[0]
 	else:
 		isa = unicode(isa)
 		if isa == 'None': ans = [0,0,0,0]

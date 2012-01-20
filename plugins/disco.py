@@ -330,8 +330,8 @@ def features(type, jid, nick, text):
 	sender(i)
 
 def features_async(type, jid, nick, what, where, is_answ):
-	isa,ert = is_answ[1],L('Error! %s')%''
-	if isa[0][:len(ert)] == ert: msg = isa[0]
+	isa = is_answ[1]
+	if isa[0].startswith(L('Error! %s')%''): msg = isa[0]
 	else:
 		isa, ftr = unicode(isa[0]), []
 		while True and not game_over:
@@ -372,8 +372,8 @@ def disco_r(type, jid, nick, text, raw_type):
 	sender(i)
 
 def disco_features_async(type, jid, nick, what, where, hm, raw_type, is_answ):
-	isa,ert = is_answ[1],L('Error! %s')%''
-	if isa[0][:len(ert)] == ert:
+	isa = is_answ[1]
+	if isa[0].startswith(L('Error! %s')%''):
 		send_msg(type, jid, nick, isa[0])
 		return
 	else:
@@ -384,8 +384,8 @@ def disco_features_async(type, jid, nick, what, where, hm, raw_type, is_answ):
 		sender(i)
 
 def disco_async(type, jid, nick, what, where, hm, disco_type, raw_type, isa_prev, is_answ):
-	if is_answ[1][1]:
-		#pprint(is_answ[1][0])
+	if is_answ[1][0].startswith(L('Error! %s')%''): msg = is_answ[1][0]
+	else:
 		if disco_type and '@' not in where:
 			cm = []
 			for ii in [[t.getAttr('name'),t.getAttr('jid')] for t in is_answ[1][1].getTag('query',namespace=xmpp.NS_DISCO_ITEMS).getTags('item')]:
@@ -438,7 +438,6 @@ def disco_async(type, jid, nick, what, where, hm, disco_type, raw_type, isa_prev
 					msg += '%s' % i['jid']
 					cnt += 1
 			else: msg = L('Not found.')
-	else: msg = L('I can\'t do it')
 	msg = rss_replace(msg)
 	send_msg(type, jid, nick, msg)
 

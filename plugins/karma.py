@@ -94,7 +94,6 @@ def karma_show(jid, nick, text):
 		else: return L('%s karma is %s') % (atext, karma_val(int(stat[0]))) + lim_text
 
 def karma_set(jid, nick, text):
-	global conn
 	cof = getFile(conoff,[])
 	if (jid,'karma') in cof: return
 	k_acc = get_level(jid,nick)[0]
@@ -115,7 +114,6 @@ def karma_set(jid, nick, text):
 	except: return L('incorrect digital parameter').capitalize()
 
 def karma_clear(jid, nick, text):
-	global conn
 	cof = getFile(conoff,[])
 	if (jid,'karma') in cof: return
 	k_acc = get_level(jid,nick)[0]
@@ -183,7 +181,6 @@ def karma_action_do(room,text,action):
 	act[action]('chat',room,nick,'%s\n%s' % (text,get_config(room,'karma_action_reason')),action.replace('kick','none'),0)
 
 def karma_change(room,jid,nick,type,text,value):
-	global conn
 	if type == 'chat': msg = L('You can\'t change karma in private!')
 	else:
 		cof = getFile(conoff,[])
