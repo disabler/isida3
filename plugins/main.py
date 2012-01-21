@@ -526,14 +526,14 @@ def close_age_null():
 	cur_execute("delete from age where jid ilike '<temporary>%'")
 	ccu = cur_execute_fetchall('select * from age where status=0 order by room')
 	cur_execute('delete from age where status=0')
-	for ab in ccu: cur_execute('insert into age values (%s,%s,%s,%s,%s,%s,%s,%s)', (ab[0],ab[1],ab[2],ab[3],ab[4],1,ab[6],ab[7]))
+	for ab in ccu: cur_execute('insert into age values (%s,%s,%s,%s,%s,%s,%s,%s,%s)', (ab[0],ab[1],ab[2],ab[3],ab[4],1,ab[6],ab[7],ab[1].lower()))
 
 def close_age():
 	cur_execute('delete from age where jid ilike %s',('<temporary>%',))
 	ccu = cur_execute_fetchall('select * from age where status=%s order by room',(0,))
 	cur_execute('delete from age where status=%s', (0,))
 	tt = int(time.time())
-	for ab in ccu: cur_execute('insert into age values (%s,%s,%s,%s,%s,%s,%s,%s)', (ab[0],ab[1],ab[2],tt,ab[4]+(tt-ab[3]),1,ab[6],ab[7]))
+	for ab in ccu: cur_execute('insert into age values (%s,%s,%s,%s,%s,%s,%s,%s,%s)', (ab[0],ab[1],ab[2],tt,ab[4]+(tt-ab[3]),1,ab[6],ab[7],ab[1].lower()))
 
 
 def close_age_room(room):
@@ -541,7 +541,7 @@ def close_age_room(room):
 	ccu = cur_execute_fetchall('select * from age where status=%s and room=%s order by room',(0,room))
 	cur_execute('delete from age where status=%s and room=%s',(0,room))
 	tt = int(time.time())
-	for ab in ccu: cur_execute('insert into age values (%s,%s,%s,%s,%s,%s,%s,%s)', (ab[0],ab[1],ab[2],tt,ab[4]+(tt-ab[3]),1,ab[6],ab[7]))
+	for ab in ccu: cur_execute('insert into age values (%s,%s,%s,%s,%s,%s,%s,%s,%s)', (ab[0],ab[1],ab[2],tt,ab[4]+(tt-ab[3]),1,ab[6],ab[7],ab[1].lower()))
 
 
 def sfind(mass,stri):
