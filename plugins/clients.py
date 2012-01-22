@@ -96,6 +96,7 @@ def clients_stats(type, jid, nick, text):
 				k = t[2]
 				if k and is_short:
 					if '/' in k: k = k.split('/')[0]
+					elif k.lower().startswith('microsoft') or k.lower().startswith('(c)') or k.startswith(u'©'): k = k.split()[1]
 					else: k = k.split()[0]
 					if '=' in k: k = k.split('=')[1]
 			else:
