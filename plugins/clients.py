@@ -92,16 +92,15 @@ def clients_stats(type, jid, nick, text):
 	if st:
 		ns = {}	
 		for t in st:
-			if is_os: k = t[2]
-			else: k = '%s %s' % (t[:2])
-			
-			if is_short:
-				if k and is_os:
+			if is_os:
+				k = t[2]
+				if k and is_short:
 					if '/' in k: k = k.split('/')[0]
 					else: k = k.split()[0]
 					if '=' in k: k = k.split('=')[1]
-				else: k = t[0]
-				
+			else:
+				if is_short: k = t[0]
+				else: k = '%s %s' % (t[:2])
 			if not k or k == 'None': k = 'Unknown'
 			k = k.replace('\r','[LF]').replace('\n','[CR]').replace('\t','[TAB]')			
 			if ns.has_key(k): ns[k] += 1
