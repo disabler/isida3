@@ -290,7 +290,7 @@ Distance between cities.\ndist search city [count of cities]\ndist city1 - city2
 Cities and other place-name of the world. Examples:\ncity add place-name\n[latitude, longtitude] - add city to database\ncity del place-name - delete city from database\ncity search [count of results|range of results] place-name - search city\ncity map place-name - city on the map\ncity place-name - coordinates of city	Міста та інші географічні назви світу. Приклади:\ncity add географічна_назва\n[широта, довгота] - додати місто до бази даних\ncity del географічна_назва - видалити місто з бази даних\ncity search [кількість результатів|діапазон результатів] географічна_назва - пошук міста\ncity map географічна_назва - місто на мапі\ncity географічна_назва - координати міста
 
 # file: ../trunk/plugins/domain.py
-Sites at Domain/IP address: %s\n	Сайти, розташовані на IP-адресі/домені: %s\n
+Sites at Domain/IP address: %s	Сайти, розташовані на IP-адресі/домені: %s
 Domain/IP address info:	Інформація о IP-адресі/домені:
 No data!	Немає даних!
 Unexpected error	Непередбачувана помилка
