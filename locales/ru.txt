@@ -50,7 +50,6 @@ Room's configuration changed.	Изменена конфигурация конф
 Censored!	Фильтруем базар!
 *** Topic: %s	*** Тема: %s
 Too many letters!	Слишком многа букаф!
-What?	Ась?
 whitelist	белый список
 lock by hash	блок по хешу
 off	выкл
@@ -87,6 +86,7 @@ Actions list.\nacl show - show list\nacl del [/silent] item - remove item from l
 Time limit exceeded. Wait: %s	Превышен лимит скорости посылки сообщений. Подождите: %s
 User %s (%s) from %s at %s send massage to you: %s	Пользователь %s (%s) из конференции %s в %s отправил(а) вам сообщение: %s
 Sent	Отправила
+What?	Ась?
 Send message to bot's owner\nmsgtoadmin text	Отправить сообщение владельцу бота.\nmsgtoadmin текст сообщения
 
 # file: ../trunk/plugins/age.py
@@ -260,7 +260,6 @@ Total: %s	Всего: %s
 "%s" not found	"%s" не найдено
 Not found.	Не найдено.
 Total: %s%s	Всего: %s%s
-I can't do it	Не получается...
 This command in use somewhere else. Please try later.	Эта команда используется в другом месте. Пожалуйста, попробуйте позже.
 Please wait. Result you will be receive in private message approximately %s %s	Ожидайте, результат Вы получите в приват примерно через %s %s
 sec.	сек.
@@ -290,10 +289,10 @@ Distance between cities.\ndist search city [count of cities]\ndist city1 - city2
 Cities and other place-name of the world. Examples:\ncity add place-name\n[latitude, longtitude] - add city to database\ncity del place-name - delete city from database\ncity search [count of results|range of results] place-name - search city\ncity map place-name - city on the map\ncity place-name - coordinates of city	Города и другие географические названия мира. Примеры:\ncity add географическое_название\n[широта, долгота] - добавить город в базу данных\ncity del географическое_название - удалить город из базы данных\ncity search [количество результатов|диапазон результатов] географическое_название - поиск города\ncity map географическое_название - город на карте\ncity географическое_название - координаты города
 
 # file: ../trunk/plugins/domain.py
-Sites at Domain/IP address: %s	Сайты расположенные на IP адресе/домене: %s
-Domain/IP address info:	Информация о IP адресе/домене:
 No data!	Нет данных!
 Unexpected error	Непредвиденная ошибка
+Sites at Domain/IP address: %s	Сайты расположенные на IP адресе/домене: %s
+Domain/IP address info:	Информация о IP адресе/домене:
 Domain/IP address whois info.	Показывает информацию whois домена/IP адреса\ndomain_info IP|домен\ndomain_info sites IP|домен - показывает сайты находящиеся на домене/IP адресе
 
 # file: ../trunk/plugins/drink.py
@@ -598,6 +597,7 @@ Name	Имя
 About	О себе
 URL	Ссылка
 Uptime: %s	Аптайм: %s
+I can't do it	Не получается...
 Remote server not found	Удалённый сервер не найден
 Ping from you %s sec.	Пинг от тебя %s сек.
 Ping from %s %s sec.	Пинг от %s %s сек.
@@ -692,6 +692,7 @@ Show user's nick changes.	Показ смены ников.
 Last track %s: %s - %s %s	Последняя дорожка %s: %s - %s %s
 Unavailable!	Недоступно!
 Last tracks %s:	Последние дорожки %s:
+Friends %s:	Друзья %s:
 Loved tracks %s:	Любимые треки %s:
 Neighbours %s:	Соседи %s:
 Playlists %s:	Плейлисты %s:
@@ -718,9 +719,11 @@ Music tastes	Музыкальная совместимость
 
 # file: ../trunk/plugins/logger.py
 Users: %s (%s)	Пользователи: %s (%s)
-leave	вышел
 join as	зашел как
-now is	теперь
+%s/%s' % (role,affiliation)))
+	
+%s/%s' % (role,affiliation)))
+	
 Logged conferences:	Я веду логи в:
 Logs are turned off in all conferences.	Логи не включены ни в одной конференции.
 Logs for %s already enabled.	Я уже веду логи конфы %s

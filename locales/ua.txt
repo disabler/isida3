@@ -50,7 +50,6 @@ Room's configuration changed.	Змінено конфігурацію конфе
 Censored!	Фільтруємо балачки!
 *** Topic: %s	*** Тема: %s
 Too many letters!	Забагато літер!
-What?	Шо?
 whitelist	білий список
 lock by hash	блок по хешу
 off	вимк
@@ -87,6 +86,7 @@ Actions list.\nacl show - show list\nacl del [/silent] item - remove item from l
 Time limit exceeded. Wait: %s	Перевищено ліміт швидкості відправлення повідомлень. Чекайте: %s
 User %s (%s) from %s at %s send massage to you: %s	Користувач %s (%s) з конференції %s в %s відправив(ила) вам повідомлення: %s
 Sent	Відправила
+What?	Шо?
 Send message to bot's owner\nmsgtoadmin text	Надіслати повідомлення власнику бота.\nmsgtoadmin текст повідомлення
 
 # file: ../trunk/plugins/age.py
@@ -260,7 +260,6 @@ Total: %s	Усього: %s
 "%s" not found	"%s" не знайдено
 Not found.	Не знайдено.
 Total: %s%s	Усього: %s%s
-I can't do it	Не виходить...
 This command in use somewhere else. Please try later.	Ця команда використовується в іншому місці. Будь ласка, спробуйте пізніше.
 Please wait. Result you will be receive in private message approximately %s %s	Чекайте, результат ви отримаєте в приват приблизно через %s %s
 sec.	сек.
@@ -290,10 +289,10 @@ Distance between cities.\ndist search city [count of cities]\ndist city1 - city2
 Cities and other place-name of the world. Examples:\ncity add place-name\n[latitude, longtitude] - add city to database\ncity del place-name - delete city from database\ncity search [count of results|range of results] place-name - search city\ncity map place-name - city on the map\ncity place-name - coordinates of city	Міста та інші географічні назви світу. Приклади:\ncity add географічна_назва\n[широта, довгота] - додати місто до бази даних\ncity del географічна_назва - видалити місто з бази даних\ncity search [кількість результатів|діапазон результатів] географічна_назва - пошук міста\ncity map географічна_назва - місто на мапі\ncity географічна_назва - координати міста
 
 # file: ../trunk/plugins/domain.py
-Sites at Domain/IP address: %s	Сайти, розташовані на IP-адресі/домені: %s
-Domain/IP address info:	Інформація о IP-адресі/домені:
 No data!	Немає даних!
 Unexpected error	Непередбачувана помилка
+Sites at Domain/IP address: %s	Сайти, розташовані на IP-адресі/домені: %s
+Domain/IP address info:	Інформація о IP-адресі/домені:
 Domain/IP address whois info.	Показує інформацію whois домену/IP-адреси\ndomain_info IP|домен\ndomain_info sites IP|домен - показує сайти, що знаходяться на домені/IP-адресі
 
 # file: ../trunk/plugins/drink.py
@@ -598,6 +597,7 @@ Name	Ім'я
 About	Про себе
 URL	Посилання
 Uptime: %s	Аптайм: %s
+I can't do it	Не виходить...
 Remote server not found	Віддалений сервер не знайдено
 Ping from you %s sec.	Пінг від тебе - %s сек.
 Ping from %s %s sec.	Пінг від %s - %s сек.
@@ -692,6 +692,7 @@ Show user's nick changes.	Показ зміни ніків.
 Last track %s: %s - %s %s	Остання доріжка %s: %s – %s %s
 Unavailable!	Недоступно!
 Last tracks %s:	Останні доріжки %s:
+Friends %s:	Друзі %s:
 Loved tracks %s:	Улюблені треки %s:
 Neighbours %s:	Сусіди %s:
 Playlists %s:	Плейлисти %s:
@@ -718,9 +719,11 @@ Music tastes	Музична сумісність
 
 # file: ../trunk/plugins/logger.py
 Users: %s (%s)	Користувачі: %s (%s)
-leave	вийшов
 join as	зайшов як
-now is	тепер
+%s/%s' % (role,affiliation)))
+	
+%s/%s' % (role,affiliation)))
+	
 Logged conferences:	Я веду логи в:
 Logs are turned off in all conferences.	Логи не ввімкнені в жодній конференції.
 Logs for %s already enabled.	Я вже веду логи конфи %s

@@ -21,9 +21,17 @@
 #                                                                             #
 # --------------------------------------------------------------------------- #
 
-global execute, lf_api, lfm_url, timer
+global execute, lf_api, lfm_url
 
 lfm_url = 'http://ws.audioscrobbler.com/2.0/'
+
+def last_text_cnt(text,c):
+	text = reduce_spaces_all(text).split(' ')
+	try: cnt = int(text[1])
+	except: cnt = GT('lastfm_max_limit')
+	cnt += c
+	text = text[0]
+	return text,cnt
 
 def last_check_ascii(type, jid, nick, text):
 	for tmp in text:
@@ -62,117 +70,80 @@ def lf_api(method, user, splitter):
 
 def lasttracks(type, jid, nick, text):
 	if last_check_ascii(type, jid, nick, text): return
-	text = reduce_spaces_all(text).split(' ')
-	try: cnt = int(text[1])
-	except: cnt = GT('lastfm_max_limit')
-	cnt += 1
-	text = text[0]
+	text,cnt = last_text_cnt(text,1)
 	ms = lf_api('user.getrecenttracks',text, '<track')
-	if cnt > len(ms): cnt = len(ms)
 	msg = L('Last tracks %s:') % text
-	for a in ms[1:cnt]: msg += '\n['+last_date_now(a)+'] '+get_tag(a,'artist')+' - '+get_tag(a,'name')
+	for a in ms[1:cnt]: msg += '\n[%s] %s - %s' % (last_date_now(a),get_tag(a,'artist'),get_tag(a,'name'))
 	send_msg(type, jid, nick, msg)
 
 def lastfriends(type, jid, nick, text):
 	if last_check_ascii(type, jid, nick, text): return
 	ms = lf_api('user.getfriends',text, '<user')
-	msg = L('Loved tracks %s:') % text
+	msg = L('Friends %s:') % text
 	for a in ms[1:]:
-		msg += ' ' + get_tag(a,'name')+' ('+get_tag(a,'realname')+'),'
+		rn = get_tag(a,'realname')
+		if rn: msg += ' %s (%s),' % (get_tag(a,'name'),rn)
+		else: msg += ' %s,' % get_tag(a,'name')
 	msg = msg[:-1]
 	send_msg(type, jid, nick, msg)
 
 def lastloved(type, jid, nick, text):
 	if last_check_ascii(type, jid, nick, text): return
-	text = reduce_spaces_all(text).split(' ')
-	try: cnt = int(text[1])
-	except: cnt = GT('lastfm_max_limit')
-	cnt += 1
-	text = text[0]
+	text,cnt = last_text_cnt(text,1)
 	ms = lf_api('user.getlovedtracks',text, '<track')
-	if cnt > len(ms): cnt = len(ms)
 	msg = L('Loved tracks %s:') % text
-	for a in ms[1:cnt]: msg += '\n['+last_date_now(a)+'] '+get_tag(a.split('<artist')[1],'name')+' - '+get_tag(a,'name')
+	for a in ms[1:cnt]: msg += '\n[%s] %s - %s' % (last_date_now(a),get_tag(a.split('<artist')[1],'name'),get_tag(a,'name'))
 	send_msg(type, jid, nick, msg)
 
 def lastneighbours(type, jid, nick, text):
 	if last_check_ascii(type, jid, nick, text): return
-	text = reduce_spaces_all(text).split(' ')
-	try: cnt = int(text[1])
-	except: cnt = GT('lastfm_max_limit')
-	cnt += 1
-	text = text[0]
+	text,cnt = last_text_cnt(text,1)
 	ms = lf_api('user.getneighbours',text, '<user')
-	if cnt > len(ms): cnt = len(ms)
 	msg = L('Neighbours %s:') % text
-	for a in ms[1:cnt]: msg += '\n'+get_tag(a,'match')+' - '+get_tag(a,'name')
+	for a in ms[1:cnt]: msg += '\n%s - %s' % (get_tag(a,'match'),get_tag(a,'name'))
 	send_msg(type, jid, nick, msg)
 
 def lastplaylist(type, jid, nick, text):
 	if last_check_ascii(type, jid, nick, text): return
-	text = reduce_spaces_all(text).split(' ')
-	try: cnt = int(text[1])
-	except: cnt = GT('lastfm_max_limit')
-	cnt += 2
-	text = text[0]
+	text,cnt = last_text_cnt(text,2)
 	ms = lf_api('user.getplaylists',text, '<playlist')
-	if cnt > len(ms): cnt = len(ms)
 	msg = L('Playlists %s:') % text
-	for a in ms[2:cnt]: msg += '\n['+get_tag(a,'id')+'] '+get_tag(a,'title')+' ('+get_tag(a,'description')+') - '+get_tag(a,'size')+' - '+get_tag(a,'duration')
+	for a in ms[2:cnt]: msg += '\n[%s] %s (%s) - %s - %s' % (get_tag(a,'id'),get_tag(a,'title'),get_tag(a,'description'),get_tag(a,'size'),get_tag(a,'duration'))
 	send_msg(type, jid, nick, msg)
 
 def topalbums(type, jid, nick, text):
 	if last_check_ascii(type, jid, nick, text): return
-	text = reduce_spaces_all(text).split(' ')
-	try: cnt = int(text[1])
-	except: cnt = GT('lastfm_max_limit')
-	cnt += 1
-	text = text[0]
+	text,cnt = last_text_cnt(text,1)
 	ms = lf_api('user.gettopalbums',text, '<album')
-	if cnt > len(ms): cnt = len(ms)
 	msg = L('Top albums %s:') % text
-	for a in ms[1:cnt]: msg += '\n['+get_tag(a,'playcount')+'] '+get_tag(a.split('<artist')[1],'name')+' - '+get_tag(a,'name')
+	for a in ms[1:cnt]: msg += '\n[%s] %s - %s' % (get_tag(a,'playcount'),get_tag(a.split('<artist')[1],'name'),get_tag(a,'name'))
 	send_msg(type, jid, nick, msg)
 
 def topartists(type, jid, nick, text):
 	if last_check_ascii(type, jid, nick, text): return
-	text = reduce_spaces_all(text).split(' ')
-	try: cnt = int(text[1])
-	except: cnt = GT('lastfm_max_limit')
-	cnt += 1
-	text = text[0]
+	text,cnt = last_text_cnt(text,1)
 	ms = lf_api('user.gettopartists',text, '<artist')
-	if cnt > len(ms): cnt = len(ms)
 	msg = L('Top artists %s:') % text
-	for a in ms[1:cnt]: msg += '\n['+get_tag(a,'playcount')+'] '+get_tag(a,'name')
+	for a in ms[1:cnt]: msg += '\n[%s] %s' % (get_tag(a,'playcount'),get_tag(a,'name'))
 	send_msg(type, jid, nick, msg)
 
 def toptags(type, jid, nick, text):
 	if last_check_ascii(type, jid, nick, text): return
-	text = reduce_spaces_all(text).split(' ')
-	try: cnt = int(text[1])
-	except: cnt = GT('lastfm_max_limit')
-	cnt += 1
-	text = text[0]
+	text,cnt = last_text_cnt(text,1)
 	ms = lf_api('user.gettoptags',text, '<tag')
-	if cnt > len(ms): cnt = len(ms)
 	msg = L('Top tags %s:') % text
-	for a in ms[1:cnt]: msg += '\n['+get_tag(a,'count')+'] '+get_tag(a,'name')+' - '+get_tag(a,'url')
+	for a in ms[1:cnt]: msg += '\n[%s] %s - %s' % (get_tag(a,'count'),get_tag(a,'name'),get_tag(a,'url'))
 	send_msg(type, jid, nick, msg)
 
 def toptracks(type, jid, nick, text):
 	if last_check_ascii(type, jid, nick, text): return
-	text = reduce_spaces_all(text).split(' ')
-	try: cnt = int(text[1])
-	except: cnt = GT('lastfm_max_limit')
-	cnt += 1
-	text = text[0]
+	text,cnt = last_text_cnt(text,1)
 	ms = lf_api('user.gettoptracks',text, '<track')
 	if cnt > len(ms): cnt = len(ms)
 	msg = L('Top tracks %s:') % text
 	for a in ms[1:cnt]:
 		b = a.split('<artist')
-		msg += '\n['+get_tag(a,'playcount')+'] '+get_tag(b[1],'name')+' - '+get_tag(a,'name')
+		msg += '\n[%s] %s - %s' % (get_tag(a,'playcount'),get_tag(b[1],'name'),get_tag(a,'name'))
 	send_msg(type, jid, nick, msg)
 
 def tasteometer(type, jid, nick, text):
@@ -192,8 +163,8 @@ def tasteometer(type, jid, nick, text):
 		msg,msg2 = L('Match tastes of %s and %s - %s') % (user1,user2,str(int(scor*100))+'%'),''
 		lfxml = lfxml.split('<artist')
 		cnt = len(lfxml)
-		for a in lfxml[2:cnt]: msg2 += get_tag(a,'name')+', '
-		if len(msg2): msg += '\n'+L('Artists: %s') % msg2[:-2]
+		for a in lfxml[2:cnt]: msg2 += '%s, ' % get_tag(a,'name')
+		if len(msg2): msg += '\n%s' % L('Artists: %s') % msg2[:-2]
 	send_msg(type, jid, nick, msg)
 
 def no_api(type, jid, nick): send_msg(type, jid, nick, L('Not found LastFM api'))
