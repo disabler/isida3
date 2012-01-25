@@ -4,8 +4,8 @@
 # --------------------------------------------------------------------------- #
 #                                                                             #
 #    Plugin for iSida Jabber Bot                                              #
-#    Copyright (C) 2011 diSabler <dsy@dsy.name>                               #
-#    Copyright (C) 2011 Vit@liy <vitaliy@root.ua>                             #
+#    Copyright (C) 2012 diSabler <dsy@dsy.name>                               #
+#    Copyright (C) 2012 Vit@liy <vitaliy@root.ua>                             #
 #                                                                             #
 #    This program is free software: you can redistribute it and/or modify     #
 #    it under the terms of the GNU General Public License as published by     #
@@ -21,6 +21,8 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 #                                                                             #
 # --------------------------------------------------------------------------- #
+
+# translate: chat_log,away_log,xa_log,dnd_log
 
 smile_dictionary = {}
 last_log_file = {}
@@ -160,12 +162,12 @@ def presence_logger(room,jid,nick,type,mass,mode,logfile):
 			log_body += ['*** %s','<span class="status">%s'][GT('html_logs_enable')] % nick
 			if not_found == 0:
 				if mode and jid != 'None': log_body += ' (%s)' % jid
-				log_body += ' %s %s' % (L('join as'),L('%s/%s' % (role,affiliation)))
-			elif not_found == 1: log_body += ' %s %s'  % (L('now is'),L('%s/%s' % (role,affiliation)))
+				log_body += ' %s %s, ' % (L('join as'),L("%s/%s" % (role,affiliation)))
+			elif not_found == 1: log_body += ' %s %s, ' % (L('now is'),L("%s/%s" % (role,affiliation)))
 			elif not_found == 2: log_body += ' %s ' % L('now is')
 			if not_found == 0 or not_found == 2:
-				if show != 'None': log_body += '%s ' % show
-				else: log_body += ' online'
+				if show != 'None': log_body += '%s ' % L("%s_log" % show).replace('_log','')
+				else: log_body += L('online_log').replace('_log','')
 				if priority != 'None': log_body += ' [%s]' % priority
 				else:  log_body += ' [0]'
 				if text != 'None':  log_body += ' (%s)' % text

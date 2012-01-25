@@ -718,12 +718,14 @@ Top tracks	Топ треков
 Music tastes	Музыкальная совместимость
 
 # file: ../trunk/plugins/logger.py
+chat_log	готов поболтать
+away_log	отошел
+xa_log	давно отошел
+dnd_log	не беспокоить
 Users: %s (%s)	Пользователи: %s (%s)
 join as	зашел как
-%s/%s' % (role,affiliation)))
-	
-%s/%s' % (role,affiliation)))
-	
+now is	теперь
+online_log	в сети
 Logged conferences:	Я веду логи в:
 Logs are turned off in all conferences.	Логи не включены ни в одной конференции.
 Logs for %s already enabled.	Я уже веду логи конфы %s
