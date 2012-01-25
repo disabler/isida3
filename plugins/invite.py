@@ -47,7 +47,7 @@ def call_body(type, jid, nick, text):
 	if skip: send_msg(type, jid, nick, msg)
 	else:
 		inv_msg = L('%s invite you to %s') % (nick, jid)
-		if reason: inv_msg += ' ' + L('because %s') % reason
+		if reason: inv_msg += ' ' + L('because: %s') % reason
 		send_msg('chat',whojid, '',inv_msg)
 
 		inv = xmpp.Message(jid)

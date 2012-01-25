@@ -109,7 +109,7 @@ def muc_tempo_ban2(type, jid, nick,text):
 		if tttime:
 			try: reason = text.split('\n',2)[2]
 			except: reason = L('No reason!')
-			reason = L('ban on %s since %s because %s') % \
+			reason = L('ban on %s since %s because: %s') % \
 				(un_unix(tttime), timeadd(tuple(time.localtime())), reason)
 			fnd = cur_execute_fetchall('select jid from age where room=%s and (nick=%s or jid=%s) group by jid',(jid,who,who))
 			if len(fnd) == 1: msg, whojid = L('done'), getRoom(unicode(fnd[0][0]))

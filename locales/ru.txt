@@ -584,7 +584,7 @@ Invited	Позвала
 I seen some peoples with this nick. Get more info!	Я видела несколько человек с таким ником. Укажите точнее!
 I don'n know %s	Я не знаю %s
 %s invite you to %s	%s просит Вас зайти в %s
-because %s	по причине %s
+because: %s	по причине: %s
 Invite to conference.\ninvite nick|jid\n[reason]	Пригласить участника в конференцию.\ninvite nick|jid\n[причина]
 
 # file: ../trunk/plugins/iq.py
@@ -1275,7 +1275,7 @@ I need jid!	Необходимо указать jid!
 banned global by %s from %s	глобальный бан от %s из конференции %s
 jid %s has been banned in %s conferences.	jid %s забанен в %s конференциях.
 No reason!	Причина не указана!
-ban on %s since %s because %s	бан сроком %s начиная с %s по причине %s
+ban on %s since %s because: %s	бан сроком %s начиная с %s по причине: %s
 I don'n know %s, and use as is!	Я не в курсе кто такой %s и использую как есть!
 I don't know %s	Я не знаю кто такой %s
 Command is locked!	Команда заблокирована!
