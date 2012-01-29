@@ -46,17 +46,16 @@ def bizinfo(type, jid, nick, text):
 	try:
 		if text:
 			text = '.'.join(text.split('.')[-2:])
-			req = 'http://bizinformation.org/ru/www.%s' % text
-			body = load_page(req)
+			body = html_encode(load_page('http://bizinformation.org/us/www.%s' % text))
 			if 'Error:' in body: msg = L('site input format is domain.tld')
 			else:
-				domain_price = re.search('<table class="content_table_main"><tr><th>.+?</th><td>(.+?) \*</td>', body).group(1)
-				msg = L('Estimated value %s is %s') % (text, domain_price.decode('utf-8'))
+				domain_price = re.findall('<div class="heading_div"><h1>.*?<span>(.*?)</span>',body,re.S+re.U+re.I)[0]
+				msg = L('Estimated value %s is %s') % (text, domain_price)
 		else: msg = L('What site be evaluated?')
 	except: msg = L('I can\'t process your request.')
 	send_msg(type, jid, nick, msg)
 
 global execute
 
-execute = [(3, 'price', price, 2, L('Show estimated value of domain | Author: ferym')),
-		   (3, 'bizinfo', bizinfo, 2, L('Show estimated value of domain | Author: Disabler'))]
+#(3, 'price', price, 2, L('Show estimated value of domain | Author: ferym')),
+execute = [(3, 'bizinfo', bizinfo, 2, L('Show estimated value of domain | Author: Disabler'))]
