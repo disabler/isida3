@@ -187,16 +187,16 @@ def atempt_to_shutdown_with_reason(text,sleep_time,exit_type,critical):
 
 def deidna(text):
 	def repl(t): return t.group().lower().decode('idna')
-	return re.sub(r'(xn--[-0-9a-z]*)',repl,text,flags=re.S+re.U+re.I)
+	return re.sub(r'(xn--[-0-9a-z_]*)',repl,text,flags=re.S+re.U+re.I)
 
 def enidna(text):
-	idn = re.findall(u'http[s]?://([-0-9a-zа-я.]*)',text,flags=re.S+re.U+re.I)
+	idn = re.findall(u'http[s]?://([-0-9a-zа-я._]*)',text,flags=re.S+re.U+re.I)
 	if idn: text = text.replace(idn[0],idn[0].lower().encode('idna'))
 	return text.encode('utf-8')
 
 def enidna_raw(text):
 	def repl(t): return t.group().lower().encode('idna')
-	return re.sub(u'([а-я][-0-9а-я]*)',repl,text,flags=re.S+re.U+re.I)
+	return re.sub(u'([а-я][-0-9а-я_]*)',repl,text,flags=re.S+re.U+re.I)
 
 def get_level(cjid, cnick):
 	access_mode = -2
