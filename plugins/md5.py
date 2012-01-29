@@ -27,12 +27,23 @@ def md5body(type, jid, nick, text):
 	send_msg(type, jid, nick, msg)
 
 def hashbody(type, jid, nick, text):
+	text = reduce_spaces_all(text)
 	if not len(text): text = nick
 	try: msg = hashes['%s/%s' % (jid,text)]
 	except: msg = L('Nick %s not found!') % text
 	send_msg(type, jid, nick, msg)
-
+	
+def findhash(type, jid, nick, text):
+	text = reduce_spaces_all(text)
+	if text:
+		h = [t for t in hashes if hashes[t]==text]
+		if h: msg = L('Found: %s') % '\n%s' % '\n'.join(h)
+		else: msg = L('Not found: %s') % text
+	else: msg = L('What?')
+	send_msg(type, jid, nick, msg)
+	
 global execute
 
 execute = [(3, 'md5', md5body, 2, L('Calculate phrase md5 sum.')),
-		   (4, 'hashbody', hashbody, 2, L('Show presence-hash of nick'))]
+		   (4, 'hashbody', hashbody, 2, L('Show presence-hash of nick')),
+		   (6, 'findhash', findhash, 2, L('Show room and nick by presence-hash'))]

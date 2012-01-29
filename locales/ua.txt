@@ -1261,6 +1261,7 @@ Temporary ignore with ddos detect.\nddos [show|del jid]	Тимчасовий і�
 Nick %s not found!	Нік %s не знайдений!
 Calculate phrase md5 sum.	Розрахунок md5 фрази.
 Show presence-hash of nick	Показ презенс-хешу ніка.
+Show room and nick by presence-hash	Відображення конференції та ніку по хешу
 
 # file: ../trunk/plugins/muc.py
 This command available only for conference owner!	Команда доступна лише власнику конференції!
