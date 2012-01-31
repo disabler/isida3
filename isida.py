@@ -27,7 +27,7 @@ updatelog_file = 'update.log'
 ver_file = 'settings/version'
 id_append = ''
 svn_ver_format = '%s-svn%s'
-git_ver_format = '%s-git%s'
+git_ver_format = '%s.%s-git%s'
 time_ver_format = '%s-none%s'
 
 def readfile(filename):
@@ -79,7 +79,7 @@ writefile(pid_file,str(os.getpid()))
 
 dirs = os.listdir('.')+os.listdir('../')
 
-if '.svn' in dirs:
+if '.!svn' in dirs:
 	USED_REPO = 'svn'
 	if os.name == 'nt': os.system('svnversion > %s' % ver_file)
 	else: os.system('echo `svnversion` > %s' % ver_file)
@@ -90,7 +90,8 @@ elif '.git' in dirs:
 	USED_REPO = 'git'
 	os.system('git describe --always > %s' % ver_file)
 	revno = str(readfile(ver_file)).replace('\n','').replace('\r','').replace('\t','').replace(' ','')
-	writefile(ver_file, unicode(git_ver_format % (revno,id_append)).encode('utf-8'))
+	os.system('git log --pretty=format:'' > %s' % ver_file)
+	writefile(ver_file, unicode(git_ver_format % (os.path.getsize(ver_file)+1,revno,id_append)).encode('utf-8'))
 else:
 	USED_REPO = 'unknown'
 	writefile(ver_file, unicode(time_ver_format % (hex(int(os.path.getctime('../')))[2:],id_append)).encode('utf-8'))
@@ -120,7 +121,8 @@ while 1:
 				os.system('git pull git://github.com/disabler/isida3.git')
 				os.system('git describe --always > %s' % ver_file)
 				revno = str(readfile(ver_file)).replace('\n','').replace('\r','').replace('\t','').replace(' ','')
-				writefile(ver_file, unicode(git_ver_format % (revno,id_append)).encode('utf-8'))
+				os.system('git log --pretty=format:'' > %s' % ver_file)
+				writefile(ver_file, unicode(git_ver_format % (os.path.getsize(ver_file)+1,revno,id_append)).encode('utf-8'))
 				os.system('git log -1 > %s' % updatelog_file)
 				writefile(updatelog_file, unicode(readfile(updatelog_file)).replace('\n\n','\n').replace('\r','').replace('\t',''))
 			else: os.system('echo Update not available! Read wiki at http://isida-bot.com to use SVN/GIT! > %s' % updatelog_file)
