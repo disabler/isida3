@@ -1641,8 +1641,8 @@ def messageCB(sess,mess):
 	else:
 		nowname = getResourse(confbase[tmppos])
 		if nowname == '': nowname = Settings['nickname']
-	if (jid == 'None' or jid[:4] == 'j2j.') and getRoom(room) in ownerbase: access_mode = 9
-	if type == 'groupchat' and nick != '' and jid != 'None' and access_mode >= 0: talk_count(room,jid,nick,text)
+	if '@' not in jid and (jid == 'None' or jid.startswith('j2j.')) and getRoom(room) in ownerbase: access_mode = 9
+	if type == 'groupchat' and nick != '' and access_mode >= 0 and jid not in ['None',getRoom(Settings['jid'])]: talk_count(room,jid,nick,text)
 	if nick != '' and nick != None and nick != nowname and len(text)>1 and text != 'None' and text != to_censore(text,room) and access_mode >= 0 and get_config(getRoom(room),'censor'):
 		cens_text = L('Censored!')
 		lvl = get_level(room,nick)[0]
