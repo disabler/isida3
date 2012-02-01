@@ -48,7 +48,7 @@ def smile_replace(room, text):
 	for smile in sorted(smile_dictionary[smilepack], key = lambda x: len(x))[::-1]:
 		tmp_smile = ' %s ' % html_escape(smile.decode('utf-8')).replace('&amp;', '&')
 		while tmp_smile in newtext:
-			sm_tag = ' <img src="%s" alt="%s"> ' % ('../../../%s/%s/%s' % (smile_folder, smilepack, smile_dictionary[smilepack][smile]),smile)
+			sm_tag = ' <img src="%s" alt="%s"> ' % ('../../../%s/%s/%s' % (smile_folder, smilepack, smile_dictionary[smilepack][smile]),smile.decode('utf-8'))
 			newtext = newtext.replace(tmp_smile, sm_tag)
 	return newtext.replace(' <br>','<br>').replace('<br> ','<br>')[1:-1]
 
