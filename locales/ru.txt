@@ -1175,6 +1175,7 @@ Kernel. Bot status. Status while loading	Kernel. Bot status. Статус при
 Kernel. Bot status. Message while loading	Kernel. Bot status. Статус-сообщение при загрузке
 Loading...	Загружаюсь...
 Kernel. Bot status. Show percent of loading	Kernel. Bot status. Показывать процент загрузки
+Kernel. Bot status. Show join to room while loading	Kernel. Bot status. Показывать конферении, в которые бот входит при загрузке
 Kernel. Notify when bot is kicked or banned	Kernel. Notify. Уведомлять о том, что бота выгнали или забанили
 Kernel. Notify jid for bot kick or ban	Kernel. Notify. Список jid'ов для уведомлений о кике или бане бота
 Watcher. Timeout for no actions in room for rejoin	Watcher. Таймаут неактивности конференции для перезахода

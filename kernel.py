@@ -2349,8 +2349,9 @@ for tocon in confbase:
 	pprint('-<- %s' % baseArg,'bright_green')
 	if GT('show_loading_by_status_percent'):
 		join_percent += join_pers_add
-		join_status = '%s %s%s' % (GT('show_loading_by_status_message'),int(join_percent),'%')
+		join_status = '%s %s%%' % (GT('show_loading_by_status_message'),int(join_percent))
 		if GT('show_loading_by_status'):
+			if GT('show_loading_by_status_room'): join_status = '%s [%s]' % (join_status,tocon)
 			if GT('show_loading_by_status_show') == 'online': caps_and_send(Presence(status=join_status, priority=Settings['priority']))
 			else: caps_and_send(Presence(show=GT('show_loading_by_status_show'), status=join_status, priority=Settings['priority']))
 	if game_over: break
