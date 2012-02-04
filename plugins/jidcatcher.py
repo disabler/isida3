@@ -27,64 +27,47 @@ def info_search(type, jid, nick, text):
 		cur_execute('delete from jid where server ilike %s',('<temporary>%',))
 		ttext = '%%%s%%' % text
 		tma = cur_execute_fetchmany('select * from jid where login ilike %s or server ilike %s or resourse ilike %s order by login',(ttext,ttext,ttext),10)
-		if len(tma):
-			msg = L('Found:')
-			cnd = 1
-			for tt in tma:
-				msg += '\n'+str(cnd)+'. '+tt[0]+'@'+tt[1]+'/'+tt[2]
-				cnd += 1
+		if tma: msg = '%s\n%s' % (L('Found:'),'\n'.join(['%s. %s@%s/%s' % tuple([tma.index(tt)+1]+list(tt)) for tt in tma]))
 		else: msg = L('\'%s\' not found!') % text
-		conn.commit()
 	send_msg(type, jid, nick, msg)
 
 def info_res(type, jid, nick, text):
 	cur_execute('delete from jid where server ilike %s',('<temporary>%',))
-	conn.commit()
 	if text == 'count':
-		tlen = len(cur_execute_fetchall('select resourse,count(*) from jid group by resourse order by -count(*)'))
+		tlen = cur_execute_fetchall('select count(*) from (select resourse,count(*) from jid group by resourse) tmp;')[0][0]
 		text,jidbase = '',''
 	else:
 		text1 = '%%%s%%' % text
-		tlen = len(cur_execute_fetchall('select resourse,count(*) from jid where resourse ilike %s group by resourse order by -count(*)',(text1,)))
-		jidbase = cur_execute_fetchmany('select resourse,count(*) from jid where resourse ilike %s group by resourse order by -count(*)',(text1,),10)
+		tlen = cur_execute_fetchall('select count(*) from (select resourse,count(*) from jid where resourse ilike %s group by resourse) tmp;',(text1,))[0][0]
+		jidbase = cur_execute_fetchmany('select resourse,count(*) from jid where resourse ilike %s group by resourse order by -count(*),resourse',(text1,),10)
 	if not tlen: msg = L('\'%s\' not found!') % text
 	else:
-		if text == '': msg = L('Total resources: %s') % str(tlen)
-		else: msg = L('Found resources: %s') % str(tlen)
-		if len(jidbase):
-			msg += '\n'
-			cnt = 1
-			for jj in jidbase:
-				msg += str(cnt)+'. '+jj[0]+'\t'+str(jj[1])+' \n'
-				cnt += 1
-			msg = msg[:-2]
+		if text == '': msg = L('Total resources: %s') % tlen
+		else: msg = L('Found resources: %s') % tlen
+		if jidbase: msg += '\n%s' % '\n'.join(['%s. %s\t%s' % tuple([jidbase.index(jj)+1]+list(jj)) for jj in jidbase])
 	send_msg(type, jid, nick, msg)
 
 def info_serv(type, jid, nick, text):
 	cur_execute('delete from jid where server ilike %s',('<temporary>%',))
-	conn.commit()
 	if text == 'count':
-		tlen = len(cur_execute_fetchall('select server,count(*) from jid group by server order by -count(*)'))
+		tlen = cur_execute_fetchall('select count(*) from (select server,count(*) from jid group by server) tmp;')[0][0]
 		text,jidbase = '',''
 	else:
 		text1 = '%%%s%%' % text
-		tlen = len(cur_execute_fetchall('select server,count(*) from jid where server ilike %s group by server order by -count(*)',(text1,)))
-		jidbase = cur_execute_fetchall('select server,count(*) from jid where server ilike %s group by server order by -count(*)',(text1,))
+		tlen = cur_execute_fetchall('select count(*) from (select server,count(*) from jid where server ilike %s group by server) tmp;',(text1,))[0][0]
+		jidbase = cur_execute_fetchall('select server,count(*) from jid where server ilike %s group by server order by -count(*),server',(text1,))
 	if not tlen: msg = L('\'%s\' not found!') % text
 	else:
-		if text == '': msg = L('Total servers: %s') % str(tlen)
-		else: msg = L('Found servers: %s') % str(tlen)
-		msg += '\n'
-		if len(jidbase):
-			for jj in jidbase: msg += jj[0]+':'+str(jj[1])+' | '
-			msg = msg[:-2]
+		if text == '': msg = L('Total servers: %s') % tlen
+		else: msg = L('Found servers: %s') % tlen
+		if jidbase: msg = '%s\n%s' %(msg,' | '.join(['%s:%s' % jj for jj in jidbase]))
 	send_msg(type, jid, nick, msg)
 
 #room number date
 
 def info_top(type, jid, nick, text):
 	tp = getFile(top_base,[])
-	if len(text): room = text
+	if text: room = text
 	else: room = getRoom(jid)
 	ttop = None
 	for tmp in tp:
@@ -96,15 +79,11 @@ def info_top(type, jid, nick, text):
 	send_msg(type, jid, nick, msg)
 
 def jidcatcher_presence(room,jid,nick,type,text):
-	if jid != 'None' and jid[:11] != '<temporary>':
-		aa1 = getName(jid)
-		aa2 = getServer(jid)
-		aa3 = getResourse(jid)
+	if jid != 'None' and not jid.startswith('<temporary>'):
+		tmp = (getName(jid),getServer(jid),getResourse(jid))
 		try:
-			cur_execute_fetchone('select login from jid where login=%s and server=%s and resourse=%s',(aa1,aa2,aa3))
-			if not tmpp:
-				cur_execute('insert into jid values (%s,%s,%s)', (aa1,aa2,aa3))
-				conn.commit()
+			tmpp = cur_execute_fetchone('select login from jid where login=%s and server=%s and resourse=%s',tmp)
+			if not tmpp: cur_execute('insert into jid values (%s,%s,%s)', tmp)
 		except: pass
 		tp = getFile(top_base,[])
 		cnt = 0
