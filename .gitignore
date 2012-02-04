@@ -3,16 +3,20 @@ dns/*pyc
 chardet/*.pyc
 simplejson/*.pyc
 paste/*.html
+paste/*.txt
 settings/*.back
 log/*.txt
 backup/*.ru
 backup/*.com
+backup/*.org
+backup/*.in
 isida.pid
 logs/chatlogs/*.ru
 logs/chatlogs/*.com
 logs/syslogs/*.ru
 logs/syslogs/*.com
 plugins/.*.*
+plugins/poke.txt
 settings/acl.db
 settings/agestat.db
 settings/aliases
@@ -28,6 +32,7 @@ settings/empty.db
 settings/feed
 settings/hidenroom.db
 settings/ignore
+settings/ignoreban.db
 settings/jidbase.db
 settings/karma.db
 settings/locale
@@ -36,6 +41,7 @@ settings/muclock.db
 settings/owner
 settings/owner.config
 settings/sayto.db
+settings/saytoowner.db
 settings/spy.db
 settings/starttime
 settings/talkers.db
