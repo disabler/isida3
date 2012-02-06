@@ -507,6 +507,10 @@ Google URL Shortener/Unshortener	Сервис сокращения ссылок 
 Google QR-code generator	Сервис генерации QR-кодов от Google
 Google Dictionary\ngdict [from_language] to_language word	Словарь Google\ngdict [с_языка] на_язык слово
 
+# file: ../trunk/plugins/here.py
+I see %s participant(s): %s	Я вижу %s участников: %s
+Current participants list	Список участников конференции
+
 # file: ../trunk/plugins/hideroom.py
 This command available only in private!	Команда доступна только в привате!
 Hidden conferences:	Я скрываю конфы:
