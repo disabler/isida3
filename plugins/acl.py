@@ -28,13 +28,15 @@ acl_actions = ['show','del'] + acl_acts
 
 acl_ver_tmp = {}
 
-def acl_show(jid):
-	a = cur_execute_fetchall('select * from acl where jid=%s',(jid,))
+def acl_show(jid,text):
+	a = cur_execute_fetchall('select * from acl where jid=%s and action ilike %s',(jid,text))
 	if len(a):
 		msg = L('Acl:')
 		for tmp in a:
-			if tmp[5]: st,tp = '\n[%s] %s %s %s -> %s', (time.ctime(float(tmp[5])),) + tmp[1:4] + (tmp[4].replace('\n',' // '),)
-			else: st,tp = '\n%s %s %s -> %s', tmp[1:4] + (tmp[4].replace('\n',' // '),)
+			if text == '%': t4 = tmp[4].replace('\n',' // ')
+			else: t4 = tmp[4]
+			if tmp[5]: st,tp = '\n[%s] %s %s %s -> %s', (time.ctime(float(tmp[5])),) + tmp[1:4] + (t4,)
+			else: st,tp = '\n%s %s %s -> %s', tmp[1:4] + (t4,)
 			msg += st % tp
 	else: msg = L('Acl not found')
 	return msg
@@ -62,13 +64,13 @@ def acl_add_del(jid,text,flag):
 	if not acl_cmd in acl_acts: msg = L('Items: %s') % ', '.join(acl_acts)
 	else:
 		try:
-			if text[0].lower() in ['sub','exp','cexp','=','<','>','<=','>=']: acl_sub_act,text = text[0].lower(),text[1:]
+			if text[0].lower() in ['sub','!sub','exp','!exp','cexp','!cexp','=','!=','<','>','<=','>=']: acl_sub_act,text = text[0].lower(),text[1:]
 			else: acl_sub_act = '='
 		except: return L('Error in parameters. Read the help about command.')
 		if acl_cmd != 'age' and acl_sub_act in ['<','>','<=','>=']: return L('Error in parameters. Read the help about command.')
-		if acl_sub_act in ['=','sub']: text[0] = text[0].replace('%20',' ')
+		if acl_sub_act in ['=','!=','sub','!sub']: text[0] = text[0].replace('%20',' ')
 		else: text[0] = text[0].replace('%20','\ ')
-		if acl_sub_act in ['exp','cexp']:
+		if acl_sub_act in ['exp','!exp','cexp','!cexp']:
 			try: re.compile(text[0].replace('*','*?'))
 			except: return L('Error in RegExp!')
 		if flag and len(text) >= 2:
@@ -112,7 +114,10 @@ def muc_acl(type, jid, nick, text):
 	if len(text): acl_cmd = text[0].lower()
 	else: acl_cmd = '!'
 	if not acl_cmd in acl_actions and acl_cmd[0] != '/': msg = L('Items: %s') % ', '.join(acl_actions)
-	elif acl_cmd == 'show': msg = acl_show(jid)
+	elif acl_cmd == 'show':
+		try: t = text[1]
+		except: t = '%'
+		msg = acl_show(jid,t)
 	elif acl_cmd == 'del': msg = acl_del(jid,text[1:])
 	else: msg = acl_add(jid,text)
 	send_msg(type, jid, nick, msg)
@@ -147,16 +152,16 @@ def acl_message(room,jid,nick,type,text):
 			if tmp[4] <= time.time() and tmp[4]: 
 				cur_execute('delete from acl where jid=%s and action=%s and type=%s and text=%s',(room,tmp[0],tmp[1],tmp[2]))
 
-			if tmp[1] == 'exp' and re.match(tmp[2].replace('*','*?'),text,re.I+re.S+re.U):
+			if tmp[1].endswith('exp') and bool(re.match(tmp[2].replace('*','*?'),text,re.I+re.S+re.U))^tmp[1].startswith('!'):
 				no_comm = acl_action(tmp[3],nick,jid,room,text)
 				break
-			elif tmp[1] == 'cexp' and re.match(tmp[2].replace('*','*?'),text,re.S+re.U):
+			elif tmp[1].endswith('cexp') and bool(re.match(tmp[2].replace('*','*?'),text,re.S+re.U))^tmp[1].startswith('!'):
 				no_comm = acl_action(tmp[3],nick,jid,room,text)
 				break
-			elif tmp[1] == 'sub' and tmp[2].lower() in text.lower():
+			elif tmp[1].endswith('sub') and bool(tmp[2].lower() in text.lower())^tmp[1].startswith('!'):
 				no_comm = acl_action(tmp[3],nick,jid,room,text)
 				break
-			elif text.lower() == tmp[2].lower():
+			elif tmp[1].endswith('=') and bool(text.lower() == tmp[2].lower())^tmp[1].startswith('!'):
 				no_comm = acl_action(tmp[3],nick,jid,room,text)
 				break
 	return not no_comm
@@ -227,16 +232,16 @@ def acl_selector(a,room,jid,nick,mass,was_joined):
 			acl_action(tmp[3],nick,jid,room,None)
 			break
 		if itm:
-			if tmp[1] == 'exp' and re.match(tmp[2].replace('*','*?'),itm,re.I+re.S+re.U):
+			if tmp[1].endswith('exp') and bool(re.match(tmp[2].replace('*','*?'),itm,re.I+re.S+re.U))^tmp[1].startswith('!'):
 				acl_action(tmp[3],nick,jid,room,None)
 				break
-			elif tmp[1] == 'cexp' and re.match(tmp[2].replace('*','*?'),itm,re.S+re.U):
+			elif tmp[1].endswith('cexp') and bool(re.match(tmp[2].replace('*','*?'),itm,re.S+re.U))^tmp[1].startswith('!'):
 				acl_action(tmp[3],nick,jid,room,None)
 				break
-			elif tmp[1] == 'sub' and tmp[2].lower() in itm.lower():
+			elif tmp[1].endswith('sub') and bool(tmp[2].lower() in itm.lower())^tmp[1].startswith('!'):
 				acl_action(tmp[3],nick,jid,room,None)
 				break
-			elif itm.lower() == tmp[2].lower() or (tmp[0] == 'all' and tmp[2].lower() in (jid.lower(),nick.lower(),mass[0].lower())):
+			elif tmp[1].endswith('=') and bool(itm.lower() == tmp[2].lower())^tmp[1].startswith('!') or (tmp[0] == 'all' and bool(tmp[2].lower() in (jid.lower(),nick.lower(),mass[0].lower()))^tmp[1].startswith('!')):
 				acl_action(tmp[3],nick,jid,room,None)
 				break
 
@@ -248,10 +253,10 @@ def acl_version_async(a, nick, jid, room, mass, is_answ):
 	acl_ver_tmp['%s/%s' % (room,nick)] = itm.replace('\r','[LF]').replace('\n','[CR]').replace('\t','[TAB]')
 	for tmp in a:
 		if tmp[0] in ['ver','version']:
-			if tmp[1] == 'exp' and re.match(tmp[2].replace('*','*?'),itm,re.I+re.S+re.U): acl_action(tmp[3],nick,jid,room,None)
-			elif tmp[1] == 'cexp' and re.match(tmp[2].replace('*','*?'),itm,re.S+re.U): acl_action(tmp[3],nick,jid,room,None)
-			elif tmp[1] == 'sub' and tmp[2].lower() in itm.lower(): acl_action(tmp[3],nick,jid,room,None)
-			elif itm.lower() == tmp[2].lower() or (tmp[0] == 'all' and tmp[2].lower() in (jid.lower(),nick.lower(),'\n'.join(mass).lower())): acl_action(tmp[3],nick,jid,room,None)
+			if tmp[1].endswith('exp') and bool(re.match(tmp[2].replace('*','*?'),itm,re.I+re.S+re.U))^tmp[1].startswith('!'): acl_action(tmp[3],nick,jid,room,None)
+			elif tmp[1].endswith('cexp') and bool(re.match(tmp[2].replace('*','*?'),itm,re.S+re.U))^tmp[1].startswith('!'): acl_action(tmp[3],nick,jid,room,None)
+			elif tmp[1].endswith('sub') and bool(tmp[2].lower() in itm.lower())^tmp[1].startswith('!'): acl_action(tmp[3],nick,jid,room,None)
+			elif tmp[1].endswith('=') and bool(itm.lower() == tmp[2].lower())^tmp[1].startswith('!') or (tmp[0] == 'all' and bool(tmp[2].lower() in (jid.lower(),nick.lower(),'\n'.join(mass).lower()))^tmp[1].startswith('!')): acl_action(tmp[3],nick,jid,room,None)
 
 global execute, presence_control, message_act_control
 
