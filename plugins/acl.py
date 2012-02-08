@@ -129,7 +129,7 @@ def acl_action(cmd,nick,jid,room,text):
 	cmd = cmd.replace('${NICK}',nick).replace('${JID}',jid).replace('${SERVER}',getServer(jid))
 	if text and '${EXP}' in cmd and '${/EXP}' in cmd:
 		regex = cmd.split('${EXP}',1)[1].split('${/EXP}',1)[0]
-		mt = re.findall(regex, text, re.S+re.U+re.I)
+		mt = re.match(regex, text, re.S+re.U+re.I)
 		if mt != []: txt = ''.join(mt[0])
 		else: txt = ''
 		cmd = cmd.split('${EXP}',1)[0] + txt + cmd.split('${/EXP}',1)[1]
@@ -153,18 +153,18 @@ def acl_message(room,jid,nick,type,text):
 				cur_execute('delete from acl where jid=%s and action=%s and type=%s and text=%s',(room,tmp[0],tmp[1],tmp[2]))
 			
 			was_match = False
-			if tmp[1].endswith('exp'):
-				if tmp[1].startswith('!') and not bool(re.findall(tmp[2].replace('*','*?'),text,re.I+re.S+re.U)): was_match = True
-				elif bool(re.findall(tmp[2].replace('*','*?'),text,re.I+re.S+re.U)): was_match = True
-			elif tmp[1].endswith('cexp'):
-				if tmp[1].startswith('!') and not bool(re.findall(tmp[2].replace('*','*?'),text,re.S+re.U)): was_match = True
-				elif bool(re.findall(tmp[2].replace('*','*?'),text,re.S+re.U)): was_match = True
-			elif tmp[1].endswith('sub'):
-				if tmp[1].startswith('!') and not bool(tmp[2].lower() in text.lower()): was_match = True
-				elif bool(tmp[2].lower() in text.lower()): was_match = True
-			elif tmp[1].endswith('='):
-				if tmp[1].startswith('!') and bool(text.lower() != tmp[2].lower()): was_match = True
-				elif bool(text.lower() == tmp[2].lower()): was_match = True
+			if tmp[1] in ['exp','!exp']:
+				if tmp[1][0] == '!' and not re.match(tmp[2].replace('*','*?'),text,re.I+re.S+re.U): was_match = True
+				elif re.match(tmp[2].replace('*','*?'),text,re.I+re.S+re.U): was_match = True
+			elif tmp[1] in ['cexp','!cexp']:
+				if tmp[1][0] == '!' and not re.match(tmp[2].replace('*','*?'),text,re.S+re.U): was_match = True
+				elif re.match(tmp[2].replace('*','*?'),text,re.S+re.U): was_match = True
+			elif tmp[1] in ['sub','!sub']:
+				if tmp[1][0] == '!' and not tmp[2].lower() in text.lower(): was_match = True
+				elif tmp[2].lower() in text.lower(): was_match = True
+			elif tmp[1] in ['=','!=']:
+				if tmp[1][0] == '!' and text.lower() != tmp[2].lower(): was_match = True
+				elif text.lower() == tmp[2].lower(): was_match = True
 			if was_match:
 				no_comm = acl_action(tmp[3],nick,jid,room,text)
 				break
@@ -238,19 +238,20 @@ def acl_selector(a,room,jid,nick,mass,was_joined):
 			break
 		if itm:
 			was_match = False
-			if tmp[1].endswith('exp'):
-				if tmp[1].startswith('!') and not bool(re.findall(tmp[2].replace('*','*?'),itm,re.I+re.S+re.U)): was_match = True
-				elif bool(re.findall(tmp[2].replace('*','*?'),itm,re.I+re.S+re.U)): was_match = True
-			elif tmp[1].endswith('cexp'):
-				if tmp[1].startswith('!') and not bool(re.findall(tmp[2].replace('*','*?'),itm,re.S+re.U)): was_match = True
-				elif bool(re.findall(tmp[2].replace('*','*?'),itm,re.S+re.U)): was_match = True
-			elif tmp[1].endswith('sub'):
-				if tmp[1].startswith('!') and bool(tmp[2].lower() not in itm.lower()): was_match = True
-				elif bool(tmp[2].lower() in itm.lower()): was_match = True
-			elif tmp[1].endswith('='):
-				if tmp[1].startswith('!') and not bool(itm.lower() == tmp[2].lower()) or not (tmp[0] == 'all' and bool(tmp[2].lower() in (jid.lower(),nick.lower(),mass[0].lower()))): was_match = True
-				elif bool(itm.lower() == tmp[2].lower()) or (tmp[0] == 'all' and bool(tmp[2].lower() in (jid.lower(),nick.lower(),mass[0].lower()))): was_match = True
+			if tmp[1] in ['exp','!exp']:
+				if tmp[1][0] == '!' and not re.match(tmp[2].replace('*','*?'),itm,re.I+re.S+re.U): was_match = True
+				elif re.match(tmp[2].replace('*','*?'),itm,re.I+re.S+re.U): was_match = True
+			elif tmp[1] in ['cexp','!cexp']:
+				if tmp[1][0] == '!' and not re.match(tmp[2].replace('*','*?'),itm,re.S+re.U): was_match = True
+				elif re.match(tmp[2].replace('*','*?'),itm,re.S+re.U): was_match = True
+			elif tmp[1] in ['sub','!sub']:
+				if tmp[1][0] == '!' and tmp[2].lower() not in itm.lower(): was_match = True
+				elif tmp[2].lower() in itm.lower(): was_match = True
+			elif tmp[1] in ['=','!=']:
+				if tmp[1][0] == '!' and not (itm.lower() == tmp[2].lower() or (tmp[0] == 'all' and tmp[2].lower() in (jid.lower(),nick.lower(),mass[0].lower()))): was_match = True
+				elif itm.lower() == tmp[2].lower() or (tmp[0] == 'all' and tmp[2].lower() in (jid.lower(),nick.lower(),mass[0].lower())): was_match = True
 			if was_match:
+				pprint(unicode(tmp))
 				acl_action(tmp[3],nick,jid,room,None)
 				break
 
@@ -263,18 +264,18 @@ def acl_version_async(a, nick, jid, room, mass, is_answ):
 	for tmp in a:
 		if tmp[0] in ['ver','version']:			
 			was_match = False
-			if tmp[1].endswith('exp'):
-				if tmp[1].startswith('!') and not bool(re.findall(tmp[2].replace('*','*?'),itm,re.I+re.S+re.U)): was_match = True
-				elif bool(re.findall(tmp[2].replace('*','*?'),itm,re.I+re.S+re.U)): was_match = True
-			elif tmp[1].endswith('cexp'):
-				if tmp[1].startswith('!') and not bool(re.findall(tmp[2].replace('*','*?'),itm,re.S+re.U)): was_match = True
-				elif bool(re.findall(tmp[2].replace('*','*?'),itm,re.S+re.U)): was_match = True
-			elif tmp[1].endswith('sub'):
-				if tmp[1].startswith('!') and not bool(tmp[2].lower() in itm.lower()): was_match = True
-				elif bool(tmp[2].lower() in itm.lower()): was_match = True
-			elif tmp[1].endswith('='):
-				if tmp[1].startswith('!') and not bool(itm.lower() == tmp[2].lower()) or not (tmp[0] == 'all' and bool(tmp[2].lower() in (jid.lower(),nick.lower(),'\n'.join(mass).lower()))): was_match = True
-				elif bool(itm.lower() == tmp[2].lower()) or (tmp[0] == 'all' and bool(tmp[2].lower() in (jid.lower(),nick.lower(),'\n'.join(mass).lower()))): was_match = True
+			if tmp[1] in ['exp','!exp']:
+				if tmp[1][0] == '!' and not re.match(tmp[2].replace('*','*?'),itm,re.I+re.S+re.U): was_match = True
+				elif re.match(tmp[2].replace('*','*?'),itm,re.I+re.S+re.U): was_match = True
+			elif tmp[1] in ['cexp','!cexp']:
+				if tmp[1][0] == '!' and not re.match(tmp[2].replace('*','*?'),itm,re.S+re.U): was_match = True
+				elif re.match(tmp[2].replace('*','*?'),itm,re.S+re.U): was_match = True
+			elif tmp[1] in ['sub','!sub']:
+				if tmp[1][0] == '!' and tmp[2].lower() not in itm.lower(): was_match = True
+				elif tmp[2].lower() in itm.lower(): was_match = True
+			elif tmp[1] in ['=','!=']:
+				if tmp[1][0] == '!' and (itm.lower() != tmp[2].lower() or tmp[0] == 'all' and tmp[2].lower() not in (jid.lower(),nick.lower(),'\n'.join(mass).lower())): was_match = True
+				elif itm.lower() == tmp[2].lower() or (tmp[0] == 'all' and tmp[2].lower() in (jid.lower(),nick.lower(),'\n'.join(mass).lower())): was_match = True
 			if was_match: acl_action(tmp[3],nick,jid,room,None)
 
 global execute, presence_control, message_act_control
