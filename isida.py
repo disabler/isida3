@@ -118,7 +118,7 @@ while 1:
 				else: os.system('echo No Updates! > %s' % updatelog_file)
 				writefile(ver_file, unicode(svn_ver_format % (str(readfile(ver_file)).replace('\n','').replace('\r','').replace('\t','').replace(' ',''),id_append)).encode('utf-8'))
 			elif USED_REPO == 'git':
-				os.system('git pull git://github.com/isida/trunk.git')
+				os.system('git pull -u origin master')
 				os.system('git describe --always > %s' % ver_file)
 				revno = str(readfile(ver_file)).replace('\n','').replace('\r','').replace('\t','').replace(' ','')
 				os.system('git log --pretty=format:'' > %s' % ver_file)
