@@ -152,10 +152,10 @@ def acl_message(room,jid,nick,type,text):
 			if tmp[4] <= time.time() and tmp[4]: 
 				cur_execute('delete from acl where jid=%s and action=%s and type=%s and text=%s',(room,tmp[0],tmp[1],tmp[2]))
 
-			if tmp[1].endswith('exp') and bool(re.match(tmp[2].replace('*','*?'),text,re.I+re.S+re.U))^tmp[1].startswith('!'):
+			if tmp[1].endswith('exp') and bool(re.findall(tmp[2].replace('*','*?'),text,re.I+re.S+re.U))^tmp[1].startswith('!'):
 				no_comm = acl_action(tmp[3],nick,jid,room,text)
 				break
-			elif tmp[1].endswith('cexp') and bool(re.match(tmp[2].replace('*','*?'),text,re.S+re.U))^tmp[1].startswith('!'):
+			elif tmp[1].endswith('cexp') and bool(re.findall(tmp[2].replace('*','*?'),text,re.S+re.U))^tmp[1].startswith('!'):
 				no_comm = acl_action(tmp[3],nick,jid,room,text)
 				break
 			elif tmp[1].endswith('sub') and bool(tmp[2].lower() in text.lower())^tmp[1].startswith('!'):
@@ -232,10 +232,10 @@ def acl_selector(a,room,jid,nick,mass,was_joined):
 			acl_action(tmp[3],nick,jid,room,None)
 			break
 		if itm:
-			if tmp[1].endswith('exp') and bool(re.match(tmp[2].replace('*','*?'),itm,re.I+re.S+re.U))^tmp[1].startswith('!'):
+			if tmp[1].endswith('exp') and bool(re.findall(tmp[2].replace('*','*?'),itm,re.I+re.S+re.U))^tmp[1].startswith('!'):
 				acl_action(tmp[3],nick,jid,room,None)
 				break
-			elif tmp[1].endswith('cexp') and bool(re.match(tmp[2].replace('*','*?'),itm,re.S+re.U))^tmp[1].startswith('!'):
+			elif tmp[1].endswith('cexp') and bool(re.findall(tmp[2].replace('*','*?'),itm,re.S+re.U))^tmp[1].startswith('!'):
 				acl_action(tmp[3],nick,jid,room,None)
 				break
 			elif tmp[1].endswith('sub') and bool(tmp[2].lower() in itm.lower())^tmp[1].startswith('!'):
@@ -253,8 +253,8 @@ def acl_version_async(a, nick, jid, room, mass, is_answ):
 	acl_ver_tmp['%s/%s' % (room,nick)] = itm.replace('\r','[LF]').replace('\n','[CR]').replace('\t','[TAB]')
 	for tmp in a:
 		if tmp[0] in ['ver','version']:
-			if tmp[1].endswith('exp') and bool(re.match(tmp[2].replace('*','*?'),itm,re.I+re.S+re.U))^tmp[1].startswith('!'): acl_action(tmp[3],nick,jid,room,None)
-			elif tmp[1].endswith('cexp') and bool(re.match(tmp[2].replace('*','*?'),itm,re.S+re.U))^tmp[1].startswith('!'): acl_action(tmp[3],nick,jid,room,None)
+			if tmp[1].endswith('exp') and bool(re.findall(tmp[2].replace('*','*?'),itm,re.I+re.S+re.U))^tmp[1].startswith('!'): acl_action(tmp[3],nick,jid,room,None)
+			elif tmp[1].endswith('cexp') and bool(re.findall(tmp[2].replace('*','*?'),itm,re.S+re.U))^tmp[1].startswith('!'): acl_action(tmp[3],nick,jid,room,None)
 			elif tmp[1].endswith('sub') and bool(tmp[2].lower() in itm.lower())^tmp[1].startswith('!'): acl_action(tmp[3],nick,jid,room,None)
 			elif tmp[1].endswith('=') and bool(itm.lower() == tmp[2].lower())^tmp[1].startswith('!') or (tmp[0] == 'all' and bool(tmp[2].lower() in (jid.lower(),nick.lower(),'\n'.join(mass).lower()))^tmp[1].startswith('!')): acl_action(tmp[3],nick,jid,room,None)
 
