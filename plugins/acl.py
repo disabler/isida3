@@ -162,7 +162,7 @@ def acl_message(room,jid,nick,type,text):
 			elif tmp[1].endswith('sub'):
 				if tmp[1].startswith('!') and not bool(tmp[2].lower() in text.lower()): was_match = True
 				elif bool(tmp[2].lower() in text.lower()): was_match = True
-			elif tmp[1].endswith('=')
+			elif tmp[1].endswith('='):
 				if tmp[1].startswith('!') and bool(text.lower() != tmp[2].lower()): was_match = True
 				elif bool(text.lower() == tmp[2].lower()): was_match = True
 			if was_match:
@@ -272,7 +272,7 @@ def acl_version_async(a, nick, jid, room, mass, is_answ):
 			elif tmp[1].endswith('sub'):
 				if tmp[1].startswith('!') and not bool(tmp[2].lower() in itm.lower()): was_match = True
 				elif bool(tmp[2].lower() in itm.lower()): was_match = True
-			elif tmp[1].endswith('=')
+			elif tmp[1].endswith('='):
 				if tmp[1].startswith('!') and not bool(itm.lower() == tmp[2].lower()) or not (tmp[0] == 'all' and bool(tmp[2].lower() in (jid.lower(),nick.lower(),'\n'.join(mass).lower()))): was_match = True
 				elif bool(itm.lower() == tmp[2].lower()) or (tmp[0] == 'all' and bool(tmp[2].lower() in (jid.lower(),nick.lower(),'\n'.join(mass).lower()))): was_match = True
 			if was_match: acl_action(tmp[3],nick,jid,room,None)
