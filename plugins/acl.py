@@ -129,7 +129,7 @@ def acl_action(cmd,nick,jid,room,text):
 	cmd = cmd.replace('${NICK}',nick).replace('${JID}',jid).replace('${SERVER}',getServer(jid))
 	if text and '${EXP}' in cmd and '${/EXP}' in cmd:
 		regex = cmd.split('${EXP}',1)[1].split('${/EXP}',1)[0]
-		mt = re.match(regex, text, re.S+re.U+re.I)
+		mt = re.findall(regex, text, re.S+re.U+re.I)
 		if mt != []: txt = ''.join(mt[0])
 		else: txt = ''
 		cmd = cmd.split('${EXP}',1)[0] + txt + cmd.split('${/EXP}',1)[1]
