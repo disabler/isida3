@@ -163,30 +163,27 @@ def acl_message(room,jid,nick,type,text):
 	if lvl < 0: return
 	if getRoom(jid) == getRoom(Settings['jid']): return
 	a = cur_execute_fetchall('select action,type,text,command,time,level from acl where jid=%s and (action=%s or action=%s or action ilike %s) order by -level',(room,'msg','message','all%'))
-	if a[5] == 9: pass	
-	elif lvl > a[5]: return
 	no_comm = True
 	if a:
 		for tmp in a:
-			if tmp[4] <= time.time() and tmp[4]: 
-				cur_execute('delete from acl where jid=%s and action=%s and type=%s and text=%s',(room,tmp[0],tmp[1],tmp[2]))
-			
-			was_match = False
-			if tmp[1] in ['exp','!exp']:
-				if tmp[1][0] == '!' and not re.match(tmp[2].replace('*','*?'),text,re.I+re.S+re.U): was_match = True
-				elif re.match(tmp[2].replace('*','*?'),text,re.I+re.S+re.U): was_match = True
-			elif tmp[1] in ['cexp','!cexp']:
-				if tmp[1][0] == '!' and not re.match(tmp[2].replace('*','*?'),text,re.S+re.U): was_match = True
-				elif re.match(tmp[2].replace('*','*?'),text,re.S+re.U): was_match = True
-			elif tmp[1] in ['sub','!sub']:
-				if tmp[1][0] == '!' and not tmp[2].lower() in text.lower(): was_match = True
-				elif tmp[2].lower() in text.lower(): was_match = True
-			elif tmp[1] in ['=','!=']:
-				if tmp[1][0] == '!' and text.lower() != tmp[2].lower(): was_match = True
-				elif text.lower() == tmp[2].lower(): was_match = True
-			if was_match:
-				no_comm = acl_action(tmp[3],nick,jid,room,text)
-				break
+			if tmp[5] == 9 or lvl <= a[5]:
+				if tmp[4] <= time.time() and tmp[4]: cur_execute('delete from acl where jid=%s and action=%s and type=%s and text=%s',(room,tmp[0],tmp[1],tmp[2]))
+				was_match = False
+				if tmp[1] in ['exp','!exp']:
+					if tmp[1][0] == '!' and not re.match(tmp[2].replace('*','*?'),text,re.I+re.S+re.U): was_match = True
+					elif re.match(tmp[2].replace('*','*?'),text,re.I+re.S+re.U): was_match = True
+				elif tmp[1] in ['cexp','!cexp']:
+					if tmp[1][0] == '!' and not re.match(tmp[2].replace('*','*?'),text,re.S+re.U): was_match = True
+					elif re.match(tmp[2].replace('*','*?'),text,re.S+re.U): was_match = True
+				elif tmp[1] in ['sub','!sub']:
+					if tmp[1][0] == '!' and not tmp[2].lower() in text.lower(): was_match = True
+					elif tmp[2].lower() in text.lower(): was_match = True
+				elif tmp[1] in ['=','!=']:
+					if tmp[1][0] == '!' and text.lower() != tmp[2].lower(): was_match = True
+					elif text.lower() == tmp[2].lower(): was_match = True
+				if was_match:
+					no_comm = acl_action(tmp[3],nick,jid,room,text)
+					break
 
 	return not no_comm
 
@@ -217,7 +214,7 @@ def acl_selector(a,room,jid,nick,mass,was_joined):
 	global iq_request,acl_ver_tmp
 	lvl = get_level(room,nick)[0]
 	for tmp in a:
-		if (tmp[5] == 9 or lvl <=tmp[5]) and tmp[0] == 'age':
+		if (tmp[5] == 9 or lvl <= tmp[5]) and tmp[0] == 'age':
 			past_age = cur_execute_fetchone('select sum(age) from age where room=%s and jid=%s and status=%s',(room,getRoom(jid),1))
 			now_age  = cur_execute_fetchone('select time,age from age where room=%s and jid=%s and status=%s',(room,getRoom(jid),0))
 			r_age = 0
