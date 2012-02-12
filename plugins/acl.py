@@ -166,7 +166,7 @@ def acl_message(room,jid,nick,type,text):
 	no_comm = True
 	if a:
 		for tmp in a:
-			if tmp[5] == 9 or lvl <= a[5]:
+			if tmp[5] == 9 or lvl <= tmp[5]:
 				if tmp[4] <= time.time() and tmp[4]: cur_execute('delete from acl where jid=%s and action=%s and type=%s and text=%s',(room,tmp[0],tmp[1],tmp[2]))
 				was_match = False
 				if tmp[1] in ['exp','!exp']:
