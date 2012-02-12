@@ -28,6 +28,8 @@ acl_actions = ['show','del'] + acl_acts
 
 acl_ver_tmp = {}
 
+acl_actions.sort()
+
 def acl_show(jid,text):
 	a = cur_execute_fetchall('select * from acl where jid=%s and action ilike %s',(jid,text))
 	if len(a):
@@ -35,8 +37,12 @@ def acl_show(jid,text):
 		for tmp in a:
 			if text == '%': t4 = tmp[4].replace('\n',' // ')
 			else: t4 = tmp[4]
-			if tmp[5]: st,tp = '\n[%s] %s %s %s -> %s', (time.ctime(float(tmp[5])),) + tmp[1:4] + (t4,)
-			else: st,tp = '\n%s %s %s -> %s', tmp[1:4] + (t4,)
+			if tmp[6] == 9:
+				if tmp[5]: st,tp = '\n[%s] %s %s %s -> %s', (time.ctime(float(tmp[5])),) + tmp[1:4] + (t4,)
+				else: st,tp = '\n%s %s %s -> %s', tmp[1:4] + (t4,)
+			else:
+				if tmp[5]: st,tp = '\n<= %s | [%s] %s %s %s -> %s', (unlevl[tmp[6]],time.ctime(float(tmp[5])),) + tmp[1:4] + (t4,)
+				else: st,tp = '\n<= %s | %s %s %s -> %s', (unlevl[tmp[6]],) + tmp[1:4] + (t4,)
 			msg += st % tp
 	else: msg = L('Acl not found')
 	return msg
@@ -44,7 +50,7 @@ def acl_show(jid,text):
 def acl_add_del(jid,text,flag):
 	global conn
 	time_mass,atime = {'s':1,'m':60,'h':3600,'d':86400,'w':604800,'M':2592000,'y':31536000},0
-	silent = False
+	silent,level = False,9
 	try:
 		while text[0][0] == '/':
 			if text[0] == '/silent': silent = True
@@ -53,6 +59,11 @@ def acl_add_del(jid,text,flag):
 				except: return L('Time format error!')
 			text = text[1:]
 	except: return L('Error in parameters. Read the help about command.')
+	if text[0].isdigit():
+		level = int(text[0])
+		if level <= 0: level = 9
+		elif level > 9: level = 9
+		text = text[1:]
 	ttext = ' '.join(text)
 	if operator.xor(ttext.count('${EXP}') <= 1,ttext.count('${/EXP}') <= 1) and flag: return L('Error in parameters. Read the help about command.')
 	elif ttext.find('${EXP}',ttext.find('${/EXP}')) > 0 and flag: return L('Error in parameters. Read the help about command.')
@@ -85,13 +96,17 @@ def acl_add_del(jid,text,flag):
 			cur_execute('delete from acl where jid=%s and action=%s and type=%s and text=%s',(jid,acl_cmd, acl_sub_act, text[0]))
 			msg = [L('Removed:'),L('Updated:')][flag]
 		else: msg = [L('Not found:'),L('Added:')][flag]
-		if flag: cur_execute('insert into acl values (%s,%s,%s,%s,%s,%s)', (jid, acl_cmd, acl_sub_act, text[0], ' '.join(text[1:]).replace('%20','\ '), atime))
-		if atime: msg += ' [%s] %s %s %s -> %s' % (time.ctime(atime),acl_cmd, acl_sub_act, text[0], ' '.join(text[1:]).replace('%20','\ ').replace('\n',' // '))
-		else: msg += ' %s %s %s -> %s' % (acl_cmd, acl_sub_act, text[0], ' '.join(text[1:]).replace('%20','\ ').replace('\n',' // '))
+		if flag: cur_execute('insert into acl values (%s,%s,%s,%s,%s,%s,%s)', (jid, acl_cmd, acl_sub_act, text[0], ' '.join(text[1:]).replace('%20','\ '), atime, level))
+		if level == 9:
+			if atime: msg += ' [%s] %s %s %s -> %s' % (time.ctime(atime),acl_cmd, acl_sub_act, text[0], ' '.join(text[1:]).replace('%20','\ ').replace('\n',' // '))
+			else: msg += ' %s %s %s -> %s' % (acl_cmd, acl_sub_act, text[0], ' '.join(text[1:]).replace('%20','\ ').replace('\n',' // '))
+		else:
+			if atime: msg += ' <= %s | [%s] %s %s %s -> %s' % (unlevl[level], time.ctime(atime),acl_cmd, acl_sub_act, text[0], ' '.join(text[1:]).replace('%20','\ ').replace('\n',' // '))
+			else: msg += ' <= %s | %s %s %s -> %s' % (unlevl[level], acl_cmd, acl_sub_act, text[0], ' '.join(text[1:]).replace('%20','\ ').replace('\n',' // '))
 		if not reduce_spaces_all(msg).split('->',1)[1]: msg = msg.split('->',1)[0]
 		if flag and acl_cmd not in['msg','message']:
 			mb = [t[1:] for t in megabase if t[0] == jid and getRoom(t[4]) != getRoom(Settings['jid'])]
-			a = [(acl_cmd, acl_sub_act, text[0], ' '.join(text[1:]).replace('%20','\ '), 0)]				
+			a = [(acl_cmd, acl_sub_act, text[0], ' '.join(text[1:]).replace('%20','\ '), 0, level)]				
 			was_joined = True
 			for t in mb:
 				room, realjid, nick = jid, t[3], t[0]
@@ -106,14 +121,14 @@ def acl_add(jid,text): return acl_add_del(jid,text,True)
 def acl_del(jid,text): return acl_add_del(jid,text,False)
 
 def muc_acl(type, jid, nick, text):
-	text = text.replace('\ ','%20').split(' ')
+	text = text.replace('\ ','%20').replace(' // ','\n').replace(' \/\/ ',' // ').split(' ')
 	if len(text) >= 3 and text[2] == '->': text[2] = ''
 	elif len(text) >= 4 and text[3] == '->': text[3] = ''
 	elif text[0].lower() == 'del' and len(text) >= 5 and text[4] == '->': text[4] = ''
 	while '' in text: text.remove('')
 	if len(text): acl_cmd = text[0].lower()
 	else: acl_cmd = '!'
-	if not acl_cmd in acl_actions and acl_cmd[0] != '/': msg = L('Items: %s') % ', '.join(acl_actions)
+	if not acl_cmd in acl_actions and acl_cmd[0] != '/' and not acl_cmd.isdigit(): msg = L('Items: %s') % ', '.join(acl_actions)
 	elif acl_cmd == 'show':
 		try: t = text[1]
 		except: t = '%'
@@ -143,9 +158,12 @@ def acl_action(cmd,nick,jid,room,text):
 def acl_message(room,jid,nick,type,text):
 	global conn
 	#if not no_comm: return
-	if get_level(room,nick)[0] < 0: return
+	lvl = get_level(room,nick)[0]
+	if lvl < 0: return
 	if getRoom(jid) == getRoom(Settings['jid']): return
-	a = cur_execute_fetchall('select action,type,text,command,time from acl where jid=%s and (action=%s or action=%s or action ilike %s)',(room,'msg','message','all%'))
+	a = cur_execute_fetchall('select action,type,text,command,time,level from acl where jid=%s and (action=%s or action=%s or action ilike %s)',(room,'msg','message','all%'))
+	if a[5] == 9: pass	
+	elif lvl > a[5]: return
 	no_comm = True
 	if a:
 		for tmp in a:
@@ -191,13 +209,14 @@ def acl_presence(room,jid,nick,type,mass):
 		return
 	# actions only on joins
 	#if was_joined: return
-	a = cur_execute_fetchall('select action,type,text,command,time from acl where jid=%s and (action ilike %s or action ilike %s or action ilike %s or action ilike %s or action ilike %s or action ilike %s or action=%s or action=%s or action=%s or action=%s or action=%s or action=%s)',(room,'prs%','presence%','nick%','all%','role%','affiliation%','jid','jidfull','res','age','ver','version'))
+	a = cur_execute_fetchall('select action,type,text,command,time,level from acl where jid=%s and (action ilike %s or action ilike %s or action ilike %s or action ilike %s or action ilike %s or action ilike %s or action=%s or action=%s or action=%s or action=%s or action=%s or action=%s)',(room,'prs%','presence%','nick%','all%','role%','affiliation%','jid','jidfull','res','age','ver','version'))
 	if a: acl_selector(a,room,jid,nick,mass,was_joined)
 
 def acl_selector(a,room,jid,nick,mass,was_joined):
 	global iq_request,acl_ver_tmp
+	lvl = get_level(room,nick)[0]
 	for tmp in a:
-		if tmp[0] == 'age':
+		if (tmp[5] == 9 or lvl <=tmp[5]) and tmp[0] == 'age':
 			past_age = cur_execute_fetchone('select sum(age) from age where room=%s and jid=%s and status=%s',(room,getRoom(jid),1))
 			now_age  = cur_execute_fetchone('select time,age from age where room=%s and jid=%s and status=%s',(room,getRoom(jid),0))
 			r_age = 0
@@ -209,7 +228,7 @@ def acl_selector(a,room,jid,nick,mass,was_joined):
 			break
 
 	for tmp in a:
-		if tmp[0] in ['ver','version'] and was_joined:
+		if (tmp[5] == 9 or lvl <= tmp[5]) and tmp[0] in ['ver','version'] and was_joined:
 			try: r_ver = acl_ver_tmp['%s/%s' % (room,nick)]
 			except:
 				iqid,who = get_id(), '%s/%s' % (room,nick)
@@ -217,43 +236,42 @@ def acl_selector(a,room,jid,nick,mass,was_joined):
 				iq_request[iqid]=(time.time(),acl_version_async,[a, nick, jid, room, mass[0]])
 				sender(i)
 				r_ver = None
-				pprint('*** ACL version request for %s/%s' % (room,nick),'purple')
+				pprint('*** ACL version request for [>=%s] %s/%s' % (tmp[5],room,nick),'purple')
 				break
 
 	for tmp in a:
-		itm = ''
-		if tmp[4] <= time.time() and tmp[4]:
-			cur_execute('delete from acl where jid=%s and action=%s and type=%s and text=%s',(room,tmp[0],tmp[1],tmp[2]))
-		if tmp[0].split('_')[0] in ['presence','prs'] and (('_join' in tmp[0] and was_joined) or ('_change' in tmp[0] and not was_joined) or ('_join' not in tmp[0] and '_change' not in tmp[0])): itm = mass[0]
-		elif tmp[0].split('_')[0] == 'nick' and (('_join' in tmp[0] and was_joined) or ('_change' in tmp[0] and not was_joined) or ('_join' not in tmp[0] and '_change' not in tmp[0])): itm = nick
-		elif tmp[0].split('_')[0] == 'role' and (('_join' in tmp[0] and was_joined) or ('_change' in tmp[0] and not was_joined) or ('_join' not in tmp[0] and '_change' not in tmp[0])): itm = mass[1]
-		elif tmp[0].split('_')[0] == 'affiliation' and (('_join' in tmp[0] and was_joined) or ('_change' in tmp[0] and not was_joined) or ('_join' not in tmp[0] and '_change' not in tmp[0])): itm = mass[2]
-		elif tmp[0].split('_')[0] == 'all' and (('_join' in tmp[0] and was_joined) or ('_change' in tmp[0] and not was_joined) or ('_join' not in tmp[0] and '_change' not in tmp[0])): itm = '|'.join((jid,nick,mass[0],mass[1],mass[2]))
-		elif tmp[0] == 'jid' and was_joined: itm = getRoom(jid)
-		elif tmp[0] == 'jidfull' and was_joined: itm = jid
-		elif tmp[0] == 'res' and was_joined: itm = getResourse(jid)
-		elif tmp[0] in ['ver','version'] and was_joined and r_ver: itm = r_ver
-		elif tmp[0] == 'age' and was_joined and bool_compare(r_age,tmp[1],tmp[2]):
-			acl_action(tmp[3],nick,jid,room,None)
-			break
-		if itm:
-			was_match = False
-			if tmp[1] in ['exp','!exp']:
-				if tmp[1][0] == '!' and not re.match(tmp[2].replace('*','*?'),itm,re.I+re.S+re.U): was_match = True
-				elif re.match(tmp[2].replace('*','*?'),itm,re.I+re.S+re.U): was_match = True
-			elif tmp[1] in ['cexp','!cexp']:
-				if tmp[1][0] == '!' and not re.match(tmp[2].replace('*','*?'),itm,re.S+re.U): was_match = True
-				elif re.match(tmp[2].replace('*','*?'),itm,re.S+re.U): was_match = True
-			elif tmp[1] in ['sub','!sub']:
-				if tmp[1][0] == '!' and tmp[2].lower() not in itm.lower(): was_match = True
-				elif tmp[2].lower() in itm.lower(): was_match = True
-			elif tmp[1] in ['=','!=']:
-				if tmp[1][0] == '!' and not (itm.lower() == tmp[2].lower() or (tmp[0] == 'all' and tmp[2].lower() in (jid.lower(),nick.lower(),mass[0].lower()))): was_match = True
-				elif itm.lower() == tmp[2].lower() or (tmp[0] == 'all' and tmp[2].lower() in (jid.lower(),nick.lower(),mass[0].lower())): was_match = True
-			if was_match:
-				pprint(unicode(tmp))
+		if tmp[5] == 9 or lvl <= tmp[5]:
+			itm = ''
+			if tmp[4] <= time.time() and tmp[4]: cur_execute('delete from acl where jid=%s and action=%s and type=%s and text=%s',(room,tmp[0],tmp[1],tmp[2]))
+			if tmp[0].split('_')[0] in ['presence','prs'] and (('_join' in tmp[0] and was_joined) or ('_change' in tmp[0] and not was_joined) or ('_join' not in tmp[0] and '_change' not in tmp[0])): itm = mass[0]
+			elif tmp[0].split('_')[0] == 'nick' and (('_join' in tmp[0] and was_joined) or ('_change' in tmp[0] and not was_joined) or ('_join' not in tmp[0] and '_change' not in tmp[0])): itm = nick
+			elif tmp[0].split('_')[0] == 'role' and (('_join' in tmp[0] and was_joined) or ('_change' in tmp[0] and not was_joined) or ('_join' not in tmp[0] and '_change' not in tmp[0])): itm = mass[1]
+			elif tmp[0].split('_')[0] == 'affiliation' and (('_join' in tmp[0] and was_joined) or ('_change' in tmp[0] and not was_joined) or ('_join' not in tmp[0] and '_change' not in tmp[0])): itm = mass[2]
+			elif tmp[0].split('_')[0] == 'all' and (('_join' in tmp[0] and was_joined) or ('_change' in tmp[0] and not was_joined) or ('_join' not in tmp[0] and '_change' not in tmp[0])): itm = '|'.join((jid,nick,mass[0],mass[1],mass[2]))
+			elif tmp[0] == 'jid' and was_joined: itm = getRoom(jid)
+			elif tmp[0] == 'jidfull' and was_joined: itm = jid
+			elif tmp[0] == 'res' and was_joined: itm = getResourse(jid)
+			elif tmp[0] in ['ver','version'] and was_joined and r_ver: itm = r_ver
+			elif tmp[0] == 'age' and was_joined and bool_compare(r_age,tmp[1],tmp[2]):
 				acl_action(tmp[3],nick,jid,room,None)
 				break
+			if itm:
+				was_match = False
+				if tmp[1] in ['exp','!exp']:
+					if tmp[1][0] == '!' and not re.match(tmp[2].replace('*','*?'),itm,re.I+re.S+re.U): was_match = True
+					elif re.match(tmp[2].replace('*','*?'),itm,re.I+re.S+re.U): was_match = True
+				elif tmp[1] in ['cexp','!cexp']:
+					if tmp[1][0] == '!' and not re.match(tmp[2].replace('*','*?'),itm,re.S+re.U): was_match = True
+					elif re.match(tmp[2].replace('*','*?'),itm,re.S+re.U): was_match = True
+				elif tmp[1] in ['sub','!sub']:
+					if tmp[1][0] == '!' and tmp[2].lower() not in itm.lower(): was_match = True
+					elif tmp[2].lower() in itm.lower(): was_match = True
+				elif tmp[1] in ['=','!=']:
+					if tmp[1][0] == '!' and not (itm.lower() == tmp[2].lower() or (tmp[0] == 'all' and tmp[2].lower() in (jid.lower(),nick.lower(),mass[0].lower()))): was_match = True
+					elif itm.lower() == tmp[2].lower() or (tmp[0] == 'all' and tmp[2].lower() in (jid.lower(),nick.lower(),mass[0].lower())): was_match = True
+				if was_match:
+					acl_action(tmp[3],nick,jid,room,None)
+					break
 
 def acl_version_async(a, nick, jid, room, mass, is_answ):
 	global acl_ver_tmp

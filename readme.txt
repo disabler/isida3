@@ -5,14 +5,15 @@ short howto for isida-bot
 
 1. python-psycopg2 >= 2.4.2
 2. python >= 2.7
-3. git-core >= 1.7.1 
+3. git-core >= 1.7.1 or subversion >= 1.6.12
 4. postgresql >= 8.4
 5. openssl >= 1.0.0e
 
 
 -------- download --------
 
-git clone git://github.com/disabler/isida3.git isida
+from git: git clone git://github.com/disabler/isida3.git isida
+from svn: svn co http://isida-bot.com/svn/branch isida
 
 
 --------- create bases --------
@@ -44,6 +45,8 @@ exit
 -------- fast install and launch --------
 
 git clone git://github.com/disabler/isida3.git isida
+# or
+# svn co http://isida-bot.com/svn/branch isida
 cd isida
 su postgres
 createuser -P isidabot

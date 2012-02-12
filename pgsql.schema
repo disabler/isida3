@@ -176,7 +176,8 @@ CREATE TABLE acl (
 	type text,
 	text text,
 	command text,
-	time int
+	time int,
+	level int default 9
 );
 
 CREATE INDEX acl_jid ON acl (jid,action,type);
