@@ -31,12 +31,12 @@ acl_ver_tmp = {}
 acl_actions.sort()
 
 def acl_show(jid,text):
-	a = cur_execute_fetchall('select * from acl where jid=%s and action ilike %s',(jid,text))
+	a = cur_execute_fetchall('select * from acl where jid=%s and action ilike %s order by -level,action',(jid,text))
 	if len(a):
 		msg = L('Acl:')
 		for tmp in a:
 			if text == '%': t4 = tmp[4].replace('\n',' // ')
-			else: t4 = tmp[4]
+			else: t4 = tmp[4].replace('\n','\n    ')
 			if tmp[6] == 9:
 				if tmp[5]: st,tp = '\n[%s] %s %s %s -> %s', (time.ctime(float(tmp[5])),) + tmp[1:4] + (t4,)
 				else: st,tp = '\n%s %s %s -> %s', tmp[1:4] + (t4,)
@@ -124,6 +124,7 @@ def muc_acl(type, jid, nick, text):
 	text = text.replace('\ ','%20').replace(' // ','\n').replace(' \/\/ ',' // ').split(' ')
 	if len(text) >= 3 and text[2] == '->': text[2] = ''
 	elif len(text) >= 4 and text[3] == '->': text[3] = ''
+	elif text[0].isdigit() and len(text) >= 5 and text[4] == '->': text[4] = ''
 	elif text[0].lower() == 'del' and len(text) >= 5 and text[4] == '->': text[4] = ''
 	while '' in text: text.remove('')
 	if len(text): acl_cmd = text[0].lower()
@@ -161,7 +162,7 @@ def acl_message(room,jid,nick,type,text):
 	lvl = get_level(room,nick)[0]
 	if lvl < 0: return
 	if getRoom(jid) == getRoom(Settings['jid']): return
-	a = cur_execute_fetchall('select action,type,text,command,time,level from acl where jid=%s and (action=%s or action=%s or action ilike %s)',(room,'msg','message','all%'))
+	a = cur_execute_fetchall('select action,type,text,command,time,level from acl where jid=%s and (action=%s or action=%s or action ilike %s) order by -level',(room,'msg','message','all%'))
 	if a[5] == 9: pass	
 	elif lvl > a[5]: return
 	no_comm = True
@@ -209,7 +210,7 @@ def acl_presence(room,jid,nick,type,mass):
 		return
 	# actions only on joins
 	#if was_joined: return
-	a = cur_execute_fetchall('select action,type,text,command,time,level from acl where jid=%s and (action ilike %s or action ilike %s or action ilike %s or action ilike %s or action ilike %s or action ilike %s or action=%s or action=%s or action=%s or action=%s or action=%s or action=%s)',(room,'prs%','presence%','nick%','all%','role%','affiliation%','jid','jidfull','res','age','ver','version'))
+	a = cur_execute_fetchall('select action,type,text,command,time,level from acl where jid=%s and (action ilike %s or action ilike %s or action ilike %s or action ilike %s or action ilike %s or action ilike %s or action=%s or action=%s or action=%s or action=%s or action=%s or action=%s) order by -level',(room,'prs%','presence%','nick%','all%','role%','affiliation%','jid','jidfull','res','age','ver','version'))
 	if a: acl_selector(a,room,jid,nick,mass,was_joined)
 
 def acl_selector(a,room,jid,nick,mass,was_joined):
