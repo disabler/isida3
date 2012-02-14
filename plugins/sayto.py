@@ -85,18 +85,36 @@ def sayto(type, jid, nick, text):
 	else: msg = L('What convey to?')
 	send_msg(type, jid, nick, msg)
 
+def say_memo(type, jid, nick, text):	
+	while len(text) and text[0] == '\n': text=text[1:]
+	while len(text) and (text[-1] == '\n' or text[-1] == ' '): text=text[:-1]
+	gj = getRoom(get_level(jid, nick)[1])
+	if text.split(' ')[0] == 'show':
+		try: text = text.split(' ',1)[1]
+		except: text = ''
+		t = cur_execute_fetchall('select message,jid from sayto where room=%s and jid ilike %s', (jid,gj))
+		if t: msg = '\n%s' % '\n'.join([u'• %s' % tmp[0] for tmp in t])
+		else: msg = L('There is no memo for you!')
+	elif text:
+		cur_execute('insert into sayto values (%s,%s,%s,%s)', ('\n%s' % int(time.time()), jid, gj, text))
+		msg = L('I\'ll remember it to you.')
+	else: msg = L('What remember to you?')
+	send_msg(type, jid, nick, msg)
+	
 def sayto_presence(room,jid,nick,type,text):
 	global conn
-	if nick != '':
+	if nick != '' and type != 'unavailable':
 		cm = cur_execute_fetchall('select * from sayto where room=%s and (jid=%s or jid=%s)',(room, getRoom(jid), nick))
 		if cm:
 			cur_execute('delete from sayto where room=%s and (jid=%s or jid=%s)',(room, getRoom(jid), nick))
 			for cc in cm:
 				if '\n' in cc[0]:
 					zz = cc[0].split('\n')
-					send_msg('chat', room, nick, L('%s (%s ago) convey for you: %s') % (zz[0], un_unix(time.time()-int(zz[1])), cc[3]))
-				else: send_msg('chat', room, nick, L('%s convey for you: %s') % (cc[3], cc[0]))
-
+					if zz[0]: msg = L('%s (%s ago) convey for you: %s') % (zz[0], un_unix(time.time()-int(zz[1])), cc[3])
+					else: msg = L('You ask remember: %s') % cc[3]
+				else: msg = L('%s convey for you: %s') % (cc[3], cc[0])
+				send_msg('chat', room, nick, msg)
+				
 def cleanup_sayto_base():
 	global last_cleanup_sayto_base
 	ctime = int(time.time())
@@ -128,4 +146,5 @@ global execute, timer, presence_control
 timer = [cleanup_sayto_base]
 presence_control = [sayto_presence]
 execute = [(3, 'sayto', sayto, 2, L('"Say to" command.\nsayto jid|nick message - if jid or nick join in conference, bot send "message". Messages saves 14 days, after if message didn\'t be send this message remove.')),
-			(7, 'sayjid', sayjid, 2, L('Send message to jid\n sayjid jid message.'))]
+			(7, 'sayjid', sayjid, 2, L('Send message to jid\n sayjid jid message.')),
+			(3, 'memo', say_memo, 2, L('Send a message to yourself at next join'))]
