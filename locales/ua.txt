@@ -18,7 +18,11 @@
 #                                                                             #
 # --------------------------------------------------------------------------- #
 
+<<<<<<< HEAD
 # file: ../branch/kernel.py
+=======
+# file: ../branch/plugins/kernel.py
+>>>>>>> 68394e8edd251a6b4cc849b359f487810dbae306
 Unknown error!	Невідома помилка!
 Error!	Помилка!
 AD-Hoc commands	AD-Hoc команди
@@ -1372,7 +1376,11 @@ This jid is here!	Даний jid знаходиться в конфі!
 I didn't seen user with jid %s, but if he join here I convey your message.	Я не бачила учасника з jid'ом %s, але якщо побачу - передам
 I didn't see user with nick %s. You can use jid.	Я не бачила %s в конференції. Ви можете вказати jid.
 What convey to?	Кому що передати?
+<<<<<<< HEAD
 There is no memo for you!	Ти не залишав нагадуваннь!
+=======
+There is no memo for you!	Ти не залишив нагадуваннь!
+>>>>>>> 68394e8edd251a6b4cc849b359f487810dbae306
 I'll remember it to you.	Я запам'ятаю це за тебе.
 What remember to you?	Що запам'ятати?
 %s (%s ago) convey for you: %s	%s (%s тому) просив передати: %s
