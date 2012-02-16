@@ -1511,4 +1511,3 @@ Search weather by code, city, country.	Поиск погоды по коду г�
 
 # file: ../branch/plugins/youtube.py
 Search at YouTube	Поиск по YouTube
-
