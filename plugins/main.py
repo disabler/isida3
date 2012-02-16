@@ -671,7 +671,7 @@ def bot_rejoin(type, jid, nick, text):
 	domain = getServer(Settings['jid'])
 	if len(text): text=unicode(text)
 	else: text=jid
-	if '\n' in text: text,passwd = text.split('\n',2)
+	if '\n' in text: text, passwd = text.split('\n', 1)
 	else: passwd = ''
 	if '@' not in text: text+='@'+lastserver
 	if '/' not in text: text+='/'+lastnick
@@ -710,7 +710,7 @@ def bot_join(type, jid, nick, text):
 	blklist = getFile(blacklist_base, [])
 	if not text or ' ' in getRoom(text): send_msg(type, jid, nick, L('Wrong arguments!'))
 	else:
-		if '\n' in text: text, passwd = text.split('\n', 2)
+		if '\n' in text: text, passwd = text.split('\n', 1)
 		else: passwd = ''
 		if '@' not in text: text += '@%s' % lastserver
 		if '/' not in text: text += '/%s' % lastnick
@@ -754,7 +754,7 @@ def bot_leave(type, jid, nick, text):
 		if text == '': text = jid
 		if '@' not in text: text+='@'+lastserver
 		if '/' not in text: text+='/'+lastnick
-		if '\n' in text: text,_ = text.split('\n',2)		
+		if '\n' in text: text, _ = text.split('\n', 1)		
 		lastserver = getServer(text)
 		lastnick = getResourse(text)
 		if len(text): text=unicode(text)
