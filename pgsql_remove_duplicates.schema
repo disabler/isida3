@@ -347,5 +347,30 @@ CREATE INDEX versions_cvo ON versions (client,version,os);
 CREATE INDEX versions_rjcvo ON versions (room,jid,client,version,os);
 
 --
+-- Issues base
+--
+
+CREATE TABLE tmp (
+	id integer,
+	room text,
+	jid text,
+	nick text,
+	level integer,
+	tags text,
+	body text,
+	status integer,
+	date integer,
+	comment text,
+	accept_by text,
+	accept_date integer
+);
+INSERT INTO tmp SELECT DISTINCT * FROM issues;
+DROP TABLE issues;
+ALTER TABLE tmp RENAME TO issues;
+
+CREATE INDEX issues_r ON issues (room,id);
+CREATE INDEX issues_d ON issues (room,date);
+
+--
 -- THE END
 --

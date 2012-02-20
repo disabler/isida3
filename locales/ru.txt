@@ -618,6 +618,38 @@ Users server statistic.	Статистика пользователей серв
 vCard query. Recomends make command base alias for query needs info.\nvcard_raw [nick] - query generic info\nvcard_raw nick\nshow - show available fields\nvcard_raw nick\n[field:name|field:name] - show requested fields from vcard.	Запрос vcard. Рекомендуется составить alias на базе команды для вывода нужных полей.\nvcard_raw [nick] - показ основной информации из vcard\nvcard_raw nick\nshow - показ доступных полей vcard\nvcard_raw nick\nполе:название|поле:название - показ запрошенных полей из vcard
 Server or jid uptime.	Аптайм jabber сервера или jid'а
 
+# file: ../branch/plugins/issue.py
+new	новое
+accepted	принято
+rejected	отклонено
+removed	удалено
+Accepted by	Принято
+Rejected by	Отклонено
+Removed by	Удалено
+No issue's body!	Не указано описание!
+I know same issue(s): %s	Я знаю похожие задачи: %s
+Added issue #%04d	Добавлена задача #%04d
+Created by %s	Создано %s
+, by reason: %s	, по причине: %s
+Issue(s) list:\n%s	Список задач:\n%s
+Issues not found!	Задачи не найдены!
+Issues with match '%s' not found!	Задач совпадающих с '%s' не найдено!
+Which issue need remove?	Какую задачу удалить?
+You must use numeric issue id.	Вы должны указать цифровой id задачи.
+Issue #%04d removed!	Задача #%04d удалена!
+There is not Your issue or You have no rights to remove it.	Это не Ваша задача или у Вас нет прав для удаления её.
+Issue #%04d was removed earlier!	Задача #%04d была удалена ранее!
+Issue #%04d not found!	Задача #%04d не найдена!
+Which issue need accept?	Какую задачу надо одобрить?
+Issue #%04d accepted!	Задача #%04d одобрена!
+Issue #%04d was accepted earlier!	Задача #%04d была одобрена ранее!
+There is not Your issue or You have no rights to accept it.	Это не Ваша задача или у Вас нет прав для принятия её.
+Which issue need reject?	Какую задачу отклонить?
+Issue #%04d rejected!	Задача #%04d отклонена!
+There is not Your issue or You have no rights to reject it.	Это не Ваша задача или у Вас нет прав для отклонения её.
+Issue #%04d was rejected earlier!	Задача #%04d была отклонена ранее!
+Issues\nissue [[[show|accept|reject|delete] id] reason] - actions with issue\nissue *tag1 *tag2 some text - add issue `some text` with tags tag1 and tag2	Задания\nissue [[[show|accept|reject|delete] id] причина] - действия с заданиями\nissue *tag1 *tag2 some text - добавить задание `some text` с тегами tag1 и tag2
+
 # file: ../branch/plugins/istrue.py
 100% True-nick!	100% Ъ-ник!
 Nicks without letters isn't true!	Ники без букв не Ъ!
@@ -1511,4 +1543,3 @@ Search weather by code, city, country.	Поиск погоды по коду г�
 
 # file: ../branch/plugins/youtube.py
 Search at YouTube	Поиск по YouTube
-

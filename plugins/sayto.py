@@ -52,29 +52,29 @@ def sayto(type, jid, nick, text):
 		else: splitter = ' '
 		to,what = text.split(splitter,1)[0],text.split(splitter,1)[1]
 		frm = nick + '\n' + str(int(time.time()))
-		fnd = cur_execute_fetchall('select status, jid from age where room=%s and nick=%s',(jid,to))
+		fnd = cur_execute_fetchall('select jid, status from age where room=%s and nick=%s group by jid, status',(jid,to))
 		if len(fnd) == 1:
-			fnd = fnd[0]
-			if fnd[0]:
+			fnd = fnd[1]
+			if fnd[1]:
 				msg = L('I will convey your message.')
-				cur_execute('insert into sayto values (%s,%s,%s,%s)', (frm, jid, fnd[1], what))				
+				cur_execute('insert into sayto values (%s,%s,%s,%s)', (frm, jid, fnd[0], what))				
 			else: msg = L('Or am I a fool or %s is here.') % to
 		elif len(fnd) > 1:
 			off_count = 0
 			for tmp in fnd:
-				if tmp[0]:
-					cur_execute('insert into sayto values (%s,%s,%s,%s)', (frm, jid, tmp[1], what))
+				if tmp[1]:
+					cur_execute('insert into sayto values (%s,%s,%s,%s)', (frm, jid, tmp[0], what))
 					off_count += 1
 			if off_count: msg = L('I seen some people with this nick, and I can convey is incorrect. Coincidence: %s, and count convey messages: %s') % (str(len(fnd)), str(off_count))
 			else: msg = L('All people with this nickname are here!')
 		else:
 			if '@' in to:
-				fnd = cur_execute_fetchall('select status, jid from age where room=%s and jid=%s',(jid,to))
+				fnd = cur_execute_fetchall('select jid, status from age where room=%s and jid=%s group by jid,status',(jid,to))
 				if fnd:
 					off_count = 0
 					for tmp in fnd:
-						if tmp[0]:
-							cur_execute('insert into sayto values (%s,%s,%s,%s)', (frm, jid, tmp[1], what))
+						if tmp[1]:
+							cur_execute('insert into sayto values (%s,%s,%s,%s)', (frm, jid, tmp[0], what))
 							off_count += 1
 					if off_count: msg = L('I will convey your message.')
 					else: msg = L('This jid is here!')

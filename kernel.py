@@ -92,35 +92,54 @@ class KThread(threading.Thread):
 def cur_execute(*params):
 	cur = conn.cursor()
 	psycopg2.extensions.register_type(psycopg2.extensions.UNICODE, cur)
+	par = None
 	try:
 		cur.execute(*params)
-		if 'update' in params[0] or 'insert' in params[0] or 'delete' in params[0]: conn.commit()
-	except: conn.rollback()
+		prm = params[0].split()[0].lower()
+		if prm in ['update','insert','delete']: conn.commit()
+	except Exception, par:
+		if pg_debug:
+			try: par = str(par)
+			except: par = unicode(par)
+		conn.rollback()
 	cur.close()
+	return par
 
 def cur_execute_fetchone(*params):
 	cur = conn.cursor()
 	psycopg2.extensions.register_type(psycopg2.extensions.UNICODE, cur)
+	par = None
 	try:
 		cur.execute(*params)
 		try: par = cur.fetchone()
-		except: par = None
-	except:
+		except Exception, par:
+			if pg_debug:
+				try: par = str(par)
+				except: par = unicode(par)
+	except Exception, par:
+		if pg_debug:
+			try: par = str(par)
+			except: par = unicode(par)
 		conn.rollback()
-		par = None
 	cur.close()
 	return par
 	
 def cur_execute_fetchall(*params):
 	cur = conn.cursor()
 	psycopg2.extensions.register_type(psycopg2.extensions.UNICODE, cur)
+	par = None
 	try:
 		cur.execute(*params)
 		try: par = cur.fetchall()
-		except: par = None
-	except:
+		except Exception, par:
+			if pg_debug:
+				try: par = str(par)
+				except: par = unicode(par)
+	except Exception, par:
+		if pg_debug:
+			try: par = str(par)
+			except: par = unicode(par)
 		conn.rollback()
-		par = None
 	cur.close()
 	return par
 	
@@ -2155,6 +2174,7 @@ user_hash = {}
 server_hash = {}
 server_hash_list = {}
 messages_excl = []
+pg_debug = False
 
 gt=tuple(time.gmtime())
 lt=tuple(time.localtime())

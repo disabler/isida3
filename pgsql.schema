@@ -271,5 +271,27 @@ CREATE INDEX versions_cvo ON versions (client,version,os);
 CREATE INDEX versions_rjcvo ON versions (room,jid,client,version,os);
 
 --
+-- Issues base
+--
+
+CREATE TABLE issues (
+	id integer,
+	room text,
+	jid text,
+	nick text,
+	level integer,
+	tags text,
+	body text,
+	status integer,
+	date integer,
+	comment text,
+	accept_by text,
+	accept_date integer
+);
+
+CREATE INDEX issues_r ON issues (room,id);
+CREATE INDEX issues_d ON issues (room,date);
+
+--
 -- THE END
 --

@@ -27,6 +27,7 @@ msg_limit		=	2048										# Лимит размера сообщений
 #debugmode		=	True										# режим _не_игнорировать_ошибки_
 #dm				=	True										# режим отладки xmpppy
 #dm2			=	True										# режим показа действий бота в консоле
+#pg_debug		=	True										# режим отладки PostgreSQL
 CommandsLog		=	True										# Логгирование команд бота
 #thread_type	=	None										# тип тредов thread/threading. по умолчанию - threading
 #ENABLE_TLS		=	None										# если бот падает при обзоре сервисов jid'а в ростере - надо принудительно отключить TLS
