@@ -119,7 +119,7 @@ def issue_accept(s,acclvl,room,jid,nick):
 				s = s[cnt:]
 				tags = ' '.join(tags)
 				cmt = ' '.join(s)
-			else: cmt = ''
+			else: cmt,tags = '',iss[0][3]
 			cur_execute('update issues set status=%s,accept_by=%s,accept_date=%s,comment=%s,tags=%s where room=%s and id=%s', (issue_accept_id,nick,int(time.time()),cmt,tags,room,id))
 			if iss[0][2] != issue_accept_id: return L('Issue #%04d accepted!') % id
 			else: return L('Issue #%04d was accepted earlier!') % id
