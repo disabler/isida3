@@ -71,7 +71,7 @@ def issue_show(s,room):
 			if t[2]: tmp = '#%04d (%s) *%s | %s\n%s' % (t[0],issue_status[t[4]],' *'.join(t[2].split()),L('Created by %s') % t[1],t[3])
 			else: tmp = '#%04d (%s) %s\n%s' % (t[0],issue_status[t[4]],L('Created by %s') % t[1],t[3])
 			if t[4]:
-				tmp = '%s\n%s %s [%s]' % (tmp,issue_status_show[t[4]],t[6],nice_time(t[7])[2])
+				tmp = '%s\n%s %s [%s]' % (tmp,issue_status_show[t[4]],t[6],disp_time(t[7]))
 				if t[5]: tmp += L(', by reason: %s') % t[5]
 			tm.append(tmp)
 		return L('Issue(s) list:\n%s') % '\n\n'.join(tm)

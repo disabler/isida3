@@ -542,13 +542,6 @@ def leave(conference, sm):
 	j = Presence(conference, 'unavailable', status=sm)
 	sender(j)
 
-def timeZero(val):
-	rval = []
-	for iv in range(0,len(val)):
-		if val[iv]<10: rval.append('0%s' % val[iv])
-		else: rval.append(str(val[iv]))
-	return rval
-
 def muc_filter_action(act,jid,room,reason):
 	if act in ['visitor','kick']:
 		nick = get_nick_by_jid(room,getRoom(jid))
@@ -577,16 +570,18 @@ def paste_text(text,room,jid):
 	fl.close()
 	return pasteurl+url
 
+def disp_time(t):
+	lt=tuple(time.localtime(t))
+	return '%02d:%02d:%02d, %02d.%s\'%02d, %s, ' % (lt[3],lt[4],lt[5],lt[2],wmonth[lt[1]-1],lt[0],wday[lt[6]])
+	
 def nice_time(ttim):
 	gt=tuple(time.gmtime())
 	lt=tuple(time.localtime(ttim))
 	timeofset = int(round(int(time.mktime(lt[:5]+(0,0,0,0))-time.mktime(gt[:5]+(0,0,0,0)))/3600.0))
 	if timeofset < 0: t_gmt = 'GMT%s' % timeofset
 	else: t_gmt = 'GMT+%s' % timeofset
-	gt=timeZero(gt)
-	t_utc='%s%s%sT%s:%s:%s' % (gt[0],gt[1],gt[2],gt[3],gt[4],gt[5])
-	ltt=timeZero(lt)
-	t_display = '%s:%s:%s, %s.%s\'%s, %s, ' % (ltt[3],ltt[4],ltt[5],ltt[2],wmonth[lt[1]-1],ltt[0],wday[lt[6]])
+	t_utc='%02d%02d%02dT%02d:%02d:%02d' % (gt[0],gt[1],gt[2],gt[3],gt[4],gt[5])
+	t_display = '%02d:%02d:%02d, %02d.%s\'%02d, %s, ' % (lt[3],lt[4],lt[5],lt[2],wmonth[lt[1]-1],lt[0],wday[lt[6]])
 	#t_tz = time.tzname[time.localtime()[8]]
 	#enc = chardet.detect(t_tz)['encoding']
 	#if t_tz == None: body = ''
