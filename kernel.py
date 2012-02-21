@@ -572,7 +572,7 @@ def paste_text(text,room,jid):
 
 def disp_time(t):
 	lt=tuple(time.localtime(t))
-	return '%02d:%02d:%02d, %02d.%s\'%02d, %s, ' % (lt[3],lt[4],lt[5],lt[2],wmonth[lt[1]-1],lt[0],wday[lt[6]])
+	return '%02d:%02d:%02d, %02d.%s\'%02d, %s' % (lt[3],lt[4],lt[5],lt[2],wmonth[lt[1]-1],lt[0],wday[lt[6]])
 	
 def nice_time(ttim):
 	gt=tuple(time.gmtime())
