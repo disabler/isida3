@@ -1471,6 +1471,7 @@ def load_page(page_name, parameters=None):
 	else: return data
 
 config_prefs = {'url_title': [L('Url title is %s'), L('Automatic show title of urls in conference'), [True,False], False],
+				'content_length': [L('Content length %s'), L('Automatic show lenght of content in conference'), [True,False], False],
 				'censor': [L('Censor is %s'), L('Censor'), [True,False], False],
 				#'censor_message': [L('Censor message is %s'), L('Censor message'), None, censor_text],
 				'censor_warning': [L('Censor warning is %s'), L('Warning for moderators and higher') ,[True,False], False],
@@ -1576,7 +1577,7 @@ config_prefs = {'url_title': [L('Url title is %s'), L('Automatic show title of u
 				}
 
 config_group_other = [L('Other settings'),'#room-other',
-				['url_title','parse_define','clear_answer','smiles','autoturn','make_stanza_jid_count'],None]
+				['url_title','parse_define','clear_answer','smiles','autoturn','make_stanza_jid_count','content_length'],None]
 
 config_group_censor = [L('Censor settings'),'#room-censor',
 				['censor','censor_warning','censor_action_member','censor_action_non_member',

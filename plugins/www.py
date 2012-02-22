@@ -25,7 +25,8 @@
 last_url_watch = ''
 url_watch_ignore = ['pdf','sig','spl','class','ps','torrent','dvi','gz','pac','swf','tar','tgz','tar','zip','mp3','m3u','wma',\
 					'wax','ogg','wav','gif','jar','jpg','jpeg','png','xbm','xpm','xwd','css','asc','c','cpp','log','conf','text',\
-					'txt','dtd','xml','mpeg','mpg','mov','qt','avi','asf','asx','wmv','bz2','tbz','tar']
+					'txt','dtd','xml','mpeg','mpg','mov','qt','avi','asf','asx','wmv','bz2','tbz','tar','so','dll','exe','bin',\
+					'img','usbimg','rar','deb','rpm','iso','ico','apk','patch','svg']
 
 def netheader(type, jid, nick, text):
 	if text:
@@ -73,28 +74,55 @@ def netwww(type, jid, nick, text):
 def parse_url_in_message(room,jid,nick,type,text):
 	global last_url_watch
 	if type != 'groupchat' or text == 'None' or nick == '' or getRoom(jid) == getRoom(selfjid): return
-	if not get_config(getRoom(room),'url_title'): return
 	if get_level(room,nick)[0] < 4: return
-	try:
-		link = re.findall(r'(http[s]?://.*)',text)[0].split(' ')[0]
-		if link and last_url_watch != link and pasteurl not in link:
-			for t in url_watch_ignore:
-				if link.endswith('.%s' % t): return
-			last_url_watch = link = enidna(link)
-			pprint('Show url-title: %s in %s' % (link,room))
-			original_page = load_page(urllib2.Request(link))[:4192]
-			page = html_encode(original_page)
-			if '<title' in page: tag = 'title'
-			elif '<TITLE' in page: tag = 'TITLE'
-			else: return
-			text = remove_sub_space(get_tag(page,tag).replace('\n',' ').replace('\r',' ').replace('\t',' '))
-			while '  ' in text: text = text.replace('  ',' ')
-			if text:
-				cnt = 0
-				for tmp in text: cnt += int(ord(tmp) in [1056,1057])
-				if cnt >= len(text)/3: text = remove_sub_space(html_encode(get_tag(original_page,tag)).replace('\n',' ').replace('\r',' ').replace('\t',' '))
-			if text: send_msg(type, room, '', L('Title: %s') % rss_del_html(rss_replace(text)))
-	except: pass
+	was_shown = False
+	if get_config(getRoom(room),'url_title'):
+		try:
+			link = re.findall(r'(http[s]?://.*)',text)[0].split(' ')[0]
+			if link and last_url_watch != link and pasteurl not in link:
+				for t in url_watch_ignore:
+					if link.endswith('.%s' % t): raise
+				last_url_watch = link = enidna(link)
+				pprint('Show url-title: %s in %s' % (link,room))
+				original_page = load_page(urllib2.Request(link))[:4192]
+				page = html_encode(original_page)
+				if '<title' in page: tag = 'title'
+				elif '<TITLE' in page: tag = 'TITLE'
+				else: raise
+				text = remove_sub_space(get_tag(page,tag).replace('\n',' ').replace('\r',' ').replace('\t',' '))
+				while '  ' in text: text = text.replace('  ',' ')
+				if text:
+					cnt = 0
+					for tmp in text: cnt += int(ord(tmp) in [1056,1057])
+					if cnt >= len(text)/3: text = remove_sub_space(html_encode(get_tag(original_page,tag)).replace('\n',' ').replace('\r',' ').replace('\t',' '))
+				if text:
+					was_shown = True
+					send_msg(type, room, '', L('Title: %s') % rss_del_html(rss_replace(text)))
+		except: pass
+	if not was_shown and get_config(getRoom(room),'content_length'):
+		try:
+			link = re.findall(u'(http[s]?://[-0-9a-zа-я.]+\/[-a-zа-я0-9._?#=@%/]+\.[a-z]{1}[a-z0-9]{1,7})',text,re.I+re.U+re.S)[0]
+			if link and last_url_watch != link and pasteurl not in link:
+				is_file = False
+				for t in url_watch_ignore:
+					if link.endswith('.%s' % t):
+						is_file = True
+						break
+				if is_file:
+					last_url_watch = link = enidna(link)
+					body, result = get_opener(link)
+					pprint('Show content length: %s in %s' % (link,room))
+					if result:
+						body = unicode(body.headers)
+						mt = float(re.findall('Content-Length.*?([0-9]+)', body, re.S+re.U+re.I)[0])
+						for t in ['','Kb','Mb','Gb']:
+							tt = t
+							if mt < 1024: break
+							mt = mt / 1024.0
+						if tt: mt = '%.2f%s' % (mt,tt)
+						else: mt = '%sb' % int(mt)
+						if mt: send_msg(type, room, '', L('Length of %s is %s') % (u'…/%s' % link.split('/')[-1],mt))
+		except: pass
 
 global execute
 

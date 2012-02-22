@@ -620,15 +620,18 @@ Server or jid uptime.	Аптайм jabber сервера или jid'а
 
 # file: ../branch/plugins/issue.py
 new	новое
+pending	рассматривается
 accepted	принято
 rejected	отклонено
 removed	удалено
+Pending by	Принято к рассмотрению
 Accepted by	Принято
 Rejected by	Отклонено
 Removed by	Удалено
+Mark as done by	Сделано
 No issue's body!	Не указано описание!
 I know same issue(s): %s	Я знаю похожие задачи: %s
-Added issue #%04d	Добавлена задача #%04d
+Added issue %s	Добавлена задача %s
 Created by %s	Создано %s
 , by reason: %s	, по причине: %s
 Issue(s) list:\n%s	Список задач:\n%s
@@ -636,19 +639,27 @@ Issues not found!	Задачи не найдены!
 Issues with match '%s' not found!	Задач совпадающих с '%s' не найдено!
 Which issue need remove?	Какую задачу удалить?
 You must use numeric issue id.	Вы должны указать цифровой id задачи.
-Issue #%04d removed!	Задача #%04d удалена!
+Issue %s removed!	Задача %s удалена!
 There is not Your issue or You have no rights to remove it.	Это не Ваша задача или у Вас нет прав для удаления её.
-Issue #%04d was removed earlier!	Задача #%04d была удалена ранее!
-Issue #%04d not found!	Задача #%04d не найдена!
+Issue %s was removed earlier!	Задача %s была удалена ранее!
+Issue %s not found!	Задача %s не найдена!
 Which issue need accept?	Какую задачу надо одобрить?
-Issue #%04d accepted!	Задача #%04d одобрена!
-Issue #%04d was accepted earlier!	Задача #%04d была одобрена ранее!
+Issue %s accepted!	Задача %s одобрена!
+Issue %s was accepted earlier!	Задача %s была одобрена ранее!
 There is not Your issue or You have no rights to accept it.	Это не Ваша задача или у Вас нет прав для принятия её.
 Which issue need reject?	Какую задачу отклонить?
-Issue #%04d rejected!	Задача #%04d отклонена!
+Issue %s rejected!	Задача %s отклонена!
 There is not Your issue or You have no rights to reject it.	Это не Ваша задача или у Вас нет прав для отклонения её.
-Issue #%04d was rejected earlier!	Задача #%04d была отклонена ранее!
-Issues\nissue [[[show|accept|reject|delete] id] reason] - actions with issue\nissue *tag1 *tag2 some text - add issue `some text` with tags tag1 and tag2	Задания\nissue [[[show|accept|reject|delete] id] причина] - действия с заданиями\nissue *tag1 *tag2 some text - добавить задание `some text` с тегами tag1 и tag2
+Issue %s was rejected earlier!	Задача %s была отклонена ранее!
+Which issue is pending?	Какую задачу принять на рассмотрение?
+Issue %s is mark as pending!	Задача %s отмечена как в рассмотрении!
+There is not Your issue or You have no rights to mark as pending.	Это не Ваша задача или у Вас нет прав для её принятия к рассмотрению.
+Issue %s was marked as pending earlier!	Задача %s была принята к рассмотрению ранее!
+Which issue is done?	Какая задача готова?
+Issue %s marked as done!	Задача %s отмечена как готовая!
+There is not Your issue or You have no rights to mark as done.	Это не Ваша задача или у Вас нет прав для её отметки как готовой.
+Issue %s was marked as done earlier!	Задача %s была отмечена как готовая ранее!
+Issues\nissue [[[show|pending|accept|reject|delete|done] id] reason] - actions with issue\nissue *tag1 *tag2 some text - add issue `some text` with tags tag1 and tag2	Задания\nissue [[[show|pending|accept|reject|delete|done] id] причина] - действия с заданиями\nissue *tag1 *tag2 some text - добавить задание `some text` с тегами tag1 и tag2
 
 # file: ../branch/plugins/istrue.py
 100% True-nick!	100% Ъ-ник!
@@ -967,6 +978,8 @@ on	вкл
 Ignore messages from unaffiliated participants in private - %s	Игнор сообщений от участников без полномочий - %s
 Url title is %s	Показ заголовков ссылок: %s
 Automatic show title of urls in conference	Автоматический показ заголовков ссылок в конференции
+Content length %s	Размер содержимого %s
+Automatic show lenght of content in conference	Автоматический показ размера контента по ссылке в конференции
 Censor is %s	Цензор: %s
 Censor	Включение/выключение цензора
 Censor message is %s	Цензор сообщений %s
@@ -1531,6 +1544,7 @@ Set global definition.\ngdfn word=definition - remember definition as word\ngdfn
 # file: ../branch/plugins/www.py
 RegExp not found!	RegExp не найден!
 Title: %s	Заголовок: %s
+Length of %s is %s	Размер %s - %s
 Show web page.\nwww regexp\n[http://]url - page after regexp\nwww [http://]url - without html tags	Показывает содержимое веб страницы.\nwww regexp\n[http://]url - страница, обработанная regexp\nwww [http://]url - страница с убранными html тегами
 Show net header	Показывает заголовок файла
 
