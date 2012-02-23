@@ -1484,6 +1484,7 @@ config_prefs = {'url_title': [L('Url title is %s'), L('Automatic show title of u
 				'smiles':[L('Smiles in logs is %s'), L('Smiles in logs'), ['off'] + smiles_dirs, 'off'],
 				'autoturn': [L('Autoturn layout of text is %s'), L('Turn text from one layout to another.'), [True,False], False],
 				'make_stanza_jid_count':[L('Jid\'s per stanza for affiliations in backup is %s'),L('Count of jid\'s per stanza for affiliations change in backup'),None,'100'],
+				'acl_multiaction': [L('ACL multiaction is %s'), L('Execute more than one action per pass in ACL.'), [True,False], False],
 				
 				# MUC-Filter messages
 
@@ -1577,7 +1578,7 @@ config_prefs = {'url_title': [L('Url title is %s'), L('Automatic show title of u
 				}
 
 config_group_other = [L('Other settings'),'#room-other',
-				['url_title','parse_define','clear_answer','smiles','autoturn','make_stanza_jid_count','content_length'],None]
+				['url_title','parse_define','clear_answer','smiles','autoturn','make_stanza_jid_count','content_length','acl_multiaction'],None]
 
 config_group_censor = [L('Censor settings'),'#room-censor',
 				['censor','censor_warning','censor_action_member','censor_action_non_member',

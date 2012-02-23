@@ -60,11 +60,8 @@ def conf_backup(type, jid, nick, text):
 			a = os.listdir(back_folder)
 			b = []
 			for c in a:
-				if 'conference' in c: b.append((c,os.path.getmtime(back_folder+c)))
-			if len(b):
-				msg = L('Available copies:') + ' '
-				for c in b: msg += c[0]+' ('+un_unix(time.time()-c[1])+')'+', '
-				msg = msg[:-2]
+				if not c.endswith('.txt'): b.append((c,os.path.getmtime(back_folder+c)))
+			if len(b): msg = '%s %s' % (L('Available copies:'), ', '.join(['%s (%s)' % (c[0],disp_time(c[1])) for c in b]))
 			else: msg = L('Backup copies not found.')
 		elif mode == 'now':
 			
@@ -86,7 +83,7 @@ def conf_backup(type, jid, nick, text):
 				setup = getFile(c_file,{})
 				try: backup_async[back_id]['bot_config'] = setup[jid]
 				except: backup_async[back_id]['bot_config'] = ''
-				backup_async[back_id]['acl'] = cur_execute_fetchall('select action,type,text,command,time from acl where jid=%s',(jid,))
+				backup_async[back_id]['acl'] = cur_execute_fetchall('select action,type,text,command,time,level from acl where jid=%s',(jid,))
 				backup_async[back_id]['rss'] = [tmp[0:4]+[tmp[5]] for tmp in getFile(feeds,[]) if tmp[4]==jid]
 				
 				msg = L('Copying completed!')
@@ -108,7 +105,16 @@ def conf_backup(type, jid, nick, text):
 		elif mode == 'restore':
 			if len(text)>1:
 				if text[1] in os.listdir(back_folder):
-					if get_xtype(jid) != 'owner': msg = L('I need an owner affiliation for restore settings!')
+					if text[1].endswith('.acl'):
+						raw_back = json.loads(readfile(back_folder+unicode(text[1])))
+						cnt = 0
+						for tmp in raw_back:
+							isit = cur_execute_fetchall('select action,type,text,command,time from acl where jid=%s and action=%s and type=%s and text=%s and level=%s',(jid,tmp[0],tmp[1],tmp[2],tmp[5]))
+							if not isit:
+								cur_execute('insert into acl values (%s,%s,%s,%s,%s,%s,%s)', tmp)
+								cnt += 1
+						msg = L('Restored %s action(s).') % cnt
+					elif get_xtype(jid) != 'owner': msg = L('I need an owner affiliation for restore settings!')
 					else:
 						bst = GT('backup_sleep_time')
 						raw_back=json.loads(readfile(back_folder+unicode(text[1])))
@@ -135,8 +141,8 @@ def conf_backup(type, jid, nick, text):
 							if [jid]+tmp not in aliases: aliases.append([jid]+tmp)
 						writefile(alfile,str(aliases))
 						for tmp in raw_back['acl']:
-							isit = cur_execute_fetchall('select action,type,text,command,time from acl where jid=%s and action=%s and type=%s and text=%s',(jid,tmp[0],tmp[1],tmp[2]))
-							if not isit: cur_execute('insert into acl values (%s,%s,%s,%s,%s,%s)', tuple([jid]+list(tmp)))
+							isit = cur_execute_fetchall('select action,type,text,command,time from acl where jid=%s and action=%s and type=%s and text=%s and level=%s',(jid,tmp[0],tmp[1],tmp[2],tmp[5]))
+							if not isit: cur_execute('insert into acl values (%s,%s,%s,%s,%s,%s,%s)', tuple([jid]+list(tmp)))
 						feedbase = getFile(feeds,[])
 						for tmp in raw_back['rss']:
 							isit = False

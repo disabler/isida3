@@ -80,6 +80,8 @@ Updated:	Обновлено:
 Not found:	Не найдено:
 Added:	Добавлено:
 done	выполнено
+You have no rights to do it!	У Вас недостаточно прав для этого!
+ACL cleared. Removed %s action(s).	ACL очищены. Удалено действий: %s
 Actions list.\nacl show - show list\nacl del [/silent] item - remove item from list\nacl [/time] [/silent] msg|message|prs|presence|role|affiliation|nick|jid|jidfull|res|age|ver|version|all [sub|exp|cexp] pattern command - execute command by condition\nallowed variables in commands: ${NICK}, ${JID}, ${SERVER}, ${EXP} and ${/EXP}\nsub = substring, exp = regular expression, cexp = case sensitive regular expression\ntime format is /number+identificator. s = sec, m = min, d = day, w = week, M = month, y = year. only one identificator allowed!	Список действий.\nacl show - показать список\nacl del [/silent] item - удалить элемент из списка\nacl [/time] [/silent] msg|message|prs|presence|role|affiliation|nick|jid|jidfull|res|age|ver|version|all [sub|exp|cexp] pattern command - выполнить команду по условию\nдоступны переменные в командах: ${NICK}, ${JID}, ${SERVER}, ${EXP} и ${/EXP}\nsub = подстрока, exp = регулярное выражение, cexp = регистрозависимое регулярное выражение\nформат времени - /число+идентификатор. s = секунды, m = минуты, d = дни, w = недели, M = месяцы, y = годы. допустим только один идентификатор!
 
 # file: ../branch/plugins/adminmail.py
@@ -130,6 +132,7 @@ I need an owner affiliation for backup settings!	Для резервного к�
 Copying completed!	Копирование завершено!
 \nOwners: %s | Admins: %s | Members: %s | Banned: %s	\nВладельцев: %s | Админов: %s | Постоянных участников: %s | Баня: %s
 \nRoom config: %s | Bot config: %s | Aliases: %s | Acl's: %s | RSS: %s	\nКонфиг конференции: %s | Конфиг бота: %s | Сокращения: %s | Действия: %s | Новости: %s
+Restored %s action(s).	Восстановлено действий: %s
 I need an owner affiliation for restore settings!	Для восстановления резервной копии мне нужны права владельца конференции!
 Restore completed.	Восстановление завершено.
 Copy not found. Use key "show" for lisen available copies.	Копия не найдена. Используйте ключ "show" для просмотра доступных копий.
@@ -1004,6 +1007,8 @@ Autoturn layout of text is %s	Автосмена раскладки текста
 Turn text from one layout to another.	Если не задан текст - "переворачивает" последнее сообщение с русской раскладки на английскую и обратно.
 Jid's per stanza for affiliations in backup is %s	Количество Jid'ов в станзе смены аффиляции при восстановлении копии конференции %s
 Count of jid's per stanza for affiliations change in backup	Количество Jid'ов в станзе смены аффиляции при восстановлении копии конференции. Рекомендации: ejabberd - 200, prosody - 1
+ACL multiaction is %s	Мультидействия в ACL %s
+Execute more than one action per pass in ACL.	Исполнять более одного действия за один проход в ACL.
 Muc filter is %s	Muc-фильтр: %s
 Message filter for participants	Фильтр сообщений для участников
 Mute newbie %s	Подавлять сообщения от новичков: %s

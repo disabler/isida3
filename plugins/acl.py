@@ -24,7 +24,7 @@
 acl_acts = ['msg','message','prs','prs_change','prs_join','presence','presence_change','presence_join',
 			'role','role_change','role_join','affiliation','affiliation_change','affiliation_join',
 			'nick','nick_change','nick_join','all','all_change','all_join','jid','jidfull','res','age','ver','version']
-acl_actions = ['show','del'] + acl_acts
+acl_actions = ['show','del','clear'] + acl_acts
 
 acl_ver_tmp = {}
 
@@ -120,6 +120,15 @@ def acl_add(jid,text): return acl_add_del(jid,text,True)
 
 def acl_del(jid,text): return acl_add_del(jid,text,False)
 
+def acl_clear(room,nick):
+	if get_level(room,nick)[0] < 8: return L('You have no rights to do it!')
+	acl_back = cur_execute_fetchall('select * from acl where jid=%s',(room,))
+	if acl_back: 
+		fname = '%s%s_%s.acl' % (back_folder,unicode(room),''.join(['%02d' % t for t in time.localtime()[:6]]))
+		writefile(fname,json.dumps(acl_back))
+	cur_execute('delete from acl where jid=%s',(room,))
+	return L('ACL cleared. Removed %s action(s).') % len(acl_back)
+
 def muc_acl(type, jid, nick, text):
 	text = text.replace('\ ','%20').replace(' // ','\n').replace(' \/\/ ',' // ').split(' ')
 	if len(text) >= 3 and text[2] == '->': text[2] = ''
@@ -130,6 +139,7 @@ def muc_acl(type, jid, nick, text):
 	if len(text): acl_cmd = text[0].lower()
 	else: acl_cmd = '!'
 	if not acl_cmd in acl_actions and acl_cmd[0] != '/' and not acl_cmd.isdigit(): msg = L('Items: %s') % ', '.join(acl_actions)
+	elif acl_cmd == 'clear': msg = acl_clear(jid,nick)
 	elif acl_cmd == 'show':
 		try: t = text[1]
 		except: t = '%'
@@ -165,6 +175,7 @@ def acl_message(room,jid,nick,type,text):
 	a = cur_execute_fetchall('select action,type,text,command,time,level from acl where jid=%s and (action=%s or action=%s or action ilike %s) order by -level',(room,'msg','message','all%'))
 	no_comm = True
 	if a:
+		acl_ma = get_config(room,'acl_multiaction')
 		for tmp in a:
 			if tmp[5] == 9 or lvl <= tmp[5]:
 				if tmp[4] <= time.time() and tmp[4]: cur_execute('delete from acl where jid=%s and action=%s and type=%s and text=%s',(room,tmp[0],tmp[1],tmp[2]))
@@ -183,7 +194,7 @@ def acl_message(room,jid,nick,type,text):
 					elif text.lower() == tmp[2].lower(): was_match = True
 				if was_match:
 					no_comm = acl_action(tmp[3],nick,jid,room,text)
-					break
+					if not acl_ma: break
 
 	return not no_comm
 
@@ -237,6 +248,7 @@ def acl_selector(a,room,jid,nick,mass,was_joined):
 				pprint('*** ACL version request for [>=%s] %s/%s' % (tmp[5],room,nick),'purple')
 				break
 
+	acl_ma = get_config(room,'acl_multiaction')
 	for tmp in a:
 		if tmp[5] == 9 or lvl <= tmp[5]:
 			itm = ''
@@ -252,7 +264,7 @@ def acl_selector(a,room,jid,nick,mass,was_joined):
 			elif tmp[0] in ['ver','version'] and was_joined and r_ver: itm = r_ver
 			elif tmp[0] == 'age' and was_joined and bool_compare(r_age,tmp[1],tmp[2]):
 				acl_action(tmp[3],nick,jid,room,None)
-				break
+				if not acl_ma: break
 			if itm:
 				was_match = False
 				if tmp[1] in ['exp','!exp']:
@@ -269,7 +281,7 @@ def acl_selector(a,room,jid,nick,mass,was_joined):
 					elif itm.lower() == tmp[2].lower() or (tmp[0] == 'all' and tmp[2].lower() in (jid.lower(),nick.lower(),mass[0].lower())): was_match = True
 				if was_match:
 					acl_action(tmp[3],nick,jid,room,None)
-					break
+					if not acl_ma: break
 
 def acl_version_async(a, nick, jid, room, mass, is_answ):
 	global acl_ver_tmp
