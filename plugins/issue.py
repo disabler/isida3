@@ -42,18 +42,20 @@ def issue(type, room, nick, text):
 	elif subc[0] == 'accept': msg = issue_accept(subc,acclvl,room,jid,nick)
 	elif subc[0] == 'reject': msg = issue_reject(subc,acclvl,room,jid,nick)
 	elif subc[0] == 'done': msg = issue_done(subc,acclvl,room,jid,nick)
-	else: msg = issue_new(subc,acclvl,room,jid,nick)
+	else: msg = issue_new(subc,acclvl,room,jid,nick,text)
 	send_msg(type, room, nick, msg)
 
-def issue_new(s,acclvl,room,jid,nick):
+def issue_new(s,acclvl,room,jid,nick,text):
 	tags = []
 	for t in s:
-		if t[0] == '*' and len(t) > 1: tags.append(t[1:])
+		if t[0] == '*' and len(t) > 1:
+			tags.append(t[1:])
+			text = text.replace(t,'',1)
 		else: break
 	s = s[len(tags):]
 	if not s: return L('No issue\'s body!')
 	tags = ' '.join(tags)
-	body = ' '.join(s)
+	body = text.strip()
 	try: id = cur_execute_fetchone('select count(*) from issues where room=%s',(room,))[0] + 1
 	except: id = 1
 	tbody = cur_execute_fetchall('select id from issues where room=%s and body ilike %s',(room,'%%%s%%' % body))
