@@ -1225,9 +1225,9 @@ def rss(type, jid, nick, text):
 		if feedbase != []:
 			msg = L('All schedule feeds:')
 			for rs in feedbase:
-				msg += u'\n'+getName(rs[4])+'\t'+rs[0]+u' ('+rs[1]+u') '+rs[2]
-				try: msg += u' - '+time.ctime(rs[3])
-				except: msg += u' - Unknown'
+				msg += '\n%s\t%s (%s) %s' % (getName(rs[4]),rs[0],rs[1],rs[2])
+				try: msg += ' - %s' % disp_time(rs[3])
+				except: msg += ' - Unknown'
 	elif mode == 'show':
 		feedbase = getFile(feeds,[])
 		msg = L('No RSS found!')
@@ -1235,8 +1235,8 @@ def rss(type, jid, nick, text):
 			msg = ''
 			for rs in feedbase:
 				if rs[4] == jid:
-					msg += u'\n'+rs[0]+u' ('+rs[1]+u') '+rs[2]
-					try: msg += u' - '+time.ctime(rs[3])
+					msg += '\n%s (%s) %s' % tuple(rs[0:3])
+					try: msg += u' - %s' % disp_time(rs[3])
 					except: msg += u' - Unknown'
 			if len(msg): msg = L('Schedule feeds for %s:%s') % (jid,msg)
 			else: msg = L('Schedule feeds for %s not found!') % jid

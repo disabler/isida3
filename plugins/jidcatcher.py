@@ -23,7 +23,7 @@
 
 def info_search(type, jid, nick, text):
 	msg = L('What I must find?')
-	if text != '':
+	if text:
 		cur_execute('delete from jid where server ilike %s',('<temporary>%',))
 		ttext = '%%%s%%' % text
 		tma = cur_execute_fetchmany('select * from jid where login ilike %s or server ilike %s or resourse ilike %s order by login',(ttext,ttext,ttext),10)
@@ -33,7 +33,7 @@ def info_search(type, jid, nick, text):
 
 def info_res(type, jid, nick, text):
 	cur_execute('delete from jid where server ilike %s',('<temporary>%',))
-	if text == 'count':
+	if text.lower() == 'count':
 		tlen = cur_execute_fetchall('select count(*) from (select resourse,count(*) from jid group by resourse) tmp;')[0][0]
 		text,jidbase = '',''
 	else:
@@ -42,8 +42,8 @@ def info_res(type, jid, nick, text):
 		jidbase = cur_execute_fetchmany('select resourse,count(*) from jid where resourse ilike %s group by resourse order by -count(*),resourse',(text1,),10)
 	if not tlen: msg = L('\'%s\' not found!') % text
 	else:
-		if text == '': msg = L('Total resources: %s') % tlen
-		else: msg = L('Found resources: %s') % tlen
+		if text: msg = L('Found resources: %s') % tlen
+		else: msg = L('Total resources: %s') % tlen
 		if jidbase: msg += '\n%s' % '\n'.join(['%s. %s\t%s' % tuple([jidbase.index(jj)+1]+list(jj)) for jj in jidbase])
 	send_msg(type, jid, nick, msg)
 
@@ -58,8 +58,8 @@ def info_serv(type, jid, nick, text):
 		jidbase = cur_execute_fetchall('select server,count(*) from jid where server ilike %s group by server order by -count(*),server',(text1,))
 	if not tlen: msg = L('\'%s\' not found!') % text
 	else:
-		if text == '': msg = L('Total servers: %s') % tlen
-		else: msg = L('Found servers: %s') % tlen
+		if text: msg = L('Found servers: %s') % tlen
+		else: msg = L('Total servers: %s') % tlen
 		if jidbase: msg = '%s\n%s' %(msg,' | '.join(['%s:%s' % jj for jj in jidbase]))
 	send_msg(type, jid, nick, msg)
 
@@ -74,7 +74,7 @@ def info_top(type, jid, nick, text):
 		if tmp[0] == room:
 			ttop = tmp
 			break
-	if ttop: msg = L('Max count of members: %s %s') % (str(ttop[1]), '('+time.ctime(ttop[2])+')')
+	if ttop: msg = L('Max count of members: %s %s') % (ttop[1], '(%s)' % disp_time(ttop[2]))
 	else: msg = L('Statistic not found!')
 	send_msg(type, jid, nick, msg)
 

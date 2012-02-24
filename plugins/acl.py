@@ -38,10 +38,10 @@ def acl_show(jid,text):
 			if text == '%': t4 = tmp[4].replace('\n',' // ')
 			else: t4 = tmp[4].replace('\n','\n    ')
 			if tmp[6] == 9:
-				if tmp[5]: st,tp = '\n[%s] %s %s %s -> %s', (time.ctime(float(tmp[5])),) + tmp[1:4] + (t4,)
+				if tmp[5]: st,tp = '\n[%s] %s %s %s -> %s', (disp_time(tmp[5]),) + tmp[1:4] + (t4,)
 				else: st,tp = '\n%s %s %s -> %s', tmp[1:4] + (t4,)
 			else:
-				if tmp[5]: st,tp = '\n<= %s | [%s] %s %s %s -> %s', (unlevl[tmp[6]],time.ctime(float(tmp[5])),) + tmp[1:4] + (t4,)
+				if tmp[5]: st,tp = '\n<= %s | [%s] %s %s %s -> %s', (unlevl[tmp[6]],disp_time(tmp[5]),) + tmp[1:4] + (t4,)
 				else: st,tp = '\n<= %s | %s %s %s -> %s', (unlevl[tmp[6]],) + tmp[1:4] + (t4,)
 			msg += st % tp
 	else: msg = L('Acl not found')
@@ -98,10 +98,10 @@ def acl_add_del(jid,text,flag):
 		else: msg = [L('Not found:'),L('Added:')][flag]
 		if flag: cur_execute('insert into acl values (%s,%s,%s,%s,%s,%s,%s)', (jid, acl_cmd, acl_sub_act, text[0], ' '.join(text[1:]).replace('%20','\ '), atime, level))
 		if level == 9:
-			if atime: msg += ' [%s] %s %s %s -> %s' % (time.ctime(atime),acl_cmd, acl_sub_act, text[0], ' '.join(text[1:]).replace('%20','\ ').replace('\n',' // '))
+			if atime: msg += ' [%s] %s %s %s -> %s' % (disp_time(atime),acl_cmd, acl_sub_act, text[0], ' '.join(text[1:]).replace('%20','\ ').replace('\n',' // '))
 			else: msg += ' %s %s %s -> %s' % (acl_cmd, acl_sub_act, text[0], ' '.join(text[1:]).replace('%20','\ ').replace('\n',' // '))
 		else:
-			if atime: msg += ' <= %s | [%s] %s %s %s -> %s' % (unlevl[level], time.ctime(atime),acl_cmd, acl_sub_act, text[0], ' '.join(text[1:]).replace('%20','\ ').replace('\n',' // '))
+			if atime: msg += ' <= %s | [%s] %s %s %s -> %s' % (unlevl[level], disp_time(atime),acl_cmd, acl_sub_act, text[0], ' '.join(text[1:]).replace('%20','\ ').replace('\n',' // '))
 			else: msg += ' <= %s | %s %s %s -> %s' % (unlevl[level], acl_cmd, acl_sub_act, text[0], ' '.join(text[1:]).replace('%20','\ ').replace('\n',' // '))
 		if not reduce_spaces_all(msg).split('->',1)[1]: msg = msg.split('->',1)[0]
 		if flag and acl_cmd not in['msg','message']:
