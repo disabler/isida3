@@ -245,7 +245,7 @@ def acl_selector(a,room,jid,nick,mass,was_joined):
 				iq_request[iqid]=(time.time(),acl_version_async,[a, nick, jid, room, mass[0],lvl])
 				sender(i)
 				r_ver = None
-				pprint('*** ACL version request for %s|%s/%s' % (tmp[5],room,nick),'purple')
+				pprint('*** ACL version request for [%s] %s/%s' % (tmp[5],room,nick),'purple')
 				break
 
 	acl_ma = get_config(room,'acl_multiaction')
