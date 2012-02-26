@@ -80,6 +80,8 @@ Updated:	Поновлено:
 Not found:	Не знайдено
 Added:	Додано:
 done	виконано
+You have no rights to do it!	У Вас недостатньо прав для цього!
+ACL cleared. Removed %s action(s).	ACL очищені. Видалено дій: %s
 Actions list.\nacl show - show list\nacl del [/silent] item - remove item from list\nacl [/time] [/silent] msg|message|prs|presence|role|affiliation|nick|jid|jidfull|res|age|ver|version|all [sub|exp|cexp] pattern command - execute command by condition\nallowed variables in commands: ${NICK}, ${JID}, ${SERVER}, ${EXP} and ${/EXP}\nsub = substring, exp = regular expression, cexp = case sensitive regular expression\ntime format is /number+identificator. s = sec, m = min, d = day, w = week, M = month, y = year. only one identificator allowed!	Список дій.\nacl show - показати список\nacl del [/silent] item - видалити елемент із списку\nacl [/time] [/silent] msg|message|prs|presence|role|affiliation|nick|jid|jidfull|res|age|ver|version|all [sub|exp|cexp] pattern command - виконати команду за умовою\nдоступні змінні в командах: ${NICK}, ${JID}, ${SERVER}, ${EXP} и ${/EXP}\nsub = підрядок, exp = регулярний вираз, cexp = регістрозалежний регулярний вираз\nформат часу - /число+ідентифікатор. s = секунди, m = хвилини, d = дні, w = тижні, M = місяці, y = роки. можливий тільки один ідентифікатор!
 
 # file: ../branch/plugins/adminmail.py
@@ -130,6 +132,7 @@ I need an owner affiliation for backup settings!	Для резервного к�
 Copying completed!	Копіювання закінчене!
 \nOwners: %s | Admins: %s | Members: %s | Banned: %s	\nВласників: %s | Адмінів: %s | Постійних учасників: %s | Баня: %s
 \nRoom config: %s | Bot config: %s | Aliases: %s | Acl's: %s | RSS: %s	Конфіг конференції: %s | Конфіг бота: %s | Скорочення: %s | Дії: %s | Новини: %s
+Restored %s action(s).	Відновлено дій: %і
 I need an owner affiliation for restore settings!	Для відновлення резервної копії мені необхідні права власника конференції!
 Restore completed.	Відновлення завершено.
 Copy not found. Use key "show" for lisen available copies.	Копія не знайдена. Використовуйте ключ "show" для перегляду доступних копій.
@@ -618,6 +621,49 @@ Users server statistic.	Статистика користувачів серве
 vCard query. Recomends make command base alias for query needs info.\nvcard_raw [nick] - query generic info\nvcard_raw nick\nshow - show available fields\nvcard_raw nick\n[field:name|field:name] - show requested fields from vcard.	Запит vcard. Рекомендується скласти alias на базі команди для виводу потрібних полів.\nvcard_raw [nick] - показ основної інформації із vcard\nvcard_raw nick\nshow - показ доступних полів vcard\nvcard_raw nick\nполе:назва|поле:назва - показ запрошених полів із vcard
 Server or jid uptime.	Аптайм jabber-серверу або jid'у
 
+# file: ../branch/plugins/issue.py
+new	нове
+pending	розглядається
+accepted	прийнято
+rejected	відхилено
+removed	видалено
+Pending by	Прийнято до розгляду
+Accepted by	Прийнято
+Rejected by	Відхилено
+Removed by	Видалено
+Mark as done by	Виконано
+No issue's body!	Відсутній опис!
+I know same issue(s): %s	Я знаю схожі завдання: %s
+Added issue %s	Додано завдання: %s
+Created by %s	Створено %s
+, by reason: %s	, по причині: %s
+Issue(s) list:\n%s	Список завдань:\n%s
+Issues not found!	Завдання не знайдені!
+Issues with match '%s' not found!	Завдань, співпадаючих з '%s', не знайдено!
+Which issue need remove?	Яке завдання видалити?
+You must use numeric issue id.	Ви повинні вказати цифровий id завдання.
+Issue %s removed!	Завдання %s видалено!
+There is not Your issue or You have no rights to remove it.	Це не Ваше завдання або у Вас немає прав для його видалення.
+Issue %s was removed earlier!	Завдання %s було видалене раніше!
+Issue %s not found!	Завдання %s не знайдено!
+Which issue need accept?	Яке завдання потрібно прийняти?
+Issue %s accepted!	Завдання %s прийнято!
+Issue %s was accepted earlier!	Завдання %s було прийняте раніше!
+There is not Your issue or You have no rights to accept it.	Це не Ваше завдання або у Вас немає прав для його прийняття.
+Which issue need reject?	Яке завдання відхилити?
+Issue %s rejected!	Завдання %s відхилено!
+There is not Your issue or You have no rights to reject it.	Це не Ваше завдання або у Вас немає прав для його вадхилення.
+Issue %s was rejected earlier!	Завдання %s було відхилено раніше!
+Which issue is pending?	Яке завдання прийняти на розгляд?
+Issue %s is mark as pending!	Завдання %s відмічено як до розгляду!
+There is not Your issue or You have no rights to mark as pending.	Це не Ваше завдання або у Вас немає прав для його прийняття до розгляду.
+Issue %s was marked as pending earlier!	Завдання %s було прийнято до розгляду раніше!
+Which issue is done?	Яке завдання виконане?
+Issue %s marked as done!	Заідання %s помічене виконаним!
+There is not Your issue or You have no rights to mark as done.	Це не Ваше завдання або у Вас немає прав для його помітки виконаним.
+Issue %s was marked as done earlier!	Завдання %s було помічене виконаним раніше!
+Issues\nissue [[[show|pending|accept|reject|delete|done] id] reason] - actions with issue\nissue *tag1 *tag2 some text - add issue `some text` with tags tag1 and tag2	Завдання\nissue [[[show|pending|accept|reject|delete|done] id] причина] - дії з завданнями\nissue *tag1 *tag2 some text - додати завдання `some text` з тегами tag1 та tag2
+
 # file: ../branch/plugins/istrue.py
 100% True-nick!	100% Ъ-нік!
 Nicks without letters isn't true!	Ніки без літер не Ъ!
@@ -639,10 +685,10 @@ Show information about conference from jc.jabber.ru.\njc [address]	Показу�
 # file: ../branch/plugins/jidcatcher.py
 What I must find?	Що ж будемо шукати?
 '%s' not found!	'%s' не знайдено!
-Total resources: %s	Усього ресурсів: %s
 Found resources: %s	Знайдено ресурсів: %s
-Total servers: %s	Усього серверів: %s
+Total resources: %s	Усього ресурсів: %s
 Found servers: %s	Знайдено серверів: %s
+Total servers: %s	Усього серверів: %s
 Max count of members: %s %s	Максимальна кількість учасників: %s %s
 Statistic not found!	Статистика не знайдена!
 Without parameters show top10 resources for all conferences, where bot is present.\nwith parameters - search in resources base\ncount - number of results.	Без параметра показує топ10 ресурсів по всіх конференціях, де знаходиться бот.\nЗ параметром - пошук по базі ресурсів.\nЧисла - кількість ресурсів.
@@ -935,6 +981,8 @@ on	ввімк
 Ignore messages from unaffiliated participants in private - %s	Ігнорування повідомлень від учасників без повноважень - %s
 Url title is %s	Показ заголовків посилань: %s
 Automatic show title of urls in conference	Автоматичний показ заголовків посилань
+Content length %s	Розмір вмісту %s
+Automatic show lenght of content in conference	Автоматичне відображення розміру контенту за посиланням в конференції
 Censor is %s	Цензор: %s
 Censor	Ввімкнення вимкнення цензора
 Censor message is %s	Цензор повідомлень: %s
@@ -959,6 +1007,8 @@ Autoturn layout of text is %s	Автозміна розкладки тексту
 Turn text from one layout to another.	Якщо текст не заданий - "перевертає" останнє повідомлення з української розкладки на англійську та назад.
 Jid's per stanza for affiliations in backup is %s	Кількість Jid'ів в станзі зміни аффіляції при відновленні копії конференції %s
 Count of jid's per stanza for affiliations change in backup	Количество Jid'ов в станзе смены аффиляции при восстановлении копии конференции. Рекомендації: ejabberd - 200, prosody - 1
+ACL multiaction is %s	Мультидії в ACL %s
+Execute more than one action per pass in ACL.	Виконувати більше однієї дії за один прохід в ACL.
 Muc filter is %s	Muc-фільтр: %s
 Message filter for participants	Фільтр повідомлень для учасників
 Mute newbie %s	Блокувати повідомлення від новачків: %s
@@ -1499,6 +1549,7 @@ Set global definition.\ngdfn word=definition - remember definition as word\ngdfn
 # file: ../branch/plugins/www.py
 RegExp not found!	RegExp не знайдений!
 Title: %s	Заголовок: %s
+Length of %s is %s	Розмір %s - %s
 Show web page.\nwww regexp\n[http://]url - page after regexp\nwww [http://]url - without html tags	Показує зміст веб-сторінки.\nwww regexp\n[http://]url - сторінка, оброблена regexp\nwww [http://]url - сторінка з прибраними html-тегами
 Show net header	Показує заголовок файлу
 
@@ -1511,4 +1562,3 @@ Search weather by code, city, country.	Пошук погоди по коду м�
 
 # file: ../branch/plugins/youtube.py
 Search at YouTube	Пошук по YouTube
-
