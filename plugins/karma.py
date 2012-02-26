@@ -74,8 +74,8 @@ def karma_get_limit(room,nick):
 	if k_log:
 		k_log = json.loads(k_log[0])
 		for tmp in k_log:
-			if time.time() - tmp < 86400: k_val -= 1
-			k_log.sort()
+			if (time.time() - tmp) < 86400: k_val -= 1
+		k_log.sort()
 	else: k_log = [0]
 	return k_val, k_limit, k_log[0]
 
