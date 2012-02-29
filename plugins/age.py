@@ -37,7 +37,7 @@ def true_age_split(type, jid, nick, text):
 
 def true_age(type, jid, nick, text):
 	true_age_raw(type, jid, nick, text, None)
-	
+
 def true_age_raw(type, jid, nick, text, xtype):
 	text = text.rstrip().split('\n')
 	llim = 10
@@ -147,7 +147,7 @@ def seenjid_raw(type, jid, nick, text, xtype):
 		real_jid = cur_execute_fetchall('select jid from age where room=%s and (no_case_nick ilike %s or jid ilike %s) group by jid,status,time order by status,-time',(jid,txt,txt))
 	sbody = []
 	if real_jid:
-		for rj in real_jid:			
+		for rj in real_jid:
 			if xtype: tmpbody = cur_execute_fetchmany('select * from age where room=%s and jid=%s order by status, jid',(jid,rj[0]),llim)
 			else: tmpbody = [cur_execute_fetchone('select * from age where room=%s and jid=%s order by status',(jid,rj[0]))]
 			if tmpbody:

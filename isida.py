@@ -54,7 +54,7 @@ def crashtext(t):
 	t = '*** %s ***' % t
 	s = '*'*len(t)
 	return '\n%s\n%s\n%s\n' % (s,t,s)
-	
+
 def crash(text):
 	printlog(crashtext(text))
 	sys.exit()

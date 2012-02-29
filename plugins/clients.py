@@ -90,7 +90,7 @@ def clients_stats(type, jid, nick, text):
 	else: req,par = 'select client,version,os from versions where room=%s and (client ilike %s or version ilike %s or os ilike %s)',(jid,match,match,match)
 	st = cur_execute_fetchall(req,par)
 	if st:
-		ns = {}	
+		ns = {}
 		for t in st:
 			if is_os:
 				k = t[2]
@@ -103,7 +103,7 @@ def clients_stats(type, jid, nick, text):
 				if is_short: k = t[0]
 				else: k = '%s %s' % (t[:2])
 			if not k or k == 'None': k = 'Unknown'
-			k = k.replace('\r','[LF]').replace('\n','[CR]').replace('\t','[TAB]')			
+			k = k.replace('\r','[LF]').replace('\n','[CR]').replace('\t','[TAB]')
 			if ns.has_key(k): ns[k] += 1
 			else: ns[k] = 1
 		ns = [(ns[t],t) for t in ns.keys()]

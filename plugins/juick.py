@@ -144,7 +144,7 @@ def juick_msg(type, jid, nick, text):
 	try: replyto = result['replyto']
 	except: replyto = ''
 	try: mid2 = '%s#%s' % (mid,result['rid'])
-	except: mid2 = mid	
+	except: mid2 = mid
 	if replyto:
 		if replies: msg = '@%s: %s\n%s\n#%s -> #%s/%s, %s, %s, %s' % (uname,tags,body,mid2.replace('#','/'),mid,replyto,timestamp,replies,JUICK_URL % mid2)
 		else: msg       = '@%s: %s\n%s\n#%s -> #%s/%s, %s, %s'     % (uname,tags,body,mid2.replace('#','/'),mid,replyto,timestamp,JUICK_URL % mid2)

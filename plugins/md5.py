@@ -32,7 +32,7 @@ def hashbody(type, jid, nick, text):
 	try: msg = hashes['%s/%s' % (jid,text)]
 	except: msg = L('Nick %s not found!') % text
 	send_msg(type, jid, nick, msg)
-	
+
 def findhash(type, jid, nick, text):
 	text = reduce_spaces_all(text)
 	if text:
@@ -41,7 +41,7 @@ def findhash(type, jid, nick, text):
 		else: msg = L('Not found: %s') % text
 	else: msg = L('What?')
 	send_msg(type, jid, nick, msg)
-	
+
 global execute
 
 execute = [(3, 'md5', md5body, 2, L('Calculate phrase md5 sum.')),

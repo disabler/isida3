@@ -85,7 +85,7 @@ def issue_show(s,room):
 		return L('Issue(s) list:\n%s') % '\n\n'.join(tm)
 	elif s_original == '%': return L('Issues not found!')
 	else: return L('Issues with match \'%s\' not found!') % s_original
-	
+
 def issue_remove(s,acclvl,room,jid,nick):
 	if len(s) > 1: id = s[1]
 	else: return L('Which issue need remove?')

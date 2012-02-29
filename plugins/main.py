@@ -148,7 +148,7 @@ def clean_user_and_server_hash():
 		if timing.has_key(gr): tmo = timing[gr]
 		else: timing[gr] = tmo
 		if time.time() > tm + tmo: server_hash.pop(tmp)
-		
+
 
 def ddos_info(type, room, nick, text):
 	global ddos_ignore
@@ -675,7 +675,7 @@ def bot_rejoin(type, jid, nick, text):
 	else: passwd = ''
 	if '@' not in text: text+='@'+lastserver
 	if '/' not in text: text+='/'+lastnick
-	old_text = '%s\n%s' % (text,passwd)	
+	old_text = '%s\n%s' % (text,passwd)
 	lastserver = getServer(text.lower())
 	lastnick = getResourse(text)
 	lroom = text
@@ -754,7 +754,7 @@ def bot_leave(type, jid, nick, text):
 		if text == '': text = jid
 		if '@' not in text: text+='@'+lastserver
 		if '/' not in text: text+='/'+lastnick
-		if '\n' in text: text, _ = text.split('\n', 1)		
+		if '\n' in text: text, _ = text.split('\n', 1)
 		lastserver = getServer(text)
 		lastnick = getResourse(text)
 		if len(text): text=unicode(text)
@@ -1485,7 +1485,7 @@ config_prefs = {'url_title': [L('Url title is %s'), L('Automatic show title of u
 				'autoturn': [L('Autoturn layout of text is %s'), L('Turn text from one layout to another.'), [True,False], False],
 				'make_stanza_jid_count':[L('Jid\'s per stanza for affiliations in backup is %s'),L('Count of jid\'s per stanza for affiliations change in backup'),None,'100'],
 				'acl_multiaction': [L('ACL multiaction is %s'), L('Execute more than one action per pass in ACL.'), [True,False], False],
-				
+
 				# MUC-Filter messages
 
 				'muc_filter': [L('Muc filter is %s'), L('Message filter for participants'), [True,False], False],
@@ -1500,7 +1500,7 @@ config_prefs = {'url_title': [L('Url title is %s'), L('Automatic show title of u
 				'muc_filter_censor_raw': [L('Raw censor muc filter is %s'), L('Raw censor filter'), ['off','visitor','kick','ban','mute'], 'off'],
 				'muc_filter_raw_percent': [L('Persent of short words for raw actions is %s'), L('Persent of short words for raw actions'), None, '40'],
 				'muc_filter_reduce_spaces_msg': [L('Reduce spaces in message %s'), L('Reduce duplicates of spaces in message'), [True,False], False],
-				
+
 				# MUC-Filter presence
 
 				'muc_filter_adblock_prs': [L('Adblock muc filter for presence is %s'), L('Adblock filter for presence'), ['off','kick','ban','replace','mute'], 'off'],
@@ -1586,10 +1586,10 @@ config_group_censor = [L('Censor settings'),'#room-censor',
 
 config_group_mucfilter = [L('General Muc-filter settings'),'#room-mucfilter',
 				['muc_filter'],None]
-				
+
 config_group_mucfilter_newbie = [L('Muc-filter settings for newbie'),'#room-mucfilter-newbie',
 				['muc_filter_newbie','muc_filter_newbie_time'],None]
-				
+
 config_group_mucfilter_hash = [L('Muc-filter settings for hash'),'#room-mucfilter-hash',
 				['muc_filter_hash','muc_filter_hash_time','muc_filter_hash_events','muc_filter_hash_action','muc_filter_hash_action_time',
 				'muc_filter_hash_action_current','muc_filter_deny_hash','muc_filter_deny_hash_list','muc_filter_hash_ban_server_by_rejoin',
@@ -1608,7 +1608,7 @@ config_group_mucfilter_raw = [L('Muc-filter settings for raw-actions'),'#room-mu
 
 config_group_mucfilter_censor = [L('Muc-filter settings for censor/ad-block'),'#room-mucfilter-censor',
 				['muc_filter_adblock_prs','muc_filter_adblock','muc_filter_censor','muc_filter_censor_prs'],None]
-				
+
 config_group_mucfilter_lists = [L('Muc-filter settings for while/black lists'),'#room-mucfilter-lists',
 				['muc_filter_whitelist','muc_filter_blacklist','muc_filter_blacklist_rules_jid','muc_filter_blacklist_rules_nick'],None]
 
@@ -1624,8 +1624,8 @@ config_group_karma = [L('Actions for karma change'),'#room-karma-action',
 				'karma_limit','karma_limit_size'],None]
 
 config_group_flood = [L('Flood settings'),'#room-flood',
-				['flood','autoflood','floodcount','floodtime'],None]			
-				
+				['flood','autoflood','floodcount','floodtime'],None]
+
 config_groups = [config_group_mucfilter,config_group_mucfilter_newbie,config_group_mucfilter_hash,config_group_mucfilter_content,
 				config_group_mucfilter_raw,config_group_mucfilter_censor,config_group_mucfilter_lists,config_group_other,config_group_bomb,
 				config_group_karma,config_group_censor,config_group_flood]

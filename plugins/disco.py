@@ -309,7 +309,7 @@ def smart_sort(item):
 	itm1.sort()
 	for t in itm1: itm2.append(item[t[1]])
 	return itm2
-	
+
 def features(type, jid, nick, text):
 	global iq_answer,iq_request
 	text = text.strip()
@@ -419,7 +419,7 @@ def disco_async(type, jid, nick, what, where, hm, disco_type, raw_type, isa_prev
 			if len(cm):
 				d_name = reduce_spaces_all(isa_prev.getTag('query',namespace=xmpp.NS_DISCO_INFO).getTagAttr('identity','name'))
 				d_deskr = reduce_spaces_all(isa_prev.getTag('query',namespace=xmpp.NS_DISCO_INFO).getTag('x',namespace=xmpp.NS_DATA).getTag('field',attrs={'var':'muc#roominfo_description'}).getTagData('value'))
-				d_occup = isa_prev.getTag('query',namespace=xmpp.NS_DISCO_INFO).getTag('x',namespace=xmpp.NS_DATA).getTag('field',attrs={'var':'muc#roominfo_occupants'}).getTagData('value')	
+				d_occup = isa_prev.getTag('query',namespace=xmpp.NS_DISCO_INFO).getTag('x',namespace=xmpp.NS_DATA).getTag('field',attrs={'var':'muc#roominfo_occupants'}).getTagData('value')
 				if d_name == d_deskr or not d_deskr: msg = '%s\n%s' % (d_name,L('Total: %s%s') % (d_occup,' - %s' % ', '.join(cm)))
 				else: msg = '%s [%s]\n%s' % (d_name,d_deskr,L('Total: %s%s') % (d_occup,' - %s' % ', '.join(cm)))
 			elif len(what): msg = L('\"%s\" not found') % what
@@ -505,7 +505,7 @@ def whereis_collect_async(whereis_id,who,is_answ):
 						if who.lower() in tmp.lower(): result.append([tmp,conf])
 			whereis_answers[whereis_id].append(result)
 		except: whereis_answers[whereis_id].append([])
-		
+
 global execute
 
 disco_exclude_update()

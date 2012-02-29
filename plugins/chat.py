@@ -102,7 +102,7 @@ def getAnswer(type, room, nick, text):
 		ANSW_PREV[room] = text.upper()
 	if type == 'groupchat' and text == to_censore(text,room): addAnswerToBase(text)
 	return answ
-	
+
 def flood_action(room,jid,nick,type,text):
 	if get_config(room,'autoflood'):
 		jjid = getRoom(jid)

@@ -29,7 +29,7 @@ def getMucItems(jid,affil,ns,back_id):
 	else: i = Node('iq', {'id': iqid, 'type': 'get', 'to':getRoom(jid)}, payload = [Node('query', {'xmlns': ns},[])])
 	iq_request[iqid]=(time.time(),getMucItems_async,[ns,affil,back_id])
 	sender(i)
-	
+
 def getMucItems_async(ns,affil,back_id,iq_stanza):
 	global backup_async
 	iq_stanza = iq_stanza[1][0]
@@ -43,13 +43,13 @@ def make_stanzas_array(raw_back,jid,affil):
 	for tmp in range(0,len(raw_back),make_stanza_jid_count):
 		i = xmpp.Iq(typ='set',to=jid,xmlns=xmpp.NS_CLIENT)
 		i.setTag('query',namespace=xmpp.NS_MUC_ADMIN)
-		for t in raw_back[tmp:tmp+make_stanza_jid_count]:	
+		for t in raw_back[tmp:tmp+make_stanza_jid_count]:
 			i.getTag('query',namespace=xmpp.NS_MUC_ADMIN).\
 					setTag('item',attrs={'affiliation':affil,'jid':t[0]}).\
 					setTagData('reason',t[1])
 		stanza_array.append(i)
 	return stanza_array
-	
+
 def conf_backup(type, jid, nick, text):
 	global backup_async,conn
 	if len(text):
@@ -64,7 +64,7 @@ def conf_backup(type, jid, nick, text):
 			if len(b): msg = '%s %s' % (L('Available copies:'), ', '.join(['%s (%s)' % (c[0],disp_time(c[1])) for c in b]))
 			else: msg = L('Backup copies not found.')
 		elif mode == 'now':
-			
+
 			if get_xtype(jid) != 'owner': msg = L('I need an owner affiliation for backup settings!')
 			else:
 				back_id = get_id()
@@ -85,14 +85,14 @@ def conf_backup(type, jid, nick, text):
 				except: backup_async[back_id]['bot_config'] = ''
 				backup_async[back_id]['acl'] = cur_execute_fetchall('select action,type,text,command,time,level from acl where jid=%s',(jid,))
 				backup_async[back_id]['rss'] = [tmp[0:4]+[tmp[5]] for tmp in getFile(feeds,[]) if tmp[4]==jid]
-				
+
 				msg = L('Copying completed!')
 				msg += L('\nOwners: %s | Admins: %s | Members: %s | Banned: %s') % (\
 					len(backup_async[back_id]['owner'])-1,\
 					len(backup_async[back_id]['admin'])+1,\
 					len(backup_async[back_id]['member']),\
 					len(backup_async[back_id]['outcast']))
-					
+
 				msg += L('\nRoom config: %s | Bot config: %s | Aliases: %s | Acl\'s: %s | RSS: %s') % (\
 					len(backup_async[back_id]['room_config']),\
 					len(backup_async[back_id]['bot_config']),\
@@ -121,7 +121,7 @@ def conf_backup(type, jid, nick, text):
 						for tmp in ['outcast','member','admin','owner']:
 							for t in make_stanzas_array(raw_back[tmp],jid,tmp):
 								sender(t)
-								time.sleep(bst)				
+								time.sleep(bst)
 						i = xmpp.Iq(typ='set',to=jid,xmlns=xmpp.NS_CLIENT)
 						i.setTag('query',namespace=xmpp.NS_MUC_OWNER)
 						i.getTag('query',namespace=xmpp.NS_MUC_OWNER).setTag('x',namespace=xmpp.NS_DATA).setAttr('type','submit')

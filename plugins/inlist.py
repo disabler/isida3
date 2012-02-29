@@ -32,7 +32,7 @@ def inlist_raw(type, jid, nick, text, affil, message):
 	i = Node('iq', {'id': iqid, 'type': 'get', 'to':getRoom(jid)}, payload = [Node('query', {'xmlns': NS_MUC_ADMIN},[Node('item',{'affiliation':affil})])])
 	iq_request[iqid]=(time.time(),inlist_raw_async,[type, jid, nick, text, message])
 	sender(i)
-	
+
 def inlist_raw_async(type, jid, nick, text, message, iq_stanza):
 	is_answ = unicode(iq_stanza[1][0])
 	if is_answ.startswith(L('Error!')): msg = is_answ

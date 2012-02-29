@@ -23,10 +23,10 @@
 
 last_cleanup_sayto_base = 0
 
-def sayto(type, jid, nick, text):	
+def sayto(type, jid, nick, text):
 	while len(text) and text[0] == '\n': text=text[1:]
 	while len(text) and (text[-1] == '\n' or text[-1] == ' '): text=text[:-1]
-	
+
 	if text.split(' ')[0] == 'show':
 		try: text = text.split(' ',1)[1]
 		except: text = ''
@@ -54,10 +54,9 @@ def sayto(type, jid, nick, text):
 		frm = nick + '\n' + str(int(time.time()))
 		fnd = cur_execute_fetchall('select jid, status from age where room=%s and nick=%s group by jid, status',(jid,to))
 		if len(fnd) == 1:
-			fnd = fnd[1]
-			if fnd[1]:
+			if fnd[0][1]:
 				msg = L('I will convey your message.')
-				cur_execute('insert into sayto values (%s,%s,%s,%s)', (frm, jid, fnd[0], what))				
+				cur_execute('insert into sayto values (%s,%s,%s,%s)', (frm, jid, fnd[0][0], what))
 			else: msg = L('Or am I a fool or %s is here.') % to
 		elif len(fnd) > 1:
 			off_count = 0
@@ -85,7 +84,7 @@ def sayto(type, jid, nick, text):
 	else: msg = L('What convey to?')
 	send_msg(type, jid, nick, msg)
 
-def say_memo(type, jid, nick, text):	
+def say_memo(type, jid, nick, text):
 	while len(text) and text[0] == '\n': text=text[1:]
 	while len(text) and (text[-1] == '\n' or text[-1] == ' '): text=text[:-1]
 	gj = getRoom(get_level(jid, nick)[1])
@@ -100,7 +99,7 @@ def say_memo(type, jid, nick, text):
 		msg = L('I\'ll remember it to you.')
 	else: msg = L('What remember to you?')
 	send_msg(type, jid, nick, msg)
-	
+
 def sayto_presence(room,jid,nick,type,text):
 	global conn
 	if nick != '' and type != 'unavailable':
@@ -114,7 +113,7 @@ def sayto_presence(room,jid,nick,type,text):
 					else: msg = L('You ask remember: %s') % cc[3]
 				else: msg = L('%s convey for you: %s') % (cc[3], cc[0])
 				send_msg('chat', room, nick, msg)
-				
+
 def cleanup_sayto_base():
 	global last_cleanup_sayto_base
 	ctime = int(time.time())

@@ -106,7 +106,7 @@ def acl_add_del(jid,text,flag):
 		if not reduce_spaces_all(msg).split('->',1)[1]: msg = msg.split('->',1)[0]
 		if flag and acl_cmd not in['msg','message']:
 			mb = [t[1:] for t in megabase if t[0] == jid and getRoom(t[4]) != getRoom(Settings['jid'])]
-			a = [(acl_cmd, acl_sub_act, text[0], ' '.join(text[1:]).replace('%20','\ '), 0, level)]				
+			a = [(acl_cmd, acl_sub_act, text[0], ' '.join(text[1:]).replace('%20','\ '), 0, level)]
 			was_joined = True
 			for t in mb:
 				room, realjid, nick = jid, t[3], t[0]
@@ -205,7 +205,7 @@ def bool_compare(a,b,c):
 		or (b == '>' and a > c)\
 		or (b == '<=' and a >= c)\
 		or (b == '>=' and a >= c)
-	
+
 def acl_presence(room,jid,nick,type,mass):
 	global iq_request,acl_ver_tmp
 	#if get_level(room,nick)[0] < 0: return

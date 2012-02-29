@@ -64,7 +64,7 @@ def domaininfo_raw(type, jid, nick, text):
 				msg += '\n'+'\n'.join(newbody)
 		except: msg = L('Unexpected error')
 	else: msg = L('Error!')
-	send_msg(type, jid, nick, msg)	
+	send_msg(type, jid, nick, msg)
 
 global execute
 

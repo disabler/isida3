@@ -123,7 +123,7 @@ def cur_execute_fetchone(*params):
 		conn.rollback()
 	cur.close()
 	return par
-	
+
 def cur_execute_fetchall(*params):
 	cur = conn.cursor()
 	psycopg2.extensions.register_type(psycopg2.extensions.UNICODE, cur)
@@ -142,7 +142,7 @@ def cur_execute_fetchall(*params):
 		conn.rollback()
 	cur.close()
 	return par
-	
+
 def cur_execute_fetchmany(*params):
 	cur = conn.cursor()
 	psycopg2.extensions.register_type(psycopg2.extensions.UNICODE, cur)
@@ -155,7 +155,7 @@ def cur_execute_fetchmany(*params):
 		par = None
 	cur.close()
 	return par
-	
+
 def get_color(c):
 	color = os.environ.has_key('TERM')
 	colors = {'clear':'[0m','blue':'[34m','red':'[31m','magenta':'[35m','green':'[32m','cyan':'[36m','brown':'[33m','light_gray':'[37m','black':'[30m','bright_blue':'[34;1m','bright_red':'[31;1m','purple':'[35;1m','bright_green':'[32;1m','bright_cyan':'[36;1m','yellow':'[33;1m','dark_gray':'[30;1m','white':'[37;1m'}
@@ -573,7 +573,7 @@ def paste_text(text,room,jid):
 def disp_time(t):
 	lt=tuple(time.localtime(t))
 	return '%02d:%02d:%02d, %02d.%s\'%02d, %s' % (lt[3],lt[4],lt[5],lt[2],wmonth[lt[1]-1],lt[0],wday[lt[6]])
-	
+
 def nice_time(ttim):
 	gt=tuple(time.gmtime())
 	lt=tuple(time.localtime(ttim))
@@ -612,7 +612,7 @@ def match_for_raw(original,regexp,gr):
 		#match_percent = 100.0 / len(original) * len(orig_join)
 		#match_percent = 100.0 / len(orig_drop) * len(orig_split)
 		match_percent = 100.0 / len(orig_drop) * sum([len(tmp) <= 2 for tmp in orig_drop])
-		
+
 		raw_percent = get_config(gr,'muc_filter_raw_percent')
 		if raw_percent.isdigit(): raw_percent = int(raw_percent)
 		else: raw_percent = int(config_prefs['muc_filter_raw_percent'][3])
@@ -679,7 +679,7 @@ def iqCB(sess,iq):
 
 	elif iq.getType()=='get' and nnj and not ddos_ignore.has_key(tjid):
 		iq_ddos_requests,iq_ddos_limit = GT('ddos_iq_requests'),GT('ddos_iq_limit')
-		nick = getResourse(room)		
+		nick = getResourse(room)
 		qry = unicode(iq.getTag(name='query'))
 		if ddos_iq.has_key(tjid): time_tuple = [time.time()] + ddos_iq[tjid][:iq_ddos_requests-1]
 		else: time_tuple = [time.time()]
@@ -853,9 +853,9 @@ def iqCB(sess,iq):
 											unsucess.append(owner_prefs[t][0])
 										PT(t,tm)
 										if tp[-1] == 'e' and old_tm != tm: eval(owner_prefs[t][-1])
-									except: pass										
+									except: pass
 								sucess_answer = [L('Settings unsuccesfully accepted:\n%s') % '\n'.join(unsucess),L('Settings succesfully accepted')][sucess_label]
-								i.setTag('command',namespace=xmpp.NS_COMMANDS,attrs={'status':'completed', 'node':disco_config_node+tn,'sessionid':id})						
+								i.setTag('command',namespace=xmpp.NS_COMMANDS,attrs={'status':'completed', 'node':disco_config_node+tn,'sessionid':id})
 								i.getTag('command').setTag('note',attrs={'type':'info'})
 								i.getTag('command').setTagData('note',sucess_answer)
 								i.getTag('command').setTag('x',namespace=xmpp.NS_DATA)
@@ -894,7 +894,7 @@ def iqCB(sess,iq):
 											i.getTag('command').getTag('x').setTag('field',attrs={'type':'text-single','label':itm_label,'var':t})\
 											.setTagData('value',unicode(GT(t)))
 										elif itm[1][0] == 'm':
-											tprm = [xmpp.Node('value',payload=prm) for prm in unicode(GT(t)).split('\n')]											
+											tprm = [xmpp.Node('value',payload=prm) for prm in unicode(GT(t)).split('\n')]
 											i.getTag('command').getTag('x').setTag('field',attrs={'type':'text-multi','label':itm_label,'var':t})\
 											.setPayload(tprm)
 										else:
@@ -955,7 +955,7 @@ def iqCB(sess,iq):
 											.setTagData('value',[0,1][dc])
 										elif itm[2] == None:
 											if '\n' in itm[3]:
-												tprm = [xmpp.Node('value',payload=prm) for prm in get_config(getRoom(room),t).split('\n')]											
+												tprm = [xmpp.Node('value',payload=prm) for prm in get_config(getRoom(room),t).split('\n')]
 												i.getTag('command').getTag('x').setTag('field',attrs={'type':'text-multi','label':itm_label,'var':t})\
 												.setPayload(tprm)
 											else:
@@ -1060,7 +1060,7 @@ def iqCB(sess,iq):
 										i.getTag('command').getTag('x').setTag('field',attrs={'type':'text-single','label':itm_label,'var':t})\
 										.setTagData('value',unicode(GT(t)))
 									elif itm[1][0] == 'm':
-										tprm = [xmpp.Node('value',payload=prm) for prm in unicode(GT(t)).split('\n')]											
+										tprm = [xmpp.Node('value',payload=prm) for prm in unicode(GT(t)).split('\n')]
 										i.getTag('command').getTag('x').setTag('field',attrs={'type':'text-multi','label':itm_label,'var':t})\
 										.setPayload(tprm)
 									else:
@@ -1122,12 +1122,12 @@ def iqCB(sess,iq):
 										.setTagData('value',[0,1][dc])
 									elif itm[2] == None:
 										if '\n' in itm[3]:
-											tprm = [xmpp.Node('value',payload=prm) for prm in get_config(getRoom(room),t).split('\n')]											
+											tprm = [xmpp.Node('value',payload=prm) for prm in get_config(getRoom(room),t).split('\n')]
 											i.getTag('command').getTag('x').setTag('field',attrs={'type':'text-multi','label':itm_label,'var':t})\
 											.setPayload(tprm)
 										else:
 											i.getTag('command').getTag('x').setTag('field',attrs={'type':'text-single','label':itm_label,'var':t})\
-											.setTagData('value',get_config(getRoom(room),t))									
+											.setTagData('value',get_config(getRoom(room),t))
 									else:
 										i.getTag('command').getTag('x').setTag('field',\
 										attrs={'type':'list-single','label':itm_label,'var':t})\
@@ -1793,7 +1793,7 @@ def presenceCB(sess,mess):
 	type=unicode(mess.getType())
 	affiliation=unicode(mess.getAffiliation())
 	role=unicode(mess.getRole())
-	jid=unicode(mess.getJid())	
+	jid=unicode(mess.getJid())
 	mss = unicode(mess)
 	bad_presence = mss.count('<x xmlns=\"http://jabber') > 1 and mss.count(' affiliation=\"') > 1 and mss.count(' role=\"') > 1
 	priority=unicode(mess.getPriority())
@@ -2089,7 +2089,7 @@ def get_id():
 	global id_count
 	id_count += 1
 	return 'request_%s' % id_count
-	
+
 def draw_warning(wt):
 	wt = '!!! Warning! %s !!!' % wt
 	pprint('!'*len(wt),'bright_red')
