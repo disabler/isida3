@@ -37,7 +37,7 @@ def netheader(type, jid, nick, text):
 		if '://' not in text[:10]: text = 'http://%s' % text
 		text = enidna(text)
 		body, result = get_opener(text)
-		if result: body = text + '\n' + unicode(body.headers)
+		if result: body = '%s\n%s' %(text.decode('utf-8'),unicode(body.headers))
 		if regex:
 			try:
 				mt = re.findall(regex, body, re.S+re.U+re.I)
