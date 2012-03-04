@@ -55,21 +55,32 @@ def convert_base(filename,from_base,to_base):
 				req = 'insert into %s values(%s);' % (to_base,','.join(['%'+a for a in 's'*len(t)]))
 				cur.execute(req,t)
 		conn.commit()
-	
+
+def errorHandler(text):
+	print text
+	sys.exit()
+
 print 'Updater for Isida Jabber Bot from 2.x to 3.x'
 print '(c) Disabler Production Lab.'
 
 if os.path.isfile(configname): execfile(configname)
-else:
-	print '%s is missed.' % configname
-	sys.exit()
-	
-try: _,_,_,_,_ = base_name,base_user,base_host,base_pass,base_port
-except:
-	print 'Missed settings for PostgreSQL!'
-	sys.exit()
+else: errorHandler('%s is missed.' % configname)
 
-conn=psycopg2.connect(database=base_name, user=base_user, host=base_host, password=base_pass, port=base_port)
+base_charset = 'utf8'	
+try: _,_,_,_,_,_ = base_type,base_name,base_user,base_host,base_pass,base_port
+except: errorHandler('Missed settings for PostgreSQL!')
+
+if base_type == 'pgsql':
+	import psycopg2
+	import psycopg2.extensions
+	conn = psycopg2.connect(database=base_name, user=base_user, host=base_host, password=base_pass, port=base_port)
+elif base_type == 'mysql':
+	import MySQLdb
+	conn = MySQLdb.connect(db=base_name, user=base_user, host=base_host, passwd=base_pass, port=int(base_port), charset=base_charset)
+else: errorHandler('Unknown database backend!')
+
+print 'Base type: %s' % base_type
+
 cur = conn.cursor()
 
 bases_arr = [[jidbase,'jid','jid'],[talkers,'talkers','talkers'],[wtfbase,'wtf','wtf'],

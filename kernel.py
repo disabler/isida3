@@ -42,8 +42,6 @@ import operator
 import os
 import math
 import pdb
-import psycopg2
-import psycopg2.extensions
 import random
 import re
 import select
@@ -91,62 +89,81 @@ class KThread(threading.Thread):
 
 def cur_execute(*params):
 	cur = conn.cursor()
-	psycopg2.extensions.register_type(psycopg2.extensions.UNICODE, cur)
+	if base_type == 'pgsql': psycopg2.extensions.register_type(psycopg2.extensions.UNICODE, cur)
 	par = None
 	try:
+		if base_type == 'mysql': 
+			params = list(params)
+			params[0] = params[0].replace(' ilike ',' like ')
+			params = tuple(params)
 		cur.execute(*params)
 		prm = params[0].split()[0].lower()
 		if prm in ['update','insert','delete']: conn.commit()
 	except Exception, par:
-		if pg_debug:
+		if db_debug:
 			try: par = str(par)
 			except: par = unicode(par)
+			pprint(par)
 		conn.rollback()
 	cur.close()
 	return par
 
 def cur_execute_fetchone(*params):
 	cur = conn.cursor()
-	psycopg2.extensions.register_type(psycopg2.extensions.UNICODE, cur)
+	if base_type == 'pgsql': psycopg2.extensions.register_type(psycopg2.extensions.UNICODE, cur)
 	par = None
 	try:
+		if base_type == 'mysql': 
+			params = list(params)
+			params[0] = params[0].replace(' ilike ',' like ')
+			params = tuple(params)
 		cur.execute(*params)
 		try: par = cur.fetchone()
 		except Exception, par:
-			if pg_debug:
+			if db_debug:
 				try: par = str(par)
 				except: par = unicode(par)
 	except Exception, par:
-		if pg_debug:
+		if db_debug:
 			try: par = str(par)
 			except: par = unicode(par)
+			pprint(par)
 		conn.rollback()
 	cur.close()
 	return par
 
 def cur_execute_fetchall(*params):
 	cur = conn.cursor()
-	psycopg2.extensions.register_type(psycopg2.extensions.UNICODE, cur)
+	if base_type == 'pgsql': psycopg2.extensions.register_type(psycopg2.extensions.UNICODE, cur)
 	par = None
 	try:
+		if base_type == 'mysql': 
+			params = list(params)
+			params[0] = params[0].replace(' ilike ',' like ')
+			params = tuple(params)
 		cur.execute(*params)
 		try: par = cur.fetchall()
 		except Exception, par:
-			if pg_debug:
+			if db_debug:
 				try: par = str(par)
 				except: par = unicode(par)
 	except Exception, par:
-		if pg_debug:
+		if db_debug:
 			try: par = str(par)
 			except: par = unicode(par)
+			pprint(par)
 		conn.rollback()
 	cur.close()
 	return par
 
 def cur_execute_fetchmany(*params):
 	cur = conn.cursor()
-	psycopg2.extensions.register_type(psycopg2.extensions.UNICODE, cur)
+	if base_type == 'pgsql': psycopg2.extensions.register_type(psycopg2.extensions.UNICODE, cur)
 	try:
+		if base_type == 'mysql': 
+			params = list(params)
+			params[0] = params[0].replace(' ilike ',' like ')
+			params = tuple(params)
 		cur.execute(params[0],params[1])
 		try: par = cur.fetchmany(params[-1])
 		except: par = None
@@ -368,10 +385,7 @@ def send_presence_all(sm):
 	time.sleep(2)
 
 def errorHandler(text):
-	c,wc = get_color('bright_red'),get_color('clear')
-	print('%s*** Error ***' % c)
-	print('%s%s' % (c,text))
-	print('%smore info at http://isida-bot.com%s' % (c,wc))
+	draw_warning(text)
 	sys.exit('exit')
 
 def arr_semi_find(array, string):
@@ -2096,18 +2110,6 @@ def draw_warning(wt):
 	pprint(wt,'bright_red')
 	pprint('!'*len(wt),'bright_red')
 
-def wait(conn):
-	tt = time.time() + 10
-	while tt > time.time():
-		state = conn.poll()
-		if state == psycopg2.extensions.POLL_OK:
-			break
-		elif state == psycopg2.extensions.POLL_WRITE:
-			select.select([], [conn.fileno()], [])
-		elif state == psycopg2.extensions.POLL_READ:
-			select.select([conn.fileno()], [], [])
-		else:
-			raise psycopg2.OperationalError("poll() returned %s" % state)
 # --------------------- Иницилизация переменных ----------------------
 
 nmbrs = ['0','1','2','3','4','5','6','7','8','9','.']
@@ -2169,7 +2171,13 @@ user_hash = {}
 server_hash = {}
 server_hash_list = {}
 messages_excl = []
-pg_debug = False
+db_debug = False
+base_type = 'pgsql'     # тип базы: pgsql или mysql
+base_name = 'isidabot'  # название базы
+base_user = 'isidabot'  # пользователь базы
+base_host = 'localhost' # хост базы
+base_port = '5432'		# порт для подключения
+base_charset = 'utf8'   # кодировка
 
 gt=tuple(time.gmtime())
 lt=tuple(time.localtime())
@@ -2180,9 +2188,17 @@ else: timeofset = int(gt[3])-int(lt[3]) + 24
 if os.path.isfile(configname): execfile(configname)
 else: errorHandler('%s is missed.' % configname)
 
+if base_type == 'pgsql':
+	import psycopg2
+	import psycopg2.extensions
+elif base_type == 'mysql':
+	import MySQLdb
+else: errorHandler('Unknown database backend!')
+
 if os.path.isfile(ver_file):
 	bvers = readfile(ver_file).decode('utf-8').replace('\n','').replace('\r','').replace('\t','').replace(' ','')
 	botVersion += '.%s' % bvers
+botVersion = '%s.%s' % (botVersion, base_type)
 if 'm' in botVersion.lower(): draw_warning('Launched bot\'s modification!')
 try: tmp = botOs
 except: botOs = os_version()
@@ -2197,11 +2213,11 @@ logging.basicConfig(filename=LOG_FILENAME,level=logging.DEBUG,)	# включен
 capsNode = 'http://isida-bot.com'
 god = SuperAdmin
 pprint('-'*50,'blue')
-if(sys.argv[0]) != 'isida.py':
-	draw_warning('Ugly launch detect! Read wiki!')
-	sys.exit('exit')
+if(sys.argv[0]) != 'isida.py': errorHandler('Ugly launch detect! Read wiki!')
 
-conn = psycopg2.connect(database=base_name, user=base_user, host=base_host, password=base_pass, port=base_port)
+if base_type == 'pgsql': conn = psycopg2.connect(database=base_name, user=base_user, host=base_host, password=base_pass, port=base_port)
+elif base_type == 'mysql': conn = MySQLdb.connect(db=base_name, user=base_user, host=base_host, passwd=base_pass, port=int(base_port), charset=base_charset)
+else: errorHandler('Can\'t connect to `%s` base type!' % base_type)
 
 pprint('*** Loading localization','white')
 locales = {}
@@ -2284,11 +2300,7 @@ pprint('*** OS: %s ' % botOs,'yellow')
 pprint('*'*50,'blue')
 pprint('*** (c) 2oo9-%s Disabler Production Lab.' % str(time.localtime()[0]).replace('0','o'),'bright_cyan')
 
-float_pyver = float(sys.version[:3])
-
-if float_pyver  < 2.7:
-	draw_warning('Required Python >= 2.7')
-	sys.exit('exit')
+if float(sys.version[:3]) < 2.7: errorHandler('Required Python >= 2.7')
 
 lastnick = Settings['nickname']
 jid = JID(Settings['jid'])

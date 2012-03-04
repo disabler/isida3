@@ -2,7 +2,7 @@
 
 #------------------------------------------------
 #			 Isida-bot Config file
-#					v1.6ru
+#					v3.0ru
 #------------------------------------------------
 
 Settings = {
@@ -16,28 +16,32 @@ Settings = {
 #proxy = {'host':'127.0.0.1','port':3128,'user':'','password':''}
 #proxy = {'host':'localhost','port':3128}
 #server = 'allports.jabber.ru:443'								# Подключение минуя ресольвер
-#secure = True													# Включение ssl/tls
+#secure = True													# Включение ssl (порт 5223)
 #http_proxy = {'host':'localhost','port':3128,'user':'me','password':'secret'}	# Http-прокси
 #http_proxy = {'host':'127.0.0.1','port':3128,'user':None,'password':None}
 SuperAdmin		=	u'aaa@bbb.ru'								# Jid владельца бота
-defaultConf		=	u'isida@conference.jabber.ru'				# Стартовая конференция
+defaultConf		=	u'support@conference.server.tld'			# Стартовая конференция
 prefix			=	u'_'										# Префикс команд по умолчанию
 msg_limit		=	2048										# Лимит размера сообщений
 #ignore_owner	=	True										# не исполнять для владельца бота отключенные команды
 #debugmode		=	True										# режим _не_игнорировать_ошибки_
 #dm				=	True										# режим отладки xmpppy
 #dm2			=	True										# режим показа действий бота в консоле
-#pg_debug		=	True										# режим отладки PostgreSQL
+#db_debug		=	True										# режим отладки postgresql/mysql
 CommandsLog		=	True										# Логгирование команд бота
 #thread_type	=	None										# тип тредов thread/threading. по умолчанию - threading
 #ENABLE_TLS		=	None										# если бот падает при обзоре сервисов jid'а в ростере - надо принудительно отключить TLS
 
 #----- Настройка баз данных -----
-base_name = 'isidabot'  # название базы для PostgreSQL
-base_user = 'isidabot'  # пользователь базы для PostgreSQL
-base_host = 'localhost' # хост базы для PostgreSQL
-base_pass = '******'    # пароль базы для PostgreSQL
-base_port = '5432'		# порт для подключения к PostgreSQL
+base_type = 'pgsql'     # тип базы: pgsql или mysql
+#base_type = 'mysql'     # тип базы: pgsql или mysql
+base_name = 'isidabot'  # название базы
+base_user = 'isidabot'  # пользователь базы
+base_host = 'localhost' # хост базы
+base_pass = '******'    # пароль базы
+base_port = '5432'		# порт для подключения. стандартные для postgresql - 5432; mysql - 3306
+#base_port = '3306'		# порт для подключения. стандартные для postgresql - 5432; mysql - 3306
+base_charset = 'utf8'   # кодировка для mysql
 
 #-------------- Файлы, пути к файлам -----------#
 slog_folder = 'log/'							# папка системных логов
@@ -90,12 +94,5 @@ smile_folder = '.smiles'						# папка со смайлами в чатлог
 smile_descriptor = 'icondef.xml'				# дескриптор смайлов
 #-----------------------------------------------#
 adblock_regexp = [u'([-0-9a-zа-я_+]+@c[-0-9a-z-.]+)', # Регекспы для блокиратора рекламы, регистронезависимые
-				  #u'зайди.*? .*?конф.*? .*?([-0-9a-zа-я_+]+@?)',
-				  #u'заходи.*? .*?конф.*? .*?([-0-9a-zа-я_+]+@?)',
-				  #u'зайди.*? .*?в.*? .*?([-0-9a-zа-я_+]+@?)',
-				  #u'заходи.*? .*?в.*? .*?([-0-9a-zа-я_+]+@?)',
-				  #u'конф.*? .*?([-0-9a-zа-я_+]+@?).*?зайди',
-				  #u'конф.*? .*?([-0-9a-zа-я_+]+@?).*?заходи',
-				  #u'все.*? .*?в.*? .*?([-0-9a-zа-я_+]+@?)',
 				  u'https?://(.*?icq.*?/[-a-z0-9?+./=?&]*?)']
 #-----------------------------------------------#
