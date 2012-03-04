@@ -85,7 +85,7 @@ def calend(type, jid, nick, text):
 			hl = re.findall('<a  href="(/holidays(?:/\d*?)+?)" title=".+?">(.+?)</a>(?:.|\s)+?/>\s+?(\d+ .+?)\s', data)
 			if len(hl) == 1:
 				d = re.search('class="img_small" /></a></td>\s+?<td>\s+?(.+?\.)\s+?</td>', data, re.S).group(1)
-				d = re.sub('\s+', ' ', d.strip())
+				d = unescape(re.sub('\s+', ' ', d.strip()))
 				msg += '%s (%s) - %s\nhttp://www.calend.ru%s' % (hl[0][1], hl[0][2], d, hl[0][0])
 			elif hl:
 				for a in hl: msg += '\n%s (%s)' % (a[1], a[2])
