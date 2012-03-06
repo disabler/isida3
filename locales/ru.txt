@@ -685,10 +685,10 @@ Show information about conference from jc.jabber.ru.\njc [address]	Показы�
 # file: ../branch/plugins/jidcatcher.py
 What I must find?	Чего искать-то будем?
 '%s' not found!	'%s' не найдено!
-Total resources: %s	Всего ресурсов: %s
 Found resources: %s	Найдено ресурсов: %s
-Total servers: %s	Всего серверов: %s
+Total resources: %s	Всего ресурсов: %s
 Found servers: %s	Найдено серверов: %s
+Total servers: %s	Всего серверов: %s
 Max count of members: %s %s	Максимальное количество участников: %s %s
 Statistic not found!	Статистика не найдена!
 Without parameters show top10 resources for all conferences, where bot is present.\nwith parameters - search in resources base\ncount - number of results.	Без параметра показывает топ10 ресурсов по всем конференциям, где находится бот.\nС параметром - поиск по базе ресурсов.\nЧисла - количество ресурсов.
@@ -1518,16 +1518,17 @@ All who i see for a last day now is here.	Все, кого я видела за 
 Show list of users for last day	Показ списка участников за сутки
 
 # file: ../branch/plugins/wtf.py
+I know that %s is %s	Я знаю, что %s - %s
+from %s: %s	от %s: %s
+What search?	Чего искать то будем?
 What need to find?	Чего искать то будем?
 Some matches in definitions: %s	Нечто похожее я видела в: %s
 No matches.	Хм. Ничего похожего я не знаю...
-I know that %s is %s	Я знаю, что %s - %s
 All I know is: %s	Всё, что я знаю это: %s
 Locale definition: %s\nGlobal: %s\nImported: %s\nTotal: %s	В этой конфе определений: %s\nГлобальных: %s\nИмпортировано: %s\nВсего: %s
 Send to private %s	Отправлено в приват %s
 \nfrom: %s %s	\nот: %s %s
 I know that %s was defined by %s %s %s	Я знаю, что %s было определено: %s %s %s
-What search?	Чего искать то будем?
 Not enough rights!	Ты ещё мал и глуп для этого!
 This is global definition and not allowed to change!	Это глобальное определение и его нельзя изменить!
 Definition removed!	Жаль, что такую полезную хренотень надо забыть...
@@ -1539,6 +1540,7 @@ Random definition from base.	Показ случайного определен�
 List of definitions in conference.\nwtfnames [all|global|import]	Показ списка определений в конференции.\nwtfnames [all|global|import]
 Definitions count.	Показ количества определений в конференции.
 Search in definitions base.	Поиск по базе определений.
+All definitions of word.	Все определения слова.
 Information about definition commiter.	Показ информации о том, кто сделал определение.
 Show definition with nick and date.	Показ определения вместе с ником и датой.
 Show definition in private.\nwtfp word\n[nick]	Показ определения в приват, независимо от куда поступила команда.\nwtfp word - показать определение word себе в приват\nwtfp word\nnick - показать определение word в приват nick

@@ -89,7 +89,7 @@ CREATE TABLE tmp (
 	nick text,
 	wtfword text,
 	wtftext text,
-	time text,
+	time integer,
 	lim integer
 );
 

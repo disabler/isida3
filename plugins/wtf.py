@@ -21,14 +21,20 @@
 #                                                                             #
 # --------------------------------------------------------------------------- #
 
+def wtfall(type, jid, nick, text):
+	if len(text):
+		ww = cur_execute_fetchall('select * from wtf where (room=%s or room=%s or room=%s) and wtfword=%s order by -time',(jid,'global','import',text))
+		if ww: msg = L('I know that %s is %s') % (text,'\n%s' % '\n\n'.join([L('from %s: %s') % (t[3],t[5]) for t in ww]))
+		else: msg = L('I don\'t know!')
+	else: msg = L('What search?')
+	send_msg(type, jid, nick, msg)
+
 def wtfsearch(type, jid, nick, text):
 	msg = L('What need to find?')
 	if len(text):
 		text = '%%%s%%' % text
-		ww = cur_execute_fetchall('select * from wtf where (room=%s or room=%s or room=%s) and (room ilike %s or jid ilike %s or nick ilike %s or wtfword ilike %s or wtftext ilike %s or time ilike %s)',(jid,'global','import',text,text,text,text,text,text))
-		msg = ''
-		for www in ww: msg += www[4]+', '
-		if len(msg): msg = L('Some matches in definitions: %s') % msg[:-2]
+		ww = cur_execute_fetchall('select wtfword from wtf where (room=%s or room=%s or room=%s) and (room ilike %s or jid ilike %s or nick ilike %s or wtfword ilike %s or wtftext ilike %s or time ilike %s)',(jid,'global','import',text,text,text,text,text,text))
+		if len(msg): msg = L('Some matches in definitions: %s') % ', '.join(zip(*ww)[0])
 		else: msg = L('No matches.')
 	send_msg(type, jid, nick, msg)
 
@@ -40,21 +46,19 @@ def wtfrand(type, jid, nick):
 	send_msg(type, jid, nick, msg)
 
 def wtfnames(type, jid, nick, text):
-	if text == 'all': tmp = cur_execute_fetchall('select * from wtf where room=%s or room=%s or room=%s',(jid,'global','import'))
-	elif text == 'global': tmp = cur_execute_fetchall('select * from wtf where room=%s',('global',))
-	elif text == 'import': tmp = cur_execute_fetchall('select * from wtf where room=%s',('import',))
-	else: tmp = cur_execute_fetchall('select * from wtf where room=%s',(jid,))
-	msg = ''
-	for ww in tmp: msg += ww[4]+', '
-	if len(msg): msg = L('All I know is: %s') % msg[:-2]
+	if text == 'all': tmp = cur_execute_fetchall('select wtfword from wtf where room=%s or room=%s or room=%s',(jid,'global','import'))
+	elif text == 'global': tmp = cur_execute_fetchall('select wtfword from wtf where room=%s',('global',))
+	elif text == 'import': tmp = cur_execute_fetchall('select wtfword from wtf where room=%s',('import',))
+	else: tmp = cur_execute_fetchall('select wtfword from wtf where room=%s',(jid,))
+	if len(msg): msg = L('All I know is: %s') % ', '.join(zip(*tmp)[0])
 	else: msg = L('No matches.')
 	send_msg(type, jid, nick, msg)
 
 def wtfcount(type, jid, nick):
-	tlen = len(cur_execute_fetchall('select * from wtf where 1=1'))
-	cnt = len(cur_execute_fetchall('select * from wtf where room=%s',(jid,)))
-	glb = len(cur_execute_fetchall('select * from wtf where room=%s',('global',)))
-	imp = len(cur_execute_fetchall('select * from wtf where room=%s',('import',)))
+	tlen = cur_execute_fetchall('select count(*) from wtf')[0][0]
+	cnt = cur_execute_fetchall('select count(*) from wtf where room=%s',(jid,))[0][0]
+	glb = cur_execute_fetchall('select count(*) from wtf where room=%s',('global',))[0][0]
+	imp = cur_execute_fetchall('select count(*) from wtf where room=%s',('import',))[0][0]
 	msg = L('Locale definition: %s\nGlobal: %s\nImported: %s\nTotal: %s') % (cnt,glb,imp,tlen)
 	send_msg(type, jid, nick, msg)
 
@@ -85,11 +89,11 @@ def wtfp(type, jid, nick, text):
 
 def wtf_get(ff,type, jid, nick, text):
 	if len(text):
-		ww = cur_execute_fetchone('select * from wtf where (room=%s or room=%s or room=%s) and wtfword=%s',(jid,'global','import',text))
+		ww = cur_execute_fetchone('select * from wtf where (room=%s or room=%s or room=%s) and wtfword=%s order by -time',(jid,'global','import',text))
 		if ww:
 			msg = L('I know that %s is %s') % (text,ww[5])
-			if ff == 1: msg += L('\nfrom: %s %s') % (ww[3],'['+ww[6]+']')
-			elif ff == 2: msg = L('I know that %s was defined by %s %s %s') % (text,ww[3],'('+ww[2]+')','['+ww[6]+']')
+			if ff == 1: msg += L('\nfrom: %s %s') % (ww[3],'[%s]' % disp_time(ww[6]))
+			elif ff == 2: msg = L('I know that %s was defined by %s %s %s') % (text,ww[3],'(%s)' % ww[2],'[%s]' % disp_time(ww[6]))
 		else: msg = L('I don\'t know!')
 	else: msg = L('What search?')
 	send_msg(type, jid, nick, msg)
@@ -102,23 +106,26 @@ def dfn(type, jid, nick, text):
 		ti = text.index('=')
 		what = del_space_end(text[:ti])
 		text = del_space_begin(text[ti+1:])
-		matches = cur_execute_fetchone('select * from wtf where (room=%s or room=%s or room=%s) and wtfword=%s order by lim',(jid,'global','import',what))
+		matches = cur_execute_fetchall('select * from wtf where (room=%s or room=%s or room=%s) and wtfword=%s order by lim,-time',(jid,'global','import',what))
 		if matches:
-			if matches[7] > al:
+			max = -1
+			for t in matches:
+				if t[7] >= max: max,match=t[7],t
+			if match[7] > al:
 				msg,text = L('Not enough rights!'),''
-				try: msg += ' ' + unlevltxt[unlevlnum[matches[7]]] % unlevl[matches[7]]
+				try: msg += ' ' + unlevltxt[unlevlnum[match[7]]] % unlevl[match[7]]
 				except: pass
-			elif matches[1] == 'global': msg, text = L('This is global definition and not allowed to change!'), ''
+			elif match[1] == 'global': msg, text = L('This is global definition and not allowed to change!'), ''
 			elif text == '':
 				msg = L('Definition removed!')
 				cur_execute('delete from wtf where wtfword=%s and room=%s',(what,jid))
 			else:
 				msg = L('Definition updated!')
-				cur_execute('delete from wtf where wtfword=%s and room=%s',(what,jid))
+				if getRoom(realjid) == getRoom(match[2]): cur_execute('delete from wtf where wtfword=%s and room=%s and jid=%s',(what,jid,match[2]))
 		elif text == '': msg = L('Nothing to remove!')
 		else: msg = L('Definition saved!')
-		idx = len(cur_execute_fetchall('select * from wtf where 1=1'))
-		if text != '': cur_execute('insert into wtf values (%s,%s,%s,%s,%s,%s,%s,%s)', (idx, jid, realjid, nick, what, text, timeadd(tuple(time.localtime())),al))
+		idx = cur_execute_fetchall('select count(*) from wtf')[0][0]
+		if text != '': cur_execute('insert into wtf values (%s,%s,%s,%s,%s,%s,%s,%s)', (idx, jid, realjid, nick, what, text, int(time.time()),al))
 	else: msg = L('What need to remember?')
 	send_msg(type, jid, nick, msg)
 
@@ -130,22 +137,25 @@ def gdfn(type, jid, nick, text):
 		ti = text.index('=')
 		what = del_space_end(text[:ti])
 		text = del_space_begin(text[ti+1:])
-		matches = cur_execute_fetchone('select * from wtf where (room=%s or room=%s or room=%s) and wtfword=%s order by lim',(jid,'global','import',what))
+		matches = cur_execute_fetchall('select * from wtf where (room=%s or room=%s or room=%s) and wtfword=%s order by lim,-time',(jid,'global','import',what))
 		if matches:
-			if matches[7] > al:
+			max = -1
+			for t in matches:
+				if t[7] >= max: max,match=t[7],t
+			if match[7] > al:
 				msg,text = L('Not enough rights!'),''
-				try: msg += ' ' + unlevltxt[unlevlnum[matches[7]]] % unlevl[matches[7]]
+				try: msg += ' ' + unlevltxt[unlevlnum[match[7]]] % unlevl[match[7]]
 				except: pass
 			elif text == '':
 				msg = L('Definition removed!')
 				cur_execute('delete from wtf where wtfword=%s',(what,))
 			else:
 				msg = L('Definition updated!')
-				cur_execute('delete from wtf where wtfword=%s',(what,))
+				if getRoom(realjid) == getRoom(match[2]): cur_execute('delete from wtf where wtfword=%s and jid=%s',(what,match[2]))
 		elif text == '': msg = L('Nothing to remove!')
 		else: msg = L('Definition saved!')
-		idx = len(cur_execute_fetchall('select * from wtf where 1=1'))
-		if text != '': cur_execute('insert into wtf values (%s,%s,%s,%s,%s,%s,%s,%s)', (idx, 'global', realjid, nick, what, text, timeadd(tuple(time.localtime())),al))
+		idx = cur_execute_fetchall('select count(*) from wtf')[0][0]
+		if text != '': cur_execute('insert into wtf values (%s,%s,%s,%s,%s,%s,%s,%s)', (idx, 'global', realjid, nick, what, text, int(time.time()),al))
 	else: msg = L('What need to remember?')
 	send_msg(type, jid, nick, msg)
 
@@ -155,6 +165,7 @@ execute = [(3, 'wtfrand', wtfrand, 1, L('Random definition from base.')),
 	 (3, 'wtfnames', wtfnames, 2, L('List of definitions in conference.\nwtfnames [all|global|import]')),
 	 (3, 'wtfcount', wtfcount, 1, L('Definitions count.')),
 	 (3, 'wtfsearch', wtfsearch, 2, L('Search in definitions base.')),
+	 (3, 'wtfall', wtfall, 2, L('All definitions of word.')),
 	 (9, 'wwtf', wwtf, 2, L('Information about definition commiter.')),
 	 (3, 'wtff', wtff, 2, L('Show definition with nick and date.')),
 	 (3, 'wtfp', wtfp, 2, L('Show definition in private.\nwtfp word\n[nick]')),

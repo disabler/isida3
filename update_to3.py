@@ -21,7 +21,7 @@
 #                                                                             #
 # --------------------------------------------------------------------------- #
 
-import os, sys, sqlite3, psycopg2, re
+import os, sys, sqlite3, psycopg2, re, time
 
 set_folder = u'settings/%s'
 
@@ -68,7 +68,7 @@ else: errorHandler('%s is missed.' % configname)
 
 base_charset = 'utf8'	
 try: _,_,_,_,_,_ = base_type,base_name,base_user,base_host,base_pass,base_port
-except: errorHandler('Missed settings for PostgreSQL!')
+except: errorHandler('Missed settings for SQL DB!')
 
 if base_type == 'pgsql':
 	import psycopg2
@@ -83,29 +83,76 @@ print 'Base type: %s' % base_type
 
 cur = conn.cursor()
 
-bases_arr = [[jidbase,'jid','jid'],[talkers,'talkers','talkers'],[wtfbase,'wtf','wtf'],
-			 [answers,'answer','answer'],[saytobase,'st','sayto'],[distbase,'dist','dist'],[distbase_user,'dist','dist_user'],
-			 [karmabase,'karma','karma'],[karmabase,'commiters','karma_commiters'],[karmabase,'limits','karma_limits'],
-			 [acl_base,'acl','acl'],[wzbase,'wz','wz'],[gisbase,'gis','gis'],[def_phone_base,'ru_stat','def_ru_stat'],
-			 [def_phone_base,'ua_stat','def_ua_stat'],[def_phone_base,'ru_mobile','def_ru_mobile'],[muc_lock_base,'muc','muc_lock']]
+al = [t.lower() for t in sys.argv]
 
-from_base = to_base = 'age'
-if os.path.isfile(agestat):
-	s_conn = sqlite3.connect(agestat)
-	s_cur = s_conn.cursor()
-	tmp = s_cur.execute('select * from %s' % from_base).fetchall()
-	print 'Import %s, Base %s->%s, %s records' % (agestat, from_base, to_base, len(tmp))
-	s_conn.close()
-	if tmp:
-		for t in tmp:
-			req = 'insert into %s values(%s);' % (to_base,','.join(['%'+a for a in 's'*9]))
-			cur.execute(req,list(t)+[t[1].lower()])
-	conn.commit()
-			 
-for t in bases_arr: convert_base(t[0],t[1],t[2])
+if '/wtf_update' in al:
+	print 'Update `wtf` base'
+	cur.execute('select * from wtf;')
+	w = cur.fetchall()
+	cur.execute('drop table wtf;')
+	cur.execute('CREATE TABLE wtf (\
+				ind integer,\
+				room text,\
+				jid text,\
+				nick text,\
+				wtfword text,\
+				wtftext text,\
+				time integer,\
+				lim integer);')	
+	for tmp in w:
+		try: tm = time.mktime([[int(t) for t in tmp[6].replace('.',' ').replace(':',' ').split()][t1] for t1 in [2,1,0,3,4,5]]+[0,0,0])
+		except: tm = 0
+		r = tmp[:6]+(tm,)+tmp[7:]
+		req = 'insert into wtf values(%s);' % (','.join(['%'+a for a in 's'*len(r)]))
+		cur.execute(req,r)
+	print 'Updated %s record(s)' % len(w)
+	print 'Finished!'
 
+elif '/h' in al or '/help' in al or '--help' in al:
+	print '\
+Usage: python %s [/h|/wtf_update]\n\n\
+/h - this help\n\
+/wtf_update - update number format in `wtf` base for enable history of words definitions\n\
+' % al[0]
+elif len(al) > 1: print 'Use: python %s /h for short help' % al[0]
+else:
+	bases_arr = [[jidbase,'jid','jid'],[talkers,'talkers','talkers'],
+				 [answers,'answer','answer'],[saytobase,'st','sayto'],[distbase,'dist','dist'],[distbase_user,'dist','dist_user'],
+				 [karmabase,'karma','karma'],[karmabase,'commiters','karma_commiters'],[karmabase,'limits','karma_limits'],
+				 [acl_base,'acl','acl'],[wzbase,'wz','wz'],[gisbase,'gis','gis'],[def_phone_base,'ru_stat','def_ru_stat'],
+				 [def_phone_base,'ua_stat','def_ua_stat'],[def_phone_base,'ru_mobile','def_ru_mobile'],[muc_lock_base,'muc','muc_lock']]
+
+	from_base = to_base = 'age'
+	if os.path.isfile(agestat):
+		s_conn = sqlite3.connect(agestat)
+		s_cur = s_conn.cursor()
+		tmp = s_cur.execute('select * from %s' % from_base).fetchall()
+		print 'Import %s, Base %s->%s, %s records' % (agestat, from_base, to_base, len(tmp))
+		s_conn.close()
+		if tmp:
+			for t in tmp:
+				req = 'insert into %s values(%s);' % (to_base,','.join(['%'+a for a in 's'*9]))
+				cur.execute(req,list(t)+[t[1].lower()])
+		conn.commit()
+
+	from_base = to_base = 'wtf'
+	if os.path.isfile(wtfbase):
+		s_conn = sqlite3.connect(wtfbase)
+		s_cur = s_conn.cursor()
+		tmp = s_cur.execute('select * from %s' % from_base).fetchall()
+		print 'Import %s, Base %s->%s, %s records' % (wtfbase, from_base, to_base, len(tmp))
+		s_conn.close()
+		if tmp:
+			for t in tmp:
+				try: tm = time.mktime([[int(t2) for t2 in t[6].replace('.',' ').replace(':',' ').split()][t1] for t1 in [2,1,0,3,4,5]]+[0,0,0])
+				except: tm = 0
+				r = t[:6]+(tm,)+t[7:]
+				req = 'insert into %s values(%s);' % (to_base,','.join(['%'+a for a in 's'*len(r)]))
+				cur.execute(req,r)
+		conn.commit()
+				 
+	for t in bases_arr: convert_base(t[0],t[1],t[2])
+	print 'Finished!'
 cur.close()
 conn.commit()
 conn.close()
-
-print 'Finished!'
