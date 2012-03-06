@@ -1724,6 +1724,7 @@ def messageCB(sess,mess):
 										argzbk = argzbk[:it]+argzbk[it+1:]
 									except: pass
 								ppr = ppr.replace('%{unused}*',' '.join(argzbk))
+						else: ppr = '%s %s' % (ppr,argz)
 
 					if len(ppr) == ppr.count(' '): ppr = ''
 					no_comm = com_parser(access_mode, nowname, type, room, nick, ppr, jid)
