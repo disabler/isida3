@@ -63,11 +63,12 @@ def errorHandler(text):
 print 'Updater for Isida Jabber Bot from 2.x to 3.x'
 print '(c) Disabler Production Lab.'
 
+base_charset, base_type = 'utf8', 'pgsql'
+
 if os.path.isfile(configname): execfile(configname)
 else: errorHandler('%s is missed.' % configname)
 
-base_charset = 'utf8'	
-try: _,_,_,_,_,_ = base_type,base_name,base_user,base_host,base_pass,base_port
+try: _,_,_,_,_ = base_name,base_user,base_host,base_pass,base_port
 except: errorHandler('Missed settings for SQL DB!')
 
 if base_type == 'pgsql':
