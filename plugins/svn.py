@@ -23,9 +23,11 @@
 
 def svn_get(type, jid, nick,text):
 	if len(text):
-		if text[:7] !='http://' and text[:8] !='https://' and text[:6] !='svn://': text = 'http://'+text
+		if text[:7] !='http://' and text[:8] !='https://' and text[:6] !='svn://': text = 'http://%s' % text
 		count = 1
 		revn = 0
+		if '-v' in text.split(): text,verb = reduce_spaces_all(text.replace('-v','')),True
+		else: verb = False
 		if ' ' in text:
 			text = text.split(' ')
 			url = text[0]
@@ -39,6 +41,7 @@ def svn_get(type, jid, nick,text):
 		else:
 			if count > 10: count = 10
 			sh_exe = 'sh -c \"LANG='+L('en_EN.UTF8')+' svn log '+url+' --limit '+str(count)+'\"'
+		if verb: sh_exe = '%s -v\"' % sh_exe[:-1]
 		svn_log = shell_execute(sh_exe).replace('\n\n','\n')
 		while svn_log[-1] in ['-','\n']: svn_log = svn_log[:-1]
 		rpl = re.findall('-{10,}',svn_log)
