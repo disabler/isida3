@@ -1711,7 +1711,9 @@ def messageCB(sess,mess):
 								try: ppr = ppr.replace('%'+tmp,'')
 								except: pass
 					else:
-						ppr = parse[2].replace('%*', argz).replace('%{reduce}*', argz.strip()).replace('%{reduceall}*', reduce_spaces_all(argz))
+						if '%' not in parse[2]: ppr = '%s %%*' % parse[2]
+						else: ppr = parse[2]
+						ppr = ppr.replace('%*', argz).replace('%{reduce}*', argz.strip()).replace('%{reduceall}*', reduce_spaces_all(argz))
 						if '%' in ppr:
 							cpar = re.findall('%([0-9]+)', ppr, re.S)
 							if len(cpar):
@@ -1724,7 +1726,6 @@ def messageCB(sess,mess):
 										argzbk = argzbk[:it]+argzbk[it+1:]
 									except: pass
 								ppr = ppr.replace('%{unused}*',' '.join(argzbk))
-						else: ppr = '%s %s' % (ppr,argz)
 
 					if len(ppr) == ppr.count(' '): ppr = ''
 					no_comm = com_parser(access_mode, nowname, type, room, nick, ppr, jid)
