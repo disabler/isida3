@@ -1774,14 +1774,23 @@ def send_msg_human(type, room, nick, text):
 
 def to_censore(text,room):
 	ccn = []
+	custom_replace = {}
 	if get_config(getRoom(room),'censor_custom'):
 		custom_censor = get_config(getRoom(room),'censor_custom_rules').replace('\r','').replace('\t','').split('\n')
 		for c in custom_censor:
-			if '#' not in c and len(c): ccn.append(c)
+			cc=c.split('#',1)
+			if cc[0]:
+				ccn.append(cc[0])
+				if len(cc) > 1: custom_replace[cc[0]] = reduce_spaces_all(cc[1])
 	wca = None
+	def_replacer = GT('censor_text')
 	for c in censor+ccn:
 		cn = re.findall(c,' %s ' % text,re.I+re.S+re.U)
-		for tmp in cn: text,wca = text.replace(tmp,[GT('censor_text')*len(tmp),GT('censor_text')][len(GT('censor_text'))>1]),True
+		for tmp in cn:
+			t = ''.join(tmp)
+			try: replacer = custom_replace[c]
+			except: replacer = def_replacer
+			text,wca = text.replace(t,[replacer*len(t),replacer][len(replacer)>1]),True
 	if wca: text = del_space_both(text)
 	return text
 
