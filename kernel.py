@@ -1778,7 +1778,11 @@ def to_censore(text,room):
 	if get_config(getRoom(room),'censor_custom'):
 		custom_censor = get_config(getRoom(room),'censor_custom_rules').replace('\r','').replace('\t','').split('\n')
 		for c in custom_censor:
-			cc=c.split('#',1)
+			if c.count('#') <= 1: cc=c.split('#',1)
+			else:
+				cc=c.split('#')
+				if cc[-1] == cc[-2] == '': cc = ['#'.join(cc[:-2]),'#']
+				else: cc = ['#'.join(cc[:-1]),cc[-1]]
 			if cc[0]:
 				ccn.append(cc[0])
 				if len(cc) > 1: custom_replace[cc[0]] = reduce_spaces_all(cc[1])
