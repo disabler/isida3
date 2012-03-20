@@ -80,7 +80,7 @@ def vcard_async(type, jid, nick, text, args, is_answ):
 		else:
 			msg_header = L('vCard:')
 			for tmp in [(L('Nick'),'NICKNAME'),(L('Name'),'FN'),(L('About'),'DESC'),(L('URL'),'URL')]:
-				tt = remove_ltgt(get_tag(isa,tmp[1]))
+				tt = esc_min2(remove_ltgt(get_tag(isa,tmp[1])))
 				if len(tt): msg += '\n%s: %s' % (tmp[0],tt)
 		if len(msg): msg = msg_header + msg
 		else: msg = msg_header + L('Empty!')
