@@ -36,7 +36,7 @@ issue_number_format = '#%04d'
 def issue(type, room, nick, text):
 	subc = reduce_spaces_all(text).split()
 	acclvl,jid = get_level(room,nick)
-	if not subc or subc[0] == 'show': msg = issue_show(subc,room)
+	if not subc or subc[0] == 'show': msg,type = issue_show(subc,room,type,nick)
 	elif subc[0] in ['del','delete','rm','remove']: msg = issue_remove(subc,acclvl,room,jid,nick)
 	elif subc[0] == 'pending': msg = issue_pending(subc,acclvl,room,jid,nick)
 	elif subc[0] == 'accept': msg = issue_accept(subc,acclvl,room,jid,nick)
@@ -64,7 +64,7 @@ def issue_new(s,acclvl,room,jid,nick,text):
 	if err: return err
 	else: return L('Added issue %s') % issue_number_format % id
 
-def issue_show(s,room):
+def issue_show(s,room,type,nick):
 	if len(s) > 1: s = s[1]
 	else: s = '%'
 	s_original = s
@@ -75,6 +75,9 @@ def issue_show(s,room):
 		iss = cur_execute_fetchall('select id,nick,tags,body,status,comment,accept_by,accept_date from issues where room=%s and (tags ilike %s or body ilike %s or comment ilike %s or nick ilike %s) and status<%s order by id;',(room,s,s,s,s,issue_reject_id))
 	if iss:
 		tm = []
+		if len(iss) > 1 and type == 'groupchat':
+			send_msg(type, room, nick, L('Sent in private message'))
+			type = 'chat'
 		for t in iss:
 			if t[2]: tmp = '%s (%s) *%s | %s\n%s' % (issue_number_format % t[0],issue_status[t[4]],' *'.join(t[2].split()),L('Created by %s') % t[1],t[3])
 			else: tmp = '%s (%s) %s\n%s' % (issue_number_format % t[0],issue_status[t[4]],L('Created by %s') % t[1],t[3])
@@ -82,9 +85,9 @@ def issue_show(s,room):
 				tmp = '%s\n%s %s [%s]' % (tmp,issue_status_show[t[4]],t[6],disp_time(t[7]))
 				if t[5]: tmp += L(', by reason: %s') % t[5]
 			tm.append(tmp)
-		return L('Issue(s) list:\n%s') % '\n\n'.join(tm)
-	elif s_original == '%': return L('Issues not found!')
-	else: return L('Issues with match \'%s\' not found!') % s_original
+		return L('Issue(s) list:\n%s') % '\n\n'.join(tm), type
+	elif s_original == '%': return L('Issues not found!'), type
+	else: return L('Issues with match \'%s\' not found!') % s_original, type
 
 def issue_remove(s,acclvl,room,jid,nick):
 	if len(s) > 1: id = s[1]

@@ -26,7 +26,7 @@ last_url_watch = ''
 url_watch_ignore = ['pdf','sig','spl','class','ps','torrent','dvi','gz','pac','swf','tar','tgz','tar','zip','mp3','m3u','wma',\
 					'wax','ogg','wav','gif','jar','jpg','jpeg','png','xbm','xpm','xwd','css','asc','c','cpp','log','conf','text',\
 					'txt','dtd','xml','mpeg','mpg','mov','qt','avi','asf','asx','wmv','bz2','tbz','tar','so','dll','exe','bin',\
-					'img','usbimg','rar','deb','rpm','iso','ico','apk','patch','svg']
+					'img','usbimg','rar','deb','rpm','iso','ico','apk','patch','svg','7z','tcl']
 
 def netheader(type, jid, nick, text):
 	if text:
