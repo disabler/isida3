@@ -57,9 +57,7 @@ def true_age_raw(type, jid, nick, text, xtype):
 			t_age = cur_execute_fetchone('select sum(age) from age where room=%s and jid=%s',(jid,real_jid[0]))
 			sbody = cur_execute_fetchone('select * from age where room=%s and jid=%s order by -time,-status',(jid,real_jid[0]))
 			sbody = [sbody[:4] + t_age + sbody[5:]]
-	except:
-		sbody = None
-		raise
+	except: sbody = None
 	if sbody:
 		msg = L('I see:')
 		for cnt, tmp in enumerate(sbody):
