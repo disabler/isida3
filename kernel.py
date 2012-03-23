@@ -806,8 +806,8 @@ def iqCB(sess,iq):
 				i.setAttr(key='id', val=id)
 				if node == '': i.setQueryNS(namespace=xmpp.NS_DISCO_INFO)
 				else: i.setTag('query',namespace=xmpp.NS_DISCO_INFO,attrs={'node':node})
-				i = disco_features_add(i)
 				if node == '':
+					i = disco_features_add(i)
 					sender(disco_ext_info_add(i))
 					raise xmpp.NodeProcessed
 				elif node.split('#')[0] == disco_config_node or node == xmpp.NS_COMMANDS:
@@ -860,8 +860,8 @@ def iqCB(sess,iq):
 				i.setAttr(key='id', val=id)
 				if node == '': i.setQueryNS(namespace=xmpp.NS_DISCO_INFO)
 				else: i.setTag('query',namespace=xmpp.NS_DISCO_INFO,attrs={'node':node})
-				i = disco_features_add(i)
 				if node == '':
+					i = disco_features_add(i)
 					sender(disco_ext_info_add(i))
 					raise xmpp.NodeProcessed
 				elif node.split('#')[0] == disco_config_node or node == xmpp.NS_COMMANDS:
