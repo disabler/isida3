@@ -477,6 +477,34 @@ def send_msg(mtype, mjid, mnick, mmessage):
 			mmessage = msg_validator(mmessage)
 			if len(mmessage): sender(xmpp.Message(mjid, mmessage, mtype))
 
+def os_version_disco():
+	iSys = sys.platform
+	iOs = os.name
+	isidaPyVer = '%s [%s]' % (sys.version.split(' (')[0],sys.version.split(')')[0].split(', ')[1])
+	if iOs == 'posix':
+		osInfo = os.uname()
+		isidaOs = osInfo[0]
+		isidaOsVer = '%s-%s / Python %s' % (osInfo[2],osInfo[4],isidaPyVer)
+	elif iSys == 'win32':
+		def get_registry_value(key, subkey, value):
+			import _winreg
+			key = getattr(_winreg, key)
+			handle = _winreg.OpenKey(key, subkey)
+			(value, type) = _winreg.QueryValueEx(handle, value)
+			return value
+		def get(key): return get_registry_value("HKEY_LOCAL_MACHINE", "SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion",key)
+		osInfo = get("ProductName")
+		buildInfo = get("CurrentBuildNumber")
+		try:
+			spInfo = get("CSDVersion")
+			isidaOs = osInfo
+			isidaOsVer = 'SP: %s / Build: %s / Python %s' % (spInfo,buildInfo,isidaPyVer)
+		except:
+			isidaOs = osInfo
+			isidaOsVer = 'Build: %s / Python %s' % (buildInfo,isidaPyVer)
+	else: isidaOs = isidaOsVer = 'unknown'
+	return isidaOs, isidaOsVer
+
 def os_version():
 	iSys = sys.platform
 	iOs = os.name
@@ -519,7 +547,7 @@ def leaveconf(conference, server, sm):
 	time.sleep(0.1)
 
 def caps_and_send(tmp):
-	tmp.setTag('c', namespace=NS_CAPS, attrs={'node':capsNode,'ver':capsVersion})
+	tmp.setTag('c', namespace=NS_CAPS, attrs={'node':capsNode,'ver':capsHash,'hash':'sha-1'})
 	sender(tmp)
 
 def join(conference,passwd):
@@ -633,6 +661,20 @@ def match_for_raw(original,regexp,gr):
 		return ['',orig_join][match_percent >= raw_percent]
 	else: return ''
 
+def disco_features_add(i):
+	for t in bot_features: i.getTag('query').setTag('feature',attrs={'var':t})
+	return i
+
+def disco_ext_info_add(i):
+	i.getTag('query').setTag('identity',attrs={'xml:lang':CURRENT_LOCALE,'category':id_category,'type':id_type,'name':id_name})
+	i.getTag('query').setTag('x',namespace=xmpp.NS_DATA,attrs={'type':'result'})
+	i.getTag('query').getTag('x',namespace=xmpp.NS_DATA).setTag('field',attrs={'var':'FORM_TYPE','type':'hidden'})
+	i.getTag('query').getTag('x',namespace=xmpp.NS_DATA).getTag('field',attrs={'var':'FORM_TYPE','type':'hidden'}).setTagData('value',xmpp.NS_SOFTWAREINFO)
+	for t in bot_softwareinfo.keys():
+		i.getTag('query').getTag('x',namespace=xmpp.NS_DATA).setTag('field',attrs={'var':t})
+		i.getTag('query').getTag('x',namespace=xmpp.NS_DATA).getTag('field',attrs={'var':t}).setTagData('value',bot_softwareinfo[t])
+	return i
+	
 def iqCB(sess,iq):
 	global timeofset, iq_in, iq_request, last_msg_base, last_msg_time_base, ddos_ignore, ddos_iq, user_hash, server_hash, server_hash_list
 	global disco_excl, message_excl
@@ -764,15 +806,10 @@ def iqCB(sess,iq):
 				i.setAttr(key='id', val=id)
 				if node == '': i.setQueryNS(namespace=xmpp.NS_DISCO_INFO)
 				else: i.setTag('query',namespace=xmpp.NS_DISCO_INFO,attrs={'node':node})
-				i.getTag('query').setTag('feature',attrs={'var':xmpp.NS_DISCO_INFO})
-				i.getTag('query').setTag('feature',attrs={'var':xmpp.NS_DISCO_ITEMS})
-				i.getTag('query').setTag('feature',attrs={'var':xmpp.NS_COMMANDS})
-				i.getTag('query').setTag('feature',attrs={'var':disco_config_node})
+				i = disco_features_add(i)
 				if node == '':
-					i.getTag('query').setTag('identity',attrs={'category':'client','type':'bot','name':'iSida Jabber Bot'})
-					sender(i)
+					sender(disco_ext_info_add(i))
 					raise xmpp.NodeProcessed
-
 				elif node.split('#')[0] == disco_config_node or node == xmpp.NS_COMMANDS:
 					i.getTag('query').setTag('feature',attrs={'var':xmpp.NS_COMMANDS})
 					i.getTag('query').setTag('feature',attrs={'var':disco_config_node})
@@ -823,15 +860,10 @@ def iqCB(sess,iq):
 				i.setAttr(key='id', val=id)
 				if node == '': i.setQueryNS(namespace=xmpp.NS_DISCO_INFO)
 				else: i.setTag('query',namespace=xmpp.NS_DISCO_INFO,attrs={'node':node})
-				i.getTag('query').setTag('feature',attrs={'var':xmpp.NS_DISCO_INFO})
-				i.getTag('query').setTag('feature',attrs={'var':xmpp.NS_DISCO_ITEMS})
-				i.getTag('query').setTag('feature',attrs={'var':xmpp.NS_COMMANDS})
-				i.getTag('query').setTag('feature',attrs={'var':disco_config_node})
+				i = disco_features_add(i)
 				if node == '':
-					i.getTag('query').setTag('identity',attrs={'category':'client','type':'bot','name':'iSida Jabber Bot'})
-					sender(i)
+					sender(disco_ext_info_add(i))
 					raise xmpp.NodeProcessed
-
 				elif node.split('#')[0] == disco_config_node or node == xmpp.NS_COMMANDS:
 					i.getTag('query').setTag('feature',attrs={'var':xmpp.NS_COMMANDS})
 					i.getTag('query').setTag('feature',attrs={'var':disco_config_node})
@@ -2135,9 +2167,8 @@ dm2 = False							# отладка действий бота
 CommandsLog = None					# логгирование команд
 prefix = '_'						# префикс комманд
 msg_limit = 1000					# лимит размера сообщений
-botName = 'Isida-Bot'				# название бота
+botName = 'iSida-bot'				# название бота
 botVersion = u'v3.0β'				# версия бота
-capsVersion = botVersion[1:-1]		# версия для капса
 disco_config_node = 'http://isida-bot.com/config'
 pres_answer = []					# результаты посылки презенсов
 iq_request = {}						# iq запросы
@@ -2193,6 +2224,8 @@ base_user = 'isidabot'  # пользователь базы
 base_host = 'localhost' # хост базы
 base_port = '5432'		# порт для подключения
 base_charset = 'utf8'   # кодировка
+bot_features = [xmpp.NS_DISCO_INFO,xmpp.NS_DISCO_ITEMS,xmpp.NS_COMMANDS,disco_config_node,xmpp.NS_PING,xmpp.NS_URN_TIME,xmpp.NS_X_OOB,xmpp.NS_MUC_FILTER,
+				xmpp.NS_VERSION,xmpp.NS_TIME,xmpp.NS_MUC,xmpp.NS_LAST,xmpp.NS_DATA]
 
 gt=tuple(time.gmtime())
 lt=tuple(time.localtime())
@@ -2217,6 +2250,9 @@ botVersion = '%s.%s' % (botVersion, base_type)
 if 'm' in botVersion.lower(): draw_warning('Launched bot\'s modification!')
 try: tmp = botOs
 except: botOs = os_version()
+
+tmp_os,tmp_ver = os_version_disco()
+bot_softwareinfo = {'software':botName,'software_version':botVersion,'os':tmp_os,'os_version':tmp_ver}
 
 sm_f = os.path.join(public_log,smile_folder)
 if os.path.isdir(sm_f):
@@ -2243,8 +2279,22 @@ if os.path.isfile(loc_file):
 		lf = readfile(lf).decode('UTF').replace('\r','').split('\n')
 		for c in lf:
 			if ('#' not in c[:3]) and len(c) and '\t' in c: locales[c.split('\t',1)[0].replace('\\n','\n').replace('\\t','\t')] = c.split('\t',1)[1].replace('\\n','\n').replace('\\t','\t')
-pprint('*** Loading main plugin','white')
 
+pprint('*** Init caps hash','white')
+id_category = 'client'
+id_type = 'bot'
+id_lang = CURRENT_LOCALE
+id_name = 'iSida Jabber Bot'
+capsHash = '%s<' % '/'.join([t.replace('/','//') for t in [id_category,id_type,id_lang,id_name]])
+bot_features.sort()
+capsHash += ''.join(['%s<' % t for t in bot_features])
+capsHash += '%s<' % xmpp.NS_SOFTWAREINFO
+tmp = ['%s<%s' % (t,bot_softwareinfo[t]) for t in bot_softwareinfo.keys()]
+tmp.sort()
+capsHash += ''.join(['%s<' % t for t in tmp])
+capsHash = hashlib.sha1(capsHash.encode('utf-8')).digest().encode('base64').replace('\n','')
+
+pprint('*** Loading main plugin','white')
 pl_folder	= 'plugins/%s'
 execfile(pl_folder % 'main.py')
 

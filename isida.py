@@ -79,7 +79,7 @@ writefile(pid_file,str(os.getpid()))
 
 dirs = os.listdir('.')+os.listdir('../')
 
-if '.!svn' in dirs:
+if '.svn' in dirs:
 	USED_REPO = 'svn'
 	if os.name == 'nt': os.system('svnversion > %s' % ver_file)
 	else: os.system('echo `svnversion` > %s' % ver_file)

@@ -141,6 +141,7 @@ NS_URN_TIME			= 'urn:xmpp:time'										# XEP-0202
 NS_URN_PING			= 'urn:xmpp:ping'										# XEP-0199
 NS_X_OOB			= 'jabber:x:oob'										# XEP-0066
 NS_AVATAR			= 'jabber:x:avatar'										# XEP-0008
+NS_SOFTWAREINFO		= 'urn:xmpp:dataforms:softwareinfo'						# XEP-0115
 
 xmpp_stream_error_conditions="""
 bad-format --  --  -- The entity has sent XML that cannot be processed.
