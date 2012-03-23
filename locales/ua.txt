@@ -255,6 +255,9 @@ Show clients statistic when available.\nclients [total|global|all[ short][ os]] 
 Available values:\n%s	Допустимі значення:\n%s
 Currency converter\nconvert from to count\nconvert list	Конвертор валют\nconvert з до сума\nconvert list
 
+# file: ../branch/plugins/cron.py
+Command not found: %s	Командe '%s' не знайдено
+
 # file: ../branch/plugins/disco.py
 - Unknown feature: %s	- Невідома фіча: %s
 Features list:\n%s	Список фіч:\n%s
@@ -881,7 +884,6 @@ leave this room.	залишив цю конференцію.
 I can't see %s here...	Я можу помилятися, але %s тут немає...
 Last update:\n%s	Останнє поновлення:\n%s
 Mode %s not detected!	Режим %s не розпізнано!
-Command not found: %s	Командe '%s' не знайдено
 Not allowed create alias for: %s	Заборонено створювати скорочення для %s
 Unable to remove %s	Неможливо видалити %s
 Not allowed remove alias for: %s	Заборонено видаляти скорочення для %s
@@ -1520,9 +1522,9 @@ Show list of users for last day	Показ списку учасників за 
 # file: ../branch/plugins/wtf.py
 I know that %s is %s	Я знаю, що %s - %s
 What search?	Що ж будемо шукати?
-What need to find?	Що ж будемо шукати?
 Some matches in definitions: %s	Дещо схоже я бачила в: %s
 No matches.	Хм. Нічого схожого я не знаю...
+What need to find?	Що ж будемо шукати?
 All I know is: %s	Все що я знаю - це: %s
 Locale definition: %s\nGlobal: %s\nImported: %s\nTotal: %s	В цій конфі визначень: %s\nГлобальних: %s\nІмпортовано: %s\nУсього: %s
 Send to private %s	Відправлено до привату %s

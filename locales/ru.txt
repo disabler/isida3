@@ -22,6 +22,7 @@
 Unknown error!	Неизвестная ошибка!
 Error!	Ошибка!
 AD-Hoc commands	AD-Hoc команды
+Current bot rooms	Текущие конференции
 Settings unsuccesfully accepted:\n%s	Не приняты настройки:\n%s
 Settings succesfully accepted	Настройки приняты успешно
 Settings	Настройки
@@ -254,6 +255,9 @@ Show clients statistic when available.\nclients [total|global|all[ short][ os]] 
 # file: ../branch/plugins/convert.py
 Available values:\n%s	Допустимые значения:\n%s
 Currency converter\nconvert from to count\nconvert list	Конвертер валют\nconvert из в сумма\nconvert list
+
+# file: ../branch/plugins/cron.py
+Command not found: %s	Команда '%s' не найдена
 
 # file: ../branch/plugins/disco.py
 - Unknown feature: %s	- Неизвестная фича: %s
@@ -881,7 +885,6 @@ leave this room.	покинул данную конференцию.
 I can't see %s here...	Я могу ошибаться, но %s тут нету...
 Last update:\n%s	Последнее обновление:\n%s
 Mode %s not detected!	Режим %s не опознан!
-Command not found: %s	Команда '%s' не найдена
 Not allowed create alias for: %s	Запрещено создавать сокращение для %s
 Unable to remove %s	Невозможно удалить %s
 Not allowed remove alias for: %s	Запрещено удалять сокращение для %s
@@ -1521,9 +1524,9 @@ Show list of users for last day	Показ списка участников з�
 I know that %s is %s	Я знаю, что %s - %s
 from %s: %s	от %s: %s
 What search?	Чего искать то будем?
-What need to find?	Чего искать то будем?
 Some matches in definitions: %s	Нечто похожее я видела в: %s
 No matches.	Хм. Ничего похожего я не знаю...
+What need to find?	Чего искать то будем?
 All I know is: %s	Всё, что я знаю это: %s
 Locale definition: %s\nGlobal: %s\nImported: %s\nTotal: %s	В этой конфе определений: %s\nГлобальных: %s\nИмпортировано: %s\nВсего: %s
 Send to private %s	Отправлено в приват %s
