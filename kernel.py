@@ -800,7 +800,7 @@ def iqCB(sess,iq):
 
 		elif iq.getTag(name='query', namespace=xmpp.NS_DISCO_INFO):
 			node=get_tag_item(unicode(query),'query','node')
-			if node.split('#')[0] in ['', disco_config_node, xmpp.NS_COMMANDS]:
+			if node.split('#')[0] in ['', disco_config_node, xmpp.NS_COMMANDS] or node == xmpp.NS_MUC_ROOMS:
 				pprint('*** iq:disco_info from %s node "%s"' % (unicode(room),node),'magenta')
 				i=xmpp.Iq(to=room, typ='result')
 				i.setAttr(key='id', val=id)
@@ -810,9 +810,13 @@ def iqCB(sess,iq):
 					i = disco_features_add(i)
 					sender(disco_ext_info_add(i))
 					raise xmpp.NodeProcessed
+				elif node == xmpp.NS_MUC_ROOMS:
+					#i.getTag('query').setTag('feature',attrs={'var':xmpp.NS_MUC_ROOMS})
+					sender(i)
+					raise xmpp.NodeProcessed				
 				elif node.split('#')[0] == disco_config_node or node == xmpp.NS_COMMANDS:
-					i.getTag('query').setTag('feature',attrs={'var':xmpp.NS_COMMANDS})
-					i.getTag('query').setTag('feature',attrs={'var':disco_config_node})
+					#i.getTag('query').setTag('feature',attrs={'var':xmpp.NS_COMMANDS})
+					#i.getTag('query').setTag('feature',attrs={'var':disco_config_node})
 					try: tn = '#' + node.split('#')[1]
 					except: tn = ''
 					if tn:
@@ -830,7 +834,19 @@ def iqCB(sess,iq):
 		elif iq.getTag(name='query', namespace=xmpp.NS_DISCO_ITEMS) and acclvl:
 			node=get_tag_item(unicode(query),'query','node')
 			pprint('*** iq:disco_items from %s node "%s"' % (unicode(room),node),'magenta')
-			if node.split('#')[0] in [disco_config_node, xmpp.NS_COMMANDS]:
+			if node == xmpp.NS_MUC_ROOMS:
+					i=xmpp.Iq(to=room, typ='result')
+					i.setAttr(key='id', val=id)
+					i.setTag('query',namespace=xmpp.NS_DISCO_ITEMS,attrs={'node':node})
+					hr,trooms = getFile(hide_conf,[]),[]
+					for t in confbase:
+						if al == 9 or getRoom(t) not in hr: trooms.append(getRoom(t))
+					trooms.sort()
+					trooms = [xmpp.Node('item',attrs={'jid':t}) for t in trooms]
+					i.getTag('query',namespace=xmpp.NS_DISCO_ITEMS).setPayload(trooms)
+					sender(i)
+					raise xmpp.NodeProcessed
+			elif node.split('#')[0] in [disco_config_node, xmpp.NS_COMMANDS]:
 				try: tn = '#' + node.split('#')[1]
 				except: tn = ''
 				i=xmpp.Iq(to=room, typ='result')
@@ -848,25 +864,35 @@ def iqCB(sess,iq):
 				i.setAttr(key='id', val=id)
 				i.setQueryNS(namespace=xmpp.NS_DISCO_ITEMS)
 				i.getTag('query').setTag('item',attrs={'node':xmpp.NS_COMMANDS, 'name':L('AD-Hoc commands'),'jid':towh})
+				i.getTag('query').setTag('item',attrs={'node':xmpp.NS_MUC_ROOMS, 'name':L('Current bot rooms'),'jid':towh})
 				sender(i)
 				raise xmpp.NodeProcessed
 
 	elif iq.getType()=='set':
 		if iq.getTag(name='command', namespace=xmpp.NS_COMMANDS) and acclvl:
 			node=get_tag_item(unicode(iq),'command','node')
-			if get_tag_item(unicode(iq),'command','action') == 'execute' and node.split('#')[0] in ['', disco_config_node, xmpp.NS_COMMANDS]:
+			if get_tag_item(unicode(iq),'command','action') == 'execute' and (node.split('#')[0] in ['', disco_config_node, xmpp.NS_COMMANDS] or node == xmpp.NS_MUC_ROOMS):
 				pprint('*** iq:ad-hoc commands from %s node "%s"' % (unicode(room),node),'magenta')
 				i=xmpp.Iq(to=room, typ='result')
 				i.setAttr(key='id', val=id)
 				if node == '': i.setQueryNS(namespace=xmpp.NS_DISCO_INFO)
-				else: i.setTag('query',namespace=xmpp.NS_DISCO_INFO,attrs={'node':node})
+				else: i.setTag('query',namespace=xmpp.NS_DISCO_ITEMS,attrs={'node':node})
 				if node == '':
 					i = disco_features_add(i)
 					sender(disco_ext_info_add(i))
 					raise xmpp.NodeProcessed
+				elif node == xmpp.NS_MUC_ROOMS:
+					hr,trooms = getFile(hide_conf,[]),[]
+					for t in confbase:
+						if al == 9 or getRoom(t) not in hr: trooms.append(getRoom(t))
+					trooms.sort()
+					trooms = [xmpp.Node('item',attrs={'jid',t}) for t in trooms]
+					i.getTag('query',namespace=xmpp.NS_DISCO_ITEMS).setPayload(trooms)
+					sender(i)
+					raise xmpp.NodeProcessed
 				elif node.split('#')[0] == disco_config_node or node == xmpp.NS_COMMANDS:
-					i.getTag('query').setTag('feature',attrs={'var':xmpp.NS_COMMANDS})
-					i.getTag('query').setTag('feature',attrs={'var':disco_config_node})
+					#i.getTag('query').setTag('feature',attrs={'var':xmpp.NS_COMMANDS})
+					#i.getTag('query').setTag('feature',attrs={'var':disco_config_node})
 					try: tn = '#' + node.split('#')[1]
 					except: tn = ''
 					try: tmpn = tn.split('-',1)[1]
@@ -2225,7 +2251,7 @@ base_host = 'localhost' # хост базы
 base_port = '5432'		# порт для подключения
 base_charset = 'utf8'   # кодировка
 bot_features = [xmpp.NS_DISCO_INFO,xmpp.NS_DISCO_ITEMS,xmpp.NS_COMMANDS,disco_config_node,xmpp.NS_PING,xmpp.NS_URN_TIME,xmpp.NS_X_OOB,xmpp.NS_MUC_FILTER,
-				xmpp.NS_VERSION,xmpp.NS_TIME,xmpp.NS_MUC,xmpp.NS_LAST,xmpp.NS_DATA]
+				xmpp.NS_VERSION,xmpp.NS_TIME,xmpp.NS_MUC,xmpp.NS_LAST,xmpp.NS_DATA,xmpp.NS_MUC_ROOMS]
 
 gt=tuple(time.gmtime())
 lt=tuple(time.localtime())
