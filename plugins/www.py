@@ -101,7 +101,7 @@ def parse_url_in_message(room,jid,nick,type,text):
 		except: pass
 	if not was_shown and get_config(getRoom(room),'content_length'):
 		try:
-			link = re.findall(u'(http[s]?://[-0-9a-zа-я.]+\/[-a-zа-я0-9._?#=@%/]+\.[a-z]{1}[a-z0-9]{1,7})',text,re.I+re.U+re.S)[0]
+			link = re.findall(u'(http[s]?://[-0-9a-zа-я.]+\/[-a-zа-я0-9._?#=@%/]+\.[a-z0-9]{2,7})',text,re.I+re.U+re.S)[0]
 			if link and last_url_watch != link and pasteurl not in link:
 				is_file = False
 				for t in url_watch_ignore:
@@ -121,7 +121,7 @@ def parse_url_in_message(room,jid,nick,type,text):
 							mt = mt / 1024.0
 						if tt: mt = '%.2f%s' % (mt,tt)
 						else: mt = '%sb' % int(mt)
-						if mt: send_msg(type, room, '', L('Length of %s is %s') % (u'…/%s' % link.split('/')[-1],mt))
+						if mt: send_msg(type, room, '', L('Length of %s is %s') % (u'…/%s' % link.rsplit('/',1)[-1],mt))
 		except: pass
 
 global execute
