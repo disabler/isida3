@@ -616,7 +616,9 @@ def raw_who(room,nick):
 		realjid = get_level(room,nick)[1]
 		msg = L('Access level: %s') % access_mode
 		msg += ', ' + [L('Ignored'),L('Minimal'),L('Visitor'),L('Visitor and Member'),L('Participant'),L('Member'), L('Moderator'),L('Moderator and member'),L('Admin'),L('Owner'),L('Bot\'s owner')][access_mode+1]
-		if realjid != 'None': msg = L('%s, jid detected') % msg
+		if realjid != 'None':
+			msg = L('%s, jid detected') % msg
+			if ddos_ignore.has_key(getRoom(realjid)): msg = '%s, %s' % (msg,L('temporary ignored (%s)') % un_unix(ddos_ignore[getRoom(realjid)][2]-time.time()))
 	return msg
 
 def info_comm(type, jid, nick):

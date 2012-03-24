@@ -270,6 +270,7 @@ CREATE INDEX versions_rj ON versions (room(255),jid(255));
 CREATE INDEX versions_cvo ON versions (client(255),version(255),os(255));
 -- CREATE INDEX versions_rjcvo ON versions (room(255),jid(255),client(255),version(255),os(255));
 
+
 --
 -- Issues base
 --
@@ -291,6 +292,26 @@ CREATE TABLE issues (
 
 CREATE INDEX issues_r ON issues (room(255),id);
 CREATE INDEX issues_d ON issues (room(255),date);
+
+
+--
+-- Cron base
+--
+
+CREATE TABLE cron (
+	room text,
+	jid text,
+	nick text,
+	time integer,
+	repeat text,
+	command text,
+	level integer
+);
+
+CREATE INDEX cron_r ON cron (room(255));
+CREATE INDEX cron_rt ON cron (room(255),time);
+CREATE INDEX cron_rtr ON cron (room(255),time,repeat);
+
 
 --
 -- THE END

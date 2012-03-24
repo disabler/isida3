@@ -98,7 +98,7 @@ def cur_execute(*params):
 			params = tuple(params)
 		cur.execute(*params)
 		prm = params[0].split()[0].lower()
-		if prm in ['update','insert','delete']: conn.commit()
+		if prm in ['update','insert','delete','create','drop','alter']: conn.commit()
 	except Exception, par:
 		if db_debug:
 			try: par = str(par)
@@ -343,7 +343,12 @@ def get_tag_item(body,tag,item):
 	body = get_tag_full(body,tag)
 	return get_subtag(body,item)
 
-def parser(t): return ''.join([['?',l][l<='~'] for l in unicode(t)])
+def parser(t): 
+	try: return ''.join([['?',l][l<='~'] for l in unicode(t)])
+	except:
+		fp = file('log/critical_exception_%s.txt' % int(time.time()), 'wb')
+		fp.write(t)
+		fp.close()
 
 def remove_sub_space(t): return ''.join([['?',l][l>=' ' or l in '\t\r\n'] for l in unicode(t)])
 
@@ -1678,7 +1683,7 @@ def com_parser(access_mode, nowname, type, room, nick, text, jid):
 	if last_command[1:7] == [nowname, type, room, nick, text, jid] and time.time() < last_command[7]+GT('ddos_diff')[access_mode]:
 		ddos_ignore[jjid] = [room,nick,time.time()+GT('ddos_limit')[access_mode]]
 		pprint('!!! DDOS Detect: %s %s/%s %s %s' % (access_mode, room, nick, jid, text),'bright_red')
-		send_msg(type, room, nick, L('Warning! Exceeded the limit of sending the same commands. You to ignore for %s sec.') % GT('ddos_limit')[access_mode])
+		send_msg(type, room, nick, L('Warning! Exceeded the limit of sending the same commands. You to ignore for %s.') % un_unix(GT('ddos_limit')[access_mode]))
 		return None
 	no_comm = True
 	cof = getFile(conoff,[])

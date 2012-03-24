@@ -46,7 +46,7 @@ Large status block!	Блокировка длинного статусного �
 Large nick block!	Блокировка длинного ника!
 To many rejoins! Wait %s sec.	Слишком много попыток входа! Ждите %s сек.
 Status-flood block!	Блокировка статус-флуда!
-Warning! Exceeded the limit of sending the same commands. You to ignore for %s sec.	Внимание! Превышен лимит отправки одинаковых команд. Вы в игноре %s сек.
+Warning! Exceeded the limit of sending the same commands. You to ignore for %s.	Внимание! Превышен лимит отправки одинаковых команд. Вы в игноре %s.
 Room's configuration changed.	Изменена конфигурация конференции.
 Censored!	Фильтруем базар!
 *** Topic: %s	*** Тема: %s
@@ -257,7 +257,22 @@ Available values:\n%s	Допустимые значения:\n%s
 Currency converter\nconvert from to count\nconvert list	Конвертер валют\nconvert из в сумма\nconvert list
 
 # file: ../branch/plugins/cron.py
+Repeat in %s	Повтор через %s
+Cron rules:\n%s	Расписания:\n%s
+There is no cron rules.	Расписания не найдены.
+Error in time format!	Ошибка в формате времени!
+Not enough parameters!	Не достаточно параметров!
 Command not found: %s	Команда '%s' не найдена
+Not allowed launch: %s	Не разрешено использовать: %s
+Sorry, this feature not implemented.	Извените, эта возможность не реализована.
+Time is pasted!	Время прошло!
+Updated: %s	Обновлено: %s
+All cron rules removed!	Все расписания удалены!
+Need choise record number.	Необходимо выбрать номер записи.
+Record ID is numeric.	Идентификатор записи - цифровой.
+Record #%s not found!	Запись #%s не найдена!
+Removed: %s	Удалено: %s
+Execute command by cron.\ncron m h d M y command\nUsed unix-type time format	Выполнение команды по расписанию.\ncron м ч д М г команда\nФормат времени аналогичен unix
 
 # file: ../branch/plugins/disco.py
 - Unknown feature: %s	- Неизвестная фича: %s
@@ -426,7 +441,6 @@ sticking NICK with the words "buy ice cream, you creep!"	тыкает NICK со 
 Sent in private message	Сообщение отправлено в приват
 Phrases:	Фразы:
 The record doesn't exist!	Такой фразы нет!
-Removed: %s	Удалено: %s
 Added	Добавила
 I can't add it! No keyword "NICK"!	Не могу добавить! Нет ключевого слова "NICK"!
 Masochist? 8-D	Самотык? 8-D
@@ -918,6 +932,7 @@ Admin	Администратор
 Owner	Владелец
 Bot's owner	Владелец бота
 %s, jid detected	%s, jid опознан
+temporary ignored (%s)	временно в игноре (%s)
 Total commands: %s | Prefix: %s | Your access level: %s | Available commands: %s%s	Всего команд: %s | Префикс: %s | Ваш доступ: %s | Доступно команд: %s%s
 Send donation to: %sBest regards, %s	Реквизиты для благодарностей/помощи:%sС Уважением, %s
 access	доступ
@@ -1465,7 +1480,6 @@ what do you want to add?	что добавить?
 not given tracking	не заданы параметры слежения
 is not specified criterion tracking	не указан критерий слежения
 I am not in the %s 	Меня нет в %s
-Updated: %s	Обновлено: %s
 what do you want remove?	что удалить?
 Monitoring conferences:	Слежение за конференциями:
 \nNext scanning across %s	\nСледующее сканирование через %s

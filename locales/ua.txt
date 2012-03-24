@@ -45,7 +45,7 @@ Large status block!	Блокування довгого статусного п�
 Large nick block!	Блокування довгого ніка
 To many rejoins! Wait %s sec.	Занадто багато спроб входу! Чекайте %s с.
 Status-flood block!	Блокування статус-флуду
-Warning! Exceeded the limit of sending the same commands. You to ignore for %s sec.	Увага! Перевищено ліміт відправлення однакових команд. Ви в ігнорі %s сек.
+Warning! Exceeded the limit of sending the same commands. You to ignore for %s.	Увага! Перевищено ліміт відправлення однакових команд. Ви в ігнорі %s.
 Room's configuration changed.	Змінено конфігурацію конференції.
 Censored!	Фільтруємо балачки!
 *** Topic: %s	*** Тема: %s
@@ -257,6 +257,8 @@ Currency converter\nconvert from to count\nconvert list	Конвертор ва�
 
 # file: ../branch/plugins/cron.py
 Command not found: %s	Командe '%s' не знайдено
+Updated: %s	Поновлено: %s
+Removed: %s	Видалено: %s
 
 # file: ../branch/plugins/disco.py
 - Unknown feature: %s	- Невідома фіча: %s
@@ -425,7 +427,6 @@ sticking NICK with the words "buy ice cream, you creep!"	тикає NICK зі с
 Sent in private message	Повідомлення відправлено до привату
 Phrases:	Фрази:
 The record doesn't exist!	Такої фрази немає!
-Removed: %s	Видалено: %s
 Added	Додала
 I can't add it! No keyword "NICK"!	Не можу додати! Немає ключового слова "NICK"!
 Masochist? 8-D	Самотик? 8-D
@@ -1464,7 +1465,6 @@ what do you want to add?	що додати?
 not given tracking	не задані параметри спостереження
 is not specified criterion tracking	не вказаний критерій спостереження
 I am not in the %s 	Мене немає в %s
-Updated: %s	Поновлено: %s
 what do you want remove?	що видалити?
 Monitoring conferences:	Спостереження за конференціями:
 \nNext scanning across %s	\nНаступне сканування через %s
