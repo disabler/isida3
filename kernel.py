@@ -839,7 +839,7 @@ def iqCB(sess,iq):
 		elif iq.getTag(name='query', namespace=xmpp.NS_DISCO_ITEMS) and acclvl:
 			node=get_tag_item(unicode(query),'query','node')
 			pprint('*** iq:disco_items from %s node "%s"' % (unicode(room),node),'magenta')
-			if node == xmpp.NS_MUC_ROOMS:
+			if node == xmpp.NS_MUC_ROOMS and GT('iq_show_rooms_disco'):
 					i=xmpp.Iq(to=room, typ='result')
 					i.setAttr(key='id', val=id)
 					i.setTag('query',namespace=xmpp.NS_DISCO_ITEMS,attrs={'node':node})
@@ -886,7 +886,7 @@ def iqCB(sess,iq):
 					i = disco_features_add(i)
 					sender(disco_ext_info_add(i))
 					raise xmpp.NodeProcessed
-				elif node == xmpp.NS_MUC_ROOMS:
+				elif node == xmpp.NS_MUC_ROOMS and GT('iq_show_rooms_disco'):
 					hr,trooms = getFile(hide_conf,[]),[]
 					for t in confbase:
 						if al == 9 or getRoom(t) not in hr: trooms.append(getRoom(t))
@@ -2113,7 +2113,7 @@ def now_schedule():
 			to -= 1
 			time.sleep(1)
 		if not game_over:
-			for tmp in gtimer: log_execute(tmp,())
+			for tmp in gtimer: thr(tmp,(),'time_thread_%s' % tmp)
 
 def check_rss():
 	l_hl = int(time.time())
@@ -2377,10 +2377,8 @@ ownerbase = getFile(owners,[god])
 ignorebase = getFile(ignores,[])
 cu_age = []
 close_age_null()
-try:
-	confbase = json.loads(readfile(confs))
-except:
-	confbase = ['%s/%s' % (defaultConf.lower(),Settings['nickname'])]
+try: confbase = json.loads(readfile(confs))
+except: confbase = ['%s/%s' % (defaultConf.lower(),Settings['nickname'])]
 if os.path.isfile(cens):
 	censor = readfile(cens).decode('UTF').replace('\r','').split('\n')
 	cn = []

@@ -264,7 +264,7 @@ Error in time format!	Ошибка в формате времени!
 Not enough parameters!	Не достаточно параметров!
 Command not found: %s	Команда '%s' не найдена
 Not allowed launch: %s	Не разрешено использовать: %s
-Sorry, this feature not implemented.	Извените, эта возможность не реализована.
+Sorry, this feature not implemented.	Извините, эта возможность не реализована.
 Time is pasted!	Время прошло!
 Updated: %s	Обновлено: %s
 All cron rules removed!	Все расписания удалены!
@@ -272,7 +272,7 @@ Need choise record number.	Необходимо выбрать номер зап
 Record ID is numeric.	Идентификатор записи - цифровой.
 Record #%s not found!	Запись #%s не найдена!
 Removed: %s	Удалено: %s
-Execute command by cron.\ncron m h d M y command\nUsed unix-type time format	Выполнение команды по расписанию.\ncron м ч д М г команда\nФормат времени аналогичен unix
+Execute command by cron.\ncron m h d M y command\nUsed unix-type time format	Выполнение команды по расписанию. Формат времени аналогичен unix-версии команды.\ncron м ч д М г команда
 
 # file: ../branch/plugins/disco.py
 - Unknown feature: %s	- Неизвестная фича: %s
@@ -1241,6 +1241,7 @@ Iq. Allow answer to uptime request	Iq. Разрешение отвечать н�
 Iq. Allow answer to version request	Iq. Разрешение отвечать на запрос версии бота
 Iq. Allow answer to service discovery	Iq. Разрешение отвечать на запрос обзора сервисов
 Iq. Allow answer to ping	Iq. Разрешение отвечать на запрос пинга
+Iq. Show bot rooms in service discovery	Iq. Показывать конференции бота при обзоре сервисов
 Kernel. Paranoic mode. Disable all execute possibles on bot	Kernel. Режим для параноиков. Запрет любых исполнений внешнего кода
 Kernel. Bot status. Show different status for bot loading	Kernel. Bot status. Особый статус при загрузке
 Kernel. Bot status. Status while loading	Kernel. Bot status. Статус при загрузке

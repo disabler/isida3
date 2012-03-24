@@ -1694,6 +1694,7 @@ owner_prefs = {'syslogs_enable': [L('Logger. Enable system logs'),'b',True],
 				'iq_version_enable':[L('Iq. Allow answer to version request'),'b',True],
 				'iq_disco_enable':[L('Iq. Allow answer to service discovery'),'b',True],
 				'iq_ping_enable':[L('Iq. Allow answer to ping'),'b',True],
+				'iq_show_rooms_disco':[L('Iq. Show bot rooms in service discovery'),'b',True],
 				'paranoia_mode':[L('Kernel. Paranoic mode. Disable all execute possibles on bot'),'b',False],
 				'show_loading_by_status':[L('Kernel. Bot status. Show different status for bot loading'),'b',True],
 				'show_loading_by_status_show':[L('Kernel. Bot status. Status while loading'),'d','dnd',['chat','online','away','xa','dnd']],
@@ -1745,7 +1746,7 @@ owner_group_mucfilter = [L('Muc-filter settings'),'#owner-mucfilter',
 
 owner_group_iq = [L('Iq requests settings'),'#owner-iq',
 				['iq_time_enable','iq_uptime_enable','iq_version_enable','iq_disco_enable',
-				'iq_ping_enable','ping_digits','timeout']]
+				'iq_ping_enable','ping_digits','timeout','iq_show_rooms_disco']]
 
 owner_group_juick = [L('Juick settings'),'#owner-juick',
 				['juick_user_post_limit','juick_user_post_size','juick_msg_answers_default','juick_user_tags_limit']]

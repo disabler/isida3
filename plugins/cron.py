@@ -108,9 +108,10 @@ def time_cron_del(jid,nick,ar):
 		return L('Removed: %s') % msg
 
 def cron_action():
-	c = cur_execute_fetchall('select * from cron where %s >= time',(int(time.time()),))
-	cur_execute('delete from cron where %s >= time',(int(time.time()),))
+	itt = int(time.time())
+	c = cur_execute_fetchall('select * from cron where %s >= time',(itt,))
 	if c:
+		cur_execute('delete from cron where %s >= time',(itt,))
 		for t in c:
 			if t[4]:
 				tm = sum(map(lambda e,t: e*t, [60,3600,86400,2592000,31104000],[int(v.replace('*','0').replace('/','')) for v in t[4].split()]))
@@ -123,8 +124,7 @@ def cron_action():
 			else:
 				nowname = getResourse(confbase[tmppos])
 				if nowname == '': nowname = Settings['nickname']
-			pprint('Execute by cron: %s' % t[5].split()[0])
-			return com_parser(t[6], nowname, 'groupchat', t[0], t[2], t[5], Settings['jid'])
+			com_parser(t[6], nowname, 'groupchat', t[0], t[2], t[5], Settings['jid'])
 
 global execute, timer
 
