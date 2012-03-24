@@ -257,22 +257,18 @@ Available values:\n%s	Допустимые значения:\n%s
 Currency converter\nconvert from to count\nconvert list	Конвертер валют\nconvert из в сумма\nconvert list
 
 # file: ../branch/plugins/cron.py
-Repeat in %s	Повтор через %s
 Cron rules:\n%s	Расписания:\n%s
 There is no cron rules.	Расписания не найдены.
-Error in time format!	Ошибка в формате времени!
 Not enough parameters!	Не достаточно параметров!
+Error in time format!	Ошибка в формате времени!
 Command not found: %s	Команда '%s' не найдена
 Not allowed launch: %s	Не разрешено использовать: %s
-Sorry, this feature not implemented.	Извините, эта возможность не реализована.
-Time is pasted!	Время прошло!
-Updated: %s	Обновлено: %s
 All cron rules removed!	Все расписания удалены!
 Need choise record number.	Необходимо выбрать номер записи.
 Record ID is numeric.	Идентификатор записи - цифровой.
 Record #%s not found!	Запись #%s не найдена!
 Removed: %s	Удалено: %s
-Execute command by cron.\ncron m h d M y command\nUsed unix-type time format	Выполнение команды по расписанию. Формат времени аналогичен unix-версии команды.\ncron м ч д М г команда
+Execute command by cron. Used unix-type time format.\ncron * * * * *\ncommand	Выполнение команды по расписанию. Формат времени аналогичен unix-версии команды. \ncron * * * * *\nкоманда
 
 # file: ../branch/plugins/disco.py
 - Unknown feature: %s	- Неизвестная фича: %s
@@ -1269,8 +1265,6 @@ Muc-filter. Timeout for repeat message	Muc-filter. Таймаут повтора
 Paste. Paste as html. Otherwize as text	Paste. Html размещение, иначе в виде текста
 City. Yandex.Map API-key	City. Yandex.Map API-ключ
 Bing. Translator API-key	Bing. Api-ключ переводчика
-NewYear. Congratulations text	NewYear. Текст поздравления с Новым годом
-Happy New Year!	С Новым годом!
 Kernel. Text for hide censore	Kernel. Текст для закрытия мата
 Kernel. Time of ignore for anti-ddos	Kernel. Время игнора при ddos'е в зависимости от уровня доступа
 Kernel. Anti-ddos time delay between messages	Kernel. Промежуток между сообщениями для включения анти-ddos
@@ -1481,6 +1475,7 @@ what do you want to add?	что добавить?
 not given tracking	не заданы параметры слежения
 is not specified criterion tracking	не указан критерий слежения
 I am not in the %s 	Меня нет в %s
+Updated: %s	Обновлено: %s
 what do you want remove?	что удалить?
 Monitoring conferences:	Слежение за конференциями:
 \nNext scanning across %s	\nСледующее сканирование через %s

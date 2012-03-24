@@ -1721,7 +1721,6 @@ owner_prefs = {'syslogs_enable': [L('Logger. Enable system logs'),'b',True],
 				'html_paste_enable':[L('Paste. Paste as html. Otherwize as text'),'b',True],
 				'yandex_api_key':[L('City. Yandex.Map API-key'),'t128','no api'],
 				'bing_api_key':[L('Bing. Translator API-key'),'t128','no api'],
-				'new_year_text':[L('NewYear. Congratulations text'),'t256',L('Happy New Year!')],
 				'censor_text':[L('Kernel. Text for hide censore'),'t32','[censored]'],
 				'ddos_limit':[L('Kernel. Time of ignore for anti-ddos'),'l10','[1800,1800,1800,1800,1800,600,300,150,60,0]'],
 				'ddos_diff':[L('Kernel. Anti-ddos time delay between messages'),'l10','[30,30,30,30,20,20,15,10,5,0]'],
@@ -1759,8 +1758,7 @@ owner_group_youtube = [L('Youtube settings'),'#owner-youtube',
 
 owner_group_other = [L('Other settings'),'#owner-other',
 				['anek_private_limit','backup_sleep_time','calendar_default_splitter',
-				'disco_max_limit','disco_exclude','html_paste_enable','yandex_api_key','bing_api_key',
-				'new_year_text']]
+				'disco_max_limit','disco_exclude','html_paste_enable','yandex_api_key','bing_api_key']]
 
 owner_group_karma = [L('Karma settings'),'#owner-karma',
 				['karma_limit','karma_show_default_limit','karma_show_max_limit','karma_timeout','karma_discret','karma_discret_lim_up','karma_discret_lim_dn']]

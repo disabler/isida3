@@ -60,7 +60,7 @@ def to_date(type, jid, nick, text):
 		L('Days').lower(), L('days'), L('days'), L('days'), L('days'), L('days'))
 	splitters = ('.', '-', ':', '/', ',', '\\')
 	if len(text):
-		#try:
+		try:
 			spl = [spl for spl in splitters if spl in text][0]
 			sdate = parse_date_string(text, spl)
 			if sdate[0] == 1900: sdate[0] = list(time.localtime())[0]
@@ -81,7 +81,7 @@ def to_date(type, jid, nick, text):
 			else: msg += L('will be in %s %s') % \
 				(str(abs(days_remain)), dmass[int(str(days_remain)[-1])])
 			msg = text + ' ' + msg
-#		except: msg = L('Error in parameters. Read the help about command.')
+		except: msg = L('Error in parameters. Read the help about command.')
 	else: msg = L('Error in parameters. Read the help about command.')
 	send_msg(type, jid, nick, msg)
 

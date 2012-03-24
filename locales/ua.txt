@@ -257,7 +257,6 @@ Currency converter\nconvert from to count\nconvert list	Конвертор ва�
 
 # file: ../branch/plugins/cron.py
 Command not found: %s	Командe '%s' не знайдено
-Updated: %s	Поновлено: %s
 Removed: %s	Видалено: %s
 
 # file: ../branch/plugins/disco.py
@@ -1253,8 +1252,6 @@ Muc-filter. Timeout for repeat message	Muc-filter. Таймаут повторі
 Paste. Paste as html. Otherwize as text	Paste. Html розмічення, інакше в вигляді тексту
 City. Yandex.Map API-key	City. Yandex.Map API-ключ
 Bing. Translator API-key	Bing. Api-ключ перекладача
-NewYear. Congratulations text	NewYear. Текст вітання з Новим роком
-Happy New Year!	З Новим роком!
 Kernel. Text for hide censore	Kernel. Текст для закриття мату
 Kernel. Time of ignore for anti-ddos	Kernel. Час ігнору при ddos'і в залежності від рівня доступу
 Kernel. Anti-ddos time delay between messages	Kernel. Проміжок між повідомленнями для вмикання анти-ddos
@@ -1465,6 +1462,7 @@ what do you want to add?	що додати?
 not given tracking	не задані параметри спостереження
 is not specified criterion tracking	не вказаний критерій спостереження
 I am not in the %s 	Мене немає в %s
+Updated: %s	Поновлено: %s
 what do you want remove?	що видалити?
 Monitoring conferences:	Спостереження за конференціями:
 \nNext scanning across %s	\nНаступне сканування через %s

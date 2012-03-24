@@ -21,9 +21,7 @@
 #                                                                             #
 # --------------------------------------------------------------------------- #
 
-# cron * * * * * command
-
-def validate_cron_time(t): return t == re.findall('[\/]?[0-9]+|\*',t)[0]
+# cron * * * * * \n command
 
 def time_cron(type, jid, nick, text):
 	ar = text.split(' ',1)[0].lower()
@@ -46,7 +44,7 @@ def time_cron_show(jid,nick,ar):
 		for t in c:
 			if room=='%': msg = '%s|%s' % (t[0],disp_time(t[3]))
 			else: msg = '%s. %s' % (idx,disp_time(t[3]))
-			if t[4]: msg += ' [%s]' % L('Repeat in %s') % un_unix(sum(map(lambda e,t: e*t, [60,3600,86400,2592000,31104000],[int(v.replace('*','0').replace('/','')) for v in t[4].split()])))
+			if t[4]: msg += ' [%s]' % t[4]
 			msg += ' -> %s' % t[5]
 			tmp.append(msg)
 			idx += 1
@@ -54,41 +52,24 @@ def time_cron_show(jid,nick,ar):
 	else: return L('There is no cron rules.')
 
 def time_cron_add(ar,jid,nick):
-	ar = ar.split(' ',5)
-	repeat_mode = False
-	for t in ar[:5]:
-		if not validate_cron_time(t): return L('Error in time format!')
-		if '/' in t: repeat_mode = True
-	am,amm = get_level(jid,nick)[0],-1
-	try: tcmd = ar[5].split(' ',1)[0]
+	try: cron_time, cron_cmd = ar.split('\n',1)
 	except: return L('Not enough parameters!')
+	try:
+		if cron_time[0] == '-': cron_time,repeat_time = cron_time[1:],''
+		else: repeat_time = cron_time
+		next_time = crontab.CronTab(cron_time).next() + time.time()
+	except: return L('Error in time format!')
+	lvl,rj = get_level(jid,nick)
+	amm,tcmd = -1,cron_cmd.split(' ')[0]
 	for tmp in comms:
 		if tmp[1] == tcmd:
 			amm = tmp[0]
 			break
 	if amm < 0: return L('Command not found: %s') % tcmd
-	elif amm > am: return L('Not allowed launch: %s') % tcmd
+	elif amm > lvl: return L('Not allowed launch: %s') % tcmd
 	else:
-		lvl,rj = get_level(jid,nick)
-		if repeat_mode:
-			tm = sum(map(lambda e,t: e*t, [60,3600,86400,2592000,31104000],[int(v.replace('*','0').replace('/','')) for v in ar[:5]]))
-			if tm < 1: return L('Error in time format!')
-			next_time = int(time.time()) + tm
-			repeat_mode = ' '.join(ar[:5])
-			msg_mask = '%s -> %s'
-		else:
-			if '*' in ar[:5]: return L('Sorry, this feature not implemented.')
-			else: 
-				next_time = int(time.mktime([int(v) for v in ar[:5]][::-1]+[0]*4))
-				if next_time <= time.time(): return L('Time is pasted!')
-				repeat_mode = ''
-				c = cur_execute_fetchall('select * from cron where room=%s and jid=%s and time=%s',(jid,getRoom(rj),next_time))
-				if c:
-					cur_execute('delete from cron where room=%s and jid=%s and time=%s',(jid,getRoom(rj),next_time))
-					msg_mask = L('Updated: %s') % ' %s -> %s'
-				else: msg_mask = '%s -> %s'
-		cur_execute('insert into cron values (%s,%s,%s,%s,%s,%s,%s)', (jid,getRoom(rj),nick,next_time,repeat_mode,ar[5],lvl))
-		return msg_mask % (disp_time(next_time),ar[5])
+		cur_execute('insert into cron values (%s,%s,%s,%s,%s,%s,%s)', (jid,getRoom(rj),nick,next_time,repeat_time,cron_cmd,lvl))
+		return '%s -> %s' % (disp_time(next_time),cron_cmd)
 	
 def time_cron_del(jid,nick,ar):
 	al = get_level(jid,nick)[0]
@@ -103,8 +84,8 @@ def time_cron_del(jid,nick,ar):
 		except: return L('Record #%s not found!') % ar
 		cur_execute('delete from cron where room=%s and jid=%s and nick=%s and time=%s and repeat=%s and command=%s and level=%s',rec)
 		msg = disp_time(rec[3])
-		if rec[4]: msg += ' [%s]' % L('Repeat in %s') % un_unix(sum(map(lambda e,t: e*t, [60,3600,86400,2592000,31104000],[int(v.replace('*','0').replace('/','')) for v in rec[4].split()])))
-		msg += ' > %s' % rec[5]
+		if rec[4]: msg += ' [%s]' % rec[4]
+		msg += ' -> %s' % rec[5]
 		return L('Removed: %s') % msg
 
 def cron_action():
@@ -114,8 +95,8 @@ def cron_action():
 		cur_execute('delete from cron where %s >= time',(itt,))
 		for t in c:
 			if t[4]:
-				tm = sum(map(lambda e,t: e*t, [60,3600,86400,2592000,31104000],[int(v.replace('*','0').replace('/','')) for v in t[4].split()]))
-				m = list(t[:3]) + [t[3]+tm] + list(t[4:7])
+				tm = crontab.CronTab(t[4]).next() + time.time()
+				m = list(t[:3]) + [tm] + list(t[4:7])
 				cur_execute('insert into cron values (%s,%s,%s,%s,%s,%s,%s)', m)
 			tmppos = arr_semi_find(confbase, t[0])
 			if tmppos == -1:
@@ -130,4 +111,4 @@ global execute, timer
 
 timer = [cron_action]
 
-execute = [(7, 'cron', time_cron, 2, L('Execute command by cron.\ncron m h d M y command\nUsed unix-type time format'))]
+execute = [(7, 'cron', time_cron, 2, L('Execute command by cron. Used unix-type time format.\ncron * * * * *\ncommand'))]
