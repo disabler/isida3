@@ -865,10 +865,10 @@ def owner(type, jid, nick, text):
 			if '@' in nnick:
 				ownerbase.append(nnick)
 				j = Presence(nnick, 'subscribed')
-				j.setTag('c', namespace=NS_CAPS, attrs={'node':capsNode,'ver':capsVersion})
+				j.setTag('c', namespace=NS_CAPS, attrs={'node':capsNode,'ver':capsHash,'hash':'sha-1'})
 				sender(j)
 				j = Presence(nnick, 'subscribe')
-				j.setTag('c', namespace=NS_CAPS, attrs={'node':capsNode,'ver':capsVersion})
+				j.setTag('c', namespace=NS_CAPS, attrs={'node':capsNode,'ver':capsHash,'hash':'sha-1'})
 				sender(j)
 				msg = L('Append: %s') % nnick
 			else: msg = L('Wrong jid!')
@@ -877,10 +877,10 @@ def owner(type, jid, nick, text):
 		if nnick in ownerbase and nnick != god:
 			ownerbase.remove(nnick)
 			j = Presence(nnick, 'unsubscribe')
-			j.setTag('c', namespace=NS_CAPS, attrs={'node':capsNode,'ver':capsVersion})
+			j.setTag('c', namespace=NS_CAPS, attrs={'node':capsNode,'ver':capsHash,'hash':'sha-1'})
 			sender(j)
 			j = Presence(nnick, 'unsubscribed')
-			j.setTag('c', namespace=NS_CAPS, attrs={'node':capsNode,'ver':capsVersion})
+			j.setTag('c', namespace=NS_CAPS, attrs={'node':capsNode,'ver':capsHash,'hash':'sha-1'})
 			sender(j)
 			msg = L('Removed: %s') % nnick
 		else: msg = L('Not found!')
