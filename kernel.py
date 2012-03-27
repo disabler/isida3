@@ -105,6 +105,7 @@ def cur_execute(*params):
 			try: par = str(par)
 			except: par = unicode(par)
 			pprint(par)
+		else: par = None
 		conn.rollback()
 	cur.close()
 	return par
@@ -124,11 +125,13 @@ def cur_execute_fetchone(*params):
 			if db_debug:
 				try: par = str(par)
 				except: par = unicode(par)
+			else: par = None
 	except Exception, par:
 		if db_debug:
 			try: par = str(par)
 			except: par = unicode(par)
 			pprint(par)
+		else: par = None
 		conn.rollback()
 	cur.close()
 	return par
@@ -148,11 +151,13 @@ def cur_execute_fetchall(*params):
 			if db_debug:
 				try: par = str(par)
 				except: par = unicode(par)
+			else: par = None
 	except Exception, par:
 		if db_debug:
 			try: par = str(par)
 			except: par = unicode(par)
 			pprint(par)
+		else: par = None
 		conn.rollback()
 	cur.close()
 	return par
@@ -167,10 +172,19 @@ def cur_execute_fetchmany(*params):
 			params = tuple(params)
 		cur.execute(params[0],params[1])
 		try: par = cur.fetchmany(params[-1])
-		except: par = None
-	except:
+		except Exception, par:
+			if db_debug:
+				try: par = str(par)
+				except: par = unicode(par)
+				pprint(par)
+			else: par = None
+	except Exception, par:
 		conn.rollback()
-		par = None
+		if db_debug:
+			try: par = str(par)
+			except: par = unicode(par)
+			pprint(par)
+		else: par = None
 	cur.close()
 	return par
 
