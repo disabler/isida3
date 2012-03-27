@@ -8,6 +8,7 @@ short howto for isida-bot
 3. git-core >= 1.7.1 or subversion >= 1.6.12
 4. postgresql >= 8.4
 5. openssl >= 1.0.0e
+6. python-crontab >= 0.12
 
 
 -------- download --------
