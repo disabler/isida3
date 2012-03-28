@@ -1834,7 +1834,7 @@ def msg_afterwork(mess,room,jid,nick,type,back_text,no_comm,access_mode,nowname)
 		if selfjid != jid and access_mode >= 0 and (back_text[:len(nowname)+2] == nowname+': ' or back_text[:len(nowname)+2] == nowname+', ' or type == 'chat') and is_flood:
 			pprint('Send msg human: %s/%s [%s] <<< %s' % (room,nick,type,text),'dark_gray')
 			if len(back_text)>100:
-				taxt = L('Too many letters!')
+				text = L('Too many letters!')
 				pprint('Send msg human: %s/%s [%s] >>> %s' % (room,nick,type,text),'dark_gray')
 				send_msg(type, room, nick, text)
 			else:
