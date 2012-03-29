@@ -23,15 +23,15 @@
 
 # translate: random,smart,full,partial,on,off,kick,ban,replace,mute,visitor,truncate,paste,chat,online,away,xa,dnd,on start,on shutdown,by time
 
-rlmas_min = ((u'&','&amp;'),(u'\"','&quot;'),(u'\'','&apos;'),(u'<','&lt;'),(u'>','&gt;'))
+rlmas_min = (('&','&amp;'),('\"','&quot;'),('\'','&apos;'),('<','&lt;'),('>','&gt;'))
 
-rlmas = rlmas_min + ((u'˜\'','&tilde;'),('\t','&nbsp;'*8))
+rlmas = rlmas_min + (('~','&tilde;'),('\t','&nbsp;'*8))
 
 lmass = (('\n','<br>'),('\n','<br />'),('\n','<br/>'),('\n','\n\r'),('','<![CDATA['),('',']]>'),
-		(u'','&shy;'),(u'','&ensp;'),(u'','&emsp;'),(u'','&thinsp;'),(u'','&zwnj;'),(u'','&zwj;'))
+		('','&shy;'),('','&ensp;'),('','&emsp;'),('','&thinsp;'),('','&zwnj;'),('','&zwj;'))
 
-rmass = ((u'&','&amp;'),(u'\"','&quot;'),(u'\'','&apos;'),(u'˜\'','&tilde;'),(u' ','&nbsp;'),
-		(u'<','&lt;'),(u'>','&gt;'),(u'¡','&iexcl;'),(u'¢','&cent;'),(u'£','&pound;'),
+rmass = (('&','&amp;'),('\"','&quot;'),('\'','&apos;'),('~','&tilde;'),(' ','&nbsp;'),
+		('<','&lt;'),('>','&gt;'),(u'¡','&iexcl;'),(u'¢','&cent;'),(u'£','&pound;'),
 		(u'¤','&curren;'),(u'¥','&yen;'),(u'¦','&brvbar;'),(u'§','&sect;'),(u'¨','&uml;'),(u'©','&copy;'),(u'ª','&ordf;'),
 		(u'«','&laquo;'),(u'¬','&not;'),(u'®','&reg;'),(u'¯','&macr;'),(u'°','&deg;'),(u'±','&plusmn;'),
 		(u'²','&sup2;'),(u'³','&sup3;'),(u'´','&acute;'),(u'µ','&micro;'),(u'¶','&para;'),(u'·','&middot;'),(u'¸','&cedil;'),
@@ -1006,35 +1006,35 @@ def info_base(type, jid, nick):
 	send_msg(type, jid, nick, msg)
 
 def real_search_owner(type, jid, nick, text):
-	msg = L('What need find?')
-	if text != '':
+	if text:
 		msg = L('Found:')
 		fl = 1
 		for mega1 in megabase:
 			if mega1[2] != 'None' and mega1[3] != 'None':
 				for mega2 in mega1:
 					if text.lower() in mega2.lower():
-						msg += u'\n'+unicode(mega1[1])+u' is '+unicode(mega1[2])+u'/'+unicode(mega1[3])
-						if mega1[4] != 'None': msg += u' ('+unicode(mega1[4])+u')'
-						msg += ' '+unicode(mega1[0])
+						msg += '\n%s - %s/%s' % (mega1[1],mega1[2],mega1[3])
+						if mega1[4] != 'None': msg += ' (%s)' % mega1[4]
+						msg += ' %s' % mega1[0]
 						fl = 0
 						break
 		if fl: msg = L('\'%s\' not found!') % text
+	else: msg = L('What need find?')
 	send_msg(type, jid, nick, msg)
 
 def real_search(type, jid, nick, text):
-	msg = L('What do you need to find?')
-	if text != '':
+	if text:
 		msg = L('Found:')
 		fl = 1
 		for mega1 in megabase:
 			if mega1[2] != 'None' and mega1[3] != 'None':
 				for mega2 in mega1:
 					if text.lower() in mega2.lower():
-						msg += u'\n'+unicode(mega1[1])+u' - '+unicode(mega1[2])+u'/'+unicode(mega1[3])+ ' '+unicode(mega1[0])
+						msg += u'\n%s - %s/%s %s' % (mega1[1],mega1[2],mega1[3],mega1[0])
 						fl = 0
 						break
 		if fl: msg = L('\'%s\' not found!') % text
+	else: msg = L('What do you need to find?')
 	send_msg(type, jid, nick, msg)
 
 def isNumber(text):
@@ -1063,13 +1063,13 @@ def html_escape(text):
 	#def email(text): return '<a href="mailto:%s">%s</a>' % (text.group(0),text.group(0))
 	def brnbsp(text): return '<br>' + '&nbsp;' * len(text.group(0))
 	def nbsp(text): return '&nbsp;' * len(text.group(0))
-	for tmp in ((u'&','&amp;'),(u'<','&lt;'),(u'>','&gt;'),(u'˜\'','&tilde;'),('\t','&nbsp;'*8)): text = text.replace(tmp[0],tmp[1])
+	for tmp in (('&','&amp;'),('<','&lt;'),('>','&gt;'),('~','&tilde;'),('\t','&nbsp;'*8)): text = text.replace(tmp[0],tmp[1])
 	text = re.sub(u'^(\ +)',nbsp,text)
 	text = re.sub(u'http[s]?://[-a-zA-Z0-9а-яА-Я._/?&#=;@%:()+]+',link,text)
 	#text = re.sub(u'[-a-zA-Z._0-9?:а-яА-Я]+@[-a-zA-Z._0-9а-яА-Я/?:]+',email,text)
 	text = text.replace('\n','<br>')
-	text = re.sub(u'<br>\ +',brnbsp,text)
-	#for tmp in ((u'\"','&quot;'),(u'\'','&apos;')): text = text.replace(tmp[0],tmp[1])
+	text = re.sub('<br>\ +',brnbsp,text)
+	#for tmp in (('\"','&quot;'),('\'','&apos;')): text = text.replace(tmp[0],tmp[1])
 	return text
 
 def esc_max2(ms):
@@ -1201,7 +1201,7 @@ def smart_concat(text):
 
 def rss(type, jid, nick, text):
 	global feedbase, feeds,	lastfeeds
-	msg = u'rss show|add|del|clear|new|get'
+	msg = 'rss show|add|del|clear|new|get'
 	nosend = None
 	text = text.split(' ')
 	tl = len(text)
@@ -1238,8 +1238,8 @@ def rss(type, jid, nick, text):
 			for rs in feedbase:
 				if rs[4] == jid:
 					msg += '\n%s (%s) %s' % tuple(rs[0:3])
-					try: msg += u' - %s' % disp_time(rs[3])
-					except: msg += u' - Unknown'
+					try: msg += ' - %s' % disp_time(rs[3])
+					except: msg += ' - Unknown'
 			if len(msg): msg = L('Schedule feeds for %s:%s') % (jid,msg)
 			else: msg = L('Schedule feeds for %s not found!') % jid
 	elif mode == 'add':
@@ -1295,9 +1295,9 @@ def rss(type, jid, nick, text):
 					feed += '<title>%s</title>%s' % tuple(tm)
 			elif '<rss' in fc or '<rdf' in fc: is_rss_aton = 1
 			feed = html_encode(feed)
-			feed = re.sub(u'(<span.*?>.*?</span>)','',feed)
-			feed = re.sub(u'(<div.*?>)','',feed)
-			feed = re.sub(u'(</div>)','',feed)
+			feed = re.sub('(<span.*?>.*?</span>)','',feed)
+			feed = re.sub('(<div.*?>)','',feed)
+			feed = re.sub('(</div>)','',feed)
 		if is_rss_aton and feed != L('Encoding error!') and feed != L('Unable to access server!'):
 			if is_rss_aton == 1:
 				if '<item>' in feed: fd = feed.split('<item>')
@@ -1359,9 +1359,9 @@ def rss(type, jid, nick, text):
 						for tm in t_msg:
 							tsubj,tmsg,tlink = tm
 							cut = int(len(tsubj+tmsg+tlink)/100*over)
-							if cut < len(tlink): tsubj,tmsg,tlink = tsubj[:cut]+u'[]','',''
-							elif cut < len(tsubj+tlink): tsubj,tmsg = tsubj[:cut-len(tlink)]+u'[…]',''
-							else: tmsg = tmsg[:cut-len(tlink+tsubj)]+u'[…]'
+							if cut < len(tlink): tsubj,tmsg,tlink = u'%s[…]' % tsubj[:cut],'',''
+							elif cut < len(tsubj+tlink): tsubj,tmsg = u'%s[…]' % tsubj[:cut-len(tlink)],''
+							else: tmsg = u'%s[…]' % tmsg[:cut-len(tlink+tsubj)]
 							tt_msg.append((tsubj,tmsg,tlink))
 						t_msg = tt_msg
 					tmp = ''
@@ -1399,7 +1399,7 @@ def configure(type, jid, nick, text):
 			tmp = config_prefs.keys()
 			tmp.sort()
 			msg = ''
-			for t in tmp: msg += u'\n[%s] - ' % t + config_prefs[t][0] % onoff(get_config(getRoom(jid),t))
+			for t in tmp: msg += '\n[%s] - ' % t + config_prefs[t][0] % onoff(get_config(getRoom(jid),t))
 			msg = L('Current status: %s') % msg
 		elif param in config_prefs: msg = config_prefs[param][0] % onoff(get_config(getRoom(jid),param))
 		else:

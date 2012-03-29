@@ -60,8 +60,9 @@ def clients_stats_old(type, jid, nick, text):
 	send_msg(type, jid, nick, msg)
 
 def clients_stats(type, jid, nick, text):
-	text2 = reduce_spaces_all(text).split()
-	text = reduce_spaces_all(text).lower().split()
+	text2 = text.split(' ')
+	text = text.lower().split(' ')
+	match = '%'
 	if text:
 		is_short = 'short' in text
 		is_os = 'os' in text
@@ -71,21 +72,27 @@ def clients_stats(type, jid, nick, text):
 			for t in ['all','total','global','short','os','user']:
 				if t in text: text.remove(t)
 				for t2 in text2:
-					if t2.lower() == t.lower(): text2.remove(t2)
+					if t2.lower() == t.lower():
+						text2.remove(t2)
+						break
 		if is_user:
-			if text2: text = ' '.join(text2)
-			else: text = nick
-			match = getRoom(get_level(jid,text)[1])
-			if match == 'None':
-				send_msg(type, jid, nick, L('I could be wrong, but %s not is here...') % text)
+			if text2:
+				cnick = text = ' '.join(text2)
+				for t in megabase:
+					if t[0] == jid and t[1] in text:
+						match,cnick = '%%%s%%' % reduce_spaces_all(text.replace(t[1],'')),t[1]
+						break
+			else: cnick = nick
+			cjid = getRoom(get_level(jid,cnick)[1])
+			if cjid == 'None':
+				send_msg(type, jid, nick, L('I could be wrong, but %s not is here...') % cnick)
 				return
-		elif text: match = '%%%s%%' % ' '.join(text)
-		else: match = '%' 
-	else:
-		match = '%'
-		is_short = is_global = is_os = is_user = False
+		elif text: match = '%%%s%%' % reduce_spaces_all(' '.join(text))
+	else: is_short = is_global = is_os = is_user = False
 
-	if is_global: req,par = 'select client,version,os from versions where client ilike %s or version ilike %s or os ilike %s',(match,match,match)
+	if is_global:
+		if is_user: req,par = 'select client,version,os from versions where jid=%s and (client ilike %s or version ilike %s or os ilike %s)',(cjid,match,match,match)
+		else: req,par = 'select client,version,os from versions where client ilike %s or version ilike %s or os ilike %s',(match,match,match)
 	elif is_user: req,par = 'select client,version,os from versions where room=%s and jid=%s',(jid,match)
 	else: req,par = 'select client,version,os from versions where room=%s and (client ilike %s or version ilike %s or os ilike %s)',(jid,match,match,match)
 	st = cur_execute_fetchall(req,par)

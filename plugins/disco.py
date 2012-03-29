@@ -405,8 +405,8 @@ def disco_async(type, jid, nick, what, where, hm, disco_type, raw_type, isa_prev
 				msg,cnt = L('Total: %s') % len(cm),1
 				for i in cm[:hm]:
 					vl = [int(i[0]),'n/a'][int(i[0]) == -1]
-					if len(i[2]): msg += u'\n%s. %s [%s] . %s' % (cnt,i[1],i[2],vl)
-					else: msg += u'\n%s. %s . %s' % (cnt,i[1],vl)
+					if len(i[2]): msg += '\n%s. %s [%s] . %s' % (cnt,i[1],i[2],vl)
+					else: msg += '\n%s. %s . %s' % (cnt,i[1],vl)
 					cnt += 1
 				while '  ' in msg: msg = msg.replace('  ',' ')
 			elif len(what): msg = L('\"%s\" not found') % what
