@@ -1362,11 +1362,11 @@ def iqCB(sess,iq):
 
 							# Censor filter
 							need_raw = True
-							if get_config(gr,'muc_filter_censor') != 'off' and body != to_censore(body,gr) and msg and not mute:
+							if get_config(gr,'muc_filter_censor') != 'off' and esc_min2(body) != to_censore(esc_min2(body),gr) and msg and not mute:
 								act = get_config(gr,'muc_filter_censor')
 								need_raw = False
 								pprint('MUC-Filter msg censor (%s): %s [%s] %s' % (act,jid,room,body),'brown')
-								if act == 'replace': msg = msg.replace(get_tag_full(msg,'body'),'<body>%s</body>' % to_censore(body,gr))
+								if act == 'replace': msg = msg.replace(get_tag_full(msg,'body'),'<body>%s</body>' % esc_max2(to_censore(esc_min2(body),gr)))
 								elif act == 'mute': mute = True
 								else: msg = muc_filter_action(act,jid,room,L('Blocked by censor!'))
 
@@ -1570,7 +1570,7 @@ def iqCB(sess,iq):
 
 						# Censor filter
 						need_raw = True
-						if get_config(gr,'muc_filter_censor_prs') != 'off' and '%s|%s' % (status,nick) != to_censore('%s|%s' % (status,nick),gr) and msg and not mute:
+						if get_config(gr,'muc_filter_censor_prs') != 'off' and '%s|%s' % (esc_min2(status),esc_min2(nick)) != to_censore('%s|%s' % (esc_min2(status),esc_min2(nick)),gr) and msg and not mute:
 							act = get_config(gr,'muc_filter_censor_prs')
 							need_raw = False
 							pprint('MUC-Filter prs censor (%s): %s [%s] %s' % (act,jid,room,'%s|%s' % (status,nick)),'brown')
