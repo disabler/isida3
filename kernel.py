@@ -427,13 +427,22 @@ def arr_del_semi_find(array, string):
 def get_joke(text):
 
 	def joke_blond(text):
-		b = ''
-		cnt = randint(0,1)
-		for tmp in text.lower():
-			if cnt: b += tmp.upper()
-			else: b += tmp
-			cnt = not cnt
-		return b
+	
+		def blond_text(text):
+			b = ''
+			cnt = randint(0,1)
+			for tmp in text:
+				if cnt: b += tmp.upper()
+				else: b += tmp.lower()
+				cnt = not cnt
+			return b
+		
+		text = text.split(' ')
+		new_text = []
+		for t in text:
+			if t == '/me' or [True for s in ['http://','https://','ftp://','svn://','xmpp:','git://'] if t.startswith(s)]: new_text.append(t)
+			else: new_text.append(blond_text(t))
+		return ' '.join(new_text)
 
 	def joke_upyachka(text):
 		upch = [u'пыщь!!!111адын',u'ололололо!!11',u'ГОЛАКТЕКО ОПАСНОСТЕ!!11',u'ТЕЛОИД!!',u'ЖАЖА1!',u'ОНОТОЛЕЙ!!!!!',u'ПОТС ЗОХВАЧЕН11!!!',
@@ -474,7 +483,7 @@ def send_msg(mtype, mjid, mnick, mmessage):
 			if between_msg_last[mjid]+time_limit <= time.time(): break
 		between_msg_last[mjid] = time.time()
 		# 1st april joke :)
-		if time.localtime()[1:3] == (4,1): mmessage = get_joke(mmessage)
+		if time.localtime()[1:3] == (4,1) and GT('1st_april_joke'): mmessage = get_joke(mmessage)
 		no_send = True
 		if len(mmessage) > msg_limit:
 			cnt = 0
@@ -737,9 +746,9 @@ def iqCB(sess,iq):
 		else:
 			try: nspace = query.getNamespace()
 			except: nspace = 'None'
-			if nspace == NS_MUC_ADMIN: iq_async(id,time.time(),iq)
-			elif nspace == NS_MUC_OWNER: iq_async(id,time.time(),iq)
-			elif nspace == NS_VERSION:
+			if nspace == xmpp.NS_MUC_ADMIN: iq_async(id,time.time(),iq)
+			elif nspace == xmpp.NS_MUC_OWNER: iq_async(id,time.time(),iq)
+			elif nspace == xmpp.NS_VERSION:
 				ver_client = query.getTagData(tag='name')
 				ver_version = query.getTagData(tag='version')
 				ver_os = query.getTagData(tag='os')
@@ -748,7 +757,7 @@ def iqCB(sess,iq):
 				t = cur_execute_fetchone('select * from versions where room=%s and jid=%s and client=%s and version=%s and os=%s',(getRoom(room),tjid,ver_client,ver_version,ver_os))
 				if not t: cur_execute('insert into versions values (%s,%s,%s,%s,%s,%s)',(getRoom(room),tjid,ver_client,ver_version,ver_os,int(time.time())))
 				iq_async(id,time.time(),ver_client,ver_version,ver_os)
-			elif nspace == NS_TIME: iq_async(id,time.time(),query.getTagData(tag='display'),query.getTagData(tag='utc'),query.getTagData(tag='tz'))
+			elif nspace == xmpp.NS_TIME: iq_async(id,time.time(),query.getTagData(tag='display'),query.getTagData(tag='utc'),query.getTagData(tag='tz'))
 			elif iq.getTag('time',namespace=xmpp.NS_URN_TIME): iq_async(id,time.time(),iq.getTag('time').getTagData(tag='utc'),iq.getTag('time').getTagData(tag='tzo'))
 			elif iq.getTag('ping',namespace=xmpp.NS_URN_PING): iq_async(id,time.time(),unicode(iq))
 			else: iq_async(id,time.time(),unicode(iq),iq)

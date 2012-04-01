@@ -272,6 +272,11 @@ Execute command by cron. Used unix-type time format.\ncron * * * * *\ncommand	В
 
 # file: ../branch/plugins/disco.py
 - Unknown feature: %s	- Неизвестная фича: %s
+Software: %s | Version: %s\nOS: %s | Version: %s	ПО: %s | Версия: %s\nОС: %s | Версия: %s
+Type: %s	Тип: %s
+Name: %s	Название: %s
+Category: %s	Категория: %s
+Language: %s	Язык: %s
 Features list:\n%s	Список фич:\n%s
 Unable to get features list	Не получается показать список фич
 Total: %s	Всего: %s
@@ -610,6 +615,7 @@ Invite to conference.\ninvite nick|jid\n[reason]	Пригласить участ
 
 # file: ../branch/plugins/iq.py
 I can't get caps of %s	Я не знаю капс %s
+%s has empty caps!	У %s пустой капс!
 vCard:	Визитка:
 Empty!	Пусто!
 vCard tags:	Теги из визитки:
@@ -1278,6 +1284,7 @@ Karma. Upper value of karma for control action	Karma. Верхний преде�
 Karma. Lower value of karma for control action	Karma. Нижний предел кармы при проверки правильности значений
 Disco. Exclude from disco by regexps	Disco. Исключать из обзора по регекспу
 Kernel. Exclude symbols from bot's messages	Kernel. Исключить символы из сообщений бота
+Kernel. 1st April joke	Kernel. Первоапрельская шутка
 Muc-filter settings	Настройки muc-фильтра
 Iq requests settings	Настройки Iq запросов
 Juick settings	Настройки juick

@@ -333,16 +333,28 @@ def features_async(type, jid, nick, what, where, is_answ):
 	isa = is_answ[1]
 	if isa[0].startswith(L('Error! %s')%''): msg = isa[0]
 	else:
-		isa, ftr = unicode(isa[0]), []
-		while True and not game_over:
-			f = get_tag_full(isa,'feature')
-			if f == '': break
-			else:
-				isa = isa.replace(f,'')
-				f = get_subtag(f,'var')
-				if disco_features_list.has_key(f): ft = '- %s' % disco_features_list[f]
-				else: ft = L('- Unknown feature: %s') % f
-				if (what and what.lower() in ft.lower()) or not what: ftr.append(ft)
+		isa, ftr = isa[1], []
+		for f in [t.getAttr('var') for t in isa.getTag('query',namespace=xmpp.NS_DISCO_INFO).getTags('feature')]:
+			if disco_features_list.has_key(f): ft = '- %s' % disco_features_list[f]
+			else: ft = L('- Unknown feature: %s') % f
+			if (what and what.lower() in ft.lower()) or not what: ftr.append(ft)
+
+		ftrs = {}
+		for t in ['os_version','os','software_version','software']:
+			try: res = isa.getTag('query').getTag('x',namespace=xmpp.NS_DATA).getTag('field',attrs={'var':t}).getTagData('value')
+			except: res = 'N/A'
+			ftrs[t] = res
+		
+		ftr.append(L('Software: %s | Version: %s\nOS: %s | Version: %s') % (ftrs['software'],ftrs['software_version'],ftrs['os'],ftrs['os_version']))
+		try:
+			ids = isa.getTag('query').getTag('identity').getAttrs()
+			idk = {'type':L('Type: %s'), 'name':L('Name: %s'), 'category':L('Category: %s'), 'xml:lang':L('Language: %s')}
+			idf = []
+			for t in idk.keys():
+				if ids.has_key(t): idf.append(idk[t] % ids[t])
+			if idf: ftr.append(' | '.join(idf))
+		except: pass
+
 		if ftr:
 			f = []
 			for tmp in ftr:

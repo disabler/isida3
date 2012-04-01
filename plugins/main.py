@@ -1734,6 +1734,7 @@ owner_prefs = {'syslogs_enable': [L('Logger. Enable system logs'),'b',True],
 				'karma_discret_lim_dn':[L('Karma. Lower value of karma for control action'),'i',-100],
 				'disco_exclude':[L('Disco. Exclude from disco by regexps'),'m256e',u'([؀-ݭ)\n(ﭐ-ﻼ])\n(syria|arab)','disco_exclude_update()'],
 				'exclude_messages':[L('Kernel. Exclude symbols from bot\'s messages'),'m256e',u'([؀-ۿ])\n([ݐ-ݿ])\n([ﭐ-﷿])\n([ﹰ-﻿])','message_exclude_update()'],
+				'1st_april_joke':[L('Kernel. 1st April joke'),'b',True]
 				}
 
 owner_group_mucfilter = [L('Muc-filter settings'),'#owner-mucfilter',
@@ -1758,7 +1759,7 @@ owner_group_youtube = [L('Youtube settings'),'#owner-youtube',
 
 owner_group_other = [L('Other settings'),'#owner-other',
 				['anek_private_limit','backup_sleep_time','calendar_default_splitter',
-				'disco_max_limit','disco_exclude','html_paste_enable','yandex_api_key','bing_api_key']]
+				'disco_max_limit','disco_exclude','html_paste_enable','yandex_api_key','bing_api_key','1st_april_joke']]
 
 owner_group_karma = [L('Karma settings'),'#owner-karma',
 				['karma_limit','karma_show_default_limit','karma_show_max_limit','karma_timeout','karma_discret','karma_discret_lim_up','karma_discret_lim_dn']]
