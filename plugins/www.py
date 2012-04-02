@@ -35,7 +35,7 @@ def netheader(type, jid, nick, text):
 			text = text.split('\n')[1]
 		except: regex = None
 		if '://' not in text[:10]: text = 'http://%s' % text
-		text = enidna(text)
+		text = enidna(text).decode('utf-8')
 		body, result = get_opener(text)
 		if result: body = '%s\n%s' %(text.decode('utf-8'),unicode(body.headers))
 		if regex:
@@ -55,7 +55,7 @@ def netwww(type, jid, nick, text):
 			text = text.split('\n')[1]
 		except: regex = None
 		if '://' not in text[:10]: text = 'http://%s' % text
-		text = enidna(text)
+		text = enidna(text).decode('utf-8')
 		msg, result = get_opener(text)
 		if result:
 			page = remove_sub_space(html_encode(load_page(text)))
@@ -67,7 +67,7 @@ def netwww(type, jid, nick, text):
 				except: msg = L('Error in RegExp!')
 			else:
 				msg = urllib.unquote(unhtml_hard(page).encode('utf8')).decode('utf8', 'ignore')
-				if '<title' in page: msg = '%s\n%s' % (get_tag(page,'title'), msg)
+				if '<title' in page: msg = '%s\n%s' % (rss_replace(get_tag(page,'title')), msg)
 	else: msg = L('What?')
 	send_msg(type, jid, nick, msg[:msg_limit])
 
@@ -80,8 +80,9 @@ def parse_url_in_message(room,jid,nick,type,text):
 		try:
 			link = re.findall(r'(http[s]?://.*)',text)[0].split(' ')[0]
 			if link and last_url_watch != link and pasteurl not in link:
+				ll = link.lower()
 				for t in url_watch_ignore:
-					if link.endswith('.%s' % t): raise
+					if ll.endswith('.%s' % t): raise
 				last_url_watch = link = enidna(link)
 				pprint('Show url-title: %s in %s' % (link,room))
 				original_page = load_page(urllib2.Request(link))[:4192]
@@ -104,8 +105,9 @@ def parse_url_in_message(room,jid,nick,type,text):
 			link = re.findall(u'(http[s]?://[-0-9a-zа-я.]+\/[-a-zа-я0-9._?#=@%/]+\.[a-z0-9]{2,7})',text,re.I+re.U+re.S)[0]
 			if link and last_url_watch != link and pasteurl not in link:
 				is_file = False
+				ll = link.lower()
 				for t in url_watch_ignore:
-					if link.endswith('.%s' % t):
+					if ll.endswith('.%s' % t):
 						is_file = True
 						break
 				if is_file:

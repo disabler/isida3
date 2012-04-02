@@ -70,8 +70,10 @@ def acl_add_del(jid,text,flag):
 	elif '${EXP}' in ttext and '${/EXP}' in ttext:
 		try: re.compile(ttext.split('${EXP}',1)[1].split('${/EXP}',1)[0].replace('%20','\ ').replace('*','*?'))
 		except: return L('Error in RegExp!')
-	acl_cmd = text[0].lower()
-	text = text[1:]
+	try:
+		acl_cmd = text[0].lower()
+		text = text[1:]
+	except: return L('Error in parameters. Read the help about command.')
 	if not acl_cmd in acl_acts: msg = L('Items: %s') % ', '.join(acl_acts)
 	else:
 		try:
