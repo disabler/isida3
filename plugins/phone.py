@@ -23,8 +23,6 @@
 
 def phonecode(type, jid, nick, text):
 	if len(text):
-		conn = psycopg2.connect("dbname='%s' user='%s' host='%s' password='%s'" % (base_name,base_user,base_host,base_pass));
-		cur = conn.cursor()
 		def_info,country = L('Not found!'),L('Unknown')
 		if text[0] == '+': text = text[1:]
 		if text.isdigit():
