@@ -1341,8 +1341,8 @@ def rss(type, jid, nick, text):
 								turl = mmsg[tu1:tu2].replace('&lt;br&gt;','\n')
 							except: turl = 'URL %s' % L('Not found!')
 						tsubj,tmsg,tlink = '','',''
-						if submode == 'full': tsubj,tmsg = replacer(ttitle),replacer(tbody)
-						elif submode == 'body': tmsg = replacer(tbody)
+						if submode == 'full': tsubj,tmsg = replacer(ttitle),replacer(tbody.replace('<li>',u'\n♦ ').replace('</li>',''))
+						elif submode == 'body': tmsg = replacer(tbody.replace('<li>',u'\n♦ ').replace('</li>',''))
 						elif submode == 'head': tsubj = replacer(ttitle)
 						else: return
 						if urlmode: tlink = urllib.unquote(turl.encode('utf8')).decode('utf8','ignore')
