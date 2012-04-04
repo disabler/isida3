@@ -829,13 +829,13 @@ def iqCB(sess,iq):
 
 		elif iq.getTag(name='query', namespace=xmpp.NS_DISCO_INFO):
 			node=get_tag_item(unicode(query),'query','node')
-			if node.split('#')[0] in ['', disco_config_node, xmpp.NS_COMMANDS] or node == xmpp.NS_MUC_ROOMS:
+			if node.split('#')[0] in ['', disco_config_node, xmpp.NS_COMMANDS] or node in [xmpp.NS_MUC_ROOMS, '%s#%s' % (capsNode,capsHash)]:
 				pprint('*** iq:disco_info from %s node "%s"' % (unicode(room),node),'magenta')
 				i=xmpp.Iq(to=room, typ='result')
 				i.setAttr(key='id', val=id)
 				if node == '': i.setQueryNS(namespace=xmpp.NS_DISCO_INFO)
 				else: i.setTag('query',namespace=xmpp.NS_DISCO_INFO,attrs={'node':node})
-				if node == '':
+				if node == '' or node == '%s#%s' % (capsNode,capsHash):
 					i = disco_features_add(i)
 					sender(disco_ext_info_add(i))
 					raise xmpp.NodeProcessed
