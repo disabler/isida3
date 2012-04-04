@@ -28,7 +28,7 @@ def leave_room(rjid, reason):
 		if rjid == getRoom(confbase[i]):
 			confbase.remove(confbase[i])
 			writefile(confs, str(confbase))
-			leaveconf(rjid, domain, reason)
+			leave(rjid, reason)
 			msg = L('Leave conference %s\n') % rjid
 	return msg
 

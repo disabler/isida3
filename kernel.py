@@ -558,23 +558,6 @@ def os_version():
 	else: isidaOs = 'unknown'
 	return isidaOs
 
-def joinconf(conference, server, passwd):
-	node = unicode(JID(conference.lower()).getResource())
-	jid = JID(node=node, domain=server.lower(), resource=getResourse(Settings['jid']))
-	if dm: cl = Client(jid.getDomain())
-	else: cl = Client(jid.getDomain(), debug=[])
-	conf = unicode(JID(conference))
-	return join(conf,passwd)
-
-def leaveconf(conference, server, sm):
-	node = unicode(JID(conference).getResource())
-	jid = JID(node=node, domain=server)
-	if dm: cl = Client(jid.getDomain())
-	else: cl = Client(jid.getDomain(), debug=[])
-	conf = unicode(JID(conference))
-	leave(conf, sm)
-	time.sleep(0.1)
-
 def caps_and_send(tmp):
 	tmp.setTag('c', namespace=NS_CAPS, attrs={'node':capsNode,'ver':capsHash,'hash':'sha-1'})
 	sender(tmp)
@@ -2489,11 +2472,11 @@ for tocon in confbase:
 	if '/' not in baseArg: baseArg += '/%s' % unicode(Settings['nickname'])
 	if '\n' in baseArg: baseArg,passwd = baseArg.split('\n',2)
 	else: passwd = ''
-	zz = joinconf(baseArg, getServer(Settings['jid']),passwd)
+	zz = join(baseArg, passwd)
 	while unicode(zz)[:3] == '409' and not game_over:
 		time.sleep(1)
 		baseArg += '_'
-		zz = joinconf(baseArg, getServer(Settings['jid']),passwd)
+		zz = join(baseArg, passwd)
 	cb.append(baseArg)
 	pprint('-<- %s' % baseArg,'bright_green')
 	if GT('show_loading_by_status_percent'):

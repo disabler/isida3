@@ -55,14 +55,14 @@ def watch_room_activity():
 		except: cw = to
 		if cw < to:
 			watch_last_activity[getRoom(tmp)] = int(time.time())
-			domain,text = getServer(Settings['jid']),tmp
+			text = tmp
 			if '\n' in text: text,passwd = text.split('\n',2)
 			else: passwd = ''
-			zz = joinconf(text, domain, passwd)
+			zz = join(text, passwd)
 			while unicode(zz)[:3] == '409':
 				time.sleep(1)
 				text += '_'
-				zz = joinconf(text, domain, passwd)
+				zz = join(text, passwd)
 			time.sleep(1)
 			pprint('Low activity! Try rejoin into %s' % text,'white')
 

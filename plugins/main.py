@@ -670,7 +670,6 @@ def helpme(type, jid, nick, text):
 def bot_rejoin(type, jid, nick, text):
 	global lastserver, lastnick, confbase
 	text=unicode(text)
-	domain = getServer(Settings['jid'])
 	if len(text): text=unicode(text)
 	else: text=jid
 	if '\n' in text: text, passwd = text.split('\n', 1)
@@ -683,13 +682,13 @@ def bot_rejoin(type, jid, nick, text):
 	lroom = text
 	if arr_semi_find(confbase, getRoom(lroom)) >= 0:
 		sm = L('Rejoin by %s') % nick
-		leaveconf(text, domain, sm)
+		leave(text, sm)
 		time.sleep(1)
-		zz = joinconf(text, domain, passwd)
+		zz = join(text, passwd)
 		while unicode(zz)[:3] == '409':
 			time.sleep(1)
 			text += '_'
-			zz = joinconf(text, domain, passwd)
+			zz = join(text, passwd)
 		time.sleep(1)
 		if zz != None: send_msg(type, jid, nick, L('Error! %s') % zz)
 		else:
@@ -708,7 +707,6 @@ def remove_by_half(cb,rm):
 def bot_join(type, jid, nick, text):
 	global lastserver, lastnick, confs, confbase, blacklist_base
 	text = unicode(text)
-	domain = getServer(Settings['jid'])
 	blklist = getFile(blacklist_base, [])
 	if not text or ' ' in getRoom(text): send_msg(type, jid, nick, L('Wrong arguments!'))
 	else:
@@ -723,11 +721,11 @@ def bot_join(type, jid, nick, text):
 			lastnick = getResourse(text)
 			lroom = text.lower().split('/')[0]
 			if arr_semi_find(confbase, lroom) == -1:
-				zz = joinconf(text, domain, passwd)
+				zz = join(text, passwd)
 				while unicode(zz)[:3] == '409':
 					time.sleep(1)
 					text += '_'
-					zz = joinconf(text, domain, passwd)
+					zz = join(text, passwd)
 				if zz != None: send_msg(type, jid, nick, L('Error! %s') % zz)
 				else:
 					confbase.append(old_text)
@@ -735,11 +733,11 @@ def bot_join(type, jid, nick, text):
 					send_msg(type, jid, nick, L('Joined to %s') % text)
 			elif text in confbase: send_msg(type, jid, nick, L('I\'m already in %s with nick %s') % (lroom, lastnick))
 			else:
-				zz = joinconf(text, domain, passwd)
+				zz = join(text, passwd)
 				while unicode(zz)[:3] == '409':
 					time.sleep(0.1)
 					text += '_'
-					zz = joinconf(text, domain, passwd)
+					zz = join(text, passwd)
 				if zz != None: send_msg(type, jid, nick, L('Error! %s') % zz)
 				else:
 					confbase = remove_by_half(confbase, lroom)
@@ -768,7 +766,7 @@ def bot_leave(type, jid, nick, text):
 			writefile(confs,json.dumps(confbase))
 			send_msg(type, jid, nick, L('Leave room %s') % text)
 			sm = L('Leave room by %s') % nick
-			leaveconf(getRoom(text), domain, sm)
+			leave(getRoom(text), sm)
 			hr = getFile(hide_conf,[])
 			if getRoom(text) in hr:
 				hr.remove(getRoom(text))
