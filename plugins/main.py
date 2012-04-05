@@ -420,18 +420,15 @@ def unhtml(page): return unhtml_raw(page,None)
 
 def unhtml_hard(page): return unhtml_raw(page,True)
 
-def del_space_both(t):
-	return del_space_end(del_space_begin(t))
-
 def alias(type, jid, nick, text):
 	global aliases
 	aliases = getFile(alfile,[])
 	text = text.strip()
 	while '  ' in text: text = text.replace('  ',' ')
-	mode = del_space_both(text.lower().split(' ',1)[0])
-	try: cmd = del_space_both(text.split(' ',1)[1].split('=',1)[0])
+	mode = text.lower().split(' ',1)[0].strip(' ')
+	try: cmd = text.split(' ',1)[1].split('=',1)[0].strip(' ')
 	except: cmd = ''
-	try: cbody = del_space_both(text.split(' ',1)[1].split('=',1)[1])
+	try: cbody = text.split(' ',1)[1].split('=',1)[1].strip(' ')
 	except: cbody = ''
 	msg = L('Mode %s not detected!') % mode
 	if mode=='add':
@@ -489,16 +486,6 @@ def fspace(mass):
 			while b[0] == ' ': b = b[1:]
 		bdd.append(b)
 	return bdd
-
-def del_space_begin(text):
-	if len(text):
-		while text[:1] == ' ': text = text[1:]
-	return text
-
-def del_space_end(text):
-	if len(text):
-		while text[-1:] == ' ': text = text[:-1]
-	return text
 
 def un_unix(val):
 	tt = map(lambda q,a: q-a, time.gmtime(val), time.gmtime(0))[:6]

@@ -1865,7 +1865,7 @@ def to_censore(text,room):
 			try: replacer = custom_replace[c]
 			except: replacer = def_replacer
 			text,wca = text.replace(t,[replacer*len(t),replacer][len(replacer)>1]),True
-	if wca: text = del_space_both(text)
+	if wca: text = text.strip(' ')
 	return text
 
 def check_hash_actions():

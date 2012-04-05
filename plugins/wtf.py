@@ -100,7 +100,8 @@ def wtf_get(ff,type, jid, nick, text):
 	send_msg(type, jid, nick, msg)
 
 def dfn(type, jid, nick, text):
-	if text and '=' in text:
+	text = text.strip()
+	if '=' in text and text[0] != '=':
 		al, realjid = get_level(jid,nick)
 		what, text = map(lambda x: x.strip(), text.split('=', 1))
 		matches = cur_execute_fetchall('select * from wtf where (room=%s or room=%s or room=%s) and wtfword=%s order by lim,-time',(jid,'global','import',what))
@@ -127,13 +128,10 @@ def dfn(type, jid, nick, text):
 	send_msg(type, jid, nick, msg)
 
 def gdfn(type, jid, nick, text):
-	if text and '=' in text:
-		ta = get_level(jid,nick)
-		realjid =ta[1]
-		al = ta[0]
-		ti = text.index('=')
-		what = del_space_end(text[:ti])
-		text = del_space_begin(text[ti+1:])
+	text = text.strip()
+	if '=' in text and text[0] != '=':
+		al, realjid = get_level(jid,nick)
+		what, text = map(lambda x: x.strip(), text.split('=', 1))
 		matches = cur_execute_fetchall('select * from wtf where (room=%s or room=%s or room=%s) and wtfword=%s order by lim,-time',(jid,'global','import',what))
 		if matches:
 			max = -1
