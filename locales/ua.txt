@@ -1528,13 +1528,13 @@ Locale definition: %s\nGlobal: %s\nImported: %s\nTotal: %s	В цій конфі 
 Send to private %s	Відправлено до привату %s
 \nfrom: %s %s	\nвід: %s %s
 I know that %s was defined by %s %s %s	Я знаю, що %s було визначено: %s %s %s
-Not enough rights!	Ти ще малий і дурний для цього!
 This is global definition and not allowed to change!	Це глобальне визначення і його не можна змінити!
 Definition removed!	Шкода, що таку корисну фігенцію потрібно забути...
 Definition updated!	Боян, але я запам'ятаю!
 Nothing to remove!	Досить бухати! Я такого не знаю!
 Definition saved!	Ммм.. Щось новеньке, зараз запам'ятаю!
 What need to remember?	Що ж потрібно запам'ятати?
+Not enough rights!	Ти ще малий і дурний для цього!
 Random definition from base.	Показ випадкового визначення з бази слів.
 List of definitions in conference.\nwtfnames [all|global|import]	Показ списку визначень в конференції.\nwtfnames [all|global|import]
 Definitions count.	Показ кількості визначень в конференції.

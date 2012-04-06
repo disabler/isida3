@@ -1254,7 +1254,15 @@ def iqCB(sess,iq):
 									if in_base[0] < newbie_time: nmute = True
 									else: nmute = False
 								if nmute:
-									pprint('MUC-Filter mute newbie: %s %s %s' % (gr,jid,body),'brown')
+									try: cnt = newbie_msg['%s|%s' % (gr,jid)]
+									except: cnt = 1
+									pprint('MUC-Filter mute newbie: %s %s [%s] %s' % (gr,jid,cnt,body),'brown')
+									act = get_config(gr,'muc_filter_newbie_repeat_action')
+									if act != 'off':
+										if cnt >= get_config_int(gr,'muc_filter_newbie_repeat'):
+											pprint('MUC-Filter mute newbie repeat action (%s): %s %s [%s]' % (act,gr,jid,cnt),'brown')
+											msg = muc_filter_action(act,jid,room,L('Messages count overflow from newbie!'))
+										else: newbie_msg['%s|%s' % (gr,jid)] = cnt + 1
 									mute = True
 
 							# New Line
@@ -2254,6 +2262,7 @@ CURRENT_LOCALE = 'en'
 user_hash = {}
 server_hash = {}
 server_hash_list = {}
+newbie_msg = {}
 messages_excl = []
 db_debug = False
 base_type = 'pgsql'     # тип базы: pgsql или mysql
@@ -2302,7 +2311,7 @@ logging.basicConfig(filename=LOG_FILENAME,level=logging.DEBUG,)	# включен
 capsNode = 'http://isida-bot.com'
 god = SuperAdmin
 pprint('-'*50,'blue')
-if(sys.argv[0]) != 'isida.py': errorHandler('Ugly launch detect! Read wiki!')
+if os.path.basename(sys.argv[0]) != 'isida.py': errorHandler('Ugly launch detect! Read wiki!')
 
 if base_type == 'pgsql': conn = psycopg2.connect(database=base_name, user=base_user, host=base_host, password=base_pass, port=base_port)
 elif base_type == 'mysql': conn = MySQLdb.connect(db=base_name, user=base_user, host=base_host, passwd=base_pass, port=int(base_port), charset=base_charset)

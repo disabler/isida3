@@ -63,14 +63,11 @@ def wtfcount(type, jid, nick):
 	msg = L('Locale definition: %s\nGlobal: %s\nImported: %s\nTotal: %s') % (cnt,glb,imp,tlen)
 	send_msg(type, jid, nick, msg)
 
-def wtf(type, jid, nick, text):
-	wtf_get(0,type, jid, nick, text)
+def wtf(type, jid, nick, text): wtf_get(0,type, jid, nick, text)
 
-def wtff(type, jid, nick, text):
-	wtf_get(1,type, jid, nick, text)
+def wtff(type, jid, nick, text): wtf_get(1,type, jid, nick, text)
 
-def wwtf(type, jid, nick, text):
-	wtf_get(2,type, jid, nick, text)
+def wwtf(type, jid, nick, text): wtf_get(2,type, jid, nick, text)
 
 def wtfp(type, jid, nick, text):
 	if '\n' in text:
@@ -104,22 +101,23 @@ def dfn(type, jid, nick, text):
 	if '=' in text and text[0] != '=':
 		al, realjid = get_level(jid,nick)
 		what, text = map(lambda x: x.strip(), text.split('=', 1))
-		matches = cur_execute_fetchall('select * from wtf where (room=%s or room=%s or room=%s) and wtfword=%s order by lim,-time',(jid,'global','import',what))
+		matches = cur_execute_fetchall('select * from wtf where (room=%s or room=%s or room=%s) and wtfword=%s order by -time',(jid,'global','import',what))
 		if matches:
-			max = -1
+			match_jid = None
+			grr = getRoom(realjid)
 			for t in matches:
-				if t[7] >= max: max,match=t[7],t
-			if match[7] > al:
-				msg,text = L('Not enough rights!'),''
-				try: msg += ' ' + unlevltxt[unlevlnum[match[7]]] % unlevl[match[7]]
-				except: pass
-			elif match[1] == 'global': msg, text = L('This is global definition and not allowed to change!'), ''
+				if getRoom(t[2]) == grr:
+					match_jid = t[2]
+					break
+			if matches[0][1] == 'global': msg, text = L('This is global definition and not allowed to change!'), ''
 			elif text == '':
-				msg = L('Definition removed!')
-				cur_execute('delete from wtf where wtfword=%s and room=%s',(what,jid))
+				if match_jid:
+					msg = L('Definition removed!')
+					cur_execute('delete from wtf where wtfword=%s and room=%s and jid=%s',(what,jid,match_jid))
+				else: msg = L('This definition is not Your!')
 			else:
 				msg = L('Definition updated!')
-				if getRoom(realjid) == getRoom(match[2]): cur_execute('delete from wtf where wtfword=%s and room=%s and jid=%s',(what,jid,match[2]))
+				if match_jid: cur_execute('delete from wtf where wtfword=%s and room=%s and jid=%s',(what,jid,match_jid))
 		elif text == '': msg = L('Nothing to remove!')
 		else: msg = L('Definition saved!')
 		idx = cur_execute_fetchall('select count(*) from wtf')[0][0]

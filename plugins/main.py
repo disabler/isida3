@@ -1477,6 +1477,8 @@ config_prefs = {'url_title': [L('Url title is %s'), L('Automatic show title of u
 
 				'muc_filter': [L('Muc filter is %s'), L('Message filter for participants'), [True,False], False],
 				'muc_filter_newbie': [L('Mute newbie %s'), L('Mute all messages from newbie'), [True,False], False],
+				'muc_filter_newbie_repeat': [L('Count of messages for newbie %s'), L('Count of messages for newbie for action'), None, '3'],
+				'muc_filter_newbie_repeat_action': [L('Action for messages overflow for newbie %s'), L('Action for messages overflow for newbie'), ['off','kick','ban'], 'off'],
 				'muc_filter_newbie_time': [L('Mute newbie time %s'), L('Time of mute all messages from newbie'), None, '60'],
 				'muc_filter_adblock': [L('Adblock muc filter is %s'), L('Adblock filter'), ['off','visitor','kick','ban','replace','mute'], 'off'],
 				'muc_filter_repeat': [L('Repeat muc filter is %s'), L('Repeat same messages filter'), ['off','visitor','kick','ban','mute'], 'off'],
@@ -1575,7 +1577,7 @@ config_group_mucfilter = [L('General Muc-filter settings'),'#room-mucfilter',
 				['muc_filter'],None]
 
 config_group_mucfilter_newbie = [L('Muc-filter settings for newbie'),'#room-mucfilter-newbie',
-				['muc_filter_newbie','muc_filter_newbie_time'],None]
+				['muc_filter_newbie','muc_filter_newbie_time','muc_filter_newbie_repeat','muc_filter_newbie_repeat_action'],None]
 
 config_group_mucfilter_hash = [L('Muc-filter settings for hash'),'#room-mucfilter-hash',
 				['muc_filter_hash','muc_filter_hash_time','muc_filter_hash_events','muc_filter_hash_action','muc_filter_hash_action_time',
