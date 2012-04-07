@@ -93,7 +93,7 @@ def clients_stats(type, jid, nick, text):
 	if is_global:
 		if is_user: req,par = 'select client,version,os from versions where jid=%s and (client ilike %s or version ilike %s or os ilike %s)',(cjid,match,match,match)
 		else: req,par = 'select client,version,os from versions where client ilike %s or version ilike %s or os ilike %s',(match,match,match)
-	elif is_user: req,par = 'select client,version,os from versions where room=%s and jid=%s',(jid,match)
+	elif is_user: req,par = 'select client,version,os from versions where room=%s and jid=%s',(jid,cjid)
 	else: req,par = 'select client,version,os from versions where room=%s and (client ilike %s or version ilike %s or os ilike %s)',(jid,match,match,match)
 	st = cur_execute_fetchall(req,par)
 	if st:
