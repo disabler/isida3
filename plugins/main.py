@@ -1377,8 +1377,7 @@ def configure(type, jid, nick, text):
 	while '  ' in text: text = text.replace('  ',' ')
 	text = text.split(' ',1)
 	to_conf = text[0]
-	try: param = text[1]
-	except: param = ''
+	param = text[1] if len(text) == 2 else ''
 	if to_conf in ['show','item','items','it','sh']:
 		if param in ['status','info','st']:
 			tmp = config_prefs.keys()
@@ -1391,13 +1390,20 @@ def configure(type, jid, nick, text):
 			tmp = config_prefs.keys()
 			tmp.sort()
 			msg = L('Available items: %s') % ', '.join(tmp)
-	elif to_conf == 'help' or to_conf == '':
+	elif to_conf == 'help' or not to_conf:
 		if param in config_prefs: msg = config_prefs[param][1]
-		elif param == '':
+		elif not param:
 			tmp = config_prefs.keys()
 			tmp.sort()
 			msg = L('Available items: %s') % ', '.join(tmp)
-		else: msg = L('Help for %s not found!') % param
+		else:
+			cps = config_prefs.keys()
+			cps.sort()
+			tmp = [cp for cp in cps if param in cp]
+			if tmp:
+				msg = L('Available items: %s') % ', '.join(tmp)
+			else:
+				msg = L('Help for %s not found!') % param
 	elif to_conf in config_prefs:
 		if param.lower() in ['show','item','items','it','sh']:
 			msg = ''
