@@ -28,8 +28,8 @@ def sokr(type, jid, nick, text):
 	else:
 		if re.search('\A\d+?(-\d+?)? ', text): target, text = text.split(' ', 1)
 		if re.match('[a-zA-Z]+\Z', text):
-			data = load_page('http://www.abbreviations.com/bs2.aspx?st=%s&o=p' % text)
-			results = re.findall('<td class="dsc">(.+?)</td>', data)
+			data = load_page('http://www.abbreviations.com/%s' % text)
+			results = re.findall('<p class="desc">(.+?)</p>', data)
 			results = [i for k,i in enumerate(results) if results.index(i) == k]
 		else:
 			data = load_page("http://www.sokr.ru/search/?", {'abbr': text.encode('utf-8'), 'abbr_exact': '1'})

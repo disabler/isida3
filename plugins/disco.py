@@ -339,13 +339,15 @@ def features_async(type, jid, nick, what, where, is_answ):
 			else: ft = L('- Unknown feature: %s') % f
 			if (what and what.lower() in ft.lower()) or not what: ftr.append(ft)
 
-		ftrs = {}
-		for t in ['os_version','os','software_version','software']:
+		ftrs,erc,q_features = {},0,['os_version','os','software_version','software']
+		for t in q_features:
 			try: res = isa.getTag('query').getTag('x',namespace=xmpp.NS_DATA).getTag('field',attrs={'var':t}).getTagData('value')
-			except: res = 'N/A'
+			except:
+				res = 'N/A'
+				erc += 1
 			ftrs[t] = res
 		
-		ftr.append(L('Software: %s | Version: %s\nOS: %s | Version: %s') % (ftrs['software'],ftrs['software_version'],ftrs['os'],ftrs['os_version']))
+		if erc != len(q_features): ftr.append(L('Software: %s | Version: %s\nOS: %s | Version: %s') % (ftrs['software'],ftrs['software_version'],ftrs['os'],ftrs['os_version']))
 		try:
 			ids = isa.getTag('query').getTag('identity').getAttrs()
 			idk = {'type':L('Type: %s'), 'name':L('Name: %s'), 'category':L('Category: %s'), 'xml:lang':L('Language: %s')}
