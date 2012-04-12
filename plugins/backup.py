@@ -25,15 +25,15 @@ backup_async = {}
 
 def getMucItems(jid,affil,ns,back_id):
 	iqid = get_id()
-	if ns == NS_MUC_ADMIN: i = Node('iq', {'id': iqid, 'type': 'get', 'to':getRoom(jid)}, payload = [Node('query', {'xmlns': NS_MUC_ADMIN},[Node('item',{'affiliation':affil})])])
-	else: i = Node('iq', {'id': iqid, 'type': 'get', 'to':getRoom(jid)}, payload = [Node('query', {'xmlns': ns},[])])
+	if ns == xmpp.NS_MUC_ADMIN: i = xmpp.Node('iq', {'id': iqid, 'type': 'get', 'to':getRoom(jid)}, payload = [xmpp.Node('query', {'xmlns': xmpp.NS_MUC_ADMIN},[xmpp.Node('item',{'affiliation':affil})])])
+	else: i = xmpp.Node('iq', {'id': iqid, 'type': 'get', 'to':getRoom(jid)}, payload = [xmpp.Node('query', {'xmlns': ns},[])])
 	iq_request[iqid]=(time.time(),getMucItems_async,[ns,affil,back_id])
 	sender(i)
 
 def getMucItems_async(ns,affil,back_id,iq_stanza):
 	global backup_async
 	iq_stanza = iq_stanza[1][0]
-	if ns == NS_MUC_ADMIN: backup_async[back_id][affil] = [[tmp.getAttr('jid'),['',tmp.getTagData('reason')][tmp.getTagData('reason') != None]] for tmp in iq_stanza.getTag('query',namespace=xmpp.NS_MUC_ADMIN).getTags('item')]
+	if ns == xmpp.NS_MUC_ADMIN: backup_async[back_id][affil] = [[tmp.getAttr('jid'),['',tmp.getTagData('reason')][tmp.getTagData('reason') != None]] for tmp in iq_stanza.getTag('query',namespace=xmpp.NS_MUC_ADMIN).getTags('item')]
 	else: backup_async[back_id]['room_config'] = [[tmp.getAttr('var'),tmp.getAttr('type'),tmp.getTagData('value')] for tmp in iq_stanza.getTag('query',namespace=xmpp.NS_MUC_OWNER).getTag('x',namespace=xmpp.NS_DATA).getTags('field')]
 
 def make_stanzas_array(raw_back,jid,affil):
@@ -69,15 +69,15 @@ def conf_backup(type, jid, nick, text):
 			else:
 				back_id = get_id()
 				backup_async[back_id] = {}
-				getMucItems(jid,'outcast',NS_MUC_ADMIN,back_id)
-				getMucItems(jid,'member',NS_MUC_ADMIN,back_id)
-				getMucItems(jid,'admin',NS_MUC_ADMIN,back_id)
-				getMucItems(jid,'owner',NS_MUC_ADMIN,back_id)
-				getMucItems(jid,'',NS_MUC_OWNER,back_id)
+				getMucItems(jid,'outcast',xmpp.NS_MUC_ADMIN,back_id)
+				getMucItems(jid,'member',xmpp.NS_MUC_ADMIN,back_id)
+				getMucItems(jid,'admin',xmpp.NS_MUC_ADMIN,back_id)
+				getMucItems(jid,'owner',xmpp.NS_MUC_ADMIN,back_id)
+				getMucItems(jid,'',xmpp.NS_MUC_OWNER,back_id)
 				bst = GT('backup_sleep_time')
 				while len(backup_async[back_id]) != 5 and not game_over: time.sleep(bst)
 				iqid = get_id()
-				i = Node('iq', {'id': iqid, 'type': 'set', 'to':jid}, payload = [Node('query', {'xmlns': NS_MUC_ADMIN},[Node('item',{'affiliation':'admin', 'jid':getRoom(str(selfjid))},[])])])
+				i = xmpp.Node('iq', {'id': iqid, 'type': 'set', 'to':jid}, payload = [xmpp.Node('query', {'xmlns': xmpp.NS_MUC_ADMIN},[xmpp.Node('item',{'affiliation':'admin', 'jid':getRoom(str(selfjid))},[])])])
 				sender(i)
 				backup_async[back_id]['alias'] = [tmp[1:] for tmp in getFile(alfile,[]) if tmp[0]==jid]
 				setup = getFile(c_file,{})
@@ -131,7 +131,7 @@ def conf_backup(type, jid, nick, text):
 								setTagData('value',tmp[2])
 						sender(i)
 						time.sleep(bst)
-						sender(Node('iq', {'id': get_id(), 'type': 'set', 'to':jid}, payload = [Node('query', {'xmlns': NS_MUC_ADMIN},[Node('item',{'affiliation':'admin', 'jid':getRoom(unicode(selfjid))},[])])]))
+						sender(xmpp.Node('iq', {'id': get_id(), 'type': 'set', 'to':jid}, payload = [xmpp.Node('query', {'xmlns': xmpp.NS_MUC_ADMIN},[xmpp.Node('item',{'affiliation':'admin', 'jid':getRoom(unicode(selfjid))},[])])]))
 						time.sleep(bst)
 						setup = getFile(c_file,{})
 						setup[jid] = raw_back['bot_config']

@@ -56,7 +56,7 @@ def global_ban(type, jid, nick, text):
 				reason = L('banned global by %s from %s') % (nick, jid)
 				for tmp in confbase:
 					if not (getRoom(tmp) in hr):
-						i = Node('iq', {'id': get_id(), 'type': 'set', 'to':getRoom(tmp)}, payload = [Node('query', {'xmlns': NS_MUC_ADMIN},[Node('item',{'affiliation':'outcast', 'jid':unicode(text)},[Node('reason',{},reason)])])])
+						i = xmpp.Node('iq', {'id': get_id(), 'type': 'set', 'to':getRoom(tmp)}, payload = [xmpp.Node('query', {'xmlns': xmpp.NS_MUC_ADMIN},[xmpp.Node('item',{'affiliation':'outcast', 'jid':unicode(text)},[xmpp.Node('reason',{},reason)])])])
 						sender(i)
 						time.sleep(0.1)
 				msg = L('jid %s has been banned in %s conferences.') % (text, str(len(confbase)-len(hr)))
@@ -85,7 +85,7 @@ def muc_tempo_ban(type, jid, nick,text):
 		for ub in ubl:
 			if ub[0] == jid and ub[1] == text.lower():
 				msg += ub[1]+'\t'+un_unix(ub[2]-int(time.time()))
-				i = Node('iq', {'id': get_id(), 'type': 'set', 'to':ub[0]}, payload = [Node('query', {'xmlns': NS_MUC_ADMIN},[Node('item',{'affiliation':'none', 'jid':getRoom(unicode(ub[1]))},[])])])
+				i = xmpp.Node('iq', {'id': get_id(), 'type': 'set', 'to':ub[0]}, payload = [xmpp.Node('query', {'xmlns': xmpp.NS_MUC_ADMIN},[xmpp.Node('item',{'affiliation':'none', 'jid':getRoom(unicode(ub[1]))},[])])])
 				sender(i)
 				ubl.remove(ub)
 		if len(msg):
@@ -127,7 +127,7 @@ def muc_tempo_ban2(type, jid, nick,text):
 
 	if skip: send_msg(type, jid, nick, msg)
 	else:
-		i = Node('iq', {'id': get_id(), 'type': 'set', 'to':jid}, payload = [Node('query', {'xmlns': NS_MUC_ADMIN},[Node('item',{'affiliation':'outcast', 'jid':unicode(whojid)},[Node('reason',{},reason)])])])
+		i = xmpp.Node('iq', {'id': get_id(), 'type': 'set', 'to':jid}, payload = [xmpp.Node('query', {'xmlns': xmpp.NS_MUC_ADMIN},[xmpp.Node('item',{'affiliation':'outcast', 'jid':unicode(whojid)},[xmpp.Node('reason',{},reason)])])])
 		sender(i)
 
 		ubl = getFile(tban,[])
@@ -161,7 +161,7 @@ def muc_affiliation(type, jid, nick, text, aff, is_jid):
 		if '\n' in text: who, reason = text.split('\n',1)[0], text.split('\n',1)[1]
 		else: who, reason = text, L('by Isida!')
 		whojid = [unicode(get_level(jid,who)[1]),who][is_jid]
-		if whojid != 'None': sender(Node('iq', {'id': get_id(), 'type': 'set', 'to':jid}, payload = [Node('query', {'xmlns': NS_MUC_ADMIN},[Node('item',{'affiliation':aff, 'jid':whojid},[Node('reason',{},reason)])])]))
+		if whojid != 'None': sender(xmpp.Node('iq', {'id': get_id(), 'type': 'set', 'to':jid}, payload = [xmpp.Node('query', {'xmlns': xmpp.NS_MUC_ADMIN},[xmpp.Node('item',{'affiliation':aff, 'jid':whojid},[xmpp.Node('reason',{},reason)])])]))
 		else: send_msg(type, jid, nick, L('I don\'t know %s') % who)
 	else: send_msg(type, jid, nick, L('What?'))
 
@@ -198,7 +198,7 @@ def muc_affiliation_past(type, jid, nick, text, aff):
 	else: skip = True
 	if skip: send_msg(type, jid, nick, msg)
 	else:
-		i = Node('iq', {'id': get_id(), 'type': 'set', 'to':jid}, payload = [Node('query', {'xmlns': NS_MUC_ADMIN},[Node('item',{'affiliation':aff, 'jid':unicode(whojid)},[Node('reason',{},reason)])])])
+		i = xmpp.Node('iq', {'id': get_id(), 'type': 'set', 'to':jid}, payload = [xmpp.Node('query', {'xmlns': xmpp.NS_MUC_ADMIN},[xmpp.Node('item',{'affiliation':aff, 'jid':unicode(whojid)},[xmpp.Node('reason',{},reason)])])])
 		sender(i)
 		send_msg(type, jid, nick, msg)
 
@@ -224,7 +224,7 @@ def muc_role(type, jid, nick, text, role, unused):
 		if '\n' in text: who, reason = text.split('\n',1)[0], text.split('\n',1)[1]
 		else: who, reason = text, L('by Isida!')
 		whojid = unicode(get_level(jid,who)[1])
-		if whojid != 'None': sender(Node('iq', {'id': get_id(), 'type': 'set', 'to':jid}, payload = [Node('query', {'xmlns': NS_MUC_ADMIN},[Node('item',{'role':role, 'nick':who},[Node('reason',{},reason)])])]))
+		if whojid != 'None': sender(xmpp.Node('iq', {'id': get_id(), 'type': 'set', 'to':jid}, payload = [xmpp.Node('query', {'xmlns': xmpp.NS_MUC_ADMIN},[xmpp.Node('item',{'role':role, 'nick':who},[xmpp.Node('reason',{},reason)])])]))
 		else: send_msg(type, jid, nick, L('I don\'t know %s') % who)
 	else: send_msg(type, jid, nick, L('What?'))
 
@@ -235,7 +235,7 @@ def check_unban():
 		for ub in unban_log:
 			if ub[2] > int(time.time()): ubl.append(ub)
 			else:
-				i = Node('iq', {'id': get_id(), 'type': 'set', 'to':ub[0]}, payload = [Node('query', {'xmlns': NS_MUC_ADMIN},[Node('item',{'affiliation':'none', 'jid':getRoom(unicode(ub[1]))},[])])])
+				i = xmpp.Node('iq', {'id': get_id(), 'type': 'set', 'to':ub[0]}, payload = [xmpp.Node('query', {'xmlns': xmpp.NS_MUC_ADMIN},[xmpp.Node('item',{'affiliation':'none', 'jid':getRoom(unicode(ub[1]))},[])])])
 				sender(i)
 		if unban_log != ubl: writefile(tban,str(ubl))
 

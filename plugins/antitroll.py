@@ -27,7 +27,7 @@ def troll(type, jid, nick, text):
 	try: count = int(text[2])
 	except: count = GT('troll_default_limit')
 	if count > GT('troll_max_limit'): count = GT('troll_max_limit')
-	otake = JID(node=getName(jid), domain=getServer(jid), resource=r)
+	otake = xmpp.JID(node=getName(jid), domain=getServer(jid), resource=r)
 	otake = unicode(otake)
 	if len(text)>1: message = text[1]
 	else: message = L('You troll!')

@@ -103,6 +103,15 @@ wday = [L('Mon'),L('Tue'),L('Wed'),L('Thu'),L('Fri'),L('Sat'),L('Sun')]
 wlight = [L('Winter time'),L('Summer time')]
 wmonth = [L('Jan'),L('Fed'),L('Mar'),L('Apr'),L('May'),L('Jun'),L('Jul'),L('Aug'),L('Sep'),L('Oct'),L('Nov'),L('Dec')]
 
+def kill_all_threads():
+	if thread_type:
+		threading_list = threading.enumerate() 
+		threading_list.remove(threading.currentThread())
+		for tmp in threading_list:
+			if not tmp.name.startswith('_MainThread'):
+				try: tmp.kill()
+				except: pass
+
 def get_xnick(jid):
 	tmppos = arr_semi_find(confbase, jid)
 	if tmppos == -1: nowname = Settings['nickname']
@@ -609,6 +618,7 @@ def raw_who(room,nick):
 	return msg
 
 def info_comm(type, jid, nick):
+	import sqlite3
 	global comms
 	msg = ''
 	ta = get_level(jid,nick)
@@ -849,11 +859,11 @@ def owner(type, jid, nick, text):
 		if nnick not in ownerbase:
 			if '@' in nnick:
 				ownerbase.append(nnick)
-				j = Presence(nnick, 'subscribed')
-				j.setTag('c', namespace=NS_CAPS, attrs={'node':capsNode,'ver':capsHash,'hash':'sha-1'})
+				j = xmpp.Presence(nnick, 'subscribed')
+				j.setTag('c', namespace=xmpp.NS_CAPS, attrs={'node':capsNode,'ver':capsHash,'hash':'sha-1'})
 				sender(j)
-				j = Presence(nnick, 'subscribe')
-				j.setTag('c', namespace=NS_CAPS, attrs={'node':capsNode,'ver':capsHash,'hash':'sha-1'})
+				j = xmpp.Presence(nnick, 'subscribe')
+				j.setTag('c', namespace=xmpp.NS_CAPS, attrs={'node':capsNode,'ver':capsHash,'hash':'sha-1'})
 				sender(j)
 				msg = L('Append: %s') % nnick
 			else: msg = L('Wrong jid!')
@@ -861,11 +871,11 @@ def owner(type, jid, nick, text):
 	elif do == 'del':
 		if nnick in ownerbase and nnick != god:
 			ownerbase.remove(nnick)
-			j = Presence(nnick, 'unsubscribe')
-			j.setTag('c', namespace=NS_CAPS, attrs={'node':capsNode,'ver':capsHash,'hash':'sha-1'})
+			j = xmpp.Presence(nnick, 'unsubscribe')
+			j.setTag('c', namespace=xmpp.NS_CAPS, attrs={'node':capsNode,'ver':capsHash,'hash':'sha-1'})
 			sender(j)
-			j = Presence(nnick, 'unsubscribed')
-			j.setTag('c', namespace=NS_CAPS, attrs={'node':capsNode,'ver':capsHash,'hash':'sha-1'})
+			j = xmpp.Presence(nnick, 'unsubscribed')
+			j.setTag('c', namespace=xmpp.NS_CAPS, attrs={'node':capsNode,'ver':capsHash,'hash':'sha-1'})
 			sender(j)
 			msg = L('Removed: %s') % nnick
 		else: msg = L('Not found!')

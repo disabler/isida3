@@ -67,7 +67,7 @@ def addAnswerToBase(tx):
 def getRandomAnswer(tx,room):
 	if not tx.strip(): return None
 	lent = len(cur_execute_fetchall('select ind from answer'))
-	mrand = randint(1,lent)
+	mrand = random.randint(1,lent)
 	answ = to_censore(cur_execute_fetchone('select body from answer where ind=%s', (mrand,))[0],room)
 	return answ
 

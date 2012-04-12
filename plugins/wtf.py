@@ -41,7 +41,7 @@ def wtfsearch(type, jid, nick, text):
 def wtfrand(type, jid, nick):
 	ww = cur_execute_fetchall('select * from wtf where room=%s or room=%s or room=%s',(jid,'global','import'))
 	tlen = len(ww)
-	ww = ww[randint(0,tlen-1)]
+	ww = ww[random.randint(0,tlen-1)]
 	msg = L('I know that %s is %s') % (ww[4],ww[5])
 	send_msg(type, jid, nick, msg)
 

@@ -22,18 +22,11 @@
 # --------------------------------------------------------------------------- #
 
 from __future__ import with_statement
-from xmpp import *
-from random import *
-from pdb import *
-from subprocess import Popen, PIPE, STDOUT
-from time import gmtime, localtime, sleep
 
-import atexit
 import calendar
 import chardet
 import crontab 
 import datetime
-import gc
 import json
 import hashlib
 import htmlentitydefs
@@ -42,51 +35,17 @@ import logging
 import operator
 import os
 import math
-import pdb
 import random
 import re
-import select
 import socket
-import sqlite3
-import subprocess
 import string
 import sys
-import thread
-import threading
 import time
 import urllib
 import urllib2
 import xmpp
 
 global execute, prefix, comms, hashlib, trace
-
-sema = threading.BoundedSemaphore(value=30)
-
-class KThread(threading.Thread):
-	def __init__(self, *args, **keywords):
-		threading.Thread.__init__(self, *args, **keywords)
-		self.killed = False
-
-	def start(self):
-		self.__run_backup = self.run
-		self.run = self.__run
-		threading.Thread.start(self)
-
-	def __run(self):
-		sys.settrace(self.globaltrace)
-		self.__run_backup()
-		self.run = self.__run_backup
-
-	def globaltrace(self, frame, why, arg):
-		if why == 'call': return self.localtrace
-		else: return None
-
-	def localtrace(self, frame, why, arg):
-		if self.killed:
-			if why == 'line': raise SystemExit()
-		return self.localtrace
-
-	def kill(self): self.killed = True
 
 def cur_execute(*params):
 	cur = conn.cursor()
@@ -194,7 +153,7 @@ def get_color(c):
 	return ['','\x1b%s' % colors[c]][color]
 
 def thr(func,param,name):
-	global th_cnt, thread_error_count
+	global th_cnt, thread_error_count, sema
 	th_cnt += 1
 	try:
 		if thread_type:
@@ -207,7 +166,7 @@ def thr(func,param,name):
 		try: SM = str(SM)
 		except: SM = unicode(SM)
 		if 'thread' in SM.lower(): thread_error_count += 1
-		else: logging.exception(' [%s] %s' % (timeadd(tuple(time.localtime())),unicode(proc)))
+		else: logging.exception(' [%s] %s' % (timeadd(tuple(time.localtime())),unicode(func)))
 		if thread_type:
 			try: tmp_th.kill()
 			except: pass
@@ -430,7 +389,7 @@ def get_joke(text):
 	
 		def blond_text(text):
 			b = ''
-			cnt = randint(0,1)
+			cnt = random.randint(0,1)
 			for tmp in text:
 				if cnt: b += tmp.upper()
 				else: b += tmp.lower()
@@ -447,12 +406,12 @@ def get_joke(text):
 	def joke_upyachka(text):
 		upch = [u'пыщь!!!111адын',u'ололололо!!11',u'ГОЛАКТЕКО ОПАСНОСТЕ!!11',u'ТЕЛОИД!!',u'ЖАЖА1!',u'ОНОТОЛЕЙ!!!!!',u'ПОТС ЗОХВАЧЕН11!!!',
 				u'ПыЩЩЩЩЩЩЩЩЩь!!!!!!!1111',u'ПыЩЩЩЩЩЩЩЩЩь11111адинадин1адин']
-		return '%s %s' % (text,choice(upch))
+		return '%s %s' % (text,random.choice(upch))
 
 	def no_joke(text): return text
 
 	jokes = [joke_blond,no_joke,joke_upyachka]
-	return choice(jokes)(text)
+	return random.choice(jokes)(text)
 
 def msg_validator(t): return ''.join([[l,'?'][l<' ' and l not in '\n\t\r'] for l in unicode(t)])
 
@@ -559,18 +518,18 @@ def os_version():
 	return isidaOs
 
 def caps_and_send(tmp):
-	tmp.setTag('c', namespace=NS_CAPS, attrs={'node':capsNode,'ver':capsHash,'hash':'sha-1'})
+	tmp.setTag('c', namespace=xmpp.NS_CAPS, attrs={'node':capsNode,'ver':capsHash,'hash':'sha-1'})
 	sender(tmp)
 
 def join(conference,passwd):
 	global pres_answer,cycles_used,cycles_unused
 	id = get_id()
-	if Settings['status'] == 'online': j = Node('presence', {'id': id, 'to': conference}, payload = [Node('status', {},[Settings['message']]),\
-																									 Node('priority', {},[Settings['priority']])])
-	else: j = Node('presence', {'id': id, 'to': conference}, payload = [Node('show', {},[Settings['status']]),\
-																		Node('status', {},[Settings['message']]),\
-																		Node('priority', {},[Settings['priority']])])
-	j.setTag('x', namespace=NS_MUC).addChild('history', {'maxchars':'0', 'maxstanzas':'0'})
+	if Settings['status'] == 'online': j = xmpp.Node('presence', {'id': id, 'to': conference}, payload = [xmpp.Node('status', {},[Settings['message']]),\
+																										  xmpp.Node('priority', {},[Settings['priority']])])
+	else: j = xmpp.Node('presence', {'id': id, 'to': conference}, payload = [xmpp.Node('show', {},[Settings['status']]),\
+																		xmpp.Node('status', {},[Settings['message']]),\
+																		xmpp.Node('priority', {},[Settings['priority']])])
+	j.setTag('x', namespace=xmpp.NS_MUC).addChild('history', {'maxchars':'0', 'maxstanzas':'0'})
 	j.getTag('x').setTagData('password', passwd)
 	caps_and_send(j)
 	answered, Error, join_timeout = None, None, 3
@@ -593,17 +552,17 @@ def join(conference,passwd):
 	return Error
 
 def leave(conference, sm):
-	j = Presence(conference, 'unavailable', status=sm)
+	j = xmpp.Presence(conference, 'unavailable', status=sm)
 	sender(j)
 
 def muc_filter_action(act,jid,room,reason):
 	if act in ['visitor','kick']:
 		nick = get_nick_by_jid(room,getRoom(jid))
-		if nick and act=='visitor': sender(Node('iq',{'id': get_id(), 'type': 'set', 'to':room},payload = [Node('query', {'xmlns': NS_MUC_ADMIN},[Node('item',{'role':'visitor', 'nick':nick},[Node('reason',{},reason)])])]))
-		elif nick and act=='kick': sender(Node('iq',{'id': get_id(), 'type': 'set', 'to':room},payload = [Node('query', {'xmlns': NS_MUC_ADMIN},[Node('item',{'role':'none', 'nick':nick},[Node('reason',{},reason)])])]))
-		elif not nick and act=='visitor': sender(Node('iq',{'id': get_id(), 'type': 'set', 'to':room},payload = [Node('query', {'xmlns': NS_MUC_ADMIN},[Node('item',{'role':'visitor', 'jid':jid},[Node('reason',{},reason)])])]))
-		elif not nick and act=='kick': sender(Node('iq',{'id': get_id(), 'type': 'set', 'to':room},payload = [Node('query', {'xmlns': NS_MUC_ADMIN},[Node('item',{'role':'none', 'jid':jid},[Node('reason',{},reason)])])]))
-	elif act=='ban': sender(Node('iq',{'id': get_id(), 'type': 'set', 'to':room},payload = [Node('query', {'xmlns': NS_MUC_ADMIN},[Node('item',{'affiliation':'outcast', 'jid':jid},[Node('reason',{},reason)])])]))
+		if nick and act=='visitor': sender(xmpp.Node('iq',{'id': get_id(), 'type': 'set', 'to':room},payload = [xmpp.Node('query', {'xmlns': xmpp.NS_MUC_ADMIN},[xmpp.Node('item',{'role':'visitor', 'nick':nick},[xmpp.Node('reason',{},reason)])])]))
+		elif nick and act=='kick': sender(xmpp.Node('iq',{'id': get_id(), 'type': 'set', 'to':room},payload = [xmpp.Node('query', {'xmlns': xmpp.NS_MUC_ADMIN},[xmpp.Node('item',{'role':'none', 'nick':nick},[xmpp.Node('reason',{},reason)])])]))
+		elif not nick and act=='visitor': sender(xmpp.Node('iq',{'id': get_id(), 'type': 'set', 'to':room},payload = [xmpp.Node('query', {'xmlns': xmpp.NS_MUC_ADMIN},[xmpp.Node('item',{'role':'visitor', 'jid':jid},[xmpp.Node('reason',{},reason)])])]))
+		elif not nick and act=='kick': sender(xmpp.Node('iq',{'id': get_id(), 'type': 'set', 'to':room},payload = [xmpp.Node('query', {'xmlns': xmpp.NS_MUC_ADMIN},[xmpp.Node('item',{'role':'none', 'jid':jid},[xmpp.Node('reason',{},reason)])])]))
+	elif act=='ban': sender(xmpp.Node('iq',{'id': get_id(), 'type': 'set', 'to':room},payload = [xmpp.Node('query', {'xmlns': xmpp.NS_MUC_ADMIN},[xmpp.Node('item',{'affiliation':'outcast', 'jid':jid},[xmpp.Node('reason',{},reason)])])]))
 	return None
 
 def paste_text(text,room,jid):
@@ -1444,13 +1403,13 @@ def iqCB(sess,iq):
 								hashes['%s/%s' % (gr,nick)] = current_hash
 								if current_hash in hashes_list:
 									pprint('MUC-Filter hash lock: %s/%s %s %s' % (gr,nick,jid,current_hash),'brown')
-									msg,mute = unicode(Node('presence', {'from': tojid, 'type': 'error', 'to':jid}, payload = ['replace_it',Node('error', {'type': 'auth','code':'403'}, payload=[Node('forbidden',{'xmlns':'urn:ietf:params:xml:ns:xmpp-stanzas'},[]),Node('text',{'xmlns':'urn:ietf:params:xml:ns:xmpp-stanzas'},[L('Deny by hash lock!')])])])).replace('replace_it',get_tag(msg,'presence')),True
+									msg,mute = unicode(xmpp.Node('presence', {'from': tojid, 'type': 'error', 'to':jid}, payload = ['replace_it',xmpp.Node('error', {'type': 'auth','code':'403'}, payload=[xmpp.Node('forbidden',{'xmlns':'urn:ietf:params:xml:ns:xmpp-stanzas'},[]),xmpp.Node('text',{'xmlns':'urn:ietf:params:xml:ns:xmpp-stanzas'},[L('Deny by hash lock!')])])])).replace('replace_it',get_tag(msg,'presence')),True
 									tmp_server = getServer(jid)
 									tmp2_server = '%s/%s' % (gr,tmp_server)
 									if get_config(gr,'muc_filter_hash_ban_by_rejoin') and not server_hash.has_key(tmp2_server):
 										if user_hash.has_key('%s/%s' % (gr,getRoom(jid))):
 											user_hash.pop('%s/%s' % (gr,getRoom(jid)))
-											sender(Node('iq',{'id': get_id(), 'type': 'set', 'to':gr},payload = [Node('query', {'xmlns': NS_MUC_ADMIN},[Node('item',{'affiliation':'outcast', 'jid':jid},[Node('reason',{},'Banned by hash activity at %s' % timeadd(tuple(time.localtime())))])])]))
+											sender(xmpp.Node('iq',{'id': get_id(), 'type': 'set', 'to':gr},payload = [xmpp.Node('query', {'xmlns': xmpp.NS_MUC_ADMIN},[xmpp.Node('item',{'affiliation':'outcast', 'jid':jid},[xmpp.Node('reason',{},'Banned by hash activity at %s' % timeadd(tuple(time.localtime())))])])]))
 											pprint('MUC-Filter ban by hash lock: %s/%s' % (gr,nick),'brown')
 										else: user_hash['%s/%s' % (gr,getRoom(jid))] = time.time()
 									if get_config(gr,'muc_filter_hash_ban_server_by_rejoin'):
@@ -1461,7 +1420,7 @@ def iqCB(sess,iq):
 											tmp_times = server_hash[tmp2_server]
 											if len(tmp_times) == tmp_rejoins and tmp_times[0]-tmp_times[-1] <= get_config_int(gr,'muc_filter_hash_ban_server_by_rejoin_timeout') and not server_hash_list.has_key(tmp2_server):
 												server_hash_list[tmp2_server] = time.time()
-												sender(Node('iq',{'id': get_id(), 'type': 'set', 'to':gr},payload = [Node('query', {'xmlns': NS_MUC_ADMIN},[Node('item',{'affiliation':'outcast', 'jid':tmp_server},[Node('reason',{},'Banned by hash activity at %s' % timeadd(tuple(time.localtime())))])])]))
+												sender(xmpp.Node('iq',{'id': get_id(), 'type': 'set', 'to':gr},payload = [xmpp.Node('query', {'xmlns': xmpp.NS_MUC_ADMIN},[xmpp.Node('item',{'affiliation':'outcast', 'jid':tmp_server},[xmpp.Node('reason',{},'Banned by hash activity at %s' % timeadd(tuple(time.localtime())))])])]))
 												pprint('MUC-Filter server ban by hash lock: %s %s' % (gr,tmp_server),'brown')
 												tmp_notify = get_config(gr,'muc_filter_hash_ban_server_by_rejoin_notify_jid')
 												if len(tmp_notify):
@@ -1482,14 +1441,14 @@ def iqCB(sess,iq):
 								if not is_bl and bl_nick and re.findall(bl_nick,nick,re.S+re.U+re.I): is_bl = True
 								if is_bl:
 									pprint('MUC-Filter blacklist: %s/%s %s' % (gr,nick,jid),'brown')
-									msg,mute = unicode(Node('presence', {'from': tojid, 'type': 'error', 'to':jid}, payload = ['replace_it',Node('error', {'type': 'auth','code':'403'}, payload=[Node('forbidden',{'xmlns':'urn:ietf:params:xml:ns:xmpp-stanzas'},[]),Node('text',{'xmlns':'urn:ietf:params:xml:ns:xmpp-stanzas'},[L('Deny by blacklist!')])])])).replace('replace_it',get_tag(msg,'presence')),True
+									msg,mute = unicode(xmpp.Node('presence', {'from': tojid, 'type': 'error', 'to':jid}, payload = ['replace_it',xmpp.Node('error', {'type': 'auth','code':'403'}, payload=[xmpp.Node('forbidden',{'xmlns':'urn:ietf:params:xml:ns:xmpp-stanzas'},[]),xmpp.Node('text',{'xmlns':'urn:ietf:params:xml:ns:xmpp-stanzas'},[L('Deny by blacklist!')])])])).replace('replace_it',get_tag(msg,'presence')),True
 
 						# Whitelist
 						if get_config(gr,'muc_filter_whitelist') and msg and not mute and newjoin:
 							in_base = cur_execute_fetchone('select jid from age where room=%s and jid=%s',(gr,getRoom(jid)))
 							if not in_base:
 								pprint('MUC-Filter whitelist: %s/%s %s' % (gr,nick,jid),'brown')
-								msg,mute = unicode(Node('presence', {'from': tojid, 'type': 'error', 'to':jid}, payload = ['replace_it',Node('error', {'type': 'auth','code':'403'}, payload=[Node('forbidden',{'xmlns':'urn:ietf:params:xml:ns:xmpp-stanzas'},[]),Node('text',{'xmlns':'urn:ietf:params:xml:ns:xmpp-stanzas'},[L('Deny by whitelist!')])])])).replace('replace_it',get_tag(msg,'presence')),True
+								msg,mute = unicode(xmpp.Node('presence', {'from': tojid, 'type': 'error', 'to':jid}, payload = ['replace_it',xmpp.Node('error', {'type': 'auth','code':'403'}, payload=[xmpp.Node('forbidden',{'xmlns':'urn:ietf:params:xml:ns:xmpp-stanzas'},[]),xmpp.Node('text',{'xmlns':'urn:ietf:params:xml:ns:xmpp-stanzas'},[L('Deny by whitelist!')])])])).replace('replace_it',get_tag(msg,'presence')),True
 
 						# AD-Block filter
 						need_raw = True
@@ -1507,7 +1466,7 @@ def iqCB(sess,iq):
 								if act == 'replace':
 									for tmp in fs: status = status.replace(tmp,[GT('censor_text')*len(tmp),GT('censor_text')][len(GT('censor_text'))>1])
 									msg = msg.replace(get_tag_full(msg,'status'),'<status>%s</status>' % status)
-								elif newjoin: msg,mute = unicode(Node('presence', {'from': tojid, 'type': 'error', 'to':jid}, payload = ['replace_it',Node('error', {'type': 'auth','code':'403'}, payload=[Node('forbidden',{'xmlns':'urn:ietf:params:xml:ns:xmpp-stanzas'},[]),Node('text',{'xmlns':'urn:ietf:params:xml:ns:xmpp-stanzas'},[L('AD-Block!')])])])).replace('replace_it',get_tag(msg,'presence')),True
+								elif newjoin: msg,mute = unicode(xmpp.Node('presence', {'from': tojid, 'type': 'error', 'to':jid}, payload = ['replace_it',xmpp.Node('error', {'type': 'auth','code':'403'}, payload=[xmpp.Node('forbidden',{'xmlns':'urn:ietf:params:xml:ns:xmpp-stanzas'},[]),xmpp.Node('text',{'xmlns':'urn:ietf:params:xml:ns:xmpp-stanzas'},[L('AD-Block!')])])])).replace('replace_it',get_tag(msg,'presence')),True
 								elif act == 'mute': msg,mute = None,True
 								else: msg = muc_filter_action(act,jid,room,L('AD-Block!'))
 							if fn and msg:
@@ -1517,7 +1476,7 @@ def iqCB(sess,iq):
 								if act == 'replace':
 									for tmp in fn: nick = nick.replace(tmp,[GT('censor_text')*len(tmp),GT('censor_text')][len(GT('censor_text'))>1])
 									msg = msg.replace(esc_max2(tojid),'%s/%s' % (tojid.split('/',1)[0],nick))
-								elif newjoin: msg,mute = unicode(Node('presence', {'from': tojid, 'type': 'error', 'to':jid}, payload = ['replace_it',Node('error', {'type': 'auth','code':'403'}, payload=[Node('forbidden',{'xmlns':'urn:ietf:params:xml:ns:xmpp-stanzas'},[]),Node('text',{'xmlns':'urn:ietf:params:xml:ns:xmpp-stanzas'},[L('AD-Block!')])])])).replace('replace_it',get_tag(msg,'presence')),True
+								elif newjoin: msg,mute = unicode(xmpp.Node('presence', {'from': tojid, 'type': 'error', 'to':jid}, payload = ['replace_it',xmpp.Node('error', {'type': 'auth','code':'403'}, payload=[xmpp.Node('forbidden',{'xmlns':'urn:ietf:params:xml:ns:xmpp-stanzas'},[]),xmpp.Node('text',{'xmlns':'urn:ietf:params:xml:ns:xmpp-stanzas'},[L('AD-Block!')])])])).replace('replace_it',get_tag(msg,'presence')),True
 								elif act == 'mute': msg,mute = None,True
 								else: msg = muc_filter_action(act,jid,room,L('AD-Block!'))
 
@@ -1534,13 +1493,13 @@ def iqCB(sess,iq):
 							if rawstatus and fs:
 								act = get_config(gr,'muc_filter_adblock_prs_raw')
 								pprint('MUC-Filter raw adblock prs status (%s): %s [%s] %s' % (act,jid,room,status),'brown')
-								if newjoin: msg,mute = unicode(Node('presence', {'from': tojid, 'type': 'error', 'to':jid}, payload = ['replace_it',Node('error', {'type': 'auth','code':'403'}, payload=[Node('forbidden',{'xmlns':'urn:ietf:params:xml:ns:xmpp-stanzas'},[]),Node('text',{'xmlns':'urn:ietf:params:xml:ns:xmpp-stanzas'},[L('AD-Block!')])])])).replace('replace_it',get_tag(msg,'presence')),True
+								if newjoin: msg,mute = unicode(xmpp.Node('presence', {'from': tojid, 'type': 'error', 'to':jid}, payload = ['replace_it',xmpp.Node('error', {'type': 'auth','code':'403'}, payload=[xmpp.Node('forbidden',{'xmlns':'urn:ietf:params:xml:ns:xmpp-stanzas'},[]),xmpp.Node('text',{'xmlns':'urn:ietf:params:xml:ns:xmpp-stanzas'},[L('AD-Block!')])])])).replace('replace_it',get_tag(msg,'presence')),True
 								elif act == 'mute': msg,mute = None,True
 								else: msg = muc_filter_action(act,jid,room,L('Raw AD-Block!'))
 							if rawnick and fn and msg:
 								act = get_config(gr,'muc_filter_adblock_prs_raw')
 								pprint('MUC-Filter raw adblock prs nick (%s): %s [%s] %s' % (act,jid,room,nick),'brown')
-								if newjoin: msg,mute = unicode(Node('presence', {'from': tojid, 'type': 'error', 'to':jid}, payload = ['replace_it',Node('error', {'type': 'auth','code':'403'}, payload=[Node('forbidden',{'xmlns':'urn:ietf:params:xml:ns:xmpp-stanzas'},[]),Node('text',{'xmlns':'urn:ietf:params:xml:ns:xmpp-stanzas'},[L('AD-Block!')])])])).replace('replace_it',get_tag(msg,'presence')),True
+								if newjoin: msg,mute = unicode(xmpp.Node('presence', {'from': tojid, 'type': 'error', 'to':jid}, payload = ['replace_it',xmpp.Node('error', {'type': 'auth','code':'403'}, payload=[xmpp.Node('forbidden',{'xmlns':'urn:ietf:params:xml:ns:xmpp-stanzas'},[]),xmpp.Node('text',{'xmlns':'urn:ietf:params:xml:ns:xmpp-stanzas'},[L('AD-Block!')])])])).replace('replace_it',get_tag(msg,'presence')),True
 								elif act == 'mute': msg,mute = None,True
 								else: msg = muc_filter_action(act,jid,room,L('Raw AD-Block!'))
 
@@ -1556,7 +1515,7 @@ def iqCB(sess,iq):
 							if status.count('\n') >= nline_count:
 								pprint('MUC-Filter prs new line (%s): %s [%s] %s' % (act,jid,room,nick+'|'+status.replace('\n','[LF]')),'brown')
 								if act == 'replace': msg = msg.replace(get_tag_full(msg,'status'),'<status>%s</status>' % reduce_spaces_all(status.replace('\n',' ')))
-								elif newjoin: msg,mute = unicode(Node('presence', {'from': tojid, 'type': 'error', 'to':jid}, payload = ['replace_it',Node('error', {'type': 'auth','code':'403'}, payload=[Node('forbidden',{'xmlns':'urn:ietf:params:xml:ns:xmpp-stanzas'},[]),Node('text',{'xmlns':'urn:ietf:params:xml:ns:xmpp-stanzas'},[L('Blocked by content!')])])])).replace('replace_it',get_tag(msg,'presence')),True
+								elif newjoin: msg,mute = unicode(xmpp.Node('presence', {'from': tojid, 'type': 'error', 'to':jid}, payload = ['replace_it',xmpp.Node('error', {'type': 'auth','code':'403'}, payload=[xmpp.Node('forbidden',{'xmlns':'urn:ietf:params:xml:ns:xmpp-stanzas'},[]),xmpp.Node('text',{'xmlns':'urn:ietf:params:xml:ns:xmpp-stanzas'},[L('Blocked by content!')])])])).replace('replace_it',get_tag(msg,'presence')),True
 								elif act == 'mute': msg,mute = None,True
 								else: msg = muc_filter_action(act,jid,room,L('Blocked by content!'))
 
@@ -1579,7 +1538,7 @@ def iqCB(sess,iq):
 									status = esc_max2(to_censore(esc_min2(status),gr))
 									msg = msg.replace(get_tag_full(msg,'status'),'<status>%s</status>' % status).replace(esc_max2(tojid),'%s/%s' % (tojid.split('/',1)[0],to_censore(esc_max2(nick),gr)))
 								else: msg = msg.replace(esc_max2(tojid),'%s/%s' % (tojid.split('/',1)[0],to_censore(esc_max2(nick),gr)))
-							elif newjoin: msg,mute = unicode(Node('presence', {'from': tojid, 'type': 'error', 'to':jid}, payload = ['replace_it',Node('error', {'type': 'auth','code':'403'}, payload=[Node('forbidden',{'xmlns':'urn:ietf:params:xml:ns:xmpp-stanzas'},[]),Node('text',{'xmlns':'urn:ietf:params:xml:ns:xmpp-stanzas'},[L('Blocked by censor!')])])])).replace('replace_it',get_tag(msg,'presence')),True
+							elif newjoin: msg,mute = unicode(xmpp.Node('presence', {'from': tojid, 'type': 'error', 'to':jid}, payload = ['replace_it',xmpp.Node('error', {'type': 'auth','code':'403'}, payload=[xmpp.Node('forbidden',{'xmlns':'urn:ietf:params:xml:ns:xmpp-stanzas'},[]),xmpp.Node('text',{'xmlns':'urn:ietf:params:xml:ns:xmpp-stanzas'},[L('Blocked by censor!')])])])).replace('replace_it',get_tag(msg,'presence')),True
 							elif act == 'mute': msg,mute = None,True
 							else: msg = muc_filter_action(act,jid,room,L('Blocked by censor!'))
 
@@ -1590,7 +1549,7 @@ def iqCB(sess,iq):
 							if (rawstatus or rawnick) and '%s|%s' % (rawstatus,rawnick) != to_censore('%s|%s' % (rawstatus,rawnick),gr):
 								act = get_config(gr,'muc_filter_censor_prs_raw')
 								pprint('MUC-Filter prs raw censor (%s): %s [%s] %s' % (act,jid,room,nick+'|'+status),'brown')
-								if newjoin: msg,mute = unicode(Node('presence', {'from': tojid, 'type': 'error', 'to':jid}, payload = ['replace_it',Node('error', {'type': 'auth','code':'403'}, payload=[Node('forbidden',{'xmlns':'urn:ietf:params:xml:ns:xmpp-stanzas'},[]),Node('text',{'xmlns':'urn:ietf:params:xml:ns:xmpp-stanzas'},[L('Blocked by censor!')])])])).replace('replace_it',get_tag(msg,'presence')),True
+								if newjoin: msg,mute = unicode(xmpp.Node('presence', {'from': tojid, 'type': 'error', 'to':jid}, payload = ['replace_it',xmpp.Node('error', {'type': 'auth','code':'403'}, payload=[xmpp.Node('forbidden',{'xmlns':'urn:ietf:params:xml:ns:xmpp-stanzas'},[]),xmpp.Node('text',{'xmlns':'urn:ietf:params:xml:ns:xmpp-stanzas'},[L('Blocked by censor!')])])])).replace('replace_it',get_tag(msg,'presence')),True
 								elif act == 'mute': msg,mute = None,True
 								else: msg = muc_filter_action(act,jid,room,L('Blocked by raw censor!'))
 
@@ -1599,7 +1558,7 @@ def iqCB(sess,iq):
 							act = get_config(gr,'muc_filter_large_status')
 							pprint('MUC-Filter large status (%s): %s [%s] %s' % (act,jid,room,status),'brown')
 							if act == 'truncate': msg = msg.replace(get_tag_full(msg,'status'),u'<status>%s…</status>' % esc_max2(esc_min2(status)[:GT('muc_filter_large_status_size')]))
-							elif newjoin: msg,mute = unicode(Node('presence', {'from': tojid, 'type': 'error', 'to':jid}, payload = ['replace_it',Node('error', {'type': 'auth','code':'403'}, payload=[Node('forbidden',{'xmlns':'urn:ietf:params:xml:ns:xmpp-stanzas'},[]),Node('text',{'xmlns':'urn:ietf:params:xml:ns:xmpp-stanzas'},[L('Large status block!')])])])).replace('replace_it',get_tag(msg,'presence')),True
+							elif newjoin: msg,mute = unicode(xmpp.Node('presence', {'from': tojid, 'type': 'error', 'to':jid}, payload = ['replace_it',xmpp.Node('error', {'type': 'auth','code':'403'}, payload=[xmpp.Node('forbidden',{'xmlns':'urn:ietf:params:xml:ns:xmpp-stanzas'},[]),xmpp.Node('text',{'xmlns':'urn:ietf:params:xml:ns:xmpp-stanzas'},[L('Large status block!')])])])).replace('replace_it',get_tag(msg,'presence')),True
 							elif act == 'mute': msg,mute = None,True
 							else: msg = muc_filter_action(act,jid,room,L('Large status block!'))
 
@@ -1607,7 +1566,7 @@ def iqCB(sess,iq):
 						if get_config(gr,'muc_filter_large_nick') != 'off' and len(esc_min2(nick)) > GT('muc_filter_large_nick_size') and msg and not mute:
 							act = get_config(gr,'muc_filter_large_nick')
 							if act == 'truncate': msg = msg.replace(esc_max2(tojid),u'%s/%s…' % (tojid.split('/',1)[0],esc_max2(esc_min2(nick)[:GT('muc_filter_large_nick_size')])))
-							elif newjoin: msg,mute = unicode(Node('presence', {'from': tojid, 'type': 'error', 'to':jid}, payload = ['replace_it',Node('error', {'type': 'auth','code':'403'}, payload=[Node('forbidden',{'xmlns':'urn:ietf:params:xml:ns:xmpp-stanzas'},[]),Node('text',{'xmlns':'urn:ietf:params:xml:ns:xmpp-stanzas'},[L('Large nick block!')])])])).replace('replace_it',get_tag(msg,'presence')),True
+							elif newjoin: msg,mute = unicode(xmpp.Node('presence', {'from': tojid, 'type': 'error', 'to':jid}, payload = ['replace_it',xmpp.Node('error', {'type': 'auth','code':'403'}, payload=[xmpp.Node('forbidden',{'xmlns':'urn:ietf:params:xml:ns:xmpp-stanzas'},[]),xmpp.Node('text',{'xmlns':'urn:ietf:params:xml:ns:xmpp-stanzas'},[L('Large nick block!')])])])).replace('replace_it',get_tag(msg,'presence')),True
 							elif act == 'mute': msg,mute = None,True
 							else: msg = muc_filter_action(act,jid,room,L('Large nick block!'))
 
@@ -1619,7 +1578,7 @@ def iqCB(sess,iq):
 							if len(muc_rejoins[ttojid]) == GT('muc_filter_rejoin_count'):
 								tmo = muc_rejoins[ttojid][GT('muc_filter_rejoin_count')-1] - muc_rejoins[ttojid][0]
 								if tmo < GT('muc_filter_rejoin_timeout'):
-									msg,mute = unicode(Node('presence', {'from': tojid, 'type': 'error', 'to':jid}, payload = ['replace_it',Node('error', {'type': 'auth','code':'403'}, payload=[Node('forbidden',{'xmlns':'urn:ietf:params:xml:ns:xmpp-stanzas'},[]),Node('text',{'xmlns':'urn:ietf:params:xml:ns:xmpp-stanzas'},[L('To many rejoins! Wait %s sec.') % GT('muc_filter_rejoin_timeout')])])])).replace('replace_it',get_tag(msg,'presence')),True
+									msg,mute = unicode(xmpp.Node('presence', {'from': tojid, 'type': 'error', 'to':jid}, payload = ['replace_it',xmpp.Node('error', {'type': 'auth','code':'403'}, payload=[xmpp.Node('forbidden',{'xmlns':'urn:ietf:params:xml:ns:xmpp-stanzas'},[]),xmpp.Node('text',{'xmlns':'urn:ietf:params:xml:ns:xmpp-stanzas'},[L('To many rejoins! Wait %s sec.') % GT('muc_filter_rejoin_timeout')])])])).replace('replace_it',get_tag(msg,'presence')),True
 									pprint('MUC-Filter rejoin: %s [%s] %s' % (jid,room,nick),'brown')
 
 						# Status filter
@@ -1728,7 +1687,7 @@ def messageCB(sess,mess):
 	room=unicode(mess.getFrom().getStripped())
 	text=unicode(mess.getBody())
 	try:
-		code = mess.getTag('x',namespace=NS_MUC_USER).getTagAttr('status','code')
+		code = mess.getTag('x',namespace=xmpp.NS_MUC_USER).getTagAttr('status','code')
 		if code == '104':
 			append_message_to_log(room,'','',type,L('Room\'s configuration changed.'))
 			return
@@ -1847,7 +1806,7 @@ def msg_afterwork(mess,room,jid,nick,type,back_text,no_comm,access_mode,nowname)
 				except: pass
 
 def send_msg_human(type, room, nick, text):
-	time.sleep(len(text)/4.0+randint(0,3))
+	time.sleep(len(text)/4.0+random.randint(0,3))
 	send_msg(type, room, nick, text)
 
 def to_censore(text,room):
@@ -2063,12 +2022,12 @@ def presenceCB(sess,mess):
 	al = get_level(getRoom(room),nick)[0]
 	if al == 9:
 		if type == 'subscribe':
-			caps_and_send(Presence(room, 'subscribed'))
-			caps_and_send(Presence(room, 'subscribe'))
+			caps_and_send(xmpp.Presence(room, 'subscribed'))
+			caps_and_send(xmpp.Presence(room, 'subscribe'))
 			pprint('Subscribe %s' % room,'light_gray')
 		elif type == 'unsubscribed':
-			caps_and_send(Presence(room, 'unsubscribe'))
-			caps_and_send(Presence(room, 'unsubscribed'))
+			caps_and_send(xmpp.Presence(room, 'unsubscribe'))
+			caps_and_send(xmpp.Presence(room, 'unsubscribed'))
 			pprint('Unsubscribe %s' % room,'light_gray')
 	if nick != '' and nick != 'None' and nick != nowname and len(text)>1 and text != 'None' and al >= 0 and get_config(getRoom(room),'censor'):
 		nt = '%s %s' % (nick,text)
@@ -2183,15 +2142,6 @@ def L(text):
 	try: return locales[text]
 	except: return text
 
-def kill_all_threads():
-	if thread_type:
-		threading_list = threading.enumerate() 
-		threading_list.remove(threading.currentThread())
-		for tmp in threading_list:
-			if not tmp.name.startswith('_MainThread'):
-				try: tmp.kill()
-				except: pass
-
 def get_id():
 	global id_count
 	id_count += 1
@@ -2290,6 +2240,36 @@ elif base_type == 'mysql':
 	import MySQLdb
 else: errorHandler('Unknown database backend!')
 
+if thread_type:
+	import threading
+	sema = threading.BoundedSemaphore(value=30)
+	class KThread(threading.Thread):
+		def __init__(self, *args, **keywords):
+			threading.Thread.__init__(self, *args, **keywords)
+			self.killed = False
+
+		def start(self):
+			self.__run_backup = self.run
+			self.run = self.__run
+			threading.Thread.start(self)
+
+		def __run(self):
+			sys.settrace(self.globaltrace)
+			self.__run_backup()
+			self.run = self.__run_backup
+
+		def globaltrace(self, frame, why, arg):
+			if why == 'call': return self.localtrace
+			else: return None
+
+		def localtrace(self, frame, why, arg):
+			if self.killed:
+				if why == 'line': raise SystemExit()
+			return self.localtrace
+
+		def kill(self): self.killed = True
+else: import thread
+	
 if os.path.isfile(ver_file):
 	bvers = readfile(ver_file).decode('utf-8').replace('\n','').replace('\r','').replace('\t','').replace(' ','')
 	botVersion += '.%s' % bvers
@@ -2413,8 +2393,8 @@ pprint('*** (c) 2oo9-%s Disabler Production Lab.' % str(time.localtime()[0]).rep
 if float(sys.version[:3]) < 2.7: errorHandler('Required Python >= 2.7')
 
 lastnick = Settings['nickname']
-jid = JID(Settings['jid'])
-if getResourse(jid) in ['None','']: jid = JID(Settings['jid'].split('/')[0]+'/my owner is stupid and can not complete the configuration')
+jid = xmpp.JID(Settings['jid'])
+if getResourse(jid) in ['None','']: jid = xmpp.JID(Settings['jid'].split('/')[0]+'/my owner is stupid and can not complete the configuration')
 selfjid = jid
 pprint('JID: %s' % unicode(jid),'light_gray')
 
@@ -2426,8 +2406,8 @@ try:
 		Port = int(server.split(':')[1])
 		pprint('Trying to connect to %s' % server,'yellow')
 	except: Server,Port = None,5222
-	if dm: cl = Client(jid.getDomain(),Port,ENABLE_TLS=ENABLE_TLS)
-	else: cl = Client(jid.getDomain(),Port,debug=[],ENABLE_TLS=ENABLE_TLS)
+	if dm: cl = xmpp.Client(jid.getDomain(),Port,ENABLE_TLS=ENABLE_TLS)
+	else: cl = xmpp.Client(jid.getDomain(),Port,debug=[],ENABLE_TLS=ENABLE_TLS)
 	try:
 		Proxy = proxy
 		pprint('Using proxy %s' % Proxy['host'],'green')
@@ -2451,11 +2431,11 @@ cl.RegisterHandler('presence',presenceCB)
 cl.RegisterDisconnectHandler(disconnecter)
 cl.UnregisterDisconnectHandler(cl.DisconnectHandler)
 if GT('show_loading_by_status'):
-	if GT('show_loading_by_status_show') == 'online': caps_and_send(Presence(status=GT('show_loading_by_status_message'), priority=Settings['priority']))
-	else: caps_and_send(Presence(show=GT('show_loading_by_status_show'), status=GT('show_loading_by_status_message'), priority=Settings['priority']))
+	if GT('show_loading_by_status_show') == 'online': caps_and_send(xmpp.Presence(status=GT('show_loading_by_status_message'), priority=Settings['priority']))
+	else: caps_and_send(xmpp.Presence(show=GT('show_loading_by_status_show'), status=GT('show_loading_by_status_message'), priority=Settings['priority']))
 else:
-	if Settings['status'] == 'online': caps_and_send(Presence(status=Settings['message'], priority=Settings['priority']))
-	else: caps_and_send(Presence(show=Settings['status'], status=Settings['message'], priority=Settings['priority']))
+	if Settings['status'] == 'online': caps_and_send(xmpp.Presence(status=Settings['message'], priority=Settings['priority']))
+	else: caps_and_send(xmpp.Presence(show=Settings['status'], status=Settings['message'], priority=Settings['priority']))
 #cl.sendInitPresence()
 
 pprint('Wait conference','yellow')
@@ -2493,8 +2473,8 @@ for tocon in confbase:
 		join_status = '%s %s%%' % (GT('show_loading_by_status_message'),int(join_percent))
 		if GT('show_loading_by_status'):
 			if GT('show_loading_by_status_room'): join_status = '%s [%s]' % (join_status,tocon)
-			if GT('show_loading_by_status_show') == 'online': caps_and_send(Presence(status=join_status, priority=Settings['priority']))
-			else: caps_and_send(Presence(show=GT('show_loading_by_status_show'), status=join_status, priority=Settings['priority']))
+			if GT('show_loading_by_status_show') == 'online': caps_and_send(xmpp.Presence(status=join_status, priority=Settings['priority']))
+			else: caps_and_send(xmpp.Presence(show=GT('show_loading_by_status_show'), status=join_status, priority=Settings['priority']))
 	if game_over: break
 confbase = cb
 is_start = None
@@ -2510,8 +2490,8 @@ try: thr(bomb_random,(),'bomb_random')
 except: pass
 
 if GT('show_loading_by_status'):
-	if Settings['status'] == 'online': caps_and_send(Presence(status=Settings['message'], priority=Settings['priority']))
-	else: caps_and_send(Presence(show=Settings['status'], status=Settings['message'], priority=Settings['priority']))
+	if Settings['status'] == 'online': caps_and_send(xmpp.Presence(status=Settings['message'], priority=Settings['priority']))
+	else: caps_and_send(xmpp.Presence(show=Settings['status'], status=Settings['message'], priority=Settings['priority']))
 
 while 1:
 	try:

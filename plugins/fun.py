@@ -121,7 +121,7 @@ def to_poke(type, jid, nick, text):
 				is_found = 1
 				break
 		if is_found:
-			msg = '/me '+dpoke[randint(0,len(dpoke)-1)]
+			msg = '/me '+dpoke[random.randint(0,len(dpoke)-1)]
 			msg = msg.replace('NICK',text)
 			nick = ''
 			type = 'groupchat'

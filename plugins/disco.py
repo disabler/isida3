@@ -325,7 +325,7 @@ def features(type, jid, nick, text):
 				where = '%s/%s' % (getRoom(jid),text[0])
 				break
 	iqid = get_id()
-	i = Node('iq', {'id': iqid, 'type': 'get', 'to':where}, payload = [Node('query', {'xmlns': NS_DISCO_INFO},[])])
+	i = xmpp.Node('iq', {'id': iqid, 'type': 'get', 'to':where}, payload = [xmpp.Node('query', {'xmlns': xmpp.NS_DISCO_INFO},[])])
 	iq_request[iqid]=(time.time(),features_async,[type, jid, nick, what, where])
 	sender(i)
 
@@ -381,7 +381,7 @@ def disco_r(type, jid, nick, text, raw_type):
 	try: hm = int(text.lower().split('\n',1)[1])
 	except: hm = GT('disco_max_limit')
 	iqid = get_id()
-	i = Node('iq', {'id': iqid, 'type': 'get', 'to':where}, payload = [Node('query', {'xmlns': NS_DISCO_INFO},[])])
+	i = xmpp.Node('iq', {'id': iqid, 'type': 'get', 'to':where}, payload = [xmpp.Node('query', {'xmlns': xmpp.NS_DISCO_INFO},[])])
 	iq_request[iqid]=(time.time(),disco_features_async,[type, jid, nick, what, where, hm, raw_type])
 	sender(i)
 
@@ -393,7 +393,7 @@ def disco_features_async(type, jid, nick, what, where, hm, raw_type, is_answ):
 	else:
 		disco_type = xmpp.NS_MUC in [t.getAttr('var') for t in isa[1].getTag('query',namespace=xmpp.NS_DISCO_INFO).getTags('feature')]
 		iqid = get_id()
-		i = Node('iq', {'id': iqid, 'type': 'get', 'to':where}, payload = [Node('query', {'xmlns': NS_DISCO_ITEMS},[])])
+		i = xmpp.Node('iq', {'id': iqid, 'type': 'get', 'to':where}, payload = [xmpp.Node('query', {'xmlns': xmpp.NS_DISCO_ITEMS},[])])
 		iq_request[iqid]=(time.time(),disco_async,[type, jid, nick, what, where, hm, disco_type, raw_type, isa[1]])
 		sender(i)
 
@@ -468,7 +468,7 @@ def whereis(type, jid, nick, text):
 			if 'conference' in text[1]: where = text[1]
 			else: where = 'conference.'+text[1]
 		iqid = get_id()
-		i = Node('iq', {'id': iqid, 'type': 'get', 'to':where}, payload = [Node('query', {'xmlns': NS_DISCO_ITEMS},[])])
+		i = xmpp.Node('iq', {'id': iqid, 'type': 'get', 'to':where}, payload = [xmpp.Node('query', {'xmlns': xmpp.NS_DISCO_ITEMS},[])])
 		iq_request[iqid]=(time.time(),whereis_async,[type, jid, nick, who, where])
 		sender(i)
 
@@ -488,7 +488,7 @@ def whereis_async(type, jid, nick, who, where, is_answ):
 	whereis_answers[whereis_id] = []
 	for ii in djids:
 		iqid = get_id()
-		i = Node('iq', {'id': iqid, 'type': 'get', 'to':ii}, payload = [Node('query', {'xmlns': NS_DISCO_ITEMS},[])])
+		i = xmpp.Node('iq', {'id': iqid, 'type': 'get', 'to':ii}, payload = [xmpp.Node('query', {'xmlns': xmpp.NS_DISCO_ITEMS},[])])
 		iq_request[iqid]=(time.time(),whereis_collect_async,[whereis_id,who])
 		sender(i)
 		if game_over: return

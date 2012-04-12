@@ -243,7 +243,7 @@ def acl_selector(a,room,jid,nick,mass,was_joined):
 			try: r_ver = acl_ver_tmp['%s/%s' % (room,nick)]
 			except:
 				iqid,who = get_id(), '%s/%s' % (room,nick)
-				i = Node('iq', {'id': iqid, 'type': 'get', 'to':who}, payload = [Node('query', {'xmlns': NS_VERSION},[])])
+				i = xmpp.Node('iq', {'id': iqid, 'type': 'get', 'to':who}, payload = [xmpp.Node('query', {'xmlns': xmpp.NS_VERSION},[])])
 				iq_request[iqid]=(time.time(),acl_version_async,[a, nick, jid, room, mass[0],lvl])
 				sender(i)
 				r_ver = None
