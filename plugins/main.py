@@ -618,24 +618,15 @@ def raw_who(room,nick):
 	return msg
 
 def info_comm(type, jid, nick):
-	import sqlite3
-	global comms
-	msg = ''
-	ta = get_level(jid,nick)
-	access_mode = ta[0]
-	tmp = sqlite3.connect(':memory:')
-	cu = tmp.cursor()
-	cu.execute('''create table tempo (comm text, am integer)''')
+	access_mode,tmp = get_level(jid,nick)[0],[]
 	for i in comms:
-		if access_mode >= i[0]: cu.execute('insert into tempo values (?,?)', (unicode(i[1]),i[0]))
+		if access_mode >= i[0]: tmp.append((i[0],i[1]))
+	tmp.sort()
+	msg = ''
 	for j in range(0,access_mode+1):
-		cm = cu.execute('select * from tempo where am=? order by comm',(j,)).fetchall()
-		if cm:
-			msg += u'\n• '+str(j)+u' … '
-			for i in cm: msg += i[0] +', '
-			msg = msg[:-2]
-	msg = L('Total commands: %s | Prefix: %s | Your access level: %s | Available commands: %s%s') % (str(len(comms)), get_prefix(get_local_prefix(jid)), str(access_mode), str(len(cu.execute('select * from tempo where am<=?',(access_mode,)).fetchall())), msg)
-	tmp.close()
+		cm = [t[1] for t in tmp if t[0] == j]
+		if cm: msg += u'\n• %s … %s' % (j,', '.join(cm))
+	msg = L('Total commands: %s | Prefix: %s | Your access level: %s | Available commands: %s%s') % (len(comms), get_prefix(get_local_prefix(jid)), access_mode, len(tmp), msg)
 	send_msg(type, jid, nick, msg)
 
 def helpme(type, jid, nick, text):

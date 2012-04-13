@@ -5,6 +5,7 @@
 #                                                                             #
 #    Plugin for iSida Jabber Bot                                              #
 #    Copyright (C) 2012 ferym <ferym@jabbim.org.ru>                           #
+#    Copyright (C) 2012 diSabler <dsy@dsy.name>                               #
 #                                                                             #
 #    This program is free software: you can redistribute it and/or modify     #
 #    it under the terms of the GNU General Public License as published by     #
@@ -21,47 +22,29 @@
 #                                                                             #
 # --------------------------------------------------------------------------- #
 
-horodb={L('aries'): '/aries/today', L('taurus'): '/taurus/today', L('gemini'): '/gemini/today', L('cancer'): '/cancer/today', L('leo'): '/leo/today', L('virgo'): '/virgo/today', L('libra'): '/libra/today', L('scorpio'): '/scorpio/today', L('sagittarius'): '/sagittarius/today', L('capricorn'): '/capricorn/today', L('aquarius'): '/aquarius/today', L('pisces'): '/pisces/today'}
+# translate: aries,taurus,gemini,cancer,leo,virgo,libra,scorpio,sagittarius,capricorn,aquarius,pisces
+horodb=['aries','taurus','gemini','cancer','leo','virgo','libra','scorpio','sagittarius','capricorn','aquarius','pisces']
 
-def handler_horoscope(type, jid, nick, parameters):
-  if parameters:
-	if parameters=='list':
-	  zod = [L('Aries'), L('Taurus'), L('Gemini'), L('Cancer'), L('Leo'), L('Virgo'), L('Libra'), L('Scorpio'), L('Sagittarius'), L('Capricorn'), L('Aquarius'), L('Pisces')]
-	  send_msg(type, jid, nick, ', '.join(zod))
-	  return
-	if parameters=='date':
-	  date = [L('Aries %s') % ('21.03-19.04'), L('Taurus %s') % ('20.04-20.05'), L('Gemini %s') % ('21.05-20.06'), L('Cancer %s') % ('21.06-22.07'), L('Leo %s') % ('23.07-22.08'), L('Virgo %s') % ('23.08-22.09'), L('Libra %s') % ('23.09-22.10'), L('Scorpio %s') % ('23.10-21.11'), L('Sagittarius %s') % ('22.11-21.12'), L('Capricorn %s') % ('22.12-19.01'), L('Aquarius %s') % ('20.01-18.02'), L('Pisces %s') % ('19.02-20.03')]
-	  sp = ''
-	  nm = 1
-	  for tb in date:
-		sp+=str(nm)+'. '+tb+'\n'
-		nm+=1
-	  if type=='groupchat':
-		send_msg(type, jid, nick, L('Sent in private message'))
-		send_msg('chat', jid, nick, L('List of dates:\n%s') % sp)
-		return
-	  send_msg('chat', jid, nick, L('List of dates:\n%s') % sp)
-	  return
-	if horodb.has_key(parameters.lower()):
-	  target = html_encode(load_page('http://horo.mail.ru/prediction'+horodb[parameters.lower()]))
-	  od = re.search('<div id="tm_today">',target)
-	  message = target[od.end():]
-	  message = message[:re.search('<div class="mb2">',message).start()]
-	  message = rss_del_html(message)
-	  message = rss_del_nn(message)
-	  message = rss_replace(message)
-	  message = message.replace('\n','')
-	  if type=='groupchat':
-		  send_msg(type,jid,nick,L('Message send to private'))
-		  send_msg('chat',jid,nick,message)
-		  return
-	  send_msg('chat',jid,nick,message)
-	else:
-	  send_msg(type, jid, nick, L('What?'))
-	  return
-  else:
-	send_msg(type,jid,nick,L('What?'))
-	return
+def handler_horoscope(type, jid, nick, text):
+	param = text.strip().lower()
+	msg = L('What?')
+	if param:
+		if param == 'list': msg = ', '.join(['%s (%s)' % (L(t).capitalize(),t.capitalize()) for t in horodb])
+		if param == 'date':
+			horo_dates = ['21.03-19.04','20.04-20.05','21.05-20.06','21.06-22.07','23.07-22.08','23.08-22.09','23.09-22.10','23.10-21.11','22.11-21.12','22.12-19.01','20.01-18.02','19.02-20.03']
+			msg = L('List of dates:\n%s') % '\n'.join([u'%s … %s' % (horo_dates[i],L(t).capitalize()) for i,t in enumerate(horodb)])
+			if type=='groupchat':
+				send_msg('chat', jid, nick, msg)
+				msg = L('Send for you in private')
+		if param in [L(t) for t in horodb] or param in horodb:
+			if param not in horodb: param = dict([[L(t),t] for t in horodb])[param]
+			body = html_encode(load_page('http://horo.mail.ru/prediction/%s/today' % param))
+			try: msg = unhtml_hard(re.findall('<div id="tm_today">(.+?)<div class="mb2">',body,re.S+re.I+re.U)[0].strip())
+			except: msg = L('Unknown error!')
+			if type=='groupchat':
+				send_msg('chat', jid, nick, msg)
+				msg = L('Send for you in private')
+	send_msg(type,jid,nick,msg)
 
 global execute
 

@@ -32,7 +32,7 @@ def wtfall(type, jid, nick, text):
 def wtfsearch(type, jid, nick, text):
 	if text:
 		text = '%%%s%%' % text
-		ww = cur_execute_fetchall('select wtfword from wtf where (room=%s or room=%s or room=%s) and (room ilike %s or jid ilike %s or nick ilike %s or wtfword ilike %s or wtftext ilike %s or time ilike %s)',(jid,'global','import',text,text,text,text,text,text))
+		ww = cur_execute_fetchall('select wtfword from wtf where (room=%s or room=%s or room=%s) and (room ilike %s or jid ilike %s or nick ilike %s or wtfword ilike %s or wtftext ilike %s)',(jid,'global','import',text,text,text,text,text))
 		if ww: msg = L('Some matches in definitions: %s') % ', '.join(zip(*ww)[0])
 		else: msg = L('No matches.')
 	else: msg = L('What need to find?')
@@ -48,8 +48,7 @@ def wtfrand(type, jid, nick):
 def wtfnames(type, jid, nick, text):
 	text = text.strip().lower()
 	if text == 'all': tmp = cur_execute_fetchall('select distinct wtfword from wtf where room=%s or room=%s or room=%s',(jid,'global','import'))
-	elif text == 'global': tmp = cur_execute_fetchall('select distinct wtfword from wtf where room=%s',('global',))
-	elif text == 'import': tmp = cur_execute_fetchall('select distinct wtfword from wtf where room=%s',('import',))
+	elif text in ['global','import']: tmp = cur_execute_fetchall('select distinct wtfword from wtf where room=%s',(text,))
 	else: tmp = cur_execute_fetchall('select distinct wtfword from wtf where room=%s',(jid,))
 	if tmp: msg = L('All I know is: %s') % ', '.join(zip(*tmp)[0])
 	else: msg = L('No matches.')

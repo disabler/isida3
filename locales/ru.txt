@@ -558,32 +558,7 @@ sagittarius	стрелец
 capricorn	козерог
 aquarius	водолей
 pisces	рыбы
-Aries	Овен
-Taurus	Телец
-Gemini	Близнецы
-Cancer	Рак
-Leo	Лев
-Virgo	Дева
-Libra	Весы
-Scorpio	Скорпион
-Sagittarius	Стрелец
-Capricorn	Козерог
-Aquarius	Водолей
-Pisces	Рыбы
-Aries %s	Овен %s
-Taurus %s	Телец %s
-Gemini %s	Близнецы %s
-Cancer %s	Рак %s
-Leo %s	Лев %s
-Virgo %s	Дева %s
-Libra %s	Весы %s
-Scorpio %s	Скорпион %s
-Sagittarius %s	Стрелец %s
-Capricorn %s	Козерог %s
-Aquarius %s	Водолей %s
-Pisces %s	Рыбы %s
 List of dates:\n%s	Список дат:\n%s
-Message send to private	Отправлен в приват
 Horoscope.\nhoro list - show all zodiacs.\nhoro date - show dates for zodiacs. | Author: ferym	Показывает гороскоп для указанного знака гороскопа. Просмотр знаков зодиака - "horo list". Просмотр списка дат - "horo date" | Автор: ferym
 
 # file: ../branch/plugins/idle.py

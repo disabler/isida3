@@ -558,32 +558,7 @@ sagittarius	стрілець
 capricorn	козеріг
 aquarius	водолій
 pisces	риби
-Aries	Овен
-Taurus	Телець
-Gemini	Близнюки
-Cancer	Рак
-Leo	Лев
-Virgo	Діва
-Libra	Терези
-Scorpio	Скорпіон
-Sagittarius	Стрілець
-Capricorn	Козеріг
-Aquarius	Водолій
-Pisces	Риби
-Aries %s	Овен %s
-Taurus %s	Телець %s
-Gemini %s	Близнюки %s
-Cancer %s	Рак %s
-Leo %s	Лев %s
-Virgo %s	Діва %s
-Libra %s	Терези %s
-Scorpio %s	Скорпіон %s
-Sagittarius %s	Стрілець %s
-Capricorn %s	Козеріг %s
-Aquarius %s	Водолій %s
-Pisces %s	Риби %s
 List of dates:\n%s	Список дат:\n%s
-Message send to private	Відправлено до привату
 Horoscope.\nhoro list - show all zodiacs.\nhoro date - show dates for zodiacs. | Author: ferym	Показує гороскоп для вказаного знака зодіаку. Перегляд знаків зодіаку - "horo list". Перегляд списку дат - "horo date" | Автор: ferym
 
 # file: ../branch/plugins/idle.py
