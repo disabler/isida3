@@ -1204,7 +1204,7 @@ def iqCB(sess,iq):
 
 							# Mute newbie
 							if get_config(gr,'muc_filter_newbie') and msg and not mute:
-								in_base = cur_execute_fetchone('select sum(%s-time+age) from age where room=%s and jid=%s and status=0',(int(time.time()),gr,getRoom(jid)))
+								in_base = cur_execute_fetchone('select sum(%s-time+age) from age where room=%s and jid=%s',(int(time.time()),gr,getRoom(jid)))
 								if not in_base: nmute = True
 								else:
 									newbie_time = get_config(gr,'muc_filter_newbie_time')
@@ -1958,7 +1958,7 @@ def presenceCB(sess,mess):
 						if tmp_room == room and hashes[tmp] == current_hash:
 							tmp_access,tmp_jid = get_level(room,tmp_nick)
 							if tmp_access <= 3 and tmp_jid != 'None':
-								in_base = cur_execute_fetchone('select sum(%s-time+age) from age where room=%s and jid=%s and status=0',(int(time.time()),room,getRoom(tmp_jid)))
+								in_base = cur_execute_fetchone('select sum(%s-time+age) from age where room=%s and jid=%s',(int(time.time()),room,getRoom(tmp_jid)))
 								if not in_base: nmute = True
 								else:
 									newbie_time = get_config(room,'muc_filter_newbie_time')

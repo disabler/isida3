@@ -228,14 +228,8 @@ def acl_selector(a,room,jid,nick,mass,was_joined):
 	lvl = get_level(room,nick)[0]
 	for tmp in a:
 		if (tmp[5] == 9 or lvl == tmp[5]) and tmp[0] == 'age':
-			past_age = cur_execute_fetchone('select sum(age) from age where room=%s and jid=%s and status=%s',(room,getRoom(jid),1))
-			now_age  = cur_execute_fetchone('select time,age from age where room=%s and jid=%s and status=%s',(room,getRoom(jid),0))
-			r_age = 0
-			if past_age or now_age:
-				try: r_age += past_age[0]
-				except: pass
-				try: r_age += int(time.time())-now_age[0]+now_age[1]
-				except: pass
+			r_age = cur_execute_fetchone('select sum(%s-time+age) from age where room=%s and jid=%s',(int(time.time()),room,getRoom(jid)))
+			if not r_age: r_age = 0
 			break
 
 	for tmp in a:
