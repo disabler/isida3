@@ -1787,7 +1787,7 @@ def msg_afterwork(mess,room,jid,nick,type,back_text,no_comm,access_mode,nowname)
 	for tmp in gmessage: not_alowed_flood = tmp(room,jid,nick,type,text) or not_alowed_flood
 	if no_comm:
 		for tmp in gactmessage: not_alowed_flood = not_alowed_flood or tmp(room,jid,nick,type,text)
-	if not not_alowed_flood and no_comm:
+	if not not_alowed_flood and no_comm and text not in ['None','',' '] and not mess.getSubject():
 		if room != selfjid: is_flood = get_config(getRoom(room),'flood') not in ['off',False]
 		else: is_flood = None
 		if selfjid != jid and access_mode >= 0 and (back_text[:len(nowname)+2] == nowname+': ' or back_text[:len(nowname)+2] == nowname+', ' or type == 'chat') and is_flood:
