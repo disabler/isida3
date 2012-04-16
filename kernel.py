@@ -1692,7 +1692,7 @@ def messageCB(sess,mess):
 			append_message_to_log(room,'','',type,L('Room\'s configuration changed.'))
 			return
 	except: pass
-	if (text == 'None' or text == '') and not mess.getSubject(): return
+	#if (text == 'None' or text == '') and not mess.getSubject(): return
 	if mess.getTimestamp() != None: return
 	nick=mess.getFrom().getResource()
 	if nick != None: nick = unicode(nick)

@@ -72,8 +72,8 @@ def append_message_to_log(room,jid,nick,type,text):
 			if get_config(getRoom(room),'smiles') != 'off': ptext = smile_replace(room, text)
 			else: ptext = text
 			msg_logger(room,jid,nick,type,ptext,public_log)
-		if type == 'chat' and text != 'None': nick = 'chat >>> %s' % nick
-		if text != 'None' and GT('syslogs_enable'): msg_logger(room,jid,nick,type,text,system_log)
+		if type == 'chat': nick = 'chat >>> %s' % nick
+		if GT('syslogs_enable'): msg_logger(room,jid,nick,type,text,system_log)
 
 def write_log_with_end(curr_path,curr_file,log_body,log_he):
 	global last_log_file
