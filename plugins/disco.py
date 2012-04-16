@@ -346,7 +346,7 @@ def features_async(type, jid, nick, what, where, is_answ):
 				res = 'N/A'
 				erc += 1
 			ftrs[t] = res
-		
+
 		if erc != len(q_features): ftr.append(L('Software: %s | Version: %s\nOS: %s | Version: %s') % (ftrs['software'],ftrs['software_version'],ftrs['os'],ftrs['os_version']))
 		try:
 			ids = isa.getTag('query').getTag('identity').getAttrs()

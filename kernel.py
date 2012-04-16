@@ -386,7 +386,7 @@ def arr_del_semi_find(array, string):
 def get_joke(text):
 
 	def joke_blond(text):
-	
+
 		def blond_text(text):
 			b = ''
 			cnt = random.randint(0,1)
@@ -395,7 +395,7 @@ def get_joke(text):
 				else: b += tmp.lower()
 				cnt = not cnt
 			return b
-		
+
 		text = text.split(' ')
 		new_text = []
 		for t in text:
@@ -645,7 +645,7 @@ def disco_ext_info_add(i):
 		i.getTag('query').getTag('x',namespace=xmpp.NS_DATA).setTag('field',attrs={'var':t})
 		i.getTag('query').getTag('x',namespace=xmpp.NS_DATA).getTag('field',attrs={'var':t}).setTagData('value',bot_softwareinfo[t])
 	return i
-	
+
 def iqCB(sess,iq):
 	global timeofset, iq_in, iq_request, last_msg_base, last_msg_time_base, ddos_ignore, ddos_iq, user_hash, server_hash, server_hash_list
 	global disco_excl, message_excl
@@ -784,7 +784,7 @@ def iqCB(sess,iq):
 				elif node == xmpp.NS_MUC_ROOMS:
 					#i.getTag('query').setTag('feature',attrs={'var':xmpp.NS_MUC_ROOMS})
 					sender(i)
-					raise xmpp.NodeProcessed				
+					raise xmpp.NodeProcessed
 				elif node.split('#')[0] == disco_config_node or node == xmpp.NS_COMMANDS:
 					#i.getTag('query').setTag('feature',attrs={'var':xmpp.NS_COMMANDS})
 					#i.getTag('query').setTag('feature',attrs={'var':disco_config_node})
@@ -2269,7 +2269,7 @@ if thread_type:
 
 		def kill(self): self.killed = True
 else: import thread
-	
+
 if os.path.isfile(ver_file):
 	bvers = readfile(ver_file).decode('utf-8').replace('\n','').replace('\r','').replace('\t','').replace(' ','')
 	botVersion += '.%s' % bvers

@@ -39,7 +39,7 @@
     {"title": "Говорят дети",
     "random": ["http://det.org.ru/?page=random", "<div class=&quot;history&quot;>((?:.|\\s)+?)</div>"],
     "number": ["http://det.org.ru/?quote=%s", "<div class=&quot;history&quot;>((?:.|\\s)+?)</div>"],
-    "search": ["http://det.org.ru/?page=find&query=%s", "<div class=&quot;history&quot;>((?:.|\\s)+?)</div>", "cp1251"]},	
+    "search": ["http://det.org.ru/?page=find&query=%s", "<div class=&quot;history&quot;>((?:.|\\s)+?)</div>", "cp1251"]},
 "afor":
     {"title": "Юмор: афоризмы о юморе и юмористические высказывания",
     "random": ["http://skio.ru/quotes/humour_quotes.php", "<form id=&quot;qForm&quot; method=&quot;post&quot;><div align=&quot;center&quot;>((?:.|\\s)+?)</div>"]}}

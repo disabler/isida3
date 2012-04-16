@@ -150,14 +150,15 @@ def clean_user_and_server_hash():
 		else: timing[gr] = tmo
 		if time.time() > tm + tmo: server_hash_list.pop(tmp)
 	for tmp in server_hash.keys():
-		tm = server_hash[tmp][0]
-		gr = getRoom(tmp)
-		try: tmo = get_config_int(gr,'muc_filter_hash_ban_by_rejoin_timeout')
-		except: tmo = 3600
-		if timing.has_key(gr): tmo = timing[gr]
-		else: timing[gr] = tmo
-		if time.time() > tm + tmo: server_hash.pop(tmp)
-
+		try:
+			tm = server_hash[tmp][0]
+			gr = getRoom(tmp)
+			try: tmo = get_config_int(gr,'muc_filter_hash_ban_by_rejoin_timeout')
+			except: tmo = 3600
+			if timing.has_key(gr): tmo = timing[gr]
+			else: timing[gr] = tmo
+			if time.time() > tm + tmo: server_hash.pop(tmp)
+		except: pass
 
 def ddos_info(type, room, nick, text):
 	global ddos_ignore

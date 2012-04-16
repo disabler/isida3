@@ -37,7 +37,7 @@ def time_cron_show(jid,nick,ar):
 	if ar:
 		if al == 9 and ar.lower().split()[0] in ['all','global','total']: room = '%'
 		else: room = jid
-	else: room = jid	
+	else: room = jid
 	c = cur_execute_fetchall('select * from cron where room ilike %s order by room, time',(room,))
 	if c:
 		tmp, idx = [], 1
@@ -70,7 +70,7 @@ def time_cron_add(ar,jid,nick):
 	else:
 		cur_execute('insert into cron values (%s,%s,%s,%s,%s,%s,%s)', (jid,getRoom(rj),nick,next_time,repeat_time,cron_cmd,lvl))
 		return '%s -> %s' % (disp_time(next_time),cron_cmd)
-	
+
 def time_cron_del(jid,nick,ar):
 	al = get_level(jid,nick)[0]
 	if al == 9 and ar.lower() == 'all':
