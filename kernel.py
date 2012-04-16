@@ -857,7 +857,7 @@ def iqCB(sess,iq):
 					for t in confbase:
 						if al == 9 or getRoom(t) not in hr: trooms.append(getRoom(t))
 					trooms.sort()
-					trooms = [xmpp.Node('item',attrs={'jid',t}) for t in trooms]
+					trooms = [xmpp.Node('item',attrs={'jid':t}) for t in trooms]
 					i.getTag('query',namespace=xmpp.NS_DISCO_ITEMS).setPayload(trooms)
 					sender(i)
 					raise xmpp.NodeProcessed
