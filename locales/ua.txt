@@ -38,7 +38,6 @@ Blocked by censor!	Блоковано цензором
 Blocked by raw censor!	Блокування прихованого мата цензором!
 Large message%s %s	Велике повідомлення%s %s
 Large message block!	Велике повідомлення заблоковано!
-Warning! Your message is blocked in connection with the policy of the room!	Увага! Ваше повідомлення було блоковано у зв'язку з політикою конференції
 Deny by hash lock!	Обмеження по хешу клієнта!
 Server %s was banned in %s	Сервер %s забанено в конференції %s
 Deny by blacklist!	Обмеження по чорному списку!
@@ -801,6 +800,8 @@ dnd	не турбувати
 on start	при старті
 on shutdown	при вимкненні
 by time	за часом
+black	чорний
+white	білий
 no limit	без обмежень 
 visitor/none	гість без повноважень 
 visitor/member	гість і постійний учасник 

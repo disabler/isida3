@@ -21,7 +21,7 @@
 #                                                                             #
 # --------------------------------------------------------------------------- #
 
-# translate: random,smart,full,partial,on,off,kick,ban,replace,mute,visitor,truncate,paste,chat,online,away,xa,dnd,on start,on shutdown,by time
+# translate: random,smart,full,partial,on,off,kick,ban,replace,mute,visitor,truncate,paste,chat,online,away,xa,dnd,on start,on shutdown,by time,black,white
 
 rlmas_min = (('&','&amp;'),('\"','&quot;'),('\'','&apos;'),('<','&lt;'),('>','&gt;'))
 
@@ -1532,6 +1532,13 @@ config_prefs = {'url_title': [L('Url title is %s'), L('Automatic show title of u
 				'muc_filter_censor_prs_raw': [L('Raw censor muc filter for presence is %s'), L('Raw censor muc filter for presence'), ['off','kick','ban','mute'], 'off'],
 				'muc_filter_adblock_prs_raw': [L('Raw adblock muc filter for presence is %s'), L('Raw adblock filter for presence'), ['off','kick','ban','mute'], 'off'],
 				'muc_filter_reduce_spaces_prs': [L('Reduce spaces in presence %s'), L('Reduce duplicates of spaces in presence'), [True,False], False],
+				#'muc_filter_caps': [L('Limitation by caps %s'), L('Limitation to join by caps'), [True,False], False],
+				'muc_filter_caps_list': [L('Type of list %s'), L('Type of list for caps'), ['off','black','white'], 'off'],
+				'muc_filter_caps_white': [L('Whitelist %s'), L('Whitelist for caps'), None, '\n'],
+				'muc_filter_caps_black': [L('Blacklist %s'), L('Blacklist for caps'), None, '\n'],
+				#'muc_filter_caps_smart': [L('Smart lists %s'), L('Smart lists for caps'), [True,False], False],
+				#'muc_filter_caps_white_smart': [L('Smart whitelist %s'), L('Smart whitelist for caps'), None, '\n'],
+				#'muc_filter_caps_black_smart': [L('Smart blacklist %s'), L('Smart blacklist for caps'), None, '\n'],
 
 				# Bomb
 
@@ -1609,6 +1616,11 @@ config_group_mucfilter_censor = [L('Muc-filter settings for censor/ad-block'),'#
 config_group_mucfilter_lists = [L('Muc-filter settings for while/black lists'),'#room-mucfilter-lists',
 				['muc_filter_whitelist','muc_filter_blacklist','muc_filter_blacklist_rules_jid','muc_filter_blacklist_rules_nick'],None]
 
+config_group_mucfilter_caps = [L('Muc-filter settings for while/black lists by caps'),'#room-mucfilter-caps-lists',
+				['muc_filter_caps_list','muc_filter_caps_white',
+				#'muc_filter_caps','muc_filter_caps_smart','muc_filter_caps_white_smart','muc_filter_caps_black_smart',
+				'muc_filter_caps_black'],None]
+				
 config_group_bomb = [L('Settings for bomb-joke'),'#room-bombjoke',
 				['bomb','bomb_fault','bomb_fault_persent','bomb_random','bomb_random_timer',
 				'bomb_timer','bomb_wire','bomb_action','bomb_action_level','bomb_reason','bomb_random_active',
@@ -1625,7 +1637,7 @@ config_group_flood = [L('Flood settings'),'#room-flood',
 
 config_groups = [config_group_mucfilter,config_group_mucfilter_newbie,config_group_mucfilter_hash,config_group_mucfilter_content,
 				config_group_mucfilter_raw,config_group_mucfilter_censor,config_group_mucfilter_lists,config_group_other,config_group_bomb,
-				config_group_karma,config_group_censor,config_group_flood]
+				config_group_karma,config_group_censor,config_group_flood,config_group_mucfilter_caps]
 
 # type:
 # b - binary (true\false)

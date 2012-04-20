@@ -39,8 +39,9 @@ def psto(type, jid, nick, text):
 		else: send_msg(type, jid, nick, L('Smoke help about command!'))
 	except: send_msg(type, jid, nick, L('Smoke help about command!'))
 
-def psto_parse(text):
+def psto_catch(room,jid,nick,type,text):
 	global psto_id
+	if '%s/%s' % (room,nick) != PSTO_JID: return
 	if text == PSTO_ERROR:
 		(type,jid,nick,psto_comm) = psto_id.popitem()[1].split('\n')
 		send_msg(type, jid, nick, text[1:])
@@ -77,7 +78,9 @@ def psto_post(type, jid, nick, text):
 	time.sleep(1.2)
 	send_msg(type, jid, nick, L('Message posted to Psto.'))
 
-global execute
+global execute,message_control
+
+message_control = [psto_catch]
 
 execute = [(3, 'psto', psto, 2, L('Miniblogs http://psto.net\npsto [#]post[/[from_comment][-][to_comment]] - show post')),
 		   (9, 'psto_post', psto_post, 2, L('Send message to blog at psto.net'))]
