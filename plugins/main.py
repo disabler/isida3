@@ -1636,8 +1636,8 @@ config_group_flood = [L('Flood settings'),'#room-flood',
 				['flood','autoflood','floodcount','floodtime'],None]
 
 config_groups = [config_group_mucfilter,config_group_mucfilter_newbie,config_group_mucfilter_hash,config_group_mucfilter_content,
-				config_group_mucfilter_raw,config_group_mucfilter_censor,config_group_mucfilter_lists,config_group_other,config_group_bomb,
-				config_group_karma,config_group_censor,config_group_flood,config_group_mucfilter_caps]
+				config_group_mucfilter_raw,config_group_mucfilter_censor,config_group_mucfilter_lists,config_group_mucfilter_caps,
+				config_group_other,config_group_bomb,config_group_karma,config_group_censor,config_group_flood]
 
 # type:
 # b - binary (true\false)
