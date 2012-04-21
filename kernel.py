@@ -792,8 +792,7 @@ def iqCB(sess,iq):
 				else: i.setTag('query',namespace=xmpp.NS_DISCO_INFO,attrs={'node':node})
 				if node == '' or node == '%s#%s' % (capsNode,capsHash):
 					i = disco_features_add(i)
-					i = disco_ext_info_add(i)
-					sender(i)
+					sender(disco_ext_info_add(i))
 					raise xmpp.NodeProcessed
 				elif node == xmpp.NS_MUC_ROOMS:
 					#i.getTag('query').setTag('feature',attrs={'var':xmpp.NS_MUC_ROOMS})

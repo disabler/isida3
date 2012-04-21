@@ -21,23 +21,23 @@
 #                                                                             #
 # --------------------------------------------------------------------------- #
 
-def domaininfo(type, jid, nick, text):
+def domaininfo_raw(type, jid, nick, text):
 	text = text.strip().lower()
 	while ' \n' in text: text = text.replace(' \n','\n')
 	if ''.join(re.findall(u'[-0-9a-zа-я. ]+',text,re.U+re.I)) == text and text.count('.') >= 1 and len(text) > 4:
-		if text.startswith('sites '): t, text, regex = 2, text.split(' ')[1], '<h3>(.*?)<br><br><br>'
-		else: t, regex = 1, '<h3>(.*?)</a><br><br /><span id="av">'
+		if text.startswith('sites '): t, text, regex = 2, text.split(' ')[1], '<h3>(.*?)<br></font><br><br>'
+		else: t, regex = 1, '</a><br /><h3>(.*?)<br /></font></blockquote>'
 		url = 'http://1whois.ru/index.php?url=%s&t=%s' % (text.encode('idna'),t)
 		body = deidna(html_encode(load_page(url).replace('&nbsp;', ' ')))
 		try:
-			body = re.findall(regex, body, re.S)[0]
-			if body: msg = unhtml_hard(''.join(body))
+			body = re.findall(regex, body, re.S)
+			if body: msg = unhtml_hard(''.join(body[0]))
 			else: msg = L('No data!')
 		except: msg = L('Unexpected error')
 	else: msg = L('Error!')
 	send_msg(type, jid, nick, msg)
 
-def domaininfo_raw(type, jid, nick, text):
+def domaininfo(type, jid, nick, text):
 	text = text.strip().lower()
 	while ' \n' in text: text = text.replace(' \n','\n')
 	if ''.join(re.findall(u'[-0-9a-zа-я. ]+',text,re.U+re.I)) == text and text.count('.') >= 1 and len(text) > 4:
@@ -62,7 +62,7 @@ def domaininfo_raw(type, jid, nick, text):
 							tmp_body[tmp] = tmp
 							newbody.append(tmp)
 				msg += '\n'+'\n'.join(newbody)
-		except: msg = L('Unexpected error')
+		except: raise#msg = L('Unexpected error')
 	else: msg = L('Error!')
 	send_msg(type, jid, nick, msg)
 

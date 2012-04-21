@@ -116,6 +116,6 @@ message_act_control = [define_message]
 
 execute = [(3, 'gcalc', gcalc, 2, L('Google Calculator')),
 	(3, 'define', define, 2, L('Definition for a word or phrase.\ndefine word - random define of word or phrase\ndefine N word - N-th define of word or phrase\ndefine a-b word - from a to b defines of word or phrase')),
-	(3, 'ggl', goo_gl, 2, L('Google URL Shortener/Unshortener')),
-	(3, 'qr', goo_gl_qr, 2, L('Google QR-code generator')),
+	#(3, 'ggl', goo_gl, 2, L('Google URL Shortener/Unshortener')),
+	#(3, 'qr', goo_gl_qr, 2, L('Google QR-code generator')),
 	(3, 'gdict', gdict, 2, L('Google Dictionary\ngdict [from_language] to_language word'))]
