@@ -2,6 +2,7 @@ xmpp/*.pyc
 dns/*pyc
 chardet/*.pyc
 simplejson/*.pyc
+*.pyc
 paste/*.html
 paste/*.txt
 settings/*.back

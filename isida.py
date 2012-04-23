@@ -59,81 +59,84 @@ def crash(text):
 	printlog(crashtext(text))
 	sys.exit()
 
-if os.name == 'nt': printlog('Warning! Correct work only on *NIX system!')
-
-try: writefile('settings/starttime',str(int(time.time())))
-except:
-	printlog(crashtext('Isida is crashed! Incorrent launch!'))
-	raise
-
-if os.path.isfile(pid_file) and os.name != 'nt':
-	try: last_pid = int(readfile(pid_file))
-	except: crash('Unable get information from %s' % pid_file)
-	try:
-		os.getsid(last_pid)
-		crash('Multilaunch detected! Kill pid %s before launch bot again!' % last_pid)
-	except Exception, SM:
-		if not str(SM).lower().count('no such process'): crash('Unknown exception!\n%s' % SM)
-
-writefile(pid_file,str(os.getpid()))
-
-dirs = os.listdir('.')+os.listdir('../')
-
-if '.svn' in dirs:
-	USED_REPO = 'svn'
-	if os.name == 'nt': os.system('svnversion > %s' % ver_file)
-	else: os.system('echo `svnversion` > %s' % ver_file)
-	os.system('echo Just Started! > %s' % updatelog_file)
-	bvers = str(readfile(ver_file)).replace('\n','').replace('\r','').replace('\t','').replace(' ','')
-	writefile(ver_file, unicode(svn_ver_format % (bvers,id_append)).encode('utf-8'))
-elif '.git' in dirs:
-	USED_REPO = 'git'
-	os.system('git describe --always > %s' % ver_file)
-	revno = str(readfile(ver_file)).replace('\n','').replace('\r','').replace('\t','').replace(' ','')
-	os.system('git log --pretty=format:'' > %s' % ver_file)
-	writefile(ver_file, unicode(git_ver_format % (os.path.getsize(ver_file)+1,revno,id_append)).encode('utf-8'))
-else:
-	USED_REPO = 'unknown'
-	writefile(ver_file, unicode(time_ver_format % (hex(int(os.path.getctime('../')))[2:],id_append)).encode('utf-8'))
-
-while 1:
-	try: execfile('kernel.py')
-	except KeyboardInterrupt: break
-	except SystemExit, mode:
-		mode = str(mode)
-		if mode == 'update':
-			if USED_REPO == 'svn':
-				if os.name == 'nt':
-					os.system('svnversion > settings/ver')
-					os.system('svn up')
-					os.system('svnversion > settings/version')
-				else:
-					os.system('echo `svnversion` > settings/ver')
-					os.system('svn up')
-					os.system('echo `svnversion` > settings/version')
-				try: ver = int(re.findall('[0-9]+',readfile('settings/version'))[0]) - int(re.findall('[0-9]+',readfile('settings/ver'))[0])
-				except: ver = -1
-				if ver > 0:	 os.system('svn log --limit %s > %s' % (ver,updatelog_file))
-				elif ver < 0: os.system('echo Failed to detect version! > %s' % updatelog_file)
-				else: os.system('echo No Updates! > %s' % updatelog_file)
-				writefile(ver_file, unicode(svn_ver_format % (str(readfile(ver_file)).replace('\n','').replace('\r','').replace('\t','').replace(' ',''),id_append)).encode('utf-8'))
-			elif USED_REPO == 'git':
-				os.system('git pull -u origin master')
-				os.system('git describe --always > %s' % ver_file)
-				revno = str(readfile(ver_file)).replace('\n','').replace('\r','').replace('\t','').replace(' ','')
-				os.system('git log --pretty=format:'' > %s' % ver_file)
-				writefile(ver_file, unicode(git_ver_format % (os.path.getsize(ver_file)+1,revno,id_append)).encode('utf-8'))
-				os.system('git log -1 > %s' % updatelog_file)
-				writefile(updatelog_file, unicode(readfile(updatelog_file)).replace('\n\n','\n').replace('\r','').replace('\t',''))
-			else: os.system('echo Update not available! Read wiki at http://isida-bot.com to use SVN/GIT! > %s' % updatelog_file)
-		elif mode == 'exit': break
-		elif mode == 'restart': pass
+def update(USED_REPO):
+	if USED_REPO == 'svn':
+		if os.name == 'nt':
+			os.system('svnversion > settings/ver')
+			os.system('svn up')
+			os.system('svnversion > settings/version')
 		else:
-			printlog('unknown exit type!')
-			break
-	except Exception, SM:
-		try: SM = str(SM)
-		except: SM = unicode(SM)
-		printlog(crashtext('Isida is crashed! It\'s imposible, but You do it!'))
-		printlog('%s\n' % SM)
+			os.system('echo `svnversion` > settings/ver')
+			os.system('svn up')
+			os.system('echo `svnversion` > settings/version')
+		try: ver = int(re.findall('[0-9]+',readfile('settings/version'))[0]) - int(re.findall('[0-9]+',readfile('settings/ver'))[0])
+		except: ver = -1
+		if ver > 0:	 os.system('svn log --limit %s > %s' % (ver,updatelog_file))
+		elif ver < 0: os.system('echo Failed to detect version! > %s' % updatelog_file)
+		else: os.system('echo No Updates! > %s' % updatelog_file)
+		writefile(ver_file, unicode(svn_ver_format % (str(readfile(ver_file)).replace('\n','').replace('\r','').replace('\t','').replace(' ',''),id_append)).encode('utf-8'))
+	elif USED_REPO == 'git':
+		os.system('git pull -u origin master')
+		os.system('git describe --always > %s' % ver_file)
+		revno = str(readfile(ver_file)).replace('\n','').replace('\r','').replace('\t','').replace(' ','')
+		os.system('git log --pretty=format:'' > %s' % ver_file)
+		writefile(ver_file, unicode(git_ver_format % (os.path.getsize(ver_file)+1,revno,id_append)).encode('utf-8'))
+		os.system('git log -1 > %s' % updatelog_file)
+		writefile(updatelog_file, unicode(readfile(updatelog_file)).replace('\n\n','\n').replace('\r','').replace('\t',''))
+	else: os.system('echo Update not available! Read wiki at http://isida-bot.com to use SVN/GIT! > %s' % updatelog_file)
+	
+if __name__ == "__main__" :
+	if os.name == 'nt': printlog('Warning! Correct work only on *NIX system!')
+
+	try: writefile('settings/starttime',str(int(time.time())))
+	except:
+		printlog(crashtext('Isida is crashed! Incorrent launch!'))
 		raise
+
+	if os.path.isfile(pid_file) and os.name != 'nt':
+		try: last_pid = int(readfile(pid_file))
+		except: crash('Unable get information from %s' % pid_file)
+		try:
+			os.getsid(last_pid)
+			crash('Multilaunch detected! Kill pid %s before launch bot again!' % last_pid)
+		except Exception, SM:
+			if not str(SM).lower().count('no such process'): crash('Unknown exception!\n%s' % SM)
+
+	writefile(pid_file,str(os.getpid()))
+
+	dirs = os.listdir('.')+os.listdir('../')
+
+	if '.svn' in dirs:
+		USED_REPO = 'svn'
+		if os.name == 'nt': os.system('svnversion > %s' % ver_file)
+		else: os.system('echo `svnversion` > %s' % ver_file)
+		os.system('echo Just Started! > %s' % updatelog_file)
+		bvers = str(readfile(ver_file)).replace('\n','').replace('\r','').replace('\t','').replace(' ','')
+		writefile(ver_file, unicode(svn_ver_format % (bvers,id_append)).encode('utf-8'))
+	elif '.git' in dirs:
+		USED_REPO = 'git'
+		os.system('git describe --always > %s' % ver_file)
+		revno = str(readfile(ver_file)).replace('\n','').replace('\r','').replace('\t','').replace(' ','')
+		os.system('git log --pretty=format:'' > %s' % ver_file)
+		writefile(ver_file, unicode(git_ver_format % (os.path.getsize(ver_file)+1,revno,id_append)).encode('utf-8'))
+	else:
+		USED_REPO = 'unknown'
+		writefile(ver_file, unicode(time_ver_format % (hex(int(os.path.getctime('../')))[2:],id_append)).encode('utf-8'))
+
+	while 1:
+		try: execfile('kernel.py')
+		except KeyboardInterrupt: break
+		except SystemExit, mode:
+			mode = str(mode)
+			if mode == 'update': update(USED_REPO)
+			elif mode == 'exit': break
+			elif mode == 'restart': pass
+			else:
+				printlog('unknown exit type!')
+				break
+		except Exception, SM:
+			try: SM = str(SM)
+			except: SM = unicode(SM)
+			printlog(crashtext('Isida is crashed! It\'s imposible, but You do it!'))
+			printlog('%s\n' % SM)
+			raise

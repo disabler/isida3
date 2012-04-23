@@ -1301,7 +1301,7 @@ Show commands list.	Показує список доступних команд.
 Enable/Disable commands.\ncomm - show disable commands\ncomm on command - enable command\ncomm off command1[ command2 command3 ...] - disable one or more command	Ввімкнення/вимкнення команд.\ncomm - показати список\ncomm on команда - ввімкнути команду\ncomm off команда1[ команда2 команда3 ...] - вимкнути одну або кілька команд
 Show bot uptime.	Час роботи бота.
 Misc information about bot.	Різна інформація про бота.
-Last svn update log	Показ svn-лога останнього оновлення бота
+Last VCS update log	Показ VCS-лога останнього оновлення бота
 Set temporary message limit.	Обсяг повідомлення, понад якого повідомлення будуть розбиватися на частини, кратні цьому обсягу.
 Plugin system.\nplugin show|local\nplugin add|del name	Управління системою плагінів:\nplugin show - показати підключені плагіни.\nplugin local - показати доступні для підключення плагіни.\nplugin add name - додати плагіни.\nplugin del name - видалити плагін.
 Show error(s).\nerror [number|clear]	Показує останню логовану помилку або останні, якщо заданий параметр.\nerror [number|clear]
@@ -1450,7 +1450,7 @@ Restart	Перезапуск
 Update	Поновлення
 Shutting down the bot. You can set reason.	Завершення роботи бота. Можна вказати параметр, який буде показаний в статусі бота при виході.
 Restart the bot. You can set reason.	Перезапуск бота. Можна вказати параметр, який буде показаний в статусі бота при виході.
-Update from SVN. You can set reason.	Поновлення бота з SVN. Можна вказати параметр, який буде показаний в статусі бота при виході.
+Update from VCS. You can set reason.	Поновлення бота з VCS. Можна вказати параметр, який буде показаний в статусі бота при виході.
 
 # file: ../branch/plugins/sokr.py
 Abbreviations.\nExamples: sokr abbr, sokr 6 abbr, sokr 3-7 abbr	Абревіатури. Приклади використання: sokr abbr, sokr 6 abbr, sokr 3-7 abbr

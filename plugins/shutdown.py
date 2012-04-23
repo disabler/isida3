@@ -37,8 +37,21 @@ def bot_restart(type, jid, nick, text):
 def bot_update(type, jid, nick, text):
 	bot_shutdown(type, jid, nick, text, L('Update'), 'update')
 
+def bot_soft_update(type, jid, nick, text):
+	global plugins_reload
+	caps_and_send(xmpp.Presence(show='dnd', status=L('Soft update activated!'), priority=Settings['priority']))
+	plugins_reload = True
+	while not game_over:
+		if not plugins_reload:
+			send_msg(type, jid, nick, L('Soft update finished! Plugins loaded: %s. Commands: %s') % (len(plugins)+1,len(comms)))
+			break
+		else: time.sleep(1)
+	if Settings['status'] == 'online': caps_and_send(xmpp.Presence(status=Settings['message'], priority=Settings['priority']))
+	else: caps_and_send(xmpp.Presence(show=Settings['status'], status=Settings['message'], priority=Settings['priority']))
+	
 global execute
 
 execute = [(9, 'quit', bot_exit, 2, L('Shutting down the bot. You can set reason.')),
 	 (9, 'restart', bot_restart, 2, L('Restart the bot. You can set reason.')),
-	 (9, 'update', bot_update, 2, L('Update from SVN. You can set reason.'))]
+	 (9, 'update', bot_update, 2, L('Update from VCS. You can set reason.')),
+	 (9, 'soft_update', bot_soft_update, 2, L('Soft update from VCS.'))]

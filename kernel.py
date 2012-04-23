@@ -2180,6 +2180,40 @@ def draw_warning(wt):
 	pprint(wt,'bright_red')
 	pprint('!'*len(wt),'bright_red')
 
+def get_bot_version():
+	if os.path.isfile(ver_file):
+		bvers = readfile(ver_file).decode('utf-8').replace('\n','').replace('\r','').replace('\t','').replace(' ','')
+		bV = '%s.%s.%s' % (botVersionDef,bvers,base_type)
+		if bvers[:-1] == 'M': draw_warning('Launched bot\'s modification!')
+	else: bV = '%s.%s' % (botVersionDef, base_type)
+	return bV
+
+def update_locale():
+	locales = {}
+	if os.path.isfile(loc_file):
+		CURRENT_LOCALE = getFile(loc_file,'\'en\'')
+		lf = '%s%s.txt' % (loc_folder,CURRENT_LOCALE)
+		if os.path.isfile(lf):
+			lf = readfile(lf).decode('UTF').replace('\r','').split('\n')
+			for c in lf:
+				if ('#' not in c[:3]) and len(c) and '\t' in c: locales[c.split('\t',1)[0].replace('\\n','\n').replace('\\t','\t')] = c.split('\t',1)[1].replace('\\n','\n').replace('\\t','\t')
+	return locales
+
+def init_hash():
+	id_category = 'client'
+	id_type = 'bot'
+	id_lang = CURRENT_LOCALE
+	id_name = 'iSida Jabber Bot'
+	capsHash = '%s<' % '/'.join([t.replace('/','//') for t in [id_category,id_type,id_lang,id_name]])
+	bot_features.sort()
+	capsHash += ''.join(['%s<' % t for t in bot_features])
+	capsHash += '%s<' % xmpp.NS_SOFTWAREINFO
+	tmp = ['%s<%s' % (t,bot_softwareinfo[t]) for t in bot_softwareinfo.keys()]
+	tmp.sort()
+	capsHash += ''.join(['%s<' % t for t in tmp])
+	capsHash = hashlib.sha1(capsHash.encode('utf-8')).digest().encode('base64').replace('\n','')
+	return id_category,id_type,id_lang,id_name,capsHash
+
 # --------------------- Иницилизация переменных ----------------------
 
 nmbrs = ['0','1','2','3','4','5','6','7','8','9','.']
@@ -2191,7 +2225,7 @@ CommandsLog = None					# логгирование команд
 prefix = '_'						# префикс комманд
 msg_limit = 1000					# лимит размера сообщений
 botName = 'iSida-bot'				# название бота
-botVersion = u'v3.0β'				# версия бота
+botVersionDef = u'v3.0β'			# версия бота
 disco_config_node = 'http://isida-bot.com/config'
 pres_answer = []					# результаты посылки презенсов
 iq_request = {}						# iq запросы
@@ -2297,11 +2331,7 @@ if thread_type:
 		def kill(self): self.killed = True
 else: import thread
 
-if os.path.isfile(ver_file):
-	bvers = readfile(ver_file).decode('utf-8').replace('\n','').replace('\r','').replace('\t','').replace(' ','')
-	botVersion += '.%s' % bvers
-botVersion = '%s.%s' % (botVersion, base_type)
-if 'm' in botVersion.lower(): draw_warning('Launched bot\'s modification!')
+botVersion = get_bot_version()
 try: tmp = botOs
 except: botOs = os_version()
 
@@ -2325,35 +2355,18 @@ elif base_type == 'mysql': conn = MySQLdb.connect(db=base_name, user=base_user, 
 else: errorHandler('Can\'t connect to `%s` base type!' % base_type)
 
 pprint('*** Loading localization','white')
-locales = {}
-if os.path.isfile(loc_file):
-	CURRENT_LOCALE = getFile(loc_file,'\'en\'')
-	lf = '%s%s.txt' % (loc_folder,CURRENT_LOCALE)
-	if os.path.isfile(lf):
-		lf = readfile(lf).decode('UTF').replace('\r','').split('\n')
-		for c in lf:
-			if ('#' not in c[:3]) and len(c) and '\t' in c: locales[c.split('\t',1)[0].replace('\\n','\n').replace('\\t','\t')] = c.split('\t',1)[1].replace('\\n','\n').replace('\\t','\t')
+locales = update_locale()
 
 pprint('*** Init caps hash','white')
-id_category = 'client'
-id_type = 'bot'
-id_lang = CURRENT_LOCALE
-id_name = 'iSida Jabber Bot'
-capsHash = '%s<' % '/'.join([t.replace('/','//') for t in [id_category,id_type,id_lang,id_name]])
-bot_features.sort()
-capsHash += ''.join(['%s<' % t for t in bot_features])
-capsHash += '%s<' % xmpp.NS_SOFTWAREINFO
-tmp = ['%s<%s' % (t,bot_softwareinfo[t]) for t in bot_softwareinfo.keys()]
-tmp.sort()
-capsHash += ''.join(['%s<' % t for t in tmp])
-capsHash = hashlib.sha1(capsHash.encode('utf-8')).digest().encode('base64').replace('\n','')
+id_category,id_type,id_lang,id_name,capsHash = init_hash()
 
 pprint('*** Loading main plugin','white')
 pl_folder	= 'plugins/%s'
 execfile(pl_folder % 'main.py')
 
+GTIMER_DEF  = [check_rss,check_hash_actions,clean_user_and_server_hash]
 pliname		= pl_folder % 'ignored.txt'
-gtimer		= [check_rss,check_hash_actions,clean_user_and_server_hash]
+gtimer		= GTIMER_DEF
 gpresence	= []
 gmessage	= []
 gactmessage	= []
@@ -2504,7 +2517,7 @@ for tocon in confbase:
 			else: caps_and_send(xmpp.Presence(show=GT('show_loading_by_status_show'), status=join_status, priority=Settings['priority']))
 	if game_over: break
 confbase = cb
-is_start = None
+is_start = plugins_reload = None
 pprint('Joined','white')
 
 #pep = xmpp.Message(to=selfjid, frm=getRoom(selfjid), payload=[xmpp.Node('event',{'xmlns':'http://jabber.org/protocol/pubsub#event'},[xmpp.Node('items',{'node':'http://jabber.org/protocol/tune'},[xmpp.Node('item',{'id':'current'},[xmpp.Node('tune',{'xmlns':'http://jabber.org/protocol/tune'},[])])])])])
@@ -2527,6 +2540,40 @@ while 1:
 			if str(cyc) == 'None': cycles_unused += 1
 			elif int(str(cyc)): cycles_used += 1
 			else: cycles_unused += 1
+			if plugins_reload:
+				import isida
+				dirs = os.listdir('.')+os.listdir('../')
+				if '.svn' in dirs: USED_REPO = 'svn'
+				elif '.git' in dirs: USED_REPO = 'git'
+				else: USED_REPO = 'unknown'
+				isida.update(USED_REPO)
+				botVersion = get_bot_version()
+				bot_softwareinfo['software_version'] = botVersion
+				pprint('*** Reload localization','white')
+				locales = update_locale()
+				pprint('*** Reinit caps hash','white')
+				id_category,id_type,id_lang,id_name,capsHash = init_hash()
+				pprint('*** Reload main plugin','white')
+				execfile(pl_folder % 'main.py')
+				gtimer,gpresence,gmessage,gactmessage = GTIMER_DEF,[],[],[]
+				pprint('*** Reload other plugins','white')
+				pl,pl_ignore,plugins = os.listdir(pl_folder % ''),getFile(pliname,[]),[]
+				for tmp in pl:
+					if tmp[-3:] == '.py' and tmp[0] != '.' and tmp != 'main.py': plugins.append(tmp)
+				plugins.sort()
+				for pl in plugins:
+					if pl in pl_ignore: pprint('Ignore plugin: %s' % pl,'red')
+					else:
+						presence_control,message_control,message_act_control,iq_control,timer,execute = [],[],[],[],[],[]
+						pprint('Append plugin: %s' % pl,'cyan')
+						execfile(pl_folder % pl)
+						for cm in execute: comms.append((cm[0],cm[1],cm[2],cm[3],L('Plugin %s. %s') % (pl[:-3],cm[4]))+cm[5:])
+						for tmr in timer: gtimer.append(tmr)
+						for tmp in presence_control: gpresence.append(tmp)
+						for tmp in message_control: gmessage.append(tmp)
+						for tmp in message_act_control: gactmessage.append(tmp)
+				pprint('*** Soft update finished! Plugins loaded: %s. Commands: %s' % (len(plugins)+1,len(comms)),'white')
+				plugins_reload = None
 		atempt_to_shutdown(False)
 		sys.exit(bot_exit_type)
 
