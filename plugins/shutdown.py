@@ -41,12 +41,8 @@ def bot_soft_update(type, jid, nick, text):
 	global plugins_reload
 	caps_and_send(xmpp.Presence(show='dnd', status=L('Soft update activated!'), priority=Settings['priority']))
 	plugins_reload = True
-	while not game_over:
-		if not plugins_reload:
-			send_msg(type, jid, nick, L('Soft update finished! Plugins loaded: %s. Commands: %s') % (len(plugins)+1,len(comms)))
-			break
-		else: time.sleep(1)
-	pprint('*** Send new hash in rooms')
+	while not game_over and plugins_reload: time.sleep(1)
+	pprint('*** Send new hash in to rooms')
 	for tocon in confbase:
 		tocon = tocon.strip()
 		if '\n' in tocon: pprint('->- %s | pass: %s' % tuple(tocon.split('\n',1)),'green')
@@ -58,7 +54,8 @@ def bot_soft_update(type, jid, nick, text):
 		zz = join(baseArg, passwd)
 	if Settings['status'] == 'online': caps_and_send(xmpp.Presence(status=Settings['message'], priority=Settings['priority']))
 	else: caps_and_send(xmpp.Presence(show=Settings['status'], status=Settings['message'], priority=Settings['priority']))
-	
+	send_msg(type, jid, nick, L('Soft update finished! Plugins loaded: %s. Commands: %s') % (len(plugins)+1,len(comms)))
+
 global execute
 
 execute = [(9, 'quit', bot_exit, 2, L('Shutting down the bot. You can set reason.')),
