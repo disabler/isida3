@@ -21,28 +21,24 @@
 #                                                                             #
 # --------------------------------------------------------------------------- #
 
-def youtube(type, jid, nick, text):
-	if '\n' in text:
-		try: lim = int(text.split('\n',1)[1])
-		except: lim = GT('youtube_default_videos')
-		if lim > GT('youtube_max_videos'): lim = GT('youtube_max_videos')
-		if lim < 1: lim = 1
-		text = text.split('\n',1)[0]
-	else: lim = GT('youtube_default_videos')
-	req = text.lower().encode("utf-8").replace(' ','+')
-	url = 'http://gdata.youtube.com/feeds/api/videos?q=%s&alt=json-in-script&callback=yt&max-results=%s&format=5'
-	res = json.loads(load_page(url % (req,lim)).read().split('yt(',1)[1][:-2])['feed']
-	if res.has_key('entry'):
-		msg = L('Found:')
-		for t in res['entry']:
-			y_title = t['title']['$t']
-			y_views = t['yt$statistics']['viewCount']
-			y_link  = t['media$group'][u'media$player'][0]['url'].split('?v=',1)[1].split('&')[0]
-			y_time  = t['media$group'][u'media$thumbnail'][0]['time'].split('.',1)[0]
-			msg += unescape('\nhttp://youtu.be/%s - %s [%s] %s' % (y_link,y_title,y_time,y_views))
-	else: msg = L('Not found!')
+SHORT_TINYURL = 'http://tinyurl.com/api-create.php?url=%s'
+SHORT_CLCR = 'http://clck.ru/--?url=%s'
+SHORT_QR = 'http://chart.apis.google.com/chart?cht=qr&chs=350x350&chld=M|2&chl=%s'
+
+def shorter_raw(type, jid, nick, text, url):
+	text = text.strip()
+	if text: msg = load_page(url % enidna(text).decode('utf-8'))
+	else: msg = L('What?')
 	send_msg(type, jid, nick, msg)
+
+def short_clcr(type, jid, nick, text): shorter_raw(type, jid, nick, text, SHORT_CLCR)
+
+def short_tinyurl(type, jid, nick, text): shorter_raw(type, jid, nick, text, SHORT_TINYURL)
+
+def short_qr(type, jid, nick, text): shorter_raw(type, jid, nick, text, SHORT_TINYURL % SHORT_QR)
 
 global execute
 
-execute = [(3, 'youtube', youtube, 2, L('Search at YouTube'))]
+execute = [(3, 'clcr', short_clcr, 2, L('URL Shortener')),
+		   (3, 'tinyurl', short_tinyurl, 2, L('URL Shortener')),
+		   (3, 'qr', short_qr, 2, L('QR-code generator'))]

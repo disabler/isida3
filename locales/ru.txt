@@ -1461,6 +1461,10 @@ Change bot nick. Available only for conference owner.	Смена ника бот
 Execute shell command.	Выполнение shell команды.
 Execute shell command without output result.	Выполнение shell команды без показа вывода команды.
 
+# file: ../branch/plugins/shortlink.py
+URL Shortener	Сервис сокращения ссылок
+QR-code generator	Сервис генерации QR-кодов
+
 # file: ../branch/plugins/shutdown.py
 %s by command from %s	%s по команде от %s
 reason: %s	причина: %s

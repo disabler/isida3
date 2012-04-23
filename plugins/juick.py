@@ -62,11 +62,11 @@ def juick(type, jid, nick, text):
 		try: tmpt = re.findall('(^[^@]#?[0-9]+)',text)[0]
 		except: tmpt = ''
 		if tmpt: juick_msg(type, jid, nick, text)
-		elif text[0] == '@': juick_user(type, jid, nick, text)
+		elif text and text[0] == '@': juick_user(type, jid, nick, text)
 		else: send_msg(type, jid, nick, L('Smoke help about command!'))
 
 def juick_user(type, jid, nick, text):
-	if text[0] == '@': text = text[1:]
+	if text and text[0] == '@': text = text[1:]
 	try: result = json.loads(html_encode(load_page(JUICK_MESSAGES_REQUEST, {'user_id':str(json.loads(html_encode(load_page(JUICK_USERS, {'uname': text})).replace('\t',' '*8))[0]['uid'])})).replace('\t',' '*8))
 	except:
 		send_msg(type, jid, nick, L('User @%s not found!') % text)
@@ -93,7 +93,7 @@ def juick_search(type, jid, nick, text):
 	send_msg(type, jid, nick, msg)
 
 def juick_tags(type, jid, nick, text):
-	if text[0] == '@': text = text[1:]
+	if text and text[0] == '@': text = text[1:]
 	try:
 		if text: hdr,url,params = L('Popular tags of @%s:') % text,JUICK_TAGS_USER,{'user_id':str(json.loads(html_encode(load_page(JUICK_USERS, {'uname': text})).replace('\t',' '*8))[0]['uid'])}
 		else: hdr,url,params = L('Popular tags:'),JUICK_TAGS,{}
