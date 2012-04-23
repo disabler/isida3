@@ -31,7 +31,7 @@ def youtube(type, jid, nick, text):
 	else: lim = GT('youtube_default_videos')
 	req = text.lower().encode("utf-8").replace(' ','+')
 	url = 'http://gdata.youtube.com/feeds/api/videos?q=%s&alt=json-in-script&callback=yt&max-results=%s&format=5'
-	res = json.loads(load_page(url % (req,lim)).read().split('yt(',1)[1][:-2])['feed']
+	res = json.loads(load_page(url % (req,lim)).split('yt(',1)[1][:-2])['feed']
 	if res.has_key('entry'):
 		msg = L('Found:')
 		for t in res['entry']:
