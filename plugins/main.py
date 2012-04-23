@@ -116,7 +116,7 @@ def get_xnick(jid):
 	tmppos = arr_semi_find(confbase, jid)
 	if tmppos == -1: nowname = Settings['nickname']
 	else:
-		nowname = getResourse(confbase[tmppos])
+		nowname = getResourse(confbase[tmppos]).split('\n')[0]
 		if nowname == '': nowname = Settings['nickname']
 	return nowname
 
@@ -912,7 +912,7 @@ def ignore(type, jid, nick, text):
 
 def info_where(type, jid, nick):
 	global confbase
-	msg = L('Active conference(s): %s') % str(len(confbase))
+	msg = L('Active conference(s): %s') % len(confbase)
 	wbase = []
 	for jjid in confbase:
 		cnt = 0
@@ -933,7 +933,7 @@ def info_where(type, jid, nick):
 
 def info_where_plus(type, jid, nick):
 	global confbase
-	msg = L('Active conference(s): %s') % str(len(confbase))
+	msg = L('Active conference(s): %s') % len(confbase)
 	wbase = []
 	for jjid in confbase:
 		cnt,rjid,ra = 0,getRoom(jjid),L('unknown')

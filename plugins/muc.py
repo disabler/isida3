@@ -148,7 +148,7 @@ def muc_affiliation(type, jid, nick, text, aff, is_jid):
 	tmppos = arr_semi_find(confbase, jid)
 	if tmppos == -1: nowname = Settings['nickname']
 	else:
-		nowname = getResourse(confbase[tmppos])
+		nowname = getResourse(confbase[tmppos]).split('\n')[0]
 		if nowname == '': nowname = Settings['nickname']
 	xtype = ''
 	for base in megabase:
@@ -173,7 +173,7 @@ def muc_affiliation_past(type, jid, nick, text, aff):
 	tmppos = arr_semi_find(confbase, jid)
 	if tmppos == -1: nowname = Settings['nickname']
 	else:
-		nowname = getResourse(confbase[tmppos])
+		nowname = getResourse(confbase[tmppos]).split('\n')[0]
 		if nowname == '': nowname = Settings['nickname']
 	xtype = ''
 	for base in megabase:
@@ -211,7 +211,7 @@ def muc_role(type, jid, nick, text, role, unused):
 	tmppos = arr_semi_find(confbase, jid)
 	if tmppos == -1: nowname = Settings['nickname']
 	else:
-		nowname = getResourse(confbase[tmppos])
+		nowname = getResourse(confbase[tmppos]).split('\n')[0]
 		if nowname == '': nowname = Settings['nickname']
 	xtype = ''
 	for base in megabase:

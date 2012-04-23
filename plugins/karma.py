@@ -174,7 +174,7 @@ def karma_correct(room):
 def karma_action_do(room,text,action):
 	tmppos = arr_semi_find(confbase, room)
 	if tmppos == -1: nick = Settings['nickname']
-	else: nick = getResourse(confbase[tmppos])
+	else: nick = getResourse(confbase[tmppos]).split('\n')[0]
 	action = action.replace('ban','outcast')
 	act = {'outcast':muc_affiliation,'none':muc_affiliation,'member':muc_affiliation,
 		   'kick':muc_role,'participant':muc_role,'visitor':muc_role,'moderator':muc_role}

@@ -164,7 +164,7 @@ def acl_action(cmd,nick,jid,room,text):
 	tmppos = arr_semi_find(confbase, room)
 	if tmppos == -1: nowname = Settings['nickname']
 	else:
-		nowname = getResourse(confbase[tmppos])
+		nowname = getResourse(confbase[tmppos]).split('\n')[0]
 		if nowname == '': nowname = Settings['nickname']
 	return com_parser(7, nowname, 'groupchat', room, nick, cmd, Settings['jid'])
 

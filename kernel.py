@@ -1737,7 +1737,7 @@ def messageCB(sess,mess):
 	tmppos = arr_semi_find(confbase, room)
 	if tmppos == -1: nowname = Settings['nickname']
 	else:
-		nowname = getResourse(confbase[tmppos])
+		nowname = getResourse(confbase[tmppos]).split('\n')[0]
 		if nowname == '': nowname = Settings['nickname']
 	if '@' not in jid and (jid == 'None' or jid.startswith('j2j.')) and getRoom(room) in ownerbase: access_mode = 9
 	if type == 'groupchat' and nick != '' and access_mode >= 0 and jid not in ['None',Settings['jid']]: talk_count(room,jid,nick,text)
@@ -2003,7 +2003,7 @@ def presenceCB(sess,mess):
 	tmppos = arr_semi_find(confbase, room.lower())
 	if tmppos == -1: nowname = Settings['nickname']
 	else:
-		nowname = getResourse(confbase[tmppos])
+		nowname = getResourse(confbase[tmppos]).split('\n')[0]
 		if nowname == '': nowname = Settings['nickname']
 	not_found,exit_type,exit_message = 0,'',''
 	if type=='unavailable':
@@ -2485,7 +2485,7 @@ thr(sender_stack,(),'sender')
 thr(remove_ignore,(),'ddos_remove')
 cb = []
 is_start = True
-lastserver = getServer(confbase[0].lower())
+lastserver = getServer(confbase[-1].lower())
 setup = getFile(c_file,{})
 join_percent, join_pers_add = 0, 100.0/len(confbase)
 
@@ -2506,7 +2506,8 @@ for tocon in confbase:
 		time.sleep(1)
 		baseArg += '_'
 		zz = join(baseArg, passwd)
-	cb.append(baseArg)
+	if passwd: cb.append('%s\n%s' % (baseArg, passwd))
+	else: cb.append(baseArg)
 	pprint('-<- %s' % baseArg,'bright_green')
 	if GT('show_loading_by_status_percent'):
 		join_percent += join_pers_add

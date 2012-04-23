@@ -34,7 +34,7 @@ def raw_redirect(type, room, nick, text):
 	tmppos = arr_semi_find(confbase, room)
 	if tmppos == -1: nowname = Settings['nickname']
 	else:
-		nowname = getResourse(confbase[tmppos])
+		nowname = getResourse(confbase[tmppos]).split('\n')[0]
 		if nowname == '': nowname = Settings['nickname']
 	com_parser(access_mode, nowname, type, room, nick, text, jid)
 
