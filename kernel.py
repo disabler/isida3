@@ -2197,7 +2197,7 @@ def update_locale():
 			lf = readfile(lf).decode('UTF').replace('\r','').split('\n')
 			for c in lf:
 				if ('#' not in c[:3]) and len(c) and '\t' in c: locales[c.split('\t',1)[0].replace('\\n','\n').replace('\\t','\t')] = c.split('\t',1)[1].replace('\\n','\n').replace('\\t','\t')
-	return locales
+	return locales,CURRENT_LOCALE
 
 def init_hash():
 	id_category = 'client'
@@ -2355,7 +2355,7 @@ elif base_type == 'mysql': conn = MySQLdb.connect(db=base_name, user=base_user, 
 else: errorHandler('Can\'t connect to `%s` base type!' % base_type)
 
 pprint('*** Loading localization','white')
-locales = update_locale()
+locales,CURRENT_LOCALE = update_locale()
 
 pprint('*** Init caps hash','white')
 id_category,id_type,id_lang,id_name,capsHash = init_hash()
@@ -2551,7 +2551,7 @@ while 1:
 				botVersion = get_bot_version()
 				bot_softwareinfo['software_version'] = botVersion
 				pprint('*** Reload localization','white')
-				locales = update_locale()
+				locales,CURRENT_LOCALE = update_locale()
 				pprint('*** Reinit caps hash','white')
 				id_category,id_type,id_lang,id_name,capsHash = init_hash()
 				pprint('*** Reload main plugin','white')
