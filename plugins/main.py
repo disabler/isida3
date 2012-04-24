@@ -1741,7 +1741,8 @@ owner_prefs = {'syslogs_enable': [L('Logger. Enable system logs'),'b',True],
 				'karma_discret_lim_dn':[L('Karma. Lower value of karma for control action'),'i',-100],
 				'disco_exclude':[L('Disco. Exclude from disco by regexps'),'m256e',u'([؀-ݭ)\n(ﭐ-ﻼ])\n(syria|arab)','disco_exclude_update()'],
 				'exclude_messages':[L('Kernel. Exclude symbols from bot\'s messages'),'m256e',u'([؀-ۿ])\n([ݐ-ݿ])\n([ﭐ-﷿])\n([ﹰ-﻿])','message_exclude_update()'],
-				'1st_april_joke':[L('Kernel. 1st April joke'),'b',True]
+				'1st_april_joke':[L('Kernel. 1st April joke'),'b',True],
+				'soft_update_resend_hash':[L('Kernel. Send new hash into rooms after soft update'),'b',True]
 				}
 
 owner_group_mucfilter = [L('Muc-filter settings'),'#owner-mucfilter',
@@ -1766,7 +1767,7 @@ owner_group_youtube = [L('Youtube settings'),'#owner-youtube',
 
 owner_group_other = [L('Other settings'),'#owner-other',
 				['anek_private_limit','backup_sleep_time','calendar_default_splitter',
-				'disco_max_limit','disco_exclude','html_paste_enable','yandex_api_key','bing_api_key','1st_april_joke']]
+				'disco_max_limit','disco_exclude','html_paste_enable','yandex_api_key','bing_api_key']]
 
 owner_group_karma = [L('Karma settings'),'#owner-karma',
 				['karma_limit','karma_show_default_limit','karma_show_max_limit','karma_timeout','karma_discret','karma_discret_lim_up','karma_discret_lim_dn']]
@@ -1781,7 +1782,7 @@ owner_group_kernel = [L('Kernel settings'),'#owner-kernel',
 				['censor_text','ddos_limit','ddos_diff','paranoia_mode','reboot_time','schedule_time',
 				'show_loading_by_status','show_loading_by_status_show','show_loading_by_status_message',
 				'show_loading_by_status_percent','kick_ban_notify','kick_ban_notify_jid',
-				'ddos_iq_requests','ddos_iq_limit','exclude_messages']]
+				'ddos_iq_requests','ddos_iq_limit','exclude_messages','1st_april_joke','soft_update_resend_hash']]
 
 owner_group_lastfm = [L('LastFM settings'),'#owner-lastfm',
 				['lfm_api','lastfm_max_limit']]

@@ -1285,6 +1285,7 @@ Karma. Lower value of karma for control action	Karma. Нижний предел 
 Disco. Exclude from disco by regexps	Disco. Исключать из обзора по регекспу
 Kernel. Exclude symbols from bot's messages	Kernel. Исключить символы из сообщений бота
 Kernel. 1st April joke	Kernel. Первоапрельская шутка
+Kernel. Send new hash into rooms after soft update	Kernel. Посылать новый хеш в конференции после мягкого обновления
 Muc-filter settings	Настройки muc-фильтра
 Iq requests settings	Настройки Iq запросов
 Juick settings	Настройки juick
