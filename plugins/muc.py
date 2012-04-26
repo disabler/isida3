@@ -145,16 +145,8 @@ def muc_member(type, jid, nick,text): muc_affiliation(type, jid, nick, text, 'me
 def muc_memberjid(type, jid, nick,text): muc_affiliation(type, jid, nick, text, 'member',1)
 
 def muc_affiliation(type, jid, nick, text, aff, is_jid):
-	tmppos = arr_semi_find(confbase, jid)
-	if tmppos == -1: nowname = Settings['nickname']
-	else:
-		nowname = getResourse(confbase[tmppos]).split('\n')[0]
-		if nowname == '': nowname = Settings['nickname']
-	xtype = ''
-	for base in megabase:
-		if base[0].lower() == jid and base[1] == nowname:
-			xtype = base[3]
-			break
+	nowname = get_xnick(jid)
+	xtype = get_xtype(jid)
 	if xtype == 'owner': send_msg(type, jid, nick, L('Command is locked!'))
 	elif len(text):
 		skip = None
@@ -170,16 +162,8 @@ def muc_none_past(type, jid, nick,text): muc_affiliation_past(type, jid, nick, t
 def muc_member_past(type, jid, nick,text): muc_affiliation_past(type, jid, nick, text, 'member')
 
 def muc_affiliation_past(type, jid, nick, text, aff):
-	tmppos = arr_semi_find(confbase, jid)
-	if tmppos == -1: nowname = Settings['nickname']
-	else:
-		nowname = getResourse(confbase[tmppos]).split('\n')[0]
-		if nowname == '': nowname = Settings['nickname']
-	xtype = ''
-	for base in megabase:
-		if base[0].lower() == jid and base[1] == nowname:
-			xtype = base[3]
-			break
+	nowname = get_xnick(jid)
+	xtype = get_xtype(jid)
 	if xtype == 'owner': msg, text = L('Command is locked!'), ''
 	else: msg = L('What?')
 	if len(text):
@@ -208,16 +192,8 @@ def muc_visitor(type, jid, nick, text): muc_role(type, jid, nick, text, 'visitor
 def muc_moderator(type, jid, nick, text): muc_role(type, jid, nick, text, 'moderator',1)
 
 def muc_role(type, jid, nick, text, role, unused):
-	tmppos = arr_semi_find(confbase, jid)
-	if tmppos == -1: nowname = Settings['nickname']
-	else:
-		nowname = getResourse(confbase[tmppos]).split('\n')[0]
-		if nowname == '': nowname = Settings['nickname']
-	xtype = ''
-	for base in megabase:
-		if base[0].lower() == jid and base[1] == nowname:
-			xtype = base[3]
-			break
+	nowname = get_xnick(jid)
+	xtype = get_xtype(jid)
 	if xtype == 'owner': send_msg(type, jid, nick, L('Command is locked!'))
 	elif len(text):
 		skip = None

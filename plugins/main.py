@@ -103,6 +103,29 @@ wday = [L('Mon'),L('Tue'),L('Wed'),L('Thu'),L('Fri'),L('Sat'),L('Sun')]
 wlight = [L('Winter time'),L('Summer time')]
 wmonth = [L('Jan'),L('Fed'),L('Mar'),L('Apr'),L('May'),L('Jun'),L('Jul'),L('Aug'),L('Sep'),L('Oct'),L('Nov'),L('Dec')]
 
+two_en = ['aa', 'aq', 'bc', 'bd', 'bf', 'bg', 'bh', 'bk', 'bn', 'bp', 'bq', 'bw', 'bx', 'bz', 'cb', 'cd', 'cf', 'cg', 'cj', \
+		  'cm', 'cn', 'cp', 'cs', 'cv', 'cw', 'cx', 'cz', 'db', 'dc', 'dh', 'dj', 'dp', 'dq', 'dt', 'dx', 'dz', 'ej', 'fb', \
+		  'fc', 'fd', 'fg', 'fh', 'fj', 'fk', 'fm', 'fn', 'fp', 'fq', 'fs', 'fv', 'fx', 'fz', 'gb', 'gc', 'gf', 'gj', 'gk', \
+		  'gp', 'gq', 'gv', 'gw', 'gx', 'gz', 'hc', 'hg', 'hh', 'hj', 'hk', 'hp', 'hq', 'hs', 'hv', 'hx', 'hz', 'ih', 'ii', \
+		  'ij', 'iq', 'iw', 'iy', 'jb', 'jc', 'jd', 'jf', 'jg', 'jh', 'jj', 'jk', 'jl', 'jm', 'jn', 'jq', 'jr', 'js', 'jt', \
+		  'jv', 'jw', 'jx', 'jy', 'jz', 'kb', 'kc', 'kd', 'kj', 'kk', 'km', 'kp', 'kq', 'kr', 'ks', 'kt', 'kv', 'kx', 'kz', \
+		  'lh', 'lj', 'ln', 'lq', 'lx', 'lz', 'mc', 'md', 'mg', 'mh', 'mj', 'mk', 'mq', 'mv', 'mw', 'mx', 'mz', 'nb', 'nr', \
+		  'oq', 'pc', 'pf', 'pj', 'pk', 'pq', 'pv', 'px', 'pz', 'qa', 'qb', 'qc', 'qd', 'qe', 'qf', 'qg', 'qh', 'qi', 'qj', \
+		  'qk', 'ql', 'qm', 'qn', 'qo', 'qp', 'qq', 'qr', 'qs', 'qt', 'qv', 'qw', 'qx', 'qy', 'qz', 'rj', 'rq', 'rx', 'rz', \
+		  'sj', 'sv', 'sx', 'sz', 'tb', 'td', 'tg', 'tj', 'tk', 'tq', 'tv', 'tx', 'tz', 'uh', 'uj', 'uo', 'uq', 'uu', 'uv', \
+		  'uw', 'ux', 'vb', 'vc', 'vd', 'vf', 'vg', 'vh', 'vj', 'vk', 'vl', 'vm', 'vn', 'vp', 'vq', 'vr', 'vs', 'vt', 'vu', \
+		  'vv', 'vw', 'vx', 'vz', 'wb', 'wc', 'wg', 'wj', 'wm', 'wp', 'wq', 'wt', 'wu', 'wv', 'wx', 'wz', 'xb', 'xd', 'xg', \
+		  'xj', 'xk', 'xl', 'xn', 'xo', 'xq', 'xr', 'xs', 'xu', 'xv', 'xw', 'xx', 'xz', 'yc', 'yd', 'yf', 'yg', 'yj', 'yk', \
+		  'yn', 'yq', 'yu', 'yv', 'yx', 'yy', 'yz', 'zb', 'zc', 'zd', 'zf', 'zg', 'zh', 'zi', 'zj', 'zk', 'zm', 'zn', 'zp', \
+		  'zq', 'zr', 'zs', 'zt', 'zu', 'zv', 'zw', 'zx']
+
+def validate_nick(nick,count):
+		nick = nick.lower()
+		pairs = 0
+		for t in re.findall('\s+[^\s]*', ' ' + nick):
+			pairs += sum([t.count(k) for k in two_en])
+		return pairs-len(nick.split()) < count, pairs
+
 def kill_all_threads():
 	if thread_type:
 		threading_list = threading.enumerate() 
@@ -1620,7 +1643,7 @@ config_group_mucfilter_caps = [L('Muc-filter settings for while/black lists by c
 				['muc_filter_caps_list','muc_filter_caps_white',
 				#'muc_filter_caps','muc_filter_caps_smart','muc_filter_caps_white_smart','muc_filter_caps_black_smart',
 				'muc_filter_caps_black'],None]
-				
+
 config_group_bomb = [L('Settings for bomb-joke'),'#room-bombjoke',
 				['bomb','bomb_fault','bomb_fault_persent','bomb_random','bomb_random_timer',
 				'bomb_timer','bomb_wire','bomb_action','bomb_action_level','bomb_reason','bomb_random_active',
@@ -1742,7 +1765,7 @@ owner_prefs = {'syslogs_enable': [L('Logger. Enable system logs'),'b',True],
 				'disco_exclude':[L('Disco. Exclude from disco by regexps'),'m256e',u'([؀-ݭ)\n(ﭐ-ﻼ])\n(syria|arab)','disco_exclude_update()'],
 				'exclude_messages':[L('Kernel. Exclude symbols from bot\'s messages'),'m256e',u'([؀-ۿ])\n([ݐ-ݿ])\n([ﭐ-﷿])\n([ﹰ-﻿])','message_exclude_update()'],
 				'1st_april_joke':[L('Kernel. 1st April joke'),'b',True],
-				'soft_update_resend_hash':[L('Kernel. Send new hash into rooms after soft update'),'b',True]
+				'soft_update_resend_hash':[L('Kernel. Send new hash into rooms after soft update'),'b',False]
 				}
 
 owner_group_mucfilter = [L('Muc-filter settings'),'#owner-mucfilter',

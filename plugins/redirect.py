@@ -31,11 +31,7 @@ def raw_redirect(type, room, nick, text):
 	ta = get_level(room,nick)
 	access_mode = ta[0]
 	jid =ta[1]
-	tmppos = arr_semi_find(confbase, room)
-	if tmppos == -1: nowname = Settings['nickname']
-	else:
-		nowname = getResourse(confbase[tmppos]).split('\n')[0]
-		if nowname == '': nowname = Settings['nickname']
+	nowname = get_xnick(room)
 	com_parser(access_mode, nowname, type, room, nick, text, jid)
 
 global execute

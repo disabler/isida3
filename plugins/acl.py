@@ -161,11 +161,7 @@ def acl_action(cmd,nick,jid,room,text):
 		if mt != []: txt = ''.join(mt[0])
 		else: txt = ''
 		cmd = cmd.split('${EXP}',1)[0] + txt + cmd.split('${/EXP}',1)[1]
-	tmppos = arr_semi_find(confbase, room)
-	if tmppos == -1: nowname = Settings['nickname']
-	else:
-		nowname = getResourse(confbase[tmppos]).split('\n')[0]
-		if nowname == '': nowname = Settings['nickname']
+	nowname = get_xnick(room)
 	return com_parser(7, nowname, 'groupchat', room, nick, cmd, Settings['jid'])
 
 def acl_message(room,jid,nick,type,text):

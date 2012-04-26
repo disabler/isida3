@@ -84,7 +84,7 @@ def update(USED_REPO):
 		os.system('git log -1 > %s' % updatelog_file)
 		writefile(updatelog_file, unicode(readfile(updatelog_file)).replace('\n\n','\n').replace('\r','').replace('\t',''))
 	else: os.system('echo Update not available! Read wiki at http://isida-bot.com to use SVN/GIT! > %s' % updatelog_file)
-	
+
 if __name__ == "__main__" :
 	if os.name == 'nt': printlog('Warning! Correct work only on *NIX system!')
 

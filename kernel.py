@@ -471,11 +471,11 @@ def send_msg(mtype, mjid, mnick, mmessage):
 def os_version_disco():
 	iSys = sys.platform
 	iOs = os.name
-	isidaPyVer = '%s [%s]' % (sys.version.split(' (')[0],sys.version.split(')')[0].split(', ')[1])
+	isidaPyVer = sys.version.split()[0]
 	if iOs == 'posix':
 		osInfo = os.uname()
 		isidaOs = osInfo[0]
-		isidaOsVer = '%s-%s / Python %s' % (osInfo[2],osInfo[4],isidaPyVer)
+		isidaOsVer = '%s-%s/PYv%s' % (osInfo[2].split('-',1)[0],osInfo[4],isidaPyVer)
 	elif iSys == 'win32':
 		def get_registry_value(key, subkey, value):
 			import _winreg
@@ -489,10 +489,10 @@ def os_version_disco():
 		try:
 			spInfo = get("CSDVersion")
 			isidaOs = osInfo
-			isidaOsVer = 'SP: %s / Build: %s / Python %s' % (spInfo,buildInfo,isidaPyVer)
+			isidaOsVer = 'SP:%s/BLD:%s/PYv%s' % (spInfo,buildInfo,isidaPyVer)
 		except:
 			isidaOs = osInfo
-			isidaOsVer = 'Build: %s / Python %s' % (buildInfo,isidaPyVer)
+			isidaOsVer = 'BLD:%s/PYv%s' % (buildInfo,isidaPyVer)
 	else: isidaOs = isidaOsVer = 'unknown'
 	return isidaOs, isidaOsVer
 
@@ -648,7 +648,7 @@ def disco_ext_info_add(i):
 		i.getTag('query').getTag('x',namespace=xmpp.NS_DATA).setTag('field',attrs={'var':t})
 		i.getTag('query').getTag('x',namespace=xmpp.NS_DATA).getTag('field',attrs={'var':t}).setTagData('value',bot_softwareinfo[t])
 	return i
-	
+
 def caps_matcher(c_caps,c_list):
 	result = False
 	for t in c_list:
@@ -658,7 +658,7 @@ def caps_matcher(c_caps,c_list):
 		elif r == 1 and c_caps.startswith(t[:-1]): return True
 		elif c_caps == t: return True
 	return result
-	
+
 def iqCB(sess,iq):
 	global timeofset, iq_in, iq_request, last_msg_base, last_msg_time_base, ddos_ignore, ddos_iq, user_hash, server_hash, server_hash_list
 	global disco_excl, message_excl
@@ -1402,7 +1402,7 @@ def iqCB(sess,iq):
 									pprint('MUC-Filter caps node lock (%s): %s/%s %s %s' % (['black','white'][caps_negate],gr,nick,jid,c_caps),'brown')
 									msg,mute = unicode(xmpp.Node('presence', {'from': tojid, 'type': 'error', 'to':jid}, payload = ['replace_it',xmpp.Node('error', {'type': 'auth','code':'403'}, payload=[xmpp.Node('forbidden',{'xmlns':'urn:ietf:params:xml:ns:xmpp-stanzas'},[]),xmpp.Node('text',{'xmlns':'urn:ietf:params:xml:ns:xmpp-stanzas'},[L('Deny by node lock!')])])])).replace('replace_it',get_tag(msg,'presence')),True
 							if caps_error: writefile('log/bad_stanza_%s.txt' % int(time.time()),unicode(msg_xmpp).encode('utf-8'))
-								
+
 						# Hash lock
 						if get_config(gr,'muc_filter_deny_hash') and msg and not mute:
 							hashes_list = reduce_spaces_all(get_config(gr,'muc_filter_deny_hash_list').replace(',',' ').replace(';',' ').replace('|',' ')).split()
@@ -1733,12 +1733,7 @@ def messageCB(sess,mess):
 	ft = back_text = text
 	rn = '%s/%s' % (room,nick)
 	access_mode,jid = get_level(room,nick)
-
-	tmppos = arr_semi_find(confbase, room)
-	if tmppos == -1: nowname = Settings['nickname']
-	else:
-		nowname = getResourse(confbase[tmppos]).split('\n')[0]
-		if nowname == '': nowname = Settings['nickname']
+	nowname = get_xnick(room)
 	if '@' not in jid and (jid == 'None' or jid.startswith('j2j.')) and getRoom(room) in ownerbase: access_mode = 9
 	if type == 'groupchat' and nick != '' and access_mode >= 0 and jid not in ['None',Settings['jid']]: talk_count(room,jid,nick,text)
 	if nick != '' and nick != None and nick != nowname and len(text)>1 and text != 'None' and text != to_censore(text,room) and access_mode >= 0 and get_config(getRoom(room),'censor'):
@@ -2000,11 +1995,7 @@ def presenceCB(sess,mess):
 			last_hash[room] = lh
 
 	if bad_presence: send_msg('groupchat', room, '', L('/me detect bad stanza from %s') % nick)
-	tmppos = arr_semi_find(confbase, room.lower())
-	if tmppos == -1: nowname = Settings['nickname']
-	else:
-		nowname = getResourse(confbase[tmppos]).split('\n')[0]
-		if nowname == '': nowname = Settings['nickname']
+	nowname = get_xnick(room.lower())
 	not_found,exit_type,exit_message = 0,'',''
 	if type=='unavailable':
 		if status=='307': exit_type,exit_message = L('kicked'),reason
@@ -2183,9 +2174,9 @@ def draw_warning(wt):
 def get_bot_version():
 	if os.path.isfile(ver_file):
 		bvers = readfile(ver_file).decode('utf-8').replace('\n','').replace('\r','').replace('\t','').replace(' ','')
-		bV = '%s.%s.%s' % (botVersionDef,bvers,base_type)
+		bV = '%s.%s-%s' % (botVersionDef,bvers,base_type)
 		if bvers[:-1] == 'M': draw_warning('Launched bot\'s modification!')
-	else: bV = '%s.%s' % (botVersionDef, base_type)
+	else: bV = '%s-%s' % (botVersionDef, base_type)
 	return bV
 
 def update_locale():
@@ -2213,6 +2204,12 @@ def init_hash():
 	capsHash += ''.join(['%s<' % t for t in tmp])
 	capsHash = hashlib.sha1(capsHash.encode('utf-8')).digest().encode('base64').replace('\n','')
 	return id_category,id_type,id_lang,id_name,capsHash
+
+def get_repo():
+	dirs = os.listdir('.')+os.listdir('../')
+	if '.svn' in dirs: return 'svn'
+	elif '.git' in dirs: return 'git'
+	else: return 'unknown'
 
 # --------------------- Иницилизация переменных ----------------------
 
@@ -2336,7 +2333,7 @@ try: tmp = botOs
 except: botOs = os_version()
 
 tmp_os,tmp_ver = os_version_disco()
-bot_softwareinfo = {'software':botName,'software_version':botVersion,'os':tmp_os,'os_version':tmp_ver}
+bot_softwareinfo = {'software':botName,'software_version':'%s-%s-%s' % (botVersionDef,get_repo().replace('unknown','none'),base_type),'os':tmp_os,'os_version':tmp_ver}
 
 sm_f = os.path.join(public_log,smile_folder)
 if os.path.isdir(sm_f):
@@ -2543,11 +2540,7 @@ while 1:
 			else: cycles_unused += 1
 			if plugins_reload:
 				import isida
-				dirs = os.listdir('.')+os.listdir('../')
-				if '.svn' in dirs: USED_REPO = 'svn'
-				elif '.git' in dirs: USED_REPO = 'git'
-				else: USED_REPO = 'unknown'
-				isida.update(USED_REPO)
+				isida.update(get_repo())
 				botVersion = get_bot_version()
 				bot_softwareinfo['software_version'] = botVersion
 				pprint('*** Reload localization','white')
