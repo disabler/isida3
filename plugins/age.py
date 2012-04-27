@@ -24,10 +24,10 @@
 def true_age_stat(type, jid, nick):
 	try: llim = GT('age_default_limit')
 	except: llim = 10
-	t_age_tmp = cur_execute_fetchmany('select jid,sum(%s-time+age) from age where room=%s and status=0 group by jid order by -sum(%s-time+age)',(int(time.time()),jid,int(time.time())),llim)
+	t_age_tmp = cur_execute_fetchmany('select jid,sum(%s-time+age) from age where room=%s group by jid order by -sum(%s-time+age)',(int(time.time()),jid,int(time.time())),llim)
 	t_age = []
 	for t in t_age_tmp:
-		tmp = cur_execute_fetchone('select nick from age where room=%s and jid=%s and status=0 order by time',(jid,t[0]))
+		tmp = cur_execute_fetchone('select nick from age where room=%s and jid=%s order by time',(jid,t[0]))
 		t_age.append((tmp[0],t[1]))
 	msg = L('Age statistic:\n%s') % '\n'.join(['%s\t%s' % (t[0],un_unix(t[1])) for t in t_age])
 	send_msg(type, jid, nick, msg)

@@ -27,6 +27,7 @@ import calendar
 import chardet
 import crontab 
 import datetime
+import gc
 import json
 import hashlib
 import htmlentitydefs
@@ -2282,6 +2283,8 @@ base_charset = 'utf8'   # кодировка
 bot_features = [xmpp.NS_DISCO_INFO,xmpp.NS_DISCO_ITEMS,xmpp.NS_COMMANDS,disco_config_node,xmpp.NS_PING,xmpp.NS_URN_TIME,xmpp.NS_X_OOB,xmpp.NS_MUC_FILTER,
 				xmpp.NS_VERSION,xmpp.NS_TIME,xmpp.NS_MUC,xmpp.NS_LAST,xmpp.NS_DATA,xmpp.NS_MUC_ROOMS]
 
+gc.enable()
+
 gt=tuple(time.gmtime())
 lt=tuple(time.localtime())
 if lt[0:3] == gt[0:3]: timeofset = int(lt[3])-int(gt[3])
@@ -2326,6 +2329,12 @@ if thread_type:
 			return self.localtrace
 
 		def kill(self): self.killed = True
+	def garbage_collector():
+		gc.collect()
+		garbage_collector_timer = threading.Timer(3600,garbage_collector)
+		garbage_collector_timer.start()
+	garbage_collector()
+
 else: import thread
 
 botVersion = get_bot_version()

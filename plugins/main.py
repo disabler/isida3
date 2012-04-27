@@ -206,6 +206,9 @@ def atempt_to_shutdown(critical):
 	if not critical:
 		pprint('Close age base','dark_gray')
 		close_age()
+	if thread_type:
+		try: garbage_collector_timer.cancel()
+		except: pass
 	conn.commit()
 	conn.close()
 	kill_all_threads()
