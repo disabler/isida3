@@ -28,7 +28,10 @@ Settings succesfully accepted	Налаштування прийняті успі
 Settings	Налаштування
 For configure required x:data-compatible client	Для налаштування потрібен x:data-сумісний клієнт
 Unknown configuration request!	Невідомий запит конфігурації
+Warning! Your message are blocked by policy of room!	Увага! Ваше повідомлення заблоковане політикою кімнати!
+Warning! This participant don't want to receive private messages!	Увага! Цей учасник не бажає отримувати приватні повідомлення!
 Messages count overflow from newbie!	Перебільшення кількості повідомленнь від новачка!
+Your messages are blocked %ssec. after first join! Please, wait quiet!	Ваші повідомлення блокуються на протязі %s сек. з першого підключення. Будь ласка, чекайте тихо!
 Blocked by content!	Блокування по вмісту!
 AD-Block!	Блокування реклами
 Raw AD-Block!	Блокування прихованої реклами!
@@ -38,6 +41,7 @@ Blocked by censor!	Блоковано цензором
 Blocked by raw censor!	Блокування прихованого мата цензором!
 Large message%s %s	Велике повідомлення%s %s
 Large message block!	Велике повідомлення заблоковано!
+Deny by node lock!	Заборонено по ноді!
 Deny by hash lock!	Обмеження по хешу клієнта!
 Server %s was banned in %s	Сервер %s забанено в конференції %s
 Deny by blacklist!	Обмеження по чорному списку!
@@ -1096,6 +1100,20 @@ Raw adblock muc filter for presence is %s	Блокування прихован�
 Raw adblock filter for presence	Блокування прихованої реклами в презенсах
 Reduce spaces in presence %s	Блокувати численні проміжки в презенсах: %s
 Reduce duplicates of spaces in presence	Блокувати численні проміжки в презенсах
+Limitation by caps %s	Обмеження по капсу %s
+Limitation to join by caps	Обмеження підключеннь по капсу
+Type of list %s	Тип списку %s
+Type of list for caps	Тип списку для капсів
+Whitelist %s	Білий список %s
+Whitelist for caps	Білий список для капсів
+Blacklist %s	Чорний список %s
+Blacklist for caps	Чорний список для капсів
+Smart lists %s	Розумні списки %s
+Smart lists for caps	розумні списки капсів
+Smart whitelist %s	Розумний білий список %s
+Smart whitelist for caps	Розумний білий список для капсів
+Smart blacklist %s	Розумний чорний список %s
+Smart blacklist for caps	Розумний чорний список для капсів
 Bomb. Allow take a bomb %s	Bomb. Дозволити роздачу бомб: %s
 Allow take a bomb in current conference	Дозволити роздачу бомб в даній конференції
 Bomb. Allow random unexplosive bombs %s	Bomb. Іноді не підривати бомби: %s
@@ -1169,6 +1187,7 @@ Muc-filter settings by content	Muc-фільтр для дій по вмісту
 Muc-filter settings for raw-actions	Muc-фільтр для підозрілих дій
 Muc-filter settings for censor/ad-block	Muc-фільтр для цензора/блокування реклами
 Muc-filter settings for while/black lists	Muc-фільтр для білого/чорного списків
+Muc-filter settings for while/black lists by caps	Muc-фільтр для списків по капсам
 Settings for bomb-joke	Налаштування бомби-жарту
 Actions for karma change	Дії при зміні карми
 Flood settings	Налаштування флуду
@@ -1266,6 +1285,7 @@ Karma. Lower value of karma for control action	Нижня межа карми п
 Disco. Exclude from disco by regexps	Disco. Видаляти з обзору по регекспу
 Kernel. Exclude symbols from bot's messages	Kernel. Видалити символи із повідомленнь бота
 Kernel. 1st April joke	Kernel. Першотравневий жарт
+Kernel. Send new hash into rooms after soft update	Kernel. Надсилати новий хеш до конференції після м'якого поновлення
 Muc-filter settings	Налаштування muc-фільтру
 Iq requests settings	Налаштування iq запитів 
 Juick settings	Налаштування Juick
@@ -1442,15 +1462,22 @@ Change bot nick. Available only for conference owner.	Зміна ніка. До�
 Execute shell command.	Виконання shell-команди.
 Execute shell command without output result.	Виконання shell-команди без показу виведення команди.
 
+# file: ../branch/plugins/shortlink.py
+URL Shortener	Сервіс скорочення посиланнь
+QR-code generator	Сервіс генерації QR-кодів
+
 # file: ../branch/plugins/shutdown.py
 %s by command from %s	%s за командою %s
 reason: %s	привід: %s
 Shutdown	Завершення роботи
 Restart	Перезапуск
 Update	Поновлення
+Soft update activated!	Запущено м'яке поновлення!
+Soft update finished! Plugins loaded: %s. Commands: %s	М'яrе поновлення завершене! Завантажено плагінів: %s. Команд: %s
 Shutting down the bot. You can set reason.	Завершення роботи бота. Можна вказати параметр, який буде показаний в статусі бота при виході.
 Restart the bot. You can set reason.	Перезапуск бота. Можна вказати параметр, який буде показаний в статусі бота при виході.
 Update from VCS. You can set reason.	Поновлення бота з VCS. Можна вказати параметр, який буде показаний в статусі бота при виході.
+Soft update from VCS.	М'яке поновлення із VCS.
 
 # file: ../branch/plugins/sokr.py
 Abbreviations.\nExamples: sokr abbr, sokr 6 abbr, sokr 3-7 abbr	Абревіатури. Приклади використання: sokr abbr, sokr 6 abbr, sokr 3-7 abbr
@@ -1566,4 +1593,3 @@ Search weather by code, city, country.	Пошук погоди по коду м�
 
 # file: ../branch/plugins/youtube.py
 Search at YouTube	Пошук по YouTube
-
