@@ -2181,6 +2181,7 @@ def get_bot_version():
 	return bV
 
 def update_locale():
+	global CURRENT_LOCALE
 	locales = {}
 	if os.path.isfile(loc_file):
 		CURRENT_LOCALE = getFile(loc_file,'\'en\'')
