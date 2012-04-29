@@ -128,7 +128,7 @@ def validate_nick(nick,count):
 
 def kill_all_threads():
 	if thread_type:
-		threading_list = threading.enumerate() 
+		threading_list = threading.enumerate()
 		threading_list.remove(threading.currentThread())
 		for tmp in threading_list:
 			if not tmp.name.startswith('_MainThread'):

@@ -31,7 +31,7 @@ def clients_stats_old(type, jid, nick, text):
 			for t in ['all','total','global','short','os']:
 				if t in text: text.remove(t)
 		if text: match = '%%\r%%%s%%' % ' '.join(text)
-		else: match = '%\r%' 
+		else: match = '%\r%'
 	else:
 		match = '%\r%'
 		is_short = is_global = is_os = False

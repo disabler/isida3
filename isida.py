@@ -85,7 +85,7 @@ def update(USED_REPO):
 		writefile(updatelog_file, unicode(readfile(updatelog_file)).replace('\n\n','\n').replace('\r','').replace('\t',''))
 	else: os.system('echo Update not available! Read wiki at http://isida-bot.com to use SVN/GIT! > %s' % updatelog_file)
 
-if __name__ == "__main__" :
+if __name__ == "__main__":
 	if os.name == 'nt': printlog('Warning! Correct work only on *NIX system!')
 
 	try: writefile('settings/starttime',str(int(time.time())))
@@ -140,3 +140,4 @@ if __name__ == "__main__" :
 			printlog(crashtext('Isida is crashed! It\'s imposible, but You do it!'))
 			printlog('%s\n' % SM)
 			raise
+	os._exit(0)

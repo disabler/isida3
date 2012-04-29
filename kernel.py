@@ -25,7 +25,7 @@ from __future__ import with_statement
 
 import calendar
 import chardet
-import crontab 
+import crontab
 import datetime
 import gc
 import json
@@ -53,7 +53,7 @@ def cur_execute(*params):
 	if base_type == 'pgsql': psycopg2.extensions.register_type(psycopg2.extensions.UNICODE, cur)
 	par = None
 	try:
-		if base_type == 'mysql': 
+		if base_type == 'mysql':
 			params = list(params)
 			params[0] = params[0].replace(' ilike ',' like ')
 			params = tuple(params)
@@ -75,7 +75,7 @@ def cur_execute_fetchone(*params):
 	if base_type == 'pgsql': psycopg2.extensions.register_type(psycopg2.extensions.UNICODE, cur)
 	par = None
 	try:
-		if base_type == 'mysql': 
+		if base_type == 'mysql':
 			params = list(params)
 			params[0] = params[0].replace(' ilike ',' like ')
 			params = tuple(params)
@@ -101,7 +101,7 @@ def cur_execute_fetchall(*params):
 	if base_type == 'pgsql': psycopg2.extensions.register_type(psycopg2.extensions.UNICODE, cur)
 	par = None
 	try:
-		if base_type == 'mysql': 
+		if base_type == 'mysql':
 			params = list(params)
 			params[0] = params[0].replace(' ilike ',' like ')
 			params = tuple(params)
@@ -126,7 +126,7 @@ def cur_execute_fetchmany(*params):
 	cur = conn.cursor()
 	if base_type == 'pgsql': psycopg2.extensions.register_type(psycopg2.extensions.UNICODE, cur)
 	try:
-		if base_type == 'mysql': 
+		if base_type == 'mysql':
 			params = list(params)
 			params[0] = params[0].replace(' ilike ',' like ')
 			params = tuple(params)
@@ -321,7 +321,7 @@ def get_tag_item(body,tag,item):
 	body = get_tag_full(body,tag)
 	return get_subtag(body,item)
 
-def parser(t): 
+def parser(t):
 	try: return ''.join([['?',l][l<='~'] for l in unicode(t)])
 	except:
 		fp = file('log/critical_exception_%s.txt' % int(time.time()), 'wb')
@@ -1567,7 +1567,7 @@ def iqCB(sess,iq):
 							need_raw = False
 							pprint('MUC-Filter prs censor (%s): %s [%s] %s' % (act,jid,room,'%s|%s' % (status,nick)),'brown')
 							if act == 'replace':
-								if len(status): 
+								if len(status):
 									status = esc_max2(to_censore(esc_min2(status),gr))
 									msg = msg.replace(get_tag_full(msg,'status'),'<status>%s</status>' % status).replace(esc_max2(tojid),'%s/%s' % (tojid.split('/',1)[0],to_censore(esc_max2(nick),gr)))
 								else: msg = msg.replace(esc_max2(tojid),'%s/%s' % (tojid.split('/',1)[0],to_censore(esc_max2(nick),gr)))
@@ -2465,12 +2465,15 @@ try:
 	except NameError: Secure = None
 	cl.connect(Server,Proxy,Secure,ENABLE_TLS=ENABLE_TLS)
 	pprint('Connected','yellow')
-	cl.auth(jid.getNode(), Settings['password'], jid.getResource())
-	pprint('Autheticated','yellow')
 except:
-	pprint('Auth error or no connection. Restart in %s sec.' % GT('reboot_time'),'red')
+	pprint('No connection. Restart in %s sec.' % GT('reboot_time'),'red')
 	time.sleep(GT('reboot_time'))
 	sys.exit('restart')
+auth_type = cl.auth(jid.getNode(), Settings['password'], jid.getResource())
+if auth_type: pprint('Autheticated via %s' % auth_type.upper(),'yellow')
+else:
+	pprint('Authetication error!','red')
+	sys.exit('exit')
 pprint('Registration Handlers','yellow')
 cl.RegisterHandler('message',messageCB)
 cl.RegisterHandler('iq',iqCB)

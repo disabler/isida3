@@ -23,7 +23,7 @@
 
 def spell(type, jid, nick, text):
 	tmp = text.strip().split(' ', 1)
-	if tmp[0]: 
+	if tmp[0]:
 		langs = re.sub('-|:;', ',', tmp[0]).lower()
 		if len(tmp) == 2 and re.match('((uk)|(en)|(ru))(,((uk)|(en)|(ru)))*?$', langs): text = tmp[1].encode('utf-8')
 		else: text, langs = text.encode('utf-8'), ''

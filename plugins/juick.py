@@ -23,7 +23,7 @@
 
 JUICK_JID = 'juick@juick.com'
 
-# Список последних сообщений: 
+# Список последних сообщений:
 JUICK_MESSAGES = 'http://api.juick.com/messages'
 
 JUICK_MESSAGES_REQUEST = '%s?' % JUICK_MESSAGES
@@ -31,19 +31,19 @@ JUICK_MESSAGES_REQUEST = '%s?' % JUICK_MESSAGES
 # Фильтрация по тегу: tag=<тег>
 # Фильтрация по типу контента: media=all | media=photo | media=video
 # Последние сообщения пользователя: user_id=<uid> | user_id=<uid>&tag=<тег>
-# Для списков сообщений выводится одна «страница». Для вывода дополнительных «страниц»: параметры before_mid, page 
+# Для списков сообщений выводится одна «страница». Для вывода дополнительных «страниц»: параметры before_mid, page
 # before_mid=<id последнего загруженного сообщения>&page=<page>
 
 # Просмотр сообщения с комментариями
 JUICK_THREAD = 'http://api.juick.com/thread?' # mid=<message ID>
 
-# Получение UserID по нику: 
+# Получение UserID по нику:
 JUICK_USERS = 'http://api.juick.com/users?' # uname=ugnich
 
-# Популярные теги: 
+# Популярные теги:
 JUICK_TAGS = 'http://api.juick.com/tags'
 
-# Все теги пользователя: 
+# Все теги пользователя:
 JUICK_TAGS_USER = '%s?' % JUICK_TAGS # user_id=<uid>
 
 JUICK_URL = 'http://juick.com/%s'
