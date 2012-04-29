@@ -1219,13 +1219,13 @@ def iqCB(sess,iq):
 
 							# Mute newbie
 							if get_config(gr,'muc_filter_newbie') and msg and not mute:
-								in_base = cur_execute_fetchone('select sum(%s-time+age) from age where room=%s and jid=%s',(int(time.time()),gr,getRoom(jid)))
+								in_base = cur_execute_fetchall('select sum(sum) from (select sum(age) from age where jid=%s and room=%s union all select %s-time from age where jid=%s and room=%s and status=0) as sum_age;',(getRoom(jid),gr,int(time.time()),getRoom(jid),gr))
 								if not in_base: nmute = True
 								else:
 									newbie_time = get_config(gr,'muc_filter_newbie_time')
 									if newbie_time.isdigit(): newbie_time = int(newbie_time)
 									else: newbie_time = 60
-									if in_base[0] < newbie_time: nmute = True
+									if in_base[0][0] < newbie_time: nmute = True
 									else: nmute = False
 								if nmute:
 									try: cnt = newbie_msg['%s|%s' % (gr,jid)]
@@ -1981,7 +1981,7 @@ def presenceCB(sess,mess):
 						if tmp_room == room and hashes[tmp] == current_hash:
 							tmp_access,tmp_jid = get_level(room,tmp_nick)
 							if tmp_access <= 3 and tmp_jid != 'None':
-								in_base = cur_execute_fetchone('select sum(%s-time+age) from age where room=%s and jid=%s',(int(time.time()),room,getRoom(tmp_jid)))
+								in_base = cur_execute_fetchall('select sum(sum) from (select sum(age) from age where jid=%s and room=%s union all select %s-time from age where jid=%s and room=%s and status=0) as sum_age;',(getRoom(tmp_jid),room,int(time.time()),getRoom(tmp_jid),room))
 								if not in_base: nmute = True
 								else:
 									newbie_time = get_config(room,'muc_filter_newbie_time')

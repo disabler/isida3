@@ -24,10 +24,10 @@
 def true_age_stat(type, jid, nick):
 	try: llim = GT('age_default_limit')
 	except: llim = 10
-	t_age_tmp = cur_execute_fetchmany('select jid,sum(%s-time+age) from age where room=%s group by jid order by -sum(%s-time+age)',(int(time.time()),jid,int(time.time())),llim)
+	t_age_tmp = cur_execute_fetchmany('select jid,sum(age+(status = 0)::boolean::int*(%s-time)) as sum_age from age where room=%s group by jid order by sum_age desc;',(int(time.time()),jid),llim)
 	t_age = []
 	for t in t_age_tmp:
-		tmp = cur_execute_fetchone('select nick from age where room=%s and jid=%s order by time',(jid,t[0]))
+		tmp = cur_execute_fetchone('select nick from age where room=%s and jid=%s order by status,-time',(jid,t[0]))
 		t_age.append((tmp[0],t[1]))
 	msg = L('Age statistic:\n%s') % '\n'.join(['%s\t%s' % (t[0],un_unix(t[1])) for t in t_age])
 	send_msg(type, jid, nick, msg)
@@ -47,15 +47,15 @@ def true_age_raw(type, jid, nick, text, xtype):
 	text = text[0]
 	if not text: text = nick
 	if llim > GT('age_max_limit'): llim = GT('age_max_limit')
-	real_jid = cur_execute_fetchone('select jid from age where room=%s and (nick=%s or jid=%s) order by -time,-status',(jid,text,text.lower()))
+	real_jid = cur_execute_fetchone('select jid from age where room=%s and (nick=%s or jid=%s) order by -time,status',(jid,text,text.lower()))
 	if not real_jid:
 		text = '%%%s%%' % text.lower()
-		real_jid = cur_execute_fetchone('select jid from age where room=%s and (no_case_nick ilike %s or jid ilike %s) order by -time,-status',(jid,text,text))
+		real_jid = cur_execute_fetchone('select jid from age where room=%s and (no_case_nick ilike %s or jid ilike %s) order by -time,status',(jid,text,text))
 	try:
-		if xtype: sbody = cur_execute_fetchmany('select * from age where room=%s and jid=%s order by -time,-status',(jid,real_jid[0]),llim)
+		if xtype: sbody = cur_execute_fetchmany('select * from age where room=%s and jid=%s order by -time,status',(jid,real_jid[0]),llim)
 		else:
 			t_age = cur_execute_fetchone('select sum(age) from age where room=%s and jid=%s',(jid,real_jid[0]))
-			sbody = cur_execute_fetchone('select * from age where room=%s and jid=%s order by -time,-status',(jid,real_jid[0]))
+			sbody = cur_execute_fetchone('select * from age where room=%s and jid=%s order by -time,status',(jid,real_jid[0]))
 			sbody = [sbody[:4] + t_age + sbody[5:]]
 	except: sbody = None
 	if sbody:
