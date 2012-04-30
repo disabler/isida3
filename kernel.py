@@ -1889,7 +1889,7 @@ def presenceCB(sess,mess):
 	show=unicode(mess.getShow())
 	reason=unicode(mess.getReason())
 	status=unicode(mess.getStatusCode())
-	try: chg_nick = [None,mess.getTag('x',namespace=xmpp.NS_MUC_USER).getTagAttr('item','nick')][status == '303']
+	try: chg_nick = [None,esc_max2(mess.getTag('x',namespace=xmpp.NS_MUC_USER).getTagAttr('item','nick'))][status == '303']
 	except: chg_nick = None
 	actor=unicode(mess.getActor())
 	to=unicode(mess.getTo())
