@@ -21,12 +21,19 @@
 #                                                                             #
 # --------------------------------------------------------------------------- #
 
+JIDCATCHER_DEFAULT_LIMIT = 10
+
 def info_search(type, jid, nick, text):
 	msg = L('What I must find?')
 	if text:
+		if '\n' in text:
+			text,lim = text.split('\n',1)
+			try: lim = int(lim)
+			except: lim = JIDCATCHER_DEFAULT_LIMIT
+		else: lim = JIDCATCHER_DEFAULT_LIMIT
 		cur_execute('delete from jid where server ilike %s',('<temporary>%',))
 		ttext = '%%%s%%' % text
-		tma = cur_execute_fetchmany('select * from jid where login ilike %s or server ilike %s or resourse ilike %s order by login',(ttext,ttext,ttext),10)
+		tma = cur_execute_fetchmany('select * from jid where login ilike %s or server ilike %s or resourse ilike %s order by login',(ttext,ttext,ttext),lim)
 		if tma: msg = '%s\n%s' % (L('Found:'),'\n'.join(['%s. %s@%s/%s' % tuple([tma.index(tt)+1]+list(tt)) for tt in tma]))
 		else: msg = L('\'%s\' not found!') % text
 	send_msg(type, jid, nick, msg)
@@ -39,7 +46,7 @@ def info_res(type, jid, nick, text):
 	else:
 		text1 = '%%%s%%' % text
 		tlen = cur_execute_fetchall('select count(*) from (select resourse,count(*) from jid where resourse ilike %s group by resourse) tmp;',(text1,))[0][0]
-		jidbase = cur_execute_fetchmany('select resourse,count(*) from jid where resourse ilike %s group by resourse order by -count(*),resourse',(text1,),10)
+		jidbase = cur_execute_fetchmany('select resourse,count(*) from jid where resourse ilike %s group by resourse order by -count(*),resourse',(text1,),JIDCATCHER_DEFAULT_LIMIT)
 	if not tlen: msg = L('\'%s\' not found!') % text
 	else:
 		if text: msg = L('Found resources: %s') % tlen
