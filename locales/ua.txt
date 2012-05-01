@@ -1356,7 +1356,6 @@ ban on %s since %s because: %s	бан терміном %s починаючи з 
 I don'n know %s, and use as is!	Я не в курсі, хто такий %s - баню як є!
 I don't know %s	Я не знаю, хто такий %s
 Command is locked!	Команда заблокована!
-by Isida!	Isida: ;)
 Ban user.	Забанити учасника.
 Ban user by jid.	Забанити учасника за jid'ом.
 Unban user.	Розбанити учасника

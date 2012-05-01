@@ -151,9 +151,10 @@ def muc_affiliation(type, jid, nick, text, aff, is_jid):
 	elif len(text):
 		skip = None
 		if '\n' in text: who, reason = text.split('\n',1)[0], text.split('\n',1)[1]
-		else: who, reason = text, L('by Isida!')
+		else: who, reason = text, []
+		if reason: reason = [xmpp.Node('reason',{},reason)]
 		whojid = [unicode(get_level(jid,who)[1]),who][is_jid]
-		if whojid != 'None': sender(xmpp.Node('iq', {'id': get_id(), 'type': 'set', 'to':jid}, payload = [xmpp.Node('query', {'xmlns': xmpp.NS_MUC_ADMIN},[xmpp.Node('item',{'affiliation':aff, 'jid':whojid},[xmpp.Node('reason',{},reason)])])]))
+		if whojid != 'None': sender(xmpp.Node('iq', {'id': get_id(), 'type': 'set', 'to':jid}, payload = [xmpp.Node('query', {'xmlns': xmpp.NS_MUC_ADMIN},[xmpp.Node('item',{'affiliation':aff, 'jid':whojid},reason)])]))
 		else: send_msg(type, jid, nick, L('I don\'t know %s') % who)
 	else: send_msg(type, jid, nick, L('What?'))
 
@@ -169,7 +170,8 @@ def muc_affiliation_past(type, jid, nick, text, aff):
 	if len(text):
 		skip = None
 		if '\n' in text: who, reason = text.split('\n',1)[0], text.split('\n',1)[1]
-		else: who, reason = text, L('by Isida!')
+		else: who, reason = text, []
+		if reason: reason = [xmpp.Node('reason',{},reason)]
 		fnd = cur_execute_fetchall('select jid from age where room=%s and (nick=%s or jid=%s) group by jid',(jid,who,who))
 		if len(fnd) == 1: msg, whojid = L('done'), getRoom(unicode(fnd[0][0]))
 		elif len(fnd) > 1:
@@ -182,7 +184,7 @@ def muc_affiliation_past(type, jid, nick, text, aff):
 	else: skip = True
 	if skip: send_msg(type, jid, nick, msg)
 	else:
-		i = xmpp.Node('iq', {'id': get_id(), 'type': 'set', 'to':jid}, payload = [xmpp.Node('query', {'xmlns': xmpp.NS_MUC_ADMIN},[xmpp.Node('item',{'affiliation':aff, 'jid':unicode(whojid)},[xmpp.Node('reason',{},reason)])])])
+		i = xmpp.Node('iq', {'id': get_id(), 'type': 'set', 'to':jid}, payload = [xmpp.Node('query', {'xmlns': xmpp.NS_MUC_ADMIN},[xmpp.Node('item',{'affiliation':aff, 'jid':unicode(whojid)},reason)])])
 		sender(i)
 		send_msg(type, jid, nick, msg)
 
@@ -198,9 +200,10 @@ def muc_role(type, jid, nick, text, role, unused):
 	elif len(text):
 		skip = None
 		if '\n' in text: who, reason = text.split('\n',1)[0], text.split('\n',1)[1]
-		else: who, reason = text, L('by Isida!')
+		else: who, reason = text, []
+		if reason: reason = [xmpp.Node('reason',{},reason)]
 		whojid = unicode(get_level(jid,who)[1])
-		if whojid != 'None': sender(xmpp.Node('iq', {'id': get_id(), 'type': 'set', 'to':jid}, payload = [xmpp.Node('query', {'xmlns': xmpp.NS_MUC_ADMIN},[xmpp.Node('item',{'role':role, 'nick':who},[xmpp.Node('reason',{},reason)])])]))
+		if whojid != 'None': sender(xmpp.Node('iq', {'id': get_id(), 'type': 'set', 'to':jid}, payload = [xmpp.Node('query', {'xmlns': xmpp.NS_MUC_ADMIN},[xmpp.Node('item',{'role':role, 'nick':who},reason)])]))
 		else: send_msg(type, jid, nick, L('I don\'t know %s') % who)
 	else: send_msg(type, jid, nick, L('What?'))
 
