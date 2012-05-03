@@ -2109,6 +2109,8 @@ def now_schedule():
 			for tmp in gtimer: thr(tmp,(),'time_thread_%s' % tmp)
 
 def check_rss():
+	global rss_processed
+	if rss_processed: return
 	l_hl = int(time.time())
 	feedbase = getFile(feeds,[])
 	for fd in feedbase:
@@ -2128,9 +2130,11 @@ def check_rss():
 				break
 		if ofset < 600: ofset = 600
 		if in_room and ll_hl + ofset <= l_hl:
+			rss_processed = True
 			pprint('check rss: %s in %s' % (fd[0],fd[4]),'green')
 			rss('groupchat', fd[4], 'RSS', 'new %s 10 %s silent' % (fd[0],fd[2]))
 			break
+	rss_processed = False
 
 def talk_count(room,jid,nick,text):
 	jid = getRoom(jid)
@@ -2274,6 +2278,7 @@ server_hash = {}
 server_hash_list = {}
 newbie_msg = {}
 messages_excl = []
+rss_processed = False
 db_debug = False
 base_type = 'pgsql'     # тип базы: pgsql или mysql
 base_name = 'isidabot'  # название базы
