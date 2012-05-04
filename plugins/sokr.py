@@ -45,8 +45,8 @@ def sokr(type, jid, nick, text):
 			except: n1, n2 = map(int, target.split('-'))
 			if 0 < n1 <= n2 <= cr:
 				msg = L('Total found %s matches. Result(s) %s:\n') % (cr, target)
-				msg += '\n'.join(['%s. %s' % (i[0]+n1, i[1]) for i in enumerate(results[n1-1: n2])]).decode('utf8')
-				msg = msg.replace('<br>', '')
+				msg += '\n'.join(['%s. %s' % (i[0]+n1, i[1].replace('\n',' ')) for i in enumerate(results[n1-1: n2])]).decode('utf8')
+				msg = msg.replace('<br>', '').replace('\r','')
 			else: msg = L('I don\'t know!')
 	send_msg(type, jid, nick, msg)
 

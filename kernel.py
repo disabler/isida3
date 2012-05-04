@@ -492,8 +492,8 @@ def os_version_disco():
 			isidaOs = osInfo
 			isidaOsVer = 'SP:%s/BLD:%s/PYv%s' % (spInfo,buildInfo,isidaPyVer)
 		except:
-			isidaOs = osInfo
-			isidaOsVer = 'BLD:%s/PYv%s' % (buildInfo,isidaPyVer)
+			isidaOs = 'Windows'
+			isidaOsVer = '%s/BLD:%s/PYv%s' % (osInfo.replace('Windows','').strip(),buildInfo,isidaPyVer)
 	else: isidaOs = isidaOsVer = 'unknown'
 	return isidaOs, isidaOsVer
 
@@ -1909,7 +1909,7 @@ def presenceCB(sess,mess):
 			if error_type: error_msg = '%s [%s]' % (error_code,error_type)
 			else: error_msg = error_code
 			if error_text: error_msg = '%s - %s' % (error_msg,error_text)
-		else: error_msg = error_text		
+		else: error_msg = error_text
 		pres_answer.append((id,error_msg,tt))
 		return
 	elif id != None: pres_answer.append((id,None,tt))

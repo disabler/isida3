@@ -114,7 +114,7 @@ disco_features_list =  {'dnssrv':'Support for DNS SRV lookups of XMPP services.,
 						'http://jabber.org/protocol/xdata-layout':'Data Forms Layout (XEP-0141)',
 						'http://jabber.org/protocol/xdata-validate':'Data Forms Validation (XEP-0122)',
 						'ipv6':'Application supports IPv6.',
-						'jabber:client':'XMPP IM (RFC 3921)',
+						'jabber:client':'Client, XMPP IM (RFC 3921)',
 						'jabber:component:accept':'Existing Component Protocol Accept(XEP-0114)',
 						'jabber:component:connect':'Existing Component Protocol Connect (XEP-0114)',
 						'jabber:iq:auth':'Non-SASL Authentication (XEP-0078)',
@@ -123,14 +123,14 @@ disco_features_list =  {'dnssrv':'Support for DNS SRV lookups of XMPP services.,
 						'jabber:iq:last':'Last Activity (XEP-0012)',
 						'jabber:iq:oob':'Out of Band Data (XEP-0066)',
 						'jabber:iq:pass':'DEPRECATED (XEP-0003)',
-						'jabber:iq:privacy':'XMPP IM (RFC 3921)',
+						'jabber:iq:privacy':'Privacy Lists (XEP-0016) / XMPP IM (RFC 3921)',
 						'jabber:iq:private':'Private XML Storage (XEP-0049)',
 						'jabber:iq:register':'In-Band Registration (XEP-0077)',
-						'jabber:iq:roster':'XMPP IM (RFC 3921)',
+						'jabber:iq:roster':'Roster, XMPP IM (RFC 3921)',
 						'jabber:iq:rpc':'Jabber-RPC (XEP-0009)',
 						'jabber:iq:search':'Jabber Search (XEP-0055)',
 						'jabber:iq:version':'Software Version (XEP-0092)',
-						'jabber:server':'XMPP IM (RFC 3921)',
+						'jabber:server':'Server, XMPP IM (RFC 3921)',
 						'jabber:x:data':'Data Forms (XEP-0004)',
 						'jabber:x:delay':'Delayed Delivery (XEP-0091, Deprecated)',
 						'jabber:x:encrypted':'Current OpenPGP Usage (XEP-0027)',
@@ -337,7 +337,7 @@ def features_async(type, jid, nick, what, where, is_answ):
 		for f in [t.getAttr('var') for t in isa.getTag('query',namespace=xmpp.NS_DISCO_INFO).getTags('feature')]:
 			if disco_features_list.has_key(f): ft = '- %s' % disco_features_list[f]
 			else: ft = L('- Unknown feature: %s') % f
-			if (what and what.lower() in ft.lower()) or not what: ftr.append(ft)
+			if (what and (what.lower() in ft.lower() or what.lower() in f.lower())) or not what: ftr.append(ft)
 
 		ftrs,erc,q_features = {},0,['os_version','os','software_version','software']
 		for t in q_features:
@@ -347,14 +347,20 @@ def features_async(type, jid, nick, what, where, is_answ):
 				erc += 1
 			ftrs[t] = res
 
-		if erc != len(q_features): ftr.append(L('Software: %s | Version: %s\nOS: %s | Version: %s') % (ftrs['software'],ftrs['software_version'],ftrs['os'],ftrs['os_version']))
+		if erc != len(q_features):
+			f = L('Software: %s | Version: %s\nOS: %s | Version: %s') % (ftrs['software'],ftrs['software_version'],ftrs['os'],ftrs['os_version'])
+			if (what and what.lower() in f.lower()) or not what: ftr.append(f)
 		try:
-			ids = isa.getTag('query').getTag('identity').getAttrs()
+			ids_t = isa.getTag('query').getTags('identity')
 			idk = {'type':L('Type: %s'), 'name':L('Name: %s'), 'category':L('Category: %s'), 'xml:lang':L('Language: %s')}
-			idf = []
-			for t in idk.keys():
-				if ids.has_key(t): idf.append(idk[t] % ids[t])
-			if idf: ftr.append(' | '.join(idf))
+			for tg in ids_t:
+				ids = tg.getAttrs()
+				idf = []
+				for t in idk.keys():
+					if ids.has_key(t): idf.append(idk[t] % ids[t])
+				if idf:
+					f = ' | '.join(idf)
+					if (what and what.lower() in f.lower()) or not what: ftr.append(f)
 		except: pass
 
 		if ftr:

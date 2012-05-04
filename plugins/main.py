@@ -98,7 +98,7 @@ iq_error = {'bad-request':L('Bad request'),
 			'subscription-required':L('Subscription required'),
 			'undefined-condition':L('Undefined condition'),
 			'unexpected-request':L('Unexpected request')}
-			
+
 presence_error = {'401':L('Password required'),
 				  '403':L('Forbidden'),
 				  '407':L('Members-only')}
