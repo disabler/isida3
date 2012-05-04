@@ -775,11 +775,11 @@ Users: %s (%s)	Користувачі: %s (%s)
 join as	зайшов як
 now is	тепер
 online_log	в мережі
+Logs for %s enabled.	Логи для %s ввімкнені.
+Logs for %s disabled.	Логи для %s вимкнені.
 Logged conferences:	Я веду логи в:
 Logs are turned off in all conferences.	Логи не ввімкнені в жодній конференції.
 Logs for %s already enabled.	Я вже веду логи конфи %s
-Logs for %s enabled.	Логи для %s ввімкнені.
-Logs for %s disabled.	Логи для %s вимкнені.
 Logging history conference.\nlog [add|del|show][ room@conference.server.tld]	Ввімкнення логів конференції.\nlog [add|del|show][ room@conference.server.tld]
 
 # file: ../branch/plugins/main.py

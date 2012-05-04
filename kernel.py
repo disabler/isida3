@@ -1896,10 +1896,21 @@ def presenceCB(sess,mess):
 	id = mess.getID()
 	tt = int(time.time())
 	if type=='error':
-		try: pres_answer.append((id,'%s: %s' % (get_tag_item(unicode(mess),'error','code'),mess.getTag('error').getTagData(tag='text')),tt))
+		try: error_code = mess.getTagAttr('error','code')
+		except: error_code = None
+		try: error_type = mess.getTagAttr('error','type')
+		except: error_type = None
+		try: error_text = mess.getTag('error').getTagData(tag='text')
 		except:
-			try: pres_answer.append((id,'%s: %s' % (get_tag_item(unicode(mess),'error','code'),mess.getTag('error')),tt))
-			except: pres_answer.append((id,L('Unknown error!'),tt))
+			try: error_text = unicode(mess.getTag('error'))
+			except: error_text = L('Unknown error!')
+		if not error_text and presence_error.has_key(error_code): error_text = presence_error[error_code]
+		if error_code:
+			if error_type: error_msg = '%s [%s]' % (error_code,error_type)
+			else: error_msg = error_code
+			if error_text: error_msg = '%s - %s' % (error_msg,error_text)
+		else: error_msg = error_text		
+		pres_answer.append((id,error_msg,tt))
 		return
 	elif id != None: pres_answer.append((id,None,tt))
 	if jid == 'None': jid = get_level(room,nick)[1]
@@ -2523,7 +2534,8 @@ for tocon in confbase:
 		zz = join(baseArg, passwd)
 	if passwd: cb.append('%s\n%s' % (baseArg, passwd))
 	else: cb.append(baseArg)
-	pprint('-<- %s' % baseArg,'bright_green')
+	if zz: pprint('-!- Error "%s" while join in to %s' % (zz,baseArg),'red')
+	else: pprint('-<- %s' % baseArg,'bright_green')
 	if GT('show_loading_by_status_percent'):
 		join_percent += join_pers_add
 		join_status = '%s %s%%' % (GT('show_loading_by_status_message'),int(join_percent))

@@ -775,11 +775,12 @@ Users: %s (%s)	Пользователи: %s (%s)
 join as	зашел как
 now is	теперь
 online_log	в сети
+Logs for %s enabled.	Логи для %s включены.
+Logs for %s disabled.	Логи для %s выключены.
 Logged conferences:	Я веду логи в:
 Logs are turned off in all conferences.	Логи не включены ни в одной конференции.
 Logs for %s already enabled.	Я уже веду логи конфы %s
-Logs for %s enabled.	Логи для %s включены.
-Logs for %s disabled.	Логи для %s выключены.
+Logs for %s not enabled.	Логи в %s не включены.
 Logging history conference.\nlog [add|del|show][ room@conference.server.tld]	Включение логов конференции.\nlog [add|del|show][ room@conference.server.tld]
 
 # file: ../branch/plugins/main.py
@@ -839,6 +840,8 @@ Service unavailable	Сервис недоступен
 Subscription required	Требуется подписка
 Undefined condition	Неопределенное состояние
 Unexpected request	Неожиданный запрос
+Password required	Требуется пароль
+Members-only	Только для постоянных участников
 Mon	Пн
 Tue	Вт
 Wed	Ср

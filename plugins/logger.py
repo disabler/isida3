@@ -186,12 +186,16 @@ presence_control = [append_presence_to_log]
 def log_room(type, jid, nick, text):
 	if type == 'groupchat': msg = L('This command available only in private!')
 	else:
-		hmode = text.split(' ')[0]
-		try: hroom = text.split(' ')[1]
+		text = text.strip().lower().split(' ',1)
+		hmode = text[0]
+		try: hroom = text[1]
 		except: hroom = jid
 		hr = getFile(log_conf,[])
-		if hmode == 'show':
-			if len(hr):
+		if not hmode:
+			if hroom in hr: msg = L('Logs for %s enabled.') % hroom
+			else: msg = L('Logs for %s disabled.') % hroom
+		elif hmode == 'show':
+			if hr:
 				msg = L('Logged conferences:')
 				for tmp in hr: msg += '\n%s' % tmp
 			else: msg = L('Logs are turned off in all conferences.')
@@ -203,11 +207,11 @@ def log_room(type, jid, nick, text):
 				msg = L('Logs for %s enabled.') % hroom
 				writefile(log_conf,str(hr))
 		elif hmode == 'del':
-			if not match_room(hroom): msg = L('I am not in the %s') % hroom
-			elif hroom in hr:
+			if hroom in hr:
 				hr.remove(hroom)
-				msg = L('Logs for %s disabled.') % hroom
 				writefile(log_conf,str(hr))
+				msg = L('Logs for %s disabled.') % hroom
+			else: msg = L('Logs for %s not enabled.') % hroom
 		else: msg = L('What?')
 	send_msg(type, jid, nick, msg)
 
