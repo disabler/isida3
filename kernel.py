@@ -654,7 +654,7 @@ def caps_matcher(c_caps,c_list):
 	result = False
 	for t in c_list:
 		r = int(t[0] == '*')*2+int(t[-1] == '*')
-		if r == 3 and t[1:-1] in c_caps: return True
+		if r == 3 and t[1:-1].lower() in c_caps.lower(): return True
 		elif r == 2 and c_caps.endsswith(t[1:]): return True
 		elif r == 1 and c_caps.startswith(t[:-1]): return True
 		elif c_caps == t: return True
@@ -1398,7 +1398,12 @@ def iqCB(sess,iq):
 								except: id_node,caps_error = get_eval_item(msg_xmpp,'getTag("c",namespace=xmpp.NS_CAPS).getAttr("node")'),True
 								try: id_ver = get_eval_item(msg_xmpp,'getTag("c",namespace=xmpp.NS_CAPS).getAttr("ver")').decode('utf-8')
 								except: id_ver,caps_error = get_eval_item(msg_xmpp,'getTag("c",namespace=xmpp.NS_CAPS).getAttr("ver")'),True
-								c_caps = '%s%s' % (id_node,id_ver)
+								try:
+									id_bmver = msg_xmpp.getAttr('ver').decode('utf-8')
+									if id_bmver or id_bmver == '': id_bmver = '%s_' % id_bmver
+									else: id_bmver = ''
+								except: id_bmver = ''
+								c_caps = '%s %s %s' % (id_node,id_ver,id_bmver)
 								if caps_matcher(c_caps,c_list) ^ caps_negate:
 									pprint('MUC-Filter caps node lock (%s): %s/%s %s %s' % (['black','white'][caps_negate],gr,nick,jid,c_caps),'brown')
 									msg,mute = unicode(xmpp.Node('presence', {'from': tojid, 'type': 'error', 'to':jid}, payload = ['replace_it',xmpp.Node('error', {'type': 'auth','code':'403'}, payload=[xmpp.Node('forbidden',{'xmlns':'urn:ietf:params:xml:ns:xmpp-stanzas'},[]),xmpp.Node('text',{'xmlns':'urn:ietf:params:xml:ns:xmpp-stanzas'},[L('Deny by node lock!')])])])).replace('replace_it',get_tag(msg,'presence')),True
@@ -1409,10 +1414,11 @@ def iqCB(sess,iq):
 							hashes_list = reduce_spaces_all(get_config(gr,'muc_filter_deny_hash_list').replace(',',' ').replace(';',' ').replace('|',' ')).split()
 							if hashes_list:
 								msg_xmpp = msg_xmpp.getTag('presence')
-								id_node = id_ver = id_lang = id_photo = id_avatar = 'error!'
+								#id_node = id_ver = id_lang = id_photo = id_avatar = 'error!'
+								id_ver = id_lang = id_photo = id_avatar = 'error!'
 								hash_error = False
-								try: id_node = get_eval_item(msg_xmpp,'getTag("c",namespace=xmpp.NS_CAPS).getAttr("node")').decode('utf-8')
-								except: id_node,hash_error = get_eval_item(msg_xmpp,'getTag("c",namespace=xmpp.NS_CAPS).getAttr("node")'),True
+								#try: id_node = get_eval_item(msg_xmpp,'getTag("c",namespace=xmpp.NS_CAPS).getAttr("node")').decode('utf-8')
+								#except: id_node,hash_error = get_eval_item(msg_xmpp,'getTag("c",namespace=xmpp.NS_CAPS).getAttr("node")'),True
 								try: id_ver = get_eval_item(msg_xmpp,'getTag("c",namespace=xmpp.NS_CAPS).getAttr("ver")').decode('utf-8')
 								except: id_ver,hash_error = get_eval_item(msg_xmpp,'getTag("c",namespace=xmpp.NS_CAPS).getAttr("ver")'),True
 								try:
