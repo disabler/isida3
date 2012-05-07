@@ -21,22 +21,29 @@
 #                                                                             #
 # --------------------------------------------------------------------------- #
 
+currency_conv_list = ['ATS','AUD','BEF','BYR','CAD','CHF','CNY','DEM','DKK','EEK',\
+					  'EGP','ESP','EUR','FIM','FRF','GBP','GRD','IEP','ISK','ITL',\
+					  'JPY','KGS','KWD','KZT','LTL','NLG','NOK','PTE','SDR','SEK',\
+					  'SGD','TRL','TRY','UAH','USD','XDR','YUN','BASE']
+
 def currency_converter(type, jid, nick, text):
 	msg = L('Error in parameters. Read the help about command.')
-	if text.lower() == 'list': msg = L('Available values:\n%s') % 'ATS AUD RUR BEF BYR CAD CHF CNY DEM DKK EEK EGP ESP EUR FIM FRF GBP GRD IEP ISK ITL JPY KGS KWD KZT LTL NLG NOK PTE RUR SDR SEK SGD TRL TRY UAH USD XDR YUN'
+	text = text.strip().upper()
+	if text == 'LIST': msg = L('Available values:\n%s') % ', '.join(currency_conv_list).replace('BASE','RUR')
 	else:
 		repl_curr = ((u'€','EUR'),('$','USD'),(u'¥','JPY'),(u'£','GBP'),('RUR','BASE'),(',','.'))
-		text = text.upper()
 		for tmp in repl_curr: text = text.replace(tmp[0],' %s ' % tmp[1])
-		text = re.findall('[a-zA-Z]+|[0-9.]+', text, re.S)
-		date,c_from,c_to,c_summ = tuple(time.localtime())[:3],None,None,None
-		for t in text:
-			if t.replace('.','').isdigit():
-				c_summ = t
-				text.remove(t)
-				break
-		if len(text) > 1: (c_from,c_to) = text[:2]
+		c_from,c_to,c_summ = '','',''
+		val = [t for t in re.findall('[A-Z]{3,4}', text, re.S) if t in currency_conv_list]
+		if len(val) >= 2: c_from,c_to = val[:2]
+		val = ''.join(re.findall('[0-9\.]',text))
+		if val.replace('.','').isdigit() and val.count('.') <= 1:
+			if val.startswith('.'): c_summ = '0%s' % val
+			elif val.endswith('.'): c_summ = '%s0' % val
+			else: c_summ = val
+		print c_from,c_to,c_summ
 		if c_from and c_to and c_summ:
+			date = tuple(time.localtime())[:3]
 			url = 'http://cash.rbc.ru/converter.shtml?mode=calc&source=cb.0&tid_from=%s&commission=1&tid_to=%s&summa=%s&day=%s&month=%s&year=%s' % (c_from,c_to,c_summ,date[2],date[1],date[0])
 			body = html_encode(load_page(url))
 			try: body = body.split('<table id="rTable" class="table">',1)[1]
