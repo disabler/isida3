@@ -41,7 +41,6 @@ def currency_converter(type, jid, nick, text):
 			if val.startswith('.'): c_summ = '0%s' % val
 			elif val.endswith('.'): c_summ = '%s0' % val
 			else: c_summ = val
-		print c_from,c_to,c_summ
 		if c_from and c_to and c_summ:
 			date = tuple(time.localtime())[:3]
 			url = 'http://cash.rbc.ru/converter.shtml?mode=calc&source=cb.0&tid_from=%s&commission=1&tid_to=%s&summa=%s&day=%s&month=%s&year=%s' % (c_from,c_to,c_summ,date[2],date[1],date[0])
