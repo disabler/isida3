@@ -2525,6 +2525,13 @@ for tocon in confbase:
 	tocon = tocon.strip()
 	if '\n' in tocon: pprint('->- %s | pass: %s' % tuple(tocon.split('\n',1)),'green')
 	else: pprint('->- %s' % tocon,'green')
+	if GT('show_loading_by_status_percent'):
+		join_percent += join_pers_add
+		join_status = '%s %s%%' % (GT('show_loading_by_status_message'),int(join_percent))
+		if GT('show_loading_by_status'):
+			if GT('show_loading_by_status_room'): join_status = '%s [%s]' % (join_status,tocon)
+			if GT('show_loading_by_status_show') == 'online': caps_and_send(xmpp.Presence(status=join_status, priority=Settings['priority']))
+			else: caps_and_send(xmpp.Presence(show=GT('show_loading_by_status_show'), status=join_status, priority=Settings['priority']))
 	try: t = setup[getRoom(tocon)]
 	except:
 		setup[getRoom(tocon)] = {}
@@ -2542,13 +2549,6 @@ for tocon in confbase:
 	else: cb.append(baseArg)
 	if zz: pprint('-!- Error "%s" while join in to %s' % (zz,baseArg),'red')
 	else: pprint('-<- %s' % baseArg,'bright_green')
-	if GT('show_loading_by_status_percent'):
-		join_percent += join_pers_add
-		join_status = '%s %s%%' % (GT('show_loading_by_status_message'),int(join_percent))
-		if GT('show_loading_by_status'):
-			if GT('show_loading_by_status_room'): join_status = '%s [%s]' % (join_status,tocon)
-			if GT('show_loading_by_status_show') == 'online': caps_and_send(xmpp.Presence(status=join_status, priority=Settings['priority']))
-			else: caps_and_send(xmpp.Presence(show=GT('show_loading_by_status_show'), status=join_status, priority=Settings['priority']))
 	if game_over: break
 confbase = cb
 is_start = plugins_reload = None
