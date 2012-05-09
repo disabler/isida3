@@ -1393,7 +1393,7 @@ def iqCB(sess,iq):
 							c_list = [t.strip() for t in get_config(gr,caps_list).split('\n') if t and not t.startswith('#')]
 							if c_list:
 								msg_xmpp = msg_xmpp.getTag('presence')
-								id_node = id_ver = 'error!'
+								id_node,id_ver = 'error!','error!'
 								try: id_node = get_eval_item(msg_xmpp,'getTag("c",namespace=xmpp.NS_CAPS).getAttr("node")').decode('utf-8')
 								except: id_node,caps_error = get_eval_item(msg_xmpp,'getTag("c",namespace=xmpp.NS_CAPS).getAttr("node")'),True
 								try: id_ver = get_eval_item(msg_xmpp,'getTag("c",namespace=xmpp.NS_CAPS).getAttr("ver")').decode('utf-8')
@@ -1415,7 +1415,7 @@ def iqCB(sess,iq):
 							if hashes_list:
 								msg_xmpp = msg_xmpp.getTag('presence')
 								#id_node = id_ver = id_lang = id_photo = id_avatar = 'error!'
-								id_ver = id_lang = id_photo = id_avatar = 'error!'
+								id_ver,id_lang,id_photo,id_avatar = 'error!','error!','error!','error!'
 								hash_error = False
 								#try: id_node = get_eval_item(msg_xmpp,'getTag("c",namespace=xmpp.NS_CAPS).getAttr("node")').decode('utf-8')
 								#except: id_node,hash_error = get_eval_item(msg_xmpp,'getTag("c",namespace=xmpp.NS_CAPS).getAttr("node")'),True
