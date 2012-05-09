@@ -27,7 +27,7 @@ watch_reset = True
 watch_last_activity = {}
 
 def connect_watch():
-	global iq_request, watch_time, game_over, watch_count, bot_exit_type, watch_reset
+	global iq_request, watch_time, game_over, watch_count, bot_exit_type, watch_reset, plugins_reload
 	if GT('watcher_self_ping') and (time.time() - watch_time) > GT('watch_size'):
 		watch_time = time.time()
 		watch_count += 1
@@ -38,9 +38,10 @@ def connect_watch():
 		sender(i)
 		to = GT('timeout') - 10
 		if to <= 10: to = 600
-		while to > 0 and not game_over:
+		while to > 0 and not game_over and not plugins_reload:
 			to -= 1
 			time.sleep(1)
+		if game_over or plugins_reload: return
 		if watch_reset:
 			pprint('Restart by watcher\'s timeout!','red')
 			bot_exit_type, game_over = 'restart', True
