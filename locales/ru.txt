@@ -1580,11 +1580,17 @@ Set definition.\ndfn word=definition - remember definition as word\ndfn word= - 
 Set global definition.\ngdfn word=definition - remember definition as word\ngdfn word= - remove definition word	Установка глобального определения.\ngdfn word=definition - запоминает definition как определение word\ngdfn word= - удаляет определение word
 
 # file: ../branch/plugins/www.py
+Bad url or rss/atom not found!	Ошибка url или новости не найдены!
+Found feed(s):%s%s	Канал(ы):%s%s
+It's just you. %s is up.	Только у тебя. %s работает.
+It's not just you! %s looks down from here.	Не только у тебя. %s лежит.
 RegExp not found!	RegExp не найден!
 Title: %s	Заголовок: %s
 Length of %s is %s	Размер %s - %s
 Show web page.\nwww regexp\n[http://]url - page after regexp\nwww [http://]url - without html tags	Показывает содержимое веб страницы.\nwww regexp\n[http://]url - страница, обработанная regexp\nwww [http://]url - страница с убранными html тегами
 Show net header	Показывает заголовок файла
+Check works site	Проверка работы сайта
+Search RSS/ATOM feeds	Поиск RSS/ATOM канала
 
 # file: ../branch/plugins/wz.py
 City not found!	Город не найден!

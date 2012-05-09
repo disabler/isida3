@@ -28,6 +28,47 @@ url_watch_ignore = ['pdf','sig','spl','class','ps','torrent','dvi','gz','pac','s
 					'txt','dtd','xml','mpeg','mpg','mov','qt','avi','asf','asx','wmv','bz2','tbz','tar','so','dll','exe','bin',\
 					'img','usbimg','rar','deb','rpm','iso','ico','apk','patch','svg','7z','tcl']
 
+def rss_search(type, jid, nick, text):
+	if text:
+		if '://' not in text[:10]: text = 'http://%s' % text
+		text = enidna(text).decode('utf-8')
+		msg, result = get_opener(text)
+		if result:
+			msg = L('Bad url or rss/atom not found!')
+			page = remove_sub_space(html_encode(load_page(text)))
+			page = get_tag(page,'head')
+			l = []
+			while '<link' in page:
+				lnk = get_tag_full(page,'link')
+				page = page.replace(lnk,'')
+				l.append(lnk)
+			if l:
+				m = []
+				for t in l:
+					rss_type = get_subtag(t,'type')
+					rss_title = get_subtag(t,'title')
+					rss_href = get_subtag(t,'href')
+					if rss_type == 'application/rss+xml': m.append('%s [%s]' % (rss_href,rss_title))
+				if m:
+					mm = []
+					for t in m:
+						if t[0] == '/': mm.append('/'.join(text.split('/',3)[:3])+t)
+						else: mm.append(t)
+					m = '\n'.join(mm)
+					msg = L('Found feed(s):%s%s') % ([' ','\n']['\n' in m],unescape(m))
+	else: msg = L('What?')
+	send_msg(type, jid, nick, msg)
+
+def www_isdown(type, jid, nick, text):
+	text = text.strip().lower()
+	if text:
+		if '://' not in text[:10]: text = 'http://%s' % text
+		_,result = get_opener(enidna(text).decode('utf-8'))
+		if result: msg = L('It\'s just you. %s is up.') % text
+		else: msg = L('It\'s not just you! %s looks down from here.') % text
+	else: msg = L('What?')
+	send_msg(type, jid, nick, msg)
+
 def netheader(type, jid, nick, text):
 	if text:
 		try:
@@ -131,4 +172,6 @@ global execute
 message_act_control = [parse_url_in_message]
 
 execute = [(3, 'www', netwww, 2, L('Show web page.\nwww regexp\n[http://]url - page after regexp\nwww [http://]url - without html tags')),
-		   (3, 'header',netheader,2, L('Show net header'))]
+		   (3, 'header', netheader, 2, L('Show net header')),
+		   (3, 'isdown', www_isdown, 2, L('Check works site')),
+		   (4, 'rss_search', rss_search, 2, L('Search RSS/ATOM feeds'))]
