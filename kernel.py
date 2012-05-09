@@ -1392,14 +1392,14 @@ def iqCB(sess,iq):
 							else: caps_list,caps_negate = 'muc_filter_caps_black',False
 							c_list = [t.strip() for t in get_config(gr,caps_list).split('\n') if t and not t.startswith('#')]
 							if c_list:
-								msg_xmpp = msg_xmpp.getTag('presence')
+								msg_xmpp_tmp = msg_xmpp.getTag('presence')
 								id_node,id_ver = 'error!','error!'
-								try: id_node = get_eval_item(msg_xmpp,'getTag("c",namespace=xmpp.NS_CAPS).getAttr("node")').decode('utf-8')
-								except: id_node,caps_error = get_eval_item(msg_xmpp,'getTag("c",namespace=xmpp.NS_CAPS).getAttr("node")'),True
-								try: id_ver = get_eval_item(msg_xmpp,'getTag("c",namespace=xmpp.NS_CAPS).getAttr("ver")').decode('utf-8')
-								except: id_ver,caps_error = get_eval_item(msg_xmpp,'getTag("c",namespace=xmpp.NS_CAPS).getAttr("ver")'),True
+								try: id_node = get_eval_item(msg_xmpp_tmp,'getTag("c",namespace=xmpp.NS_CAPS).getAttr("node")').decode('utf-8')
+								except: id_node,caps_error = get_eval_item(msg_xmpp_tmp,'getTag("c",namespace=xmpp.NS_CAPS).getAttr("node")'),True
+								try: id_ver = get_eval_item(msg_xmpp_tmp,'getTag("c",namespace=xmpp.NS_CAPS).getAttr("ver")').decode('utf-8')
+								except: id_ver,caps_error = get_eval_item(msg_xmpp_tmp,'getTag("c",namespace=xmpp.NS_CAPS).getAttr("ver")'),True
 								try:
-									id_bmver = msg_xmpp.getAttr('ver').decode('utf-8')
+									id_bmver = msg_xmpp_tmp.getAttr('ver').decode('utf-8')
 									if id_bmver or id_bmver == '': id_bmver = '%s_' % id_bmver
 									else: id_bmver = ''
 								except: id_bmver = ''
@@ -1413,25 +1413,25 @@ def iqCB(sess,iq):
 						if get_config(gr,'muc_filter_deny_hash') and msg and not mute:
 							hashes_list = reduce_spaces_all(get_config(gr,'muc_filter_deny_hash_list').replace(',',' ').replace(';',' ').replace('|',' ')).split()
 							if hashes_list:
-								msg_xmpp = msg_xmpp.getTag('presence')
+								msg_xmpp_tmp = msg_xmpp.getTag('presence')
 								#id_node = id_ver = id_lang = id_photo = id_avatar = 'error!'
 								id_ver,id_lang,id_photo,id_avatar = 'error!','error!','error!','error!'
 								hash_error = False
-								#try: id_node = get_eval_item(msg_xmpp,'getTag("c",namespace=xmpp.NS_CAPS).getAttr("node")').decode('utf-8')
-								#except: id_node,hash_error = get_eval_item(msg_xmpp,'getTag("c",namespace=xmpp.NS_CAPS).getAttr("node")'),True
-								try: id_ver = get_eval_item(msg_xmpp,'getTag("c",namespace=xmpp.NS_CAPS).getAttr("ver")').decode('utf-8')
-								except: id_ver,hash_error = get_eval_item(msg_xmpp,'getTag("c",namespace=xmpp.NS_CAPS).getAttr("ver")'),True
+								#try: id_node = get_eval_item(msg_xmpp_tmp,'getTag("c",namespace=xmpp.NS_CAPS).getAttr("node")').decode('utf-8')
+								#except: id_node,hash_error = get_eval_item(msg_xmpp_tmp,'getTag("c",namespace=xmpp.NS_CAPS).getAttr("node")'),True
+								try: id_ver = get_eval_item(msg_xmpp_tmp,'getTag("c",namespace=xmpp.NS_CAPS).getAttr("ver")').decode('utf-8')
+								except: id_ver,hash_error = get_eval_item(msg_xmpp_tmp,'getTag("c",namespace=xmpp.NS_CAPS).getAttr("ver")'),True
 								try:
-									id_bmver = msg_xmpp.getAttr('ver').decode('utf-8')
+									id_bmver = msg_xmpp_tmp.getAttr('ver').decode('utf-8')
 									if id_bmver or id_bmver == '': id_bmver = '%s_' % id_bmver
 									else: id_bmver = ''
 								except: id_bmver = ''
-								try: id_lang = get_eval_item(msg_xmpp,'getAttr("xml:lang")').decode('utf-8')
-								except: id_lang,hash_error = get_eval_item(msg_xmpp,'getAttr("xml:lang")'),True
-								try: id_photo = get_eval_item(msg_xmpp,'getTag("x",namespace=xmpp.NS_VCARD_UPDATE).getTagData("photo")').decode('utf-8')
-								except: id_photo,hash_error = get_eval_item(msg_xmpp,'getTag("x",namespace=xmpp.NS_VCARD_UPDATE).getTagData("photo")'),True
-								try: id_avatar = get_eval_item(msg_xmpp,'getTag("x",namespace=xmpp.NS_AVATAR).getTagData("hash")').decode('utf-8')
-								except: id_avatar,hash_error = get_eval_item(msg_xmpp,'getTag("x",namespace=xmpp.NS_AVATAR).getTagData("hash")'),True
+								try: id_lang = get_eval_item(msg_xmpp_tmp,'getAttr("xml:lang")').decode('utf-8')
+								except: id_lang,hash_error = get_eval_item(msg_xmpp_tmp,'getAttr("xml:lang")'),True
+								try: id_photo = get_eval_item(msg_xmpp_tmp,'getTag("x",namespace=xmpp.NS_VCARD_UPDATE).getTagData("photo")').decode('utf-8')
+								except: id_photo,hash_error = get_eval_item(msg_xmpp_tmp,'getTag("x",namespace=xmpp.NS_VCARD_UPDATE).getTagData("photo")'),True
+								try: id_avatar = get_eval_item(msg_xmpp_tmp,'getTag("x",namespace=xmpp.NS_AVATAR).getTagData("hash")').decode('utf-8')
+								except: id_avatar,hash_error = get_eval_item(msg_xmpp_tmp,'getTag("x",namespace=xmpp.NS_AVATAR).getTagData("hash")'),True
 
 								hash_body = '<'.join([unicode(tmp) for tmp in id_avatar,id_photo,id_ver,id_bmver,id_lang]) + '<<'
 								if hash_error:
