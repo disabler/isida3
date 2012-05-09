@@ -1906,16 +1906,20 @@ def presenceCB(sess,mess):
 		except: error_code = None
 		try: error_type = mess.getTagAttr('error','type')
 		except: error_type = None
-		try: error_text = mess.getTag('error').getTagData(tag='text')
+		try: 
+			error_text = mess.getTag('error').getTagData(tag='text')
+			if not error_text: raise
 		except:
-			try: error_text = unicode(mess.getTag('error'))
+			try: error_text = get_tag(unicode(mess.getTag('error')),'error')
 			except: error_text = L('Unknown error!')
 		if not error_text and presence_error.has_key(error_code): error_text = presence_error[error_code]
 		if error_code:
 			if error_type: error_msg = '%s [%s]' % (error_code,error_type)
 			else: error_msg = error_code
 			if error_text: error_msg = '%s - %s' % (error_msg,error_text)
-		else: error_msg = error_text
+		else:
+			if error_type: error_msg = '%s [%s]' % (error_type.capitalize(),error_text)
+			else: error_msg = error_text
 		pres_answer.append((id,error_msg,tt))
 		return
 	elif id != None: pres_answer.append((id,None,tt))
@@ -2547,7 +2551,12 @@ for tocon in confbase:
 		zz = join(baseArg, passwd)
 	if passwd: cb.append('%s\n%s' % (baseArg, passwd))
 	else: cb.append(baseArg)
-	if zz: pprint('-!- Error "%s" while join in to %s' % (zz,baseArg),'red')
+	if zz:
+		pprint('-!- Error "%s" while join in to %s' % (zz,baseArg),'red')
+		if GT('show_loading_by_status'):
+			if GT('show_loading_by_status_room'): join_status = 'Error while join in to %s - %s' % (tocon,zz)
+			if GT('show_loading_by_status_show') == 'online': caps_and_send(xmpp.Presence(status=join_status, priority=Settings['priority']))
+			else: caps_and_send(xmpp.Presence(show=GT('show_loading_by_status_show'), status=join_status, priority=Settings['priority']))
 	else: pprint('-<- %s' % baseArg,'bright_green')
 	if game_over: break
 confbase = cb
