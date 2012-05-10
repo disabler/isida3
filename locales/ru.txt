@@ -272,7 +272,7 @@ Need choise record number.	Необходимо выбрать номер зап
 Record ID is numeric.	Идентификатор записи - цифровой.
 Record #%s not found!	Запись #%s не найдена!
 Removed: %s	Удалено: %s
-Execute command by cron. Used unix-type time format.\ncron * * * * *\ncommand	Выполнение команды по расписанию. Формат времени аналогичен unix-версии команды. \ncron * * * * *\nкоманда
+Execute command by cron. Used unix-type time format.\ncron [once] [anonim|silent] * * * * *\ncommand	Выполнение команды по расписанию. Формат времени аналогичен unix-версии команды. \ncron [once] [anonim|silent] * * * * *\nкоманда
 
 # file: ../branch/plugins/disco.py
 - Unknown feature: %s	- Неизвестная фича: %s

@@ -272,7 +272,7 @@ Need choise record number.	Необхідно обрати номер запис
 Record ID is numeric.	Ідентифікатор запису - цифровий.
 Record #%s not found!	Запис #%s не знайдено!
 Removed: %s	Видалено: %s
-Execute command by cron. Used unix-type time format.\ncron * * * * *\ncommand	Виконання команди по розкладу. Формат часу аналогічний unix-версії команди. \ncron * * * * *\nкоманда
+Execute command by cron. Used unix-type time format.\ncron [once] [anonim|silent] * * * * *\ncommand	Виконання команди по розкладу. Формат часу аналогічний unix-версії команди. \ncron [once] [anonim|silent] * * * * *\nкоманда
 
 # file: ../branch/plugins/disco.py
 - Unknown feature: %s	- Невідома фіча: %s

@@ -42,8 +42,12 @@ def time_cron_show(jid,nick,ar):
 	if c:
 		tmp, idx = [], 1
 		for t in c:
+			if t[2] == '\n': mode = '[silent]'
+			elif not t[2]: mode = '[anonim]'
+			else: mode = ''
 			if room=='%': msg = '%s|%s' % (t[0],disp_time(t[3]))
 			else: msg = '%s. %s' % (idx,disp_time(t[3]))
+			if mode: msg = '%s %s' % (msg,mode)
 			if t[4]: msg += ' [%s]' % t[4]
 			msg += ' -> %s' % t[5]
 			tmp.append(msg)
@@ -55,8 +59,17 @@ def time_cron_add(ar,jid,nick):
 	try: cron_time, cron_cmd = ar.split('\n',1)
 	except: return L('Not enough parameters!')
 	try:
-		if cron_time[0] == '-': cron_time,repeat_time = cron_time[1:],''
-		else: repeat_time = cron_time
+		SM,RM,NM = 'silent','once','anonim'
+		CMD = [SM,RM,NM]
+		ct = cron_time.lower().split()
+		rm,sm,nm = RM in ct,SM in ct,NM in ct
+		if rm or sm or nm:
+			for t in CMD:
+				try: ct.remove(t)
+				except: pass
+		ct = ' '.join(ct)
+		if rm: cron_time,repeat_time = ct,''
+		else: cron_time,repeat_time = ct,ct
 		next_time = crontab.CronTab(cron_time).next() + time.time()
 	except: return L('Error in time format!')
 	lvl,rj = get_level(jid,nick)
@@ -68,6 +81,8 @@ def time_cron_add(ar,jid,nick):
 	if amm < 0: return L('Command not found: %s') % tcmd
 	elif amm > lvl: return L('Not allowed launch: %s') % tcmd
 	else:
+		if sm: nick = '\n'
+		elif nm: nick = ''
 		cur_execute('insert into cron values (%s,%s,%s,%s,%s,%s,%s)', (jid,getRoom(rj),nick,next_time,repeat_time,cron_cmd,lvl))
 		return '%s -> %s' % (disp_time(next_time),cron_cmd)
 
@@ -84,6 +99,10 @@ def time_cron_del(jid,nick,ar):
 		except: return L('Record #%s not found!') % ar
 		cur_execute('delete from cron where room=%s and jid=%s and nick=%s and time=%s and repeat=%s and command=%s and level=%s',rec)
 		msg = disp_time(rec[3])
+		if rec[2] == '\n': mode = '[silent]'
+		elif not rec[2]: mode = '[anonim]'
+		else: mode = ''
+		if mode: msg = '%s %s' % (msg,mode)
 		if rec[4]: msg += ' [%s]' % rec[4]
 		msg += ' -> %s' % rec[5]
 		return L('Removed: %s') % msg
@@ -105,10 +124,12 @@ def cron_action():
 			else:
 				nowname = getResourse(confbase[tmppos])
 				if nowname == '': nowname = Settings['nickname']
-			com_parser(t[6], nowname, 'groupchat', t[0], t[2], t[5], Settings['jid'])
+			if t[2] == '\n': tmp_nick,tmp_type = '%s_cron_%d' % (nowname,time.time()),'chat'
+			else: tmp_nick,tmp_type = t[2],'groupchat'
+			com_parser(t[6], nowname, tmp_type, t[0], tmp_nick, t[5], Settings['jid'])
 
 global execute, timer
 
 timer = [cron_action]
 
-execute = [(7, 'cron', time_cron, 2, L('Execute command by cron. Used unix-type time format.\ncron * * * * *\ncommand'))]
+execute = [(7, 'cron', time_cron, 2, L('Execute command by cron. Used unix-type time format.\ncron [once] [anonim|silent] * * * * *\ncommand'))]
