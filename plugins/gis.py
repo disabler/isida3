@@ -48,12 +48,13 @@ def gweather_raw(type, jid, nick, text, fully):
 		text = text.lower()
 		wzc = cur_execute_fetchall('select * from gis where code ilike %s or lcity ilike %s',(text,text))
 		if not wzc:
-			text = '%%%s%%' % text
-			wzc = cur_execute_fetchall('select * from gis where code ilike %s or lcity ilike %s',(text,text))
+			ttext = '%%%s%%' % text
+			wzc = cur_execute_fetchall('select * from gis where code ilike %s or lcity ilike %s',(ttext,ttext))
+		if not wzc and text.isdigit() and 4 <= len(text) <= 5: wzc = [(text,'','')]
 		if wzc:
 			if len(wzc) == 1:
 				text = wzc[0][0]
-				link = 'http://informer.gismeteo.ru/xml/'+text+'.xml'
+				link = 'http://informer.gismeteo.ru/xml/%s.xml' % text
 				try: body, noerr = html_encode(load_page(link)), True
 				except Exception, SM:
 					try: body = str(SM)
@@ -61,8 +62,14 @@ def gweather_raw(type, jid, nick, text, fully):
 					noerr = None
 				if not body or body == '<?xml version="1.0" encoding="UTF-8"?>\n</xml>': body,noerr = L('Unexpected error'), None
 				if noerr:
-					body = body.split('<FORE')[1:]
-					msg = L('Weather in %s:\nDate\t t%s\tWind\tClouds') % (wzc[0][1],u'°')
+					if wzc[0][1]: ct = wzc[0][1]
+					else:
+						try: res = re.findall('<TOWN index=".*?" sname="(.*?)"',body)
+						except: res = ''
+						if res: ct = urllib2.unquote(res[0]).encode('cp1252').decode('cp1251')
+						else: ct = L('Unknown')
+					body = body.split('<FORE')[1:]		
+					msg = L('Weather in %s:\nDate\t t%s\tWind\tClouds') % (ct,u'°')
 					if fully: msg += L('\tPressure, mm. Hg. Art.\tHumidity %')
 					for tmp in body:
 						tmp2 = '<FORE' + tmp
