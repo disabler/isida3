@@ -109,9 +109,27 @@ if '/wtf_update' in al:
 	print 'Updated %s record(s)' % len(w)
 	print 'Finished!'
 
+elif '/gis_update' in al:
+	print 'Update `gis` base'
+	cur.execute('delete from gis;')
+	from_base = to_base = 'gis'
+	s_conn = sqlite3.connect(gisbase)
+	s_cur = s_conn.cursor()
+	tmp = s_cur.execute('select * from %s' % from_base).fetchall()
+	print 'Import %s, Base %s->%s, %s records' % (gisbase, from_base, to_base, len(tmp))
+	s_conn.close()
+
+	if tmp:
+		for t in tmp:
+			req = 'insert into gis values(%s);' % (','.join(['%'+a for a in 's'*len(t)]))
+			cur.execute(req,t)
+		print 'Updated %s record(s)' % len(tmp)
+	else: 'Update failed! `gis` base not found or empty!'
+	print 'Finished!'
+
 elif '/h' in al or '/help' in al or '--help' in al:
 	print '\
-Usage: python %s [/h|/wtf_update]\n\n\
+Usage: python %s [/h|/wtf_update|/gis_update]\n\n\
 /h - this help\n\
 /wtf_update - update number format in `wtf` base for enable history of words definitions\n\
 ' % al[0]
@@ -154,6 +172,7 @@ else:
 				 
 	for t in bases_arr: convert_base(t[0],t[1],t[2])
 	print 'Finished!'
+
 cur.close()
 conn.commit()
 conn.close()
