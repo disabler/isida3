@@ -609,7 +609,7 @@ def show_error(type, jid, nick, text):
 		log = log.split('ERROR:')
 		lll = len(log)
 		if cmd > lll: cmd = lll
-		msg = L('Total Error(s): %s\n') % lll-1
+		msg = L('Total Error(s): %s\n') % (lll-1)
 		if text != '':
 			for aa in range(lll-cmd,lll): msg += log[aa]+'\n'
 		else: msg += ' '

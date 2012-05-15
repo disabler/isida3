@@ -36,7 +36,8 @@ def youtube(type, jid, nick, text):
 		msg = L('Found:')
 		for t in res['entry']:
 			y_title = t['title']['$t']
-			y_views = t['yt$statistics']['viewCount']
+			try: y_views = t['yt$statistics']['viewCount']
+			except: y_views = ''
 			y_link  = t['media$group'][u'media$player'][0]['url'].split('?v=',1)[1].split('&')[0]
 			y_time  = t['media$group'][u'media$thumbnail'][0]['time'].split('.',1)[0]
 			msg += unescape('\nhttp://youtu.be/%s - %s [%s] %s' % (y_link,y_title,y_time,y_views))
