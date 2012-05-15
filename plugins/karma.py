@@ -49,7 +49,7 @@ def karma_top(jid, nick, text, order):
 	for tmp in stat:
 		tmp2 = get_nick_by_jid(jid, tmp[0])
 		if tmp2:
-			msg += '\n%s. %s\t%s' % (cnt,tmp2,karma_val(int(tmp[1]))
+			msg += '\n%s. %s\t%s' % (cnt,tmp2,karma_val(int(tmp[1])))
 			cnt += 1
 		if cnt >= lim: break
 	if len(msg): return L('Top karma: %s') % msg

@@ -70,7 +70,7 @@ def city(type, jid, nick, text):
 				if not cur_execute_fetchone('select * from dist_user where point ilike %s',(place,)):
 					cur_execute('insert into dist_user values (%s,%s,%s)',(place,coords[1],coords[0]))
 					conn.commit()
-					msg = L('Added: ') + place_ext.decode('utf-8') + L(' as ') + '"%s"' % place
+					msg = L('Added: ') + place_ext + L(' as ') + '"%s"' % place
 				else: msg = L('This point is in database!')
 			else: msg = L('Not found Yandex.Map API. Get API-key on http://api.yandex.ru/maps/form.xml')
 		except: msg = L('What?')
@@ -108,7 +108,7 @@ def city(type, jid, nick, text):
 			for object in j['response']['GeoObjectCollection']['featureMember']:
 				msg += object['GeoObject']['metaDataProperty']['GeocoderMetaData']['text']
 				msg += ' - (%s)\n' % ', '.join(object['GeoObject']['Point']['pos'].split()[::-1])
-			if msg: msg = '\n' + msg.decode('utf-8')
+			if msg: msg = '\n' + msg
 			else: msg = L('Not found!')
 		else: msg = L('Not found Yandex.Map API. Get API-key on http://api.yandex.ru/maps/form.xml')
 	else:
