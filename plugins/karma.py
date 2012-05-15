@@ -49,7 +49,7 @@ def karma_top(jid, nick, text, order):
 	for tmp in stat:
 		tmp2 = get_nick_by_jid(jid, tmp[0])
 		if tmp2:
-			msg += '\n'+str(cnt)+'. '+tmp2+'\t'+karma_val(int(tmp[1]))
+			msg += '\n%s. %s\t%s' % (cnt,tmp2,karma_val(int(tmp[1]))
 			cnt += 1
 		if cnt >= lim: break
 	if len(msg): return L('Top karma: %s') % msg
@@ -137,10 +137,7 @@ def karma_get_access(room,jid):
 	if int(stat[0]) < GT('karma_limit'): return None
 	return True
 
-def karma_val(val):
-	if val == 0: return '0'
-	elif val < 0: return str(val)
-	else: return '+'+str(val)
+def karma_val(val): return ['%+2d' % val,'0'][val==0]
 
 def karma_correct(room):
 	def karma_correct_diff(vm,ac):

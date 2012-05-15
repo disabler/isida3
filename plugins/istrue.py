@@ -34,7 +34,7 @@ def is_valid(type, jid, nick, text):
 	else: idx, hl = 0.5, None
 	if (ru_lit == lt or en_lit == lt) and float(caps_lit)/lt <= 0.5: msg = L('100% True-nick!')
 	elif ru_lit+en_lit == 0: msg = L('Nicks without letters isn\'t true!')
-	elif ru_lit+en_lit+text.count(' ')+text.count('.') == lt: msg = L('Valid of nick is - %s%s') % (str(100-int(idx*100)), '%!')
+	elif ru_lit+en_lit+text.count(' ')+text.count('.') == lt: msg = L('Valid of nick is - %s%s') % (100-int(idx*100), '%!')
 	elif not ru_lit or not en_lit: msg = L('Normal nick, but left symbols in fireplace.')
 	else: msg = L('Valid of nick is - %s%s') % (int(float(ru_lit+en_lit)/lt*100-int(idx*100)), '%!')
 	if float(caps_lit)/lt > 0.5: msg += ' ' + L('Many caps - %s%s') % (int(float(caps_lit)/lt*100), '%!')
@@ -50,8 +50,7 @@ def is_true(type, jid, nick, text):
 	else:
 		idx = 0
 		for tmp in text: idx += ord(tmp)
-		idx = int((idx/100.0 - int(idx/100))*100)
-		msg = L('Expression is true for %s%s') % (str(idx), '%')
+		msg = L('Expression is true for %s%s') % (idx % 100, '%')
 	send_msg(type, jid, nick, msg)
 
 global execute

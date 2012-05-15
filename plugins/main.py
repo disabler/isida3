@@ -609,7 +609,7 @@ def show_error(type, jid, nick, text):
 		log = log.split('ERROR:')
 		lll = len(log)
 		if cmd > lll: cmd = lll
-		msg = L('Total Error(s): %s\n') % str(lll-1)
+		msg = L('Total Error(s): %s\n') % lll-1
 		if text != '':
 			for aa in range(lll-cmd,lll): msg += log[aa]+'\n'
 		else: msg += ' '
@@ -958,7 +958,7 @@ def info_where(type, jid, nick):
 		else:
 			msg += '\n%s. %s [%s]' % (nmb,i[1].split('\n')[0],i[0])
 			nmb += 1
-	if hr_count: msg += L('\nHidden conference(s): %s') % str(hr_count)
+	if hr_count: msg += L('\nHidden conference(s): %s') % hr_count
 	send_msg(type, jid, nick, msg)
 
 def info_where_plus(type, jid, nick):
@@ -980,7 +980,7 @@ def info_where_plus(type, jid, nick):
 		else:
 			msg += '\n%s. %s (%s) [%s]' % (nmb,i[1].split('\n')[0],i[2],i[0])
 			nmb += 1
-	if hr_count: msg += L('\nHidden conference(s): %s') % str(hr_count)
+	if hr_count: msg += L('\nHidden conference(s): %s') % hr_count
 	send_msg(type, jid, nick, msg)
 
 
@@ -989,9 +989,9 @@ def get_uptime_str():
 
 def info(type, jid, nick):
 	global confbase
-	msg = L('Conference(s): %s (for more info use \'where\' command)\n') % str(len(confbase))
+	msg = L('Conference(s): %s (for more info use \'where\' command)\n') % len(confbase)
 	msg += L('Server: %s | Nick: %s\n') % (lastserver,lastnick)
-	msg += L('Message size limit: %s\n') % str(msg_limit)
+	msg += L('Message size limit: %s\n') % msg_limit
 	msg += L('Local time: %s\n') % timeadd(tuple(time.localtime()))
 	msg += L('Uptime: %s, Last session: %s') % (get_uptime_str(), un_unix(int(time.time())-sesstime))
 	floods = get_config(getRoom(jid),'flood')

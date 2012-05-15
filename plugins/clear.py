@@ -27,7 +27,7 @@ def hidden_clear(type, jid, nick, text):
 	if cntr > GT('clear_max_count'): cntr = GT('clear_max_count')
 	elif cntr < 2: cntr = 2
 	cdel,cmode = GT('clear_delay'),get_config(getRoom(jid),'clear_answer') == 'presence'
-	clear_msg = L('Clean by %s messages in approximately %s sec.') % (str(cntr),str(int(cntr*cdel)))
+	clear_msg = L('Clean by %s messages in approximately %s sec.') % (cntr,int(cntr*cdel))
 	if cmode: caps_and_send(xmpp.Presence(jid,show=Settings['status'], status=clear_msg, priority=Settings['priority']))
 	else: send_msg(type, jid, nick, clear_msg)
 	time.sleep(cdel)

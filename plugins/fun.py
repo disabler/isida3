@@ -89,11 +89,7 @@ def to_poke(type, jid, nick, text):
 		if type == 'groupchat':
 			send_msg(type, jid, nick, L('Sent in private message'))
 			type = 'chat'
-		msg = L('Phrases:')
-		cnt = 1
-		for tmp in dpoke:
-			msg += '\n'+str(cnt)+'. '+tmp
-			cnt += 1
+		msg = '%s\n%s' % (L('Phrases:'),'\n'.join(['%s. %s' % t for t in enumerate(dpoke)]))
 	elif text[:4] == 'del ' and access_mode == 9:
 		text = text[4:]
 		try: pos = int(text)-1

@@ -28,7 +28,7 @@ def answers_ie(type, jid, nick, text):
 		base_size = len(cur_execute_fetchall('select * from answer'))
 		fnd = cur_execute_fetchall('select body from answer where body ilike %s group by body order by body',('%',))
 		answer = ''
-		msg = L('Export to file: %s | Total records: %s | Unique records: %s') % (fname,str(base_size),str(len(fnd)))
+		msg = L('Export to file: %s | Total records: %s | Unique records: %s') % (fname,base_size,len(fnd))
 		for i in fnd:
 			if i[0] != '': answer += i[0].strip() +'\n'
 		writefile(fname,answer.encode('utf-8'))
@@ -39,7 +39,7 @@ def answers_ie(type, jid, nick, text):
 			answer = readfile(fname).decode('utf-8')
 			answer = answer.split('\n')
 			cur_execute('delete from answer where body ilike %s',('%',))
-			msg = L('Import from file: %s | Total records: %s') % (fname,str(len(answer)))
+			msg = L('Import from file: %s | Total records: %s') % (fname,len(answer))
 			idx = 1
 			for i in answer:
 				if i != '':

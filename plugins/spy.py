@@ -66,20 +66,20 @@ def spy_del(text):
 			break
 	return msg
 
-def spy_show(text):
+def spy_show():
 	sb = getFile(spy_base,[])
 	if not len(sb): return L('List is empty.')
 	msg = L('Monitoring conferences:')
-	for tmp in sb:
-		msg += '\n'+tmp[0]+' '+tmp[4]+' ('+un_unix(int(time.time()-tmp[1]))+'|u'+str(tmp[2])+'|m'+str(tmp[3])+')'
+	msg += '\n%s' % '\n'.join(['%s %s (%s|u%s|m%s)' % (tmp[0],tmp[4],un_unix(int(time.time()-tmp[1])),tmp[2],tmp[3]) for tmp in sb])
 	msg += L('\nNext scanning across %s') % un_unix(int(GT('scan_time')-(time.time()-spy_stat_time)))
 	return msg
 
 def conf_spy(type, jid, nick,text):
+	text = text.strip().lower()
 	msg = None
-	if text[:4] == 'add ': msg = spy_add(text[4:])
-	elif text[:4] == 'del ': msg = spy_del(text[4:])
-	elif text[:4] == 'show': msg = spy_show(text[4:])
+	if text.startswith('add '): msg = spy_add(text[4:])
+	elif text.startswith('del '): msg = spy_del(text[4:])
+	elif text == 'show': msg = spy_show()
 	if not msg: msg = L('Smoke help about command!')
 	send_msg(type, jid, nick, msg)
 

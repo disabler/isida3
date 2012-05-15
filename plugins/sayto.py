@@ -51,7 +51,7 @@ def sayto(type, jid, nick, text):
 		if '\n' in text: splitter = '\n'
 		else: splitter = ' '
 		to,what = text.split(splitter,1)[0],text.split(splitter,1)[1]
-		frm = nick + '\n' + str(int(time.time()))
+		frm = '%s\n%s' % (nick,int(time.time()))
 		fnd = cur_execute_fetchall('select jid, status from age where room=%s and nick=%s group by jid, status',(jid,to))
 		if len(fnd) == 1:
 			if fnd[0][1]:

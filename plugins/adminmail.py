@@ -37,7 +37,7 @@ def adminmail(type, jid, nick, text):
 			else: del timesent[fjid]
 		timesent[fjid] = int(time.time())+tmp_lim
 		writefile(time_limit_base, str(timesent))
-		msg = L('User %s (%s) from %s at %s send massage to you: %s') % (nick,fjid,jid,str(time.strftime("%H:%M %d.%m.%y", time.localtime (time.time()))),text)
+		msg = L('User %s (%s) from %s at %s send massage to you: %s') % (nick,fjid,jid,time.strftime("%H:%M %d.%m.%y", time.localtime (time.time())),text)
 		for ajid in ownerbase: send_msg('chat', getRoom(ajid), '', msg)
 		send_msg(type, jid, nick, L('Sent'))
 	else: send_msg(type, jid, nick, L('What?'))

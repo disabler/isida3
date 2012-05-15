@@ -59,7 +59,7 @@ def global_ban(type, jid, nick, text):
 						i = xmpp.Node('iq', {'id': get_id(), 'type': 'set', 'to':getRoom(tmp)}, payload = [xmpp.Node('query', {'xmlns': xmpp.NS_MUC_ADMIN},[xmpp.Node('item',{'affiliation':'outcast', 'jid':unicode(text)},[xmpp.Node('reason',{},reason)])])])
 						sender(i)
 						time.sleep(0.1)
-				msg = L('jid %s has been banned in %s conferences.') % (text, str(len(confbase)-len(hr)))
+				msg = L('jid %s has been banned in %s conferences.') % (text, len(confbase)-len(hr))
 		else: msg = L('Command temporary blocked!')
 	send_msg(type, jid, nick, msg)
 

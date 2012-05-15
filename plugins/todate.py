@@ -106,7 +106,7 @@ def todate(type, jid, nick, text):
 					L('days'),L('days'),L('days'),L('days'),
 					L('days'),L('days'))
 			if days_remain < 0: msg = L('Date has already in past!')
-			else: msg += ' ' + str(days_remain) + ' ' + dmass[int(str(days_remain)[-1])]
+			else: msg += ' %s %s' % (days_remain,dmass[int(str(days_remain)[-1])])
 		except: msg = L('Error in parameters. Read the help about command.')
 	else: msg = L('Error in parameters. Read the help about command.')
 	send_msg(type, jid, nick, msg)
