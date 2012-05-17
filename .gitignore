@@ -18,6 +18,7 @@ logs/chatlogs/*.com
 logs/syslogs/*.ru
 logs/syslogs/*.com
 plugins/.*.*
+plugins/_*.*
 plugins/poke.txt
 settings/acl.db
 settings/agestat.db

@@ -22,6 +22,8 @@
 #                                                                             #
 # --------------------------------------------------------------------------- #
 
+LAST_RANDOM_POKE = {}
+
 def poem(type, jid, nick):
 	dict = [[u'я помню',u'не помню',u'забыть бы',u'купите',u'очкуешь',u'какое',u'угробил',u'открою',u'ты чуешь?'],
 			[u'чудное',u'странное',u'некое',u'вкусное',u'пьяное',u'свинское',u'чоткое',u'сраное',u'нужное',u'конское'],
@@ -109,7 +111,17 @@ def to_poke(type, jid, nick, text):
 		else: msg = L('I can\'t add it! No keyword "NICK"!')
 	elif get_level(jid,text)[1] == selfjid: msg = L('I ban a ip for such jokes!')
 	else:
-		if not text: text, is_found = random.choice([d[1] for d in megabase if d[0]==jid and d[4] != Settings['jid']]), True
+		if not text:
+			nick_list = [d[1] for d in megabase if d[0]==jid and d[4] != Settings['jid'] and d[1] != nick]
+			if nick_list:
+				curr_nick = random.choice(nick_list)
+				try: last_nick = LAST_RANDOM_POKE[jid]
+				except: last_nick = ''
+				if len(nick_list) > 1:
+					while curr_nick == last_nick: curr_nick = random.choice(nick_list)
+				LAST_RANDOM_POKE[jid] = curr_nick
+				text, is_found = curr_nick, True
+			else: is_found = False
 		else:
 			is_found = False
 			for tmp in megabase:
@@ -119,7 +131,8 @@ def to_poke(type, jid, nick, text):
 		if is_found:
 			msg = '/me %s' % random.choice(dpoke).replace('NICK',text)
 			nick,type = '','groupchat'
-		else: msg = L('I could be wrong, but %s not is here...') % text
+		elif text: msg = L('I could be wrong, but %s not is here...') % text
+		else: msg = L('Masochist? 8-D')
 	send_msg(type, jid, nick, msg)
 
 def life(type, jid, nick, text):
