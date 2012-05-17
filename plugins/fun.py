@@ -91,7 +91,7 @@ def to_poke(type, jid, nick, text):
 		if type == 'groupchat':
 			send_msg(type, jid, nick, L('Sent in private message'))
 			type = 'chat'
-		msg = '%s\n%s' % (L('Phrases:'),'\n'.join(['%s. %s' % t for t in enumerate(dpoke)]))
+		msg = '%s\n%s' % (L('Phrases:'),'\n'.join(['%s. %s' % (c+1,t) for c,t in enumerate(dpoke)]))
 	elif t_cmd.startswith('del ') and owner:
 		text = text[4:]
 		try: pos = int(text)-1
