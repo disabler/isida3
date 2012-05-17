@@ -481,6 +481,7 @@ S	Пд
 SW	ПдЗх
 W	Зх
 NW	ПнЗх
+Unknown	Невідомо
 Weather in %s:\nDate\t t%s\tWind\tClouds	Погода в %s:\nДата\t t%s\tВітер\tХмарн
 \tPressure, mm. Hg. Art.\tHumidity %	\tТиск, мм.рт.ст.\tВологість %
 \tCalm	\tШтиль
@@ -1386,7 +1387,6 @@ Search domain zones TLD.	Пошук доменних зон TLD.
 Paste some text to server	Публікація тексту на сервері
 
 # file: ../branch/plugins/phone.py
-Unknown	Невідомо
 Russia, Mobile	Росія, Мобільний
 Too many results!	Занадто багато результатів!
 Russia	Росія

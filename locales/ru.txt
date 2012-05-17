@@ -456,6 +456,7 @@ Just funny poem	Просто смешное стихотворение
 Prophecy oracle. Example: oracle your_answer?	Предсказания оракула. Пример: oracle ваш_вопрос?
 Heads or tails	Орёл или решка
 "Poke" command\npoke nick - say a random phrase for nick\nControls command, available only for bot owner:\npoke show - show list of phrases\npoke add phrase - add phrase\npoke del phrase_number - remove phrase.	Команда "тык"\npoke nick - сказать случайную фразу nick\nКоманды управления, доступные только владельцу бота:\npoke show - показать список фраз\npoke add фраза - добавить фразу\npoke del номер_фразы - удалить фразу
+"Random Poke" command	Команда "Случайны тык"
 Info about your life. Example: life dd.mm.yy [hour:min:sec]	Информация о твоей жизни. Пример: life дд.мм.гг [час:мин:сек]
 
 # file: ../branch/plugins/gis.py
@@ -481,6 +482,7 @@ S	Ю
 SW	ЮЗ
 W	З
 NW	СЗ
+Unknown	Неизвестно
 Weather in %s:\nDate\t t%s\tWind\tClouds	Погода в %s:\nДата\t t%s\tВетер\tОбл.
 \tPressure, mm. Hg. Art.\tHumidity %	\tДавление, мм.рт.ст.\tВлажность %
 \tCalm	\tШтиль
@@ -1389,7 +1391,6 @@ Search domain zones TLD.	Поиск доменных зон TLD.
 Paste some text to server	Публикация текста на сервере
 
 # file: ../branch/plugins/phone.py
-Unknown	Неизвестно
 Russia, Mobile	Россия, Мобильный
 Too many results!	Слишком много результатов!
 Russia	Россия

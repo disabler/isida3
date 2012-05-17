@@ -82,15 +82,15 @@ def to_poke(type, jid, nick, text):
 			L('gave NICK strawberry poison'),
 			L('jumped around with a tambourine NICK'),
 			L('sticking NICK with the words "buy ice cream, you creep!"')]
-	ta = get_level(jid,nick)
-	access_mode = ta[0]
+	owner = get_level(jid,nick)[0] == 9
 	dpoke = getFile(poke_file,predef_poke)
-	if text == 'show' and access_mode == 9:
+	t_cmd = text.lower()
+	if t_cmd == 'show' and owner:
 		if type == 'groupchat':
 			send_msg(type, jid, nick, L('Sent in private message'))
 			type = 'chat'
 		msg = '%s\n%s' % (L('Phrases:'),'\n'.join(['%s. %s' % t for t in enumerate(dpoke)]))
-	elif text[:4] == 'del ' and access_mode == 9:
+	elif t_cmd.startswith('del ') and owner:
 		text = text[4:]
 		try: pos = int(text)-1
 		except: pos = len(dpoke)+1
@@ -100,15 +100,14 @@ def to_poke(type, jid, nick, text):
 			dpoke.remove(remove_body)
 			writefile(poke_file, str(dpoke))
 			msg = L('Removed: %s') % remove_body
-
-	elif text[:4] == 'add ' and access_mode == 9:
+	elif t_cmd.startswith('add ') and owner:
 		text = text[4:]
 		if 'NICK' in text:
 			dpoke.append(text)
 			writefile(poke_file, str(dpoke))
 			msg = L('Added')
 		else: msg = L('I can\'t add it! No keyword "NICK"!')
-	elif text == '' or text == nick: msg = L('Masochist? 8-D')
+	elif not text: msg = L('Masochist? 8-D')
 	elif get_level(jid,text)[1] == selfjid: msg = L('I ban a ip for such jokes!')
 	else:
 		is_found = 0
@@ -117,12 +116,12 @@ def to_poke(type, jid, nick, text):
 				is_found = 1
 				break
 		if is_found:
-			msg = '/me '+dpoke[random.randint(0,len(dpoke)-1)]
-			msg = msg.replace('NICK',text)
-			nick = ''
-			type = 'groupchat'
+			msg = '/me %s' % random.choice(dpoke).replace('NICK',text)
+			nick,type = '','groupchat'
 		else: msg = L('I could be wrong, but %s not is here...') % text
 	send_msg(type, jid, nick, msg)
+
+def random_poke(type, jid, nick): to_poke(type, jid, nick, random.choice([d[1] for d in megabase if d[0]==jid and d[4] != Settings['jid']]))
 
 def life(type, jid, nick, text):
 	text = reduce_spaces_all(text)
@@ -174,4 +173,5 @@ execute = [(3, 'poem', poem, 1, L('Just funny poem')),
 		(3, 'oracle', oracle, 2, L('Prophecy oracle. Example: oracle your_answer?')),
 		(3, 'coin', coin, 2, L('Heads or tails')),
 		(3, 'poke', to_poke, 2, L('"Poke" command\npoke nick - say a random phrase for nick\nControls command, available only for bot owner:\npoke show - show list of phrases\npoke add phrase - add phrase\npoke del phrase_number - remove phrase.')),
+		(3, 'randpoke', random_poke, 1, L('"Random Poke" command')),
 		(3, 'life', life, 2, L('Info about your life. Example: life dd.mm.yy [hour:min:sec]'))]
