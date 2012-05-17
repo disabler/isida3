@@ -448,7 +448,6 @@ Phrases:	Фразы:
 The record doesn't exist!	Такой фразы нет!
 Added	Добавила
 I can't add it! No keyword "NICK"!	Не могу добавить! Нет ключевого слова "NICK"!
-Masochist? 8-D	Самотык? 8-D
 I ban a ip for such jokes!	Ща зобаню по ip за такие шутки!
 You live %s years or %s days or %s hours or %s minutes or %s seconds.\nYou slept %s hours, or %s days.\nYou blink about %s times.\nYour heart pumped %s liters of blood and made %s strikes.\nYou drank %s liters of water and drank it %s hours.\nYou have increased by %s centimeters in my head of hair, dropped %s pieces, all of the hair %s kilometers.\nYou grew up in the hands %s centimeters and in the feet %s centimeters nails.\nYou breathed %s liters of air a total weight of %s kilograms.\nYou have stood out %s liters of sweat, and %s liters of urine, and %s liters of saliva.\nYou lost %s billion nerve cells.\nYou laughed %s times.\nYou've gone %s kilometers	Ты живешь %s лет, или %s дней, или %s часов, или %s минут, или %s секунд.\nТы спал(а) %s часов, или %s суток.\nТы моргнул(а) примерно %s раз.\nТвоё сердце перекачало %s литров крови и сделало %s ударов.\nТы выпил(а) %s литров воды и пил(а) её %s часов.\nУ тебя выросло на голове %s сантиметров волос, выпало %s штук, все волосы %s километров.\nУ тебя выросло на руках %s сантиметров и на ногах %s сантиметров ногтей.\nТы вдохнул(а) %s литров воздуха общим весом %s килограммов.\nУ тебя выделилось %s литров пота, %s литров мочи и %s литров слюны.\nТы потерял(а) %s миллионов нервных клеток.\nТы смеялся(лась) %s раз.\nТы прошёл(ла) %s километров
 Smoke help about command!	Курим помощь по команде!
@@ -456,7 +455,6 @@ Just funny poem	Просто смешное стихотворение
 Prophecy oracle. Example: oracle your_answer?	Предсказания оракула. Пример: oracle ваш_вопрос?
 Heads or tails	Орёл или решка
 "Poke" command\npoke nick - say a random phrase for nick\nControls command, available only for bot owner:\npoke show - show list of phrases\npoke add phrase - add phrase\npoke del phrase_number - remove phrase.	Команда "тык"\npoke nick - сказать случайную фразу nick\nКоманды управления, доступные только владельцу бота:\npoke show - показать список фраз\npoke add фраза - добавить фразу\npoke del номер_фразы - удалить фразу
-"Random Poke" command	Команда "Случайны тык"
 Info about your life. Example: life dd.mm.yy [hour:min:sec]	Информация о твоей жизни. Пример: life дд.мм.гг [час:мин:сек]
 
 # file: ../branch/plugins/gis.py

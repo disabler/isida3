@@ -107,21 +107,20 @@ def to_poke(type, jid, nick, text):
 			writefile(poke_file, str(dpoke))
 			msg = L('Added')
 		else: msg = L('I can\'t add it! No keyword "NICK"!')
-	elif not text: msg = L('Masochist? 8-D')
 	elif get_level(jid,text)[1] == selfjid: msg = L('I ban a ip for such jokes!')
 	else:
-		is_found = 0
-		for tmp in megabase:
-			if tmp[0] == jid and tmp[1] == text:
-				is_found = 1
-				break
+		if not text: text, is_found = random.choice([d[1] for d in megabase if d[0]==jid and d[4] != Settings['jid']]), True
+		else:
+			is_found = False
+			for tmp in megabase:
+				if tmp[0] == jid and tmp[1] == text:
+					is_found = True
+					break
 		if is_found:
 			msg = '/me %s' % random.choice(dpoke).replace('NICK',text)
 			nick,type = '','groupchat'
 		else: msg = L('I could be wrong, but %s not is here...') % text
 	send_msg(type, jid, nick, msg)
-
-def random_poke(type, jid, nick): to_poke(type, jid, nick, random.choice([d[1] for d in megabase if d[0]==jid and d[4] != Settings['jid']]))
 
 def life(type, jid, nick, text):
 	text = reduce_spaces_all(text)
@@ -173,5 +172,4 @@ execute = [(3, 'poem', poem, 1, L('Just funny poem')),
 		(3, 'oracle', oracle, 2, L('Prophecy oracle. Example: oracle your_answer?')),
 		(3, 'coin', coin, 2, L('Heads or tails')),
 		(3, 'poke', to_poke, 2, L('"Poke" command\npoke nick - say a random phrase for nick\nControls command, available only for bot owner:\npoke show - show list of phrases\npoke add phrase - add phrase\npoke del phrase_number - remove phrase.')),
-		(3, 'randpoke', random_poke, 1, L('"Random Poke" command')),
 		(3, 'life', life, 2, L('Info about your life. Example: life dd.mm.yy [hour:min:sec]'))]
