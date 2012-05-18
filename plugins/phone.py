@@ -110,7 +110,7 @@ def phonecode(type, jid, nick, text):
 					di += [', '.join(res)]
 				di = '\n'.join(di)
 				def_info += [L('Country: %s\n%s') % (L('Ukraine'),di)]
-			#result = cu.execute('select * from def_ru_mobile where provider ilike %s or region ilike %s', (text,text)).fetchall()
+			#result = cur_execute_fetchall('select * from def_ru_mobile where provider ilike %s or region ilike %s', (text,text))
 			#if result:
 			#	di = []
 			#	for res in result: di += ['%s, %s (%s) %s..%s, %s ' % res]

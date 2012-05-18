@@ -82,10 +82,10 @@ def city(type, jid, nick, text):
 		else: msg = L('This point isn\'t in database!')
 	elif parameters[0] == 'map':
 		t = cur_execute_fetchone('select * from dist_user where point ilike %s',(parameters[1].lower(),))
-		if not t: t = cu.execute_fetchone('select * from dist where point ilike %s',(parameters[1].lower(),))
+		if not t: t = cur_execute_fetchone('select * from dist where point ilike %s',(parameters[1].lower(),))
 		if t:
 			tmp = 'http://maps.google.com/maps?ll=%s,%s&spn=0.01,0.01&t=h&q=%s,%s' % (t[1], t[2], t[1], t[2])
-			try: msg = city_capitalize(parameters[1]) + L(' on the map: ') + goo_gl_raw(tmp, False)
+			try: msg = city_capitalize(parameters[1]) + L(' on the map: ') + load_page(SHORT_TINYURL % enidna(tmp).decode('utf-8'))
 			except: msg = city_capitalize(parameters[1]) + L(' on the map: ') + tmp
 		else: msg = L('What?')
 	elif parameters[0] == 'search':

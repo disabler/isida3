@@ -22,7 +22,7 @@
 # --------------------------------------------------------------------------- #
 
 SHORT_TINYURL = 'http://tinyurl.com/api-create.php?url=%s'
-SHORT_CLCR = 'http://clck.ru/--?url=%s'
+SHORT_CLCK = 'http://clck.ru/--?url=%s'
 SHORT_QR = 'http://chart.apis.google.com/chart?cht=qr&chs=350x350&chld=M|2&chl=%s'
 
 def shorter_raw(type, jid, nick, text, url):
@@ -31,7 +31,7 @@ def shorter_raw(type, jid, nick, text, url):
 	else: msg = L('What?')
 	send_msg(type, jid, nick, msg)
 
-def short_clck(type, jid, nick, text): shorter_raw(type, jid, nick, text, SHORT_CLCR)
+def short_clck(type, jid, nick, text): shorter_raw(type, jid, nick, text, SHORT_CLCK)
 
 def short_tinyurl(type, jid, nick, text): shorter_raw(type, jid, nick, text, SHORT_TINYURL)
 
