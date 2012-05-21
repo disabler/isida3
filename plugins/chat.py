@@ -25,6 +25,8 @@
 ANSW_PREV = {}
 FLOOD_STATS = {}
 
+autophrases_time = {}
+
 if os.path.isfile(os.path.join(loc_folder, '%s.txt' % CURRENT_LOCALE)):
 	chat_folder = 'plugins/chat/%s/' % CURRENT_LOCALE
 else:
@@ -33,10 +35,23 @@ else:
 MIND_FILE = chat_folder + 'mind.txt'
 EMPTY_FILE = chat_folder + 'empty.txt'
 ANSWER_FILE = chat_folder + 'answer.txt'
+PHRASES_FILE = chat_folder + 'phrases.txt'
 
-list_of_mind = [m.strip() for m in readfile(MIND_FILE).split('\n') if m.strip()]
 list_of_answers = readfile(ANSWER_FILE).split('\n')
 list_of_empty = readfile(EMPTY_FILE).split('\n')
+list_of_phrases_with_highlight = []
+list_of_phrases_no_highlight = []
+for phrase in readfile(PHRASES_FILE).split('\n'):
+	if 'NICK' in phrase:
+		list_of_phrases_with_highlight.append(phrase)
+	else:
+		list_of_phrases_no_highlight.append(phrase)
+
+dict_of_mind = {}
+for p in readfile(MIND_FILE).split('\n'):
+	if '||' in p:
+		tmp1, tmp2 = p.strip().split('||')
+		dict_of_mind[tmp1] = tmp2.split('|')
 
 def flood_actions(type, room, nick, answ, msg):
 	text = ''
@@ -76,11 +91,11 @@ def getSmartAnswer(type, room, nick, text):
 	else: answ = random.choice(list_of_empty).strip()
 	score,sc, var = 1.0,0,[answ]
 	text = ' %s ' % text.upper()
-	for answer in list_of_mind:
-		s = answer.split('||')
-		sc = rating(s[0], text, room)
-		if sc > score: score,var = sc,s[1].split('|')
-		elif sc == score: var += s[1].split('|')
+	for answer in dict_of_mind:
+		sc = rating(answer, text, room)
+		if sc > score: score,var = sc,dict_of_mind[answer]
+		elif sc == score: var += dict_of_mind[answer]
+		
 	answ = random.choice(var).decode('utf-8')
 	if answ[0] != '@': return answ
 	else:
@@ -89,9 +104,9 @@ def getSmartAnswer(type, room, nick, text):
 
 def rating(s, text, room):
 	r,s = 0.0,s.decode('utf-8').split('|')
-	for _ in s:
-		if _ in text: r += 1
-		if _ in ANSW_PREV.get(room, ''): r += 0.5
+	for k in s:
+		if k in text: r += 1
+		if k in ANSW_PREV.get(room, ''): r += 0.5
 	return r
 
 def getAnswer(type, room, nick, text):
@@ -118,16 +133,32 @@ def flood_action(room,jid,nick,type,text):
 			FLOOD_STATS[room] = [jjid, tm, 1]
 		else:
 			FLOOD_STATS[room][2] += 1
-
 		if FLOOD_STATS.has_key(room) and FLOOD_STATS[room][2] >= get_config_int(room,'floodcount') and tm - FLOOD_STATS[room][1] > get_config_int(room,'floodtime'):
 			pprint('Send msg human: %s/%s [%s] <<< %s' % (room,nick,type,text),'dark_gray')
 			msg = getAnswer(type, room, nick, text)
 			pprint('Send msg human: %s/%s [%s] >>> %s' % (room,nick,type,msg),'dark_gray')
-			send_msg(type, room, nick, msg)
+			thr(send_msg_human,(type, room, nick, msg),'msg_human_auto')
 			return True
 	return False
 
-global execute, message_act_control
+def phrases_timer():
+	for room in list(set([i[0] for i in megabase])):
+		if get_config(room,'autophrases') != 'off':
+			if not room in autophrases_time:
+				autophrases_time[room] = time.time() + random.normalvariate(int(get_config(room,'autophrasestime')), 2) / 2
+			if time.time() > autophrases_time[room]:
+				if get_config(room,'autophrases') == 'without highlight':
+					msg = random.choice(list_of_phrases_no_highlight).decode('utf-8')
+				else:
+					msg = random.choice(list_of_phrases_with_highlight + list_of_phrases_no_highlight).decode('utf-8')
+				if 'NICK' in msg:
+					rand_nicks = [d[1] for d in megabase if d[0]==room if getRoom(d[4]) not in ignorebase and d[1] not in [get_xnick(room), '']]
+					msg = msg.replace('NICK', random.choice(rand_nicks))
+				send_msg('groupchat', room, '', msg)
+				autophrases_time[room] = time.time() + random.normalvariate(int(get_config(room,'autophrasestime')), 2)
+
+global execute, message_act_control, timer
 
 message_act_control = [flood_action]
+timer = [phrases_timer] 
 execute = []

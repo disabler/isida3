@@ -21,7 +21,7 @@
 #                                                                             #
 # --------------------------------------------------------------------------- #
 
-# translate: random,smart,full,partial,on,off,kick,ban,replace,mute,visitor,truncate,paste,chat,online,away,xa,dnd,on start,on shutdown,by time,black,white
+# translate: random,smart,full,partial,on,off,kick,ban,replace,mute,visitor,truncate,paste,chat,online,away,xa,dnd,on start,on shutdown,by time,black,white,without highlight,all
 
 rlmas_min = (('&','&amp;'),('\"','&quot;'),('\'','&apos;'),('<','&lt;'),('>','&gt;'))
 
@@ -1607,8 +1607,10 @@ config_prefs = {'url_title': [L('Url title is %s'), L('Automatic show title of u
 				'flood': [L('Flood is %s'), L('Autoanswer'), ['off','random','smart'], 'off'],
 				'autoflood': [L('Autoflood is %s'), L('Autoflood'), [True,False], False],
 				'floodcount': [L('Number of message for autoflood\'s start: %s'), L('Number of message for autoflood\'s start'), None, '3'],
-				'floodtime': [L('Time period for autoflood\'s start: %s'), L('Time period for autoflood\'s start'), None, '1800']
-
+				'floodtime': [L('Time period for autoflood\'s start: %s'), L('Time period for autoflood\'s start'), None, '1800'],
+				'autophrases': [L('Autophrases is %s'), L('Autophrases'), ['off','without highlight','all'], 'off'],
+				'autophrasestime': [L('Time period for autophrases is %s'), L('Time period for autophrases'), None, '7200']
+				
 				}
 
 config_group_other = [L('Other settings'),'#room-other',
@@ -1663,7 +1665,7 @@ config_group_karma = [L('Actions for karma change'),'#room-karma-action',
 				'karma_limit','karma_limit_size'],None]
 
 config_group_flood = [L('Flood settings'),'#room-flood',
-				['flood','autoflood','floodcount','floodtime'],None]
+				['flood','autoflood','floodcount','floodtime','autophrases','autophrasestime'],None]
 
 config_groups = [config_group_mucfilter,config_group_mucfilter_newbie,config_group_mucfilter_hash,config_group_mucfilter_content,
 				config_group_mucfilter_raw,config_group_mucfilter_censor,config_group_mucfilter_lists,config_group_mucfilter_caps,
