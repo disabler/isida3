@@ -18,7 +18,7 @@
 #                                                                             #
 # --------------------------------------------------------------------------- #
 
-# file: ../isida3/kernel.py
+# file: ../branch/kernel.py
 Unknown error!	Неизвестная ошибка!
 Error!	Ошибка!
 AD-Hoc commands	AD-Hoc команды
@@ -72,7 +72,7 @@ Shutdown by CTRL+C...	Какой-то умник нажал CTRL+C в консо
 System Shutdown. Trying to restart in %s sec.	Сервер потух. Попытаюсь перезапуститься через %s сек.
 Critical error! Trying to restart in %s sec.	Критическая ошибка! Попытаюсь перезапуститься через %s сек.
 
-# file: ../isida3/plugins/acl.py
+# file: ../branch/plugins/acl.py
 Acl:	Действия:
 Acl not found	Действия не найдены
 Time format error!	Ошибка формата времени!
@@ -89,14 +89,14 @@ You have no rights to do it!	У Вас недостаточно прав для 
 ACL cleared. Removed %s action(s).	ACL очищены. Удалено действий: %s
 Actions list.\nacl show - show list\nacl del [/silent] item - remove item from list\nacl [/time] [/silent] msg|message|prs|presence|role|affiliation|nick|jid|jidfull|res|age|ver|version|all [sub|exp|cexp] pattern command - execute command by condition\nallowed variables in commands: ${NICK}, ${JID}, ${SERVER}, ${EXP} and ${/EXP}\nsub = substring, exp = regular expression, cexp = case sensitive regular expression\ntime format is /number+identificator. s = sec, m = min, d = day, w = week, M = month, y = year. only one identificator allowed!	Список действий.\nacl show - показать список\nacl del [/silent] item - удалить элемент из списка\nacl [/time] [/silent] msg|message|prs|presence|role|affiliation|nick|jid|jidfull|res|age|ver|version|all [sub|exp|cexp] pattern command - выполнить команду по условию\nдоступны переменные в командах: ${NICK}, ${JID}, ${SERVER}, ${EXP} и ${/EXP}\nsub = подстрока, exp = регулярное выражение, cexp = регистрозависимое регулярное выражение\nформат времени - /число+идентификатор. s = секунды, m = минуты, d = дни, w = недели, M = месяцы, y = годы. допустим только один идентификатор!
 
-# file: ../isida3/plugins/adminmail.py
+# file: ../branch/plugins/adminmail.py
 Time limit exceeded. Wait: %s	Превышен лимит скорости посылки сообщений. Подождите: %s
 User %s (%s) from %s at %s send massage to you: %s	Пользователь %s (%s) из конференции %s в %s отправил(а) вам сообщение: %s
 Sent	Отправила
 What?	Ась?
 Send message to bot's owner\nmsgtoadmin text	Отправить сообщение владельцу бота.\nmsgtoadmin текст сообщения
 
-# file: ../isida3/plugins/age.py
+# file: ../branch/plugins/age.py
 Age statistic:\n%s	Статистика возрастов:\n%s
 I see:	Я видела:
 %s %s ago	%s %s назад
@@ -115,22 +115,22 @@ Show age statistic for conference.	Показ статистики возрас�
 Show time of join/leave + jid.	Показывает время входа/выхода + jid. Результат работы команды всегда направляется в приват.
 Show time of join/leave + jid splitted by nicks.	Показывает время входа/выхода + jid с разбивкой по никам. Результат работы команды всегда направляется в приват.
 
-# file: ../isida3/plugins/anek.py
+# file: ../branch/plugins/anek.py
 Something broken.	Что-то сломалось.
 Show random anecdote | Author: ferym	Показывает случайный анекдот с интернет ресурса | Автор: ferym
 
-# file: ../isida3/plugins/answers.py
+# file: ../branch/plugins/answers.py
 Export to file: %s | Total records: %s | Unique records: %s	Экспорт в файл: %s | Всего записей: %s | После удаления дубликатов: %s
 Import from file: %s | Total records: %s	Импорт из файла: %s | Всего записей: %s
 File %s not found!	Файл %s не доступен!
 Import/Export answers base.\nanswers import [filename] - import from file\nanswers export [filename] - export to file	Импорт/Экспорт базы ответов в текстовый файл.\nanswers import [название файла] - импорт ответов из текстового файла в базу\nanswers export [название файла] - экспорт ответов из базы в текстовый файл'
 
-# file: ../isida3/plugins/antitroll.py
+# file: ../branch/plugins/antitroll.py
 You troll!	Ты тролль!
 Done	Готово
 Repeat message to private.\ntroll nick\n[text]\n[number]	Повтор сообщения несколько раз в приват.\ntroll ник\n[текст]\n[количество]
 
-# file: ../isida3/plugins/backup.py
+# file: ../branch/plugins/backup.py
 Available copies:	Резервные копии:
 Backup copies not found.	Резервные копии не найдены
 I need an owner affiliation for backup settings!	Для резервного копирования мне необходимы права владельца конференции
@@ -145,12 +145,12 @@ What do you want to restore?	Что будем восстанавливать?
 Unknown item!	Неизвестный элемент!
 Backup/restore conference settings.\nbackup show|now|restore\nshow - show available copies\nnow - backup current conference\nrestore name_conference - restore settings name_conference in current conference	Резервное копирование/восстановление конференций.\nbackup show|now|restore\nshow - показать доступные копии\nnow - сохранить текущую конференцию\nrestore название_конференции - восстановить конференцию в текущей.
 
-# file: ../isida3/plugins/bash.py
+# file: ../branch/plugins/bash.py
 Quote not found!	Цитата не найдена!
 Quote from bash.org.ru\nbash [number]	Цитата с bash.org.ru\nbash [номер]
 Quote from ibash.org.ru\nibash [number]	Цитата с ibash.org.ru\nibash [номер]
 
-# file: ../isida3/plugins/bing.py
+# file: ../branch/plugins/bing.py
 Indonesian	индонезийский
 Italian	итальянский
 Arabic	арабский
@@ -197,7 +197,7 @@ Incorrect language settings for translate. tr list - available languages.	Неп
 Command's format: tr [from] to text	Формат команды: tr [с_какого] на_какой текст
 Bing translator.\nbt [from_language] to_language text - translate text\nbt list - list for available languages for translate\nbt info <reduction> - get info about language reduction\nbt lang <expression> - get languages by expression	Переводчик Bing.\nbt [с_какого_языка] на_какой_язык текст - перевод текста\nbt list - список языков для перевода\nbt info <сокращение> - расшифровка сокращения языка\nbt lang <выражение> - найти языки за выражением
 
-# file: ../isida3/plugins/blacklist.py
+# file: ../branch/plugins/blacklist.py
 Leave conference %s\n	Свалила из %s\n
 Conference was added in blacklist	Конференция занесена в черный список
 This conference already exist in blacklist.	Адрес уже содержится в списке.
@@ -210,7 +210,7 @@ List of conferences:\n	Список конференций:\n
 Cleared.	Очищено.
 Manage of conferences blacklist.\nblacklist add|del|show|clear\nblacklist add|del room@conference.server.tld - add|remove address from blacklist\nblacklist show - show blacklist\nblacklist clear - clear blacklist	Черный список конференций.\nblacklist add|del|show|clear\nblacklist add|del room@conference.server.tld - добавить|удалить конференцию из черного списка\nblacklist show - показать список\nblacklist clear - очистить список
 
-# file: ../isida3/plugins/bomb.py
+# file: ../branch/plugins/bomb.py
 blue	синий
 red	красный
 magenta	фиолетовый
@@ -232,35 +232,35 @@ unknown	не известно
 Bomb is deactivated! Congratulations!	Бомба деактивирована! Поздравляю!
 Take a bomb joke!	Выдача бомбы!
 
-# file: ../isida3/plugins/bugmenot.py
+# file: ../branch/plugins/bugmenot.py
 %s%% (%s votes)	%s%% (%s голосов)
 Site Blocked	Сайт заблокирован
 No results!	Нет результатов!
 Login: %s, Pass: %s - %s %s	Логин: %s, Пароль: %s - %s %s
 Search in bugmenot.com	Поиск по bugmenot.com
 
-# file: ../isida3/plugins/calendar.py
+# file: ../branch/plugins/calendar.py
 \nMon Tue Wed Thu Fri Sat Sun\n	\nПн Вт Ср Чт Пт Сб Вс\n
 Now: %s%s	Сейчас: %s%s
 Calendar. Without parameters show calendar for current month.\ncalendar [month][year][symbol_splitter]	Показ календаря. Без параметров показывает календарь на текущий месяц\ncalendar [месяц][год][символ_разделитель]
 
-# file: ../isida3/plugins/clear.py
+# file: ../branch/plugins/clear.py
 Clean by %s messages in approximately %s sec.	Начинаю зачистку! Сообщений: %s, время зачистки примерно %s сек.
 Cleaned!	Стерильно!!!
 Hidden cleaning of conference history.	Скрытая очистка истории сообщений. По умолчанию будет послано 20 скрытых + 1 сообщение в конференцию. Можно задать свой параметр от 2 до 100.
 
-# file: ../isida3/plugins/clients.py
+# file: ../branch/plugins/clients.py
 Error! %s	Ошибка! %s
 Client statistic:%s	Статистика клиентов:%s
 Clients statistic not available.	Статистика клиентов не доступна.
 I could be wrong, but %s not is here...	Я могу ошибаться, но %s тут нету...
 Show clients statistic when available.\nclients [total|global|all[ short][ os]] [string]	Статистика клиентов, если доступна.\nclients [total|global|all[ short][ os]] [строка]
 
-# file: ../isida3/plugins/convert.py
+# file: ../branch/plugins/convert.py
 Available values:\n%s	Допустимые значения:\n%s
 Currency converter\nconvert from to count\nconvert list	Конвертер валют\nconvert из в сумма\nconvert list
 
-# file: ../isida3/plugins/cron.py
+# file: ../branch/plugins/cron.py
 Cron rules:\n%s	Расписания:\n%s
 There is no cron rules.	Расписания не найдены.
 Not enough parameters!	Не достаточно параметров!
@@ -274,7 +274,7 @@ Record #%s not found!	Запись #%s не найдена!
 Removed: %s	Удалено: %s
 Execute command by cron. Used unix-type time format.\ncron [once] [anonim|silent] * * * * *\ncommand	Выполнение команды по расписанию. Формат времени аналогичен unix-версии команды. \ncron [once] [anonim|silent] * * * * *\nкоманда
 
-# file: ../isida3/plugins/disco.py
+# file: ../branch/plugins/disco.py
 - Unknown feature: %s	- Неизвестная фича: %s
 Software: %s | Version: %s\nOS: %s | Version: %s	ПО: %s | Версия: %s\nОС: %s | Версия: %s
 Type: %s	Тип: %s
@@ -298,7 +298,7 @@ Service discovery.\ndisco_raw server.tld - request information about server\ndis
 Show features of object	Показ списка возможностей клиента или сервера
 Find nick on conference server\nwhereis - find your nick on current conference server\nwhereis nick - find nick on current conference server\nwhereis nick\n[conference.]server.tld - find nick on server server.tld	Поиск ника по серверу конференций\nwhereis - поиск своего ника по серверу на котором находится текущая конференция\nwhereis nick - поиск ника по серверу на котором находится текущая конференция\nwhereis nick\n[conference.]server.tld - поиск ника по серверу server.tld
 
-# file: ../isida3/plugins/dist.py
+# file: ../branch/plugins/dist.py
 Added!	Добавлено!
 This point is in database!	Эта точка присутствует в базе данных!
 Added: 	Добавлено: 
@@ -315,14 +315,14 @@ Cities not found	Города не найдены
 Distance between cities.\ndist search city [count of cities]\ndist city1 - city2	Расстояние между городами.\ndist search город [количество ответов] - поиск города в базе\ndist город1|город2 - расстояние
 Cities and other place-name of the world. Examples:\ncity add place-name\n[latitude, longtitude] - add city to database\ncity del place-name - delete city from database\ncity search [count of results|range of results] place-name - search city\ncity map place-name - city on the map\ncity place-name - coordinates of city	Города и другие географические названия мира. Примеры:\ncity add географическое_название\n[широта, долгота] - добавить город в базу данных\ncity del географическое_название - удалить город из базы данных\ncity search [количество результатов|диапазон результатов] географическое_название - поиск города\ncity map географическое_название - город на карте\ncity географическое_название - координаты города
 
-# file: ../isida3/plugins/domain.py
+# file: ../branch/plugins/domain.py
 No data!	Нет данных!
 Unexpected error	Непредвиденная ошибка
 Sites at Domain/IP address: %s	Сайты расположенные на IP адресе/домене: %s
 Domain/IP address info:	Информация о IP адресе/домене:
 Domain/IP address whois info.	Показывает информацию whois домена/IP адреса\ndomain_info IP|домен\ndomain_info sites IP|домен - показывает сайты находящиеся на домене/IP адресе
 
-# file: ../isida3/plugins/drink.py
+# file: ../branch/plugins/drink.py
 first	первое
 second	второе
 third	третье
@@ -394,23 +394,23 @@ Database doesn't exist.	К сожалению база отсутствует.
 Find holiday\ndrink [name_holiday/date]	Поиск повода выпить ;)\ndrink [повод/дата]
 Find holiday\ncalend [name_holiday/date]	Поиск повода выпить ;)\ncalend [повод/дата]
 
-# file: ../isida3/plugins/dumpz.py
+# file: ../branch/plugins/dumpz.py
 Posting by URL: %s	Запостила по ссылке %s 
 Posting text&code on dedicated server for easy sharing.\ndumpz text - posting plain text,\ndumpz [sh|c|html|py|php|css|sql|cpp] - posting text with highlighting	Отправка текста и кода на выделенные сервера для совместного использования.\ndumpz text - отправка простого текста,\ndumpz [sh|c|html|py|php|css|sql|cpp] - отправка текста с подсветкой
 
-# file: ../isida3/plugins/execute.py
+# file: ../branch/plugins/execute.py
 I can't execute it! Error: %s	Я не могу это исполнить! Ошибка: %s
 I can't calculate it	Я не могу это посчитать
 Expression unacceptable!	Недопустимое выражение!
 Calculator.	Калькулятор.
 Execution of external code.	Выполнение внешнего кода.
 
-# file: ../isida3/plugins/flibusta.py
+# file: ../branch/plugins/flibusta.py
 No news	Новинок не найдено
 Total found %s matches. Result(s) %s:\n	Всего найдено %s совпадений. Результат(ы) %s:\n
 Search books and authors on flibusta.net.\nflibusta [-a author] [-t title] [-n number of result]	Поиск книг и авторов на сайте flibusta.net.\nflibusta [-a автор] [-t название] [-n номер результата]
 
-# file: ../isida3/plugins/fun.py
+# file: ../branch/plugins/fun.py
 Yes	Да
 Yes - definitely	Да - определенно
 You may rely on it	Вы можете положиться на это
@@ -458,7 +458,7 @@ Heads or tails	Орёл или решка
 "Poke" command\npoke nick - say a random phrase for nick\nControls command, available only for bot owner:\npoke show - show list of phrases\npoke add phrase - add phrase\npoke del phrase_number - remove phrase.	Команда "тык"\npoke nick - сказать случайную фразу nick\nКоманды управления, доступные только владельцу бота:\npoke show - показать список фраз\npoke add фраза - добавить фразу\npoke del номер_фразы - удалить фразу
 Info about your life. Example: life dd.mm.yy [hour:min:sec]	Информация о твоей жизни. Пример: life дд.мм.гг [час:мин:сек]
 
-# file: ../isida3/plugins/gis.py
+# file: ../branch/plugins/gis.py
 Night	Ночь
 Morning	Утро
 Day	День
@@ -489,7 +489,7 @@ Found:	Найдено:
 Weather forecast (short). Courtesy Gismeteo.Ru | http://www.gismeteo.ru	Краткий прогноз погоды. Предоставлено Gismeteo.Ru | http://www.gismeteo.ru
 Weather forecast (full). Courtesy Gismeteo.Ru | http://www.gismeteo.ru	Полный прогноз погоды. Предоставлено Gismeteo.Ru | http://www.gismeteo.ru'
 
-# file: ../isida3/plugins/google.py
+# file: ../branch/plugins/google.py
 %s site:en.wikipedia.org	%s site:ru.wikipedia.org
 xep "%s" not found!	xep "%s" не найден!
 Expression "%s" not found!	Выражение "%s" не найдено!
@@ -516,7 +516,7 @@ Search in google	Поиск через google
 Search XEP	Поиск XEP
 Search in en.wikipedia.org	Поиск по ru.wikipedia.org
 
-# file: ../isida3/plugins/googleplus.py
+# file: ../branch/plugins/googleplus.py
 verb	глагол
 noun	существительное
 preposition	предлог
@@ -534,11 +534,11 @@ Google URL Shortener/Unshortener	Сервис сокращения ссылок 
 Google QR-code generator	Сервис генерации QR-кодов от Google
 Google Dictionary\ngdict [from_language] to_language word	Словарь Google\ngdict [с_языка] на_язык слово
 
-# file: ../isida3/plugins/here.py
+# file: ../branch/plugins/here.py
 I see %s participant(s): %s	Я вижу %s участников: %s
 Current participants list	Список участников конференции
 
-# file: ../isida3/plugins/hideroom.py
+# file: ../branch/plugins/hideroom.py
 This command available only in private!	Команда доступна только в привате!
 Hidden conferences:	Я скрываю конфы:
 No hidden conferences.	Скрытых конференций нет.
@@ -549,7 +549,7 @@ I'm already hide a %s	Я уже скрываю конфу %s
 I'm not hide room %s	Я не скрываю конфу %s
 Hide conference.\nhide [add|del|show] [room@conference.server.tld]	Скрыть конференцию.\nhide [add|del|show][ room@conference.server.tld]
 
-# file: ../isida3/plugins/horo.py
+# file: ../branch/plugins/horo.py
 aries	овен
 taurus	телец
 gemini	близнецы
@@ -565,7 +565,7 @@ pisces	рыбы
 List of dates:\n%s	Список дат:\n%s
 Horoscope.\nhoro list - show all zodiacs.\nhoro date - show dates for zodiacs. | Author: ferym	Показывает гороскоп для указанного знака гороскопа. Просмотр знаков зодиака - "horo list". Просмотр списка дат - "horo date" | Автор: ferym
 
-# file: ../isida3/plugins/idle.py
+# file: ../branch/plugins/idle.py
 I can't find %s	Не могу найти %s
 Your last activity was %s ago	Ваша последняя активность была %s назад
 %s's last ativity was %s ago	Последняя активность %s была %s назад
@@ -573,7 +573,7 @@ message	сообщение
 presence	презенс
 Idle time	Время с момента последней активности
 
-# file: ../isida3/plugins/inlist.py
+# file: ../branch/plugins/inlist.py
 Total banned: %s	Всего в бане: %s
 Total owners: %s	Всего владельцев: %s
 Total admins: %s	Всего администраторов: %s
@@ -584,7 +584,7 @@ Search in members list of conference.	Поиск по members списку ко�
 Search in admins list of conference.	Поиск по admins списку конференции.
 Search in owners list of conference.	Поиск по owners списку конференции.
 
-# file: ../isida3/plugins/invite.py
+# file: ../branch/plugins/invite.py
 %s ishere!	%s находится тут!
 Invited	Позвала
 I seen some peoples with this nick. Get more info!	Я видела несколько человек с таким ником. Укажите точнее!
@@ -593,7 +593,7 @@ I don'n know %s	Я не знаю %s
 because: %s	по причине: %s
 Invite to conference.\ninvite nick|jid\n[reason]	Пригласить участника в конференцию.\ninvite nick|jid\n[причина]
 
-# file: ../isida3/plugins/iq.py
+# file: ../branch/plugins/iq.py
 I can't get caps of %s	Я не знаю капс %s
 %s has empty caps!	У %s пустой капс!
 vCard:	Визитка:
@@ -621,7 +621,7 @@ Users server statistic.	Статистика пользователей серв
 vCard query. Recomends make command base alias for query needs info.\nvcard_raw [nick] - query generic info\nvcard_raw nick\nshow - show available fields\nvcard_raw nick\n[field:name|field:name] - show requested fields from vcard.	Запрос vcard. Рекомендуется составить alias на базе команды для вывода нужных полей.\nvcard_raw [nick] - показ основной информации из vcard\nvcard_raw nick\nshow - показ доступных полей vcard\nvcard_raw nick\nполе:название|поле:название - показ запрошенных полей из vcard
 Server or jid uptime.	Аптайм jabber сервера или jid'а
 
-# file: ../isida3/plugins/issue.py
+# file: ../branch/plugins/issue.py
 new	новое
 pending	рассматривается
 accepted	принято
@@ -664,7 +664,7 @@ There is not Your issue or You have no rights to mark as done.	Это не Ва�
 Issue %s was marked as done earlier!	Задача %s была отмечена как готовая ранее!
 Issues\nissue [[[show|pending|accept|reject|delete|done] id] reason] - actions with issue\nissue *tag1 *tag2 some text - add issue `some text` with tags tag1 and tag2	Задания\nissue [[[show|pending|accept|reject|delete|done] id] причина] - действия с заданиями\nissue *tag1 *tag2 some text - добавить задание `some text` с тегами tag1 и tag2
 
-# file: ../isida3/plugins/istrue.py
+# file: ../branch/plugins/istrue.py
 100% True-nick!	100% Ъ-ник!
 Nicks without letters isn't true!	Ники без букв не Ъ!
 Valid of nick is - %s%s	Кошерность ника %s%s
@@ -679,10 +679,10 @@ Expression is true for %s%s	Вероятность того, что выраже
 Check truth of expession.	Проверка выражения на правдивость.
 Check different languages symbols in nick.	Проверка ника на наличие использования букв из разных языков.
 
-# file: ../isida3/plugins/jc.py
+# file: ../branch/plugins/jc.py
 Show information about conference from jc.jabber.ru.\njc [address]	Показывает информацию о указанной конференции с ресурса jc.jabber.ru\njc [конфа]
 
-# file: ../isida3/plugins/jidcatcher.py
+# file: ../branch/plugins/jidcatcher.py
 What I must find?	Чего искать-то будем?
 '%s' not found!	'%s' не найдено!
 Found resources: %s	Найдено ресурсов: %s
@@ -696,7 +696,7 @@ Wihtout parameters show all servers freom where joined in rooms, where bot is pr
 Search in internal jids base.	Поиск по внутренней базе jid'ов.
 Conference's activity.	Активность конференции.
 
-# file: ../isida3/plugins/juick.py
+# file: ../branch/plugins/juick.py
 User @%s not found!	Пользователь @%s не найден!
 Replies: %s	Ответы: %s
 Popular tags of @%s:	Популярные теги @%s:
@@ -707,7 +707,7 @@ Message posted to Juick.	Сообщение отправлено в блог Jui
 Miniblogs http://juick.com\njuick [msg][#]post - show post\njuick tags [user] - show popular tags\njuick search [text] - search text\njuick [user] @username - show messages of user	Миниблоги http://juick.com\njuick [msg][#]пост - показать пост\njuick tags [пользователь] - показать популярные теги\njuick search [текст] - поиск текста\njuick [user] @пользователь - показать последние сообщения пользователя
 Send message to blog at juick.com	Отправка сообщения в блог на juick.com
 
-# file: ../isida3/plugins/karma.py
+# file: ../branch/plugins/karma.py
 In this room karma is not changed!	В данной конфе карма не изменялась!
 Top karma: %s	Топ кармы: %s
 Karma for members is present not changed!	У присутствующих карма не изменялась!
@@ -730,15 +730,15 @@ You changes %s's karma to %s. Next time to change across: %s	Вы изменил
 Time from last change %s's karma is very small. Please wait %s	Вы недавно меняли карму %s. Надо подождать: %s
 Karma.\nkarma [show] nick\nkarma top+|- [count]\nFor change karma: nick: +1\nnick: -1	Карма участника.\nkarma [show] nick\nkarma top+|- [количество]\nДля изменения:\nnick: +1\nnick: -1
 
-# file: ../isida3/plugins/kinopoisk.py
+# file: ../branch/plugins/kinopoisk.py
 Search in www.kinopoisk.ru. Example:\nfilm [id] film_id\nfilm [search] film_name	Поиск по www.kinopoisk.ru. Пример:\nfilm [id] film_id\nfilm [search] film_name
 
-# file: ../isida3/plugins/known.py
+# file: ../branch/plugins/known.py
 I know you as:	Я видела тебя как:
 I know %s as:	Я видела %s как:
 Show user's nick changes.	Показ смены ников.
 
-# file: ../isida3/plugins/lastfm.py
+# file: ../branch/plugins/lastfm.py
 Last track %s: %s - %s %s	Последняя дорожка %s: %s - %s %s
 Unavailable!	Недоступно!
 Last tracks %s:	Последние дорожки %s:
@@ -767,7 +767,7 @@ Top tags	Топ тегов
 Top tracks	Топ треков
 Music tastes	Музыкальная совместимость
 
-# file: ../isida3/plugins/logger.py
+# file: ../branch/plugins/logger.py
 chat_log	готов поболтать
 away_log	отошел
 xa_log	давно отошел
@@ -784,7 +784,7 @@ Logs for %s already enabled.	Я уже веду логи конфы %s
 Logs for %s not enabled.	Логи в %s не включены.
 Logging history conference.\nlog [add|del|show][ room@conference.server.tld]	Включение логов конференции.\nlog [add|del|show][ room@conference.server.tld]
 
-# file: ../isida3/plugins/main.py
+# file: ../branch/plugins/main.py
 random	случайный
 smart	умный
 full	полностью
@@ -1343,13 +1343,13 @@ Conference configure.\nconfig [show[ status]|help][ item]	Настройка к�
 Deny recieve messages from unaffiliated participants in private	Запрет приёма сообщений от участников без полномочий в привате
 Temporary ignore with ddos detect.\nddos [show|del jid]	Временный игнор при подозрении на ddos.\nddos [show|del jid]
 
-# file: ../isida3/plugins/md5.py
+# file: ../branch/plugins/md5.py
 Nick %s not found!	Ник %s не найден!
 Calculate phrase md5 sum.	Расчёт md5 фразы.
 Show presence-hash of nick	Показ презенс-хеша ника.
 Show room and nick by presence-hash	Показ конференции и ника по хешу
 
-# file: ../isida3/plugins/muc.py
+# file: ../branch/plugins/muc.py
 This command available only for conference owner!	Команда доступна только владельцу конференции!
 Global ban is off in:	Глобальный бан отключён в:
 Global ban enable without limits!	Я баню глобально без ограничений!
@@ -1379,7 +1379,7 @@ Revoke voice.	Забрать голос.
 Grant moderator.	Повысить роль до модератора
 Global ban. Available only for confernce owner.\nglobal_ban del - remove conference from banlist,\nglobal_ban add - add conference into banlist,\nglobal_ban <jid> - ban jid in all rooms, where bot is admin.	Глобальный бан. Доступен только владельцам конференций.\nglobal_ban del - удалить конференцию из списка глобального бана,\nglobal_ban add - добавить конференцию в список глобального бана,\nglobal_ban <jid> - забанить jid во всех конференциях, в которых бот админ.
 
-# file: ../isida3/plugins/net.py
+# file: ../branch/plugins/net.py
 What do you want to find?	Что искать то будем?
 I can't resolve it	Не резолвится
 Port status at %s	Статус порта у %s
@@ -1391,11 +1391,11 @@ Net Ping.\nnet_ping ip|domain	Сетевой пинг.\nnet_ping ip-адрес|�
 DNS resolver.	DNS резолвер.
 Search domain zones TLD.	Поиск доменных зон TLD.
 
-# file: ../isida3/plugins/paste.py
+# file: ../branch/plugins/paste.py
 %s pasted by %s	%s запостил(а) %s
 Paste some text to server	Публикация текста на сервере
 
-# file: ../isida3/plugins/phone.py
+# file: ../branch/plugins/phone.py
 Russia, Mobile	Россия, Мобильный
 Too many results!	Слишком много результатов!
 Russia	Россия
@@ -1404,7 +1404,7 @@ Country: %s, Phone number not found	Страна: %s, Номер телефон�
 Country: %s\n%s	Страна: %s\n%s
 Information about telephone city code, DEF code or search code for city.	Информация о коде города, DEF коде, поиск кода по названию
 
-# file: ../isida3/plugins/price.py
+# file: ../branch/plugins/price.py
 Estimated value %s is %s	Оценочная стоимость домена %s составляет: %s
 What site be evaluated?	Какой сайт оценивать?
 I can't process your request.	Не получилось обработать запрос.
@@ -1412,13 +1412,13 @@ site input format is domain.tld	формат ввода сайта domain.tld
 Show estimated value of domain | Author: ferym	Показывает ориентировочную оценочную стоимость домена | Автор: ferym
 Show estimated value of domain | Author: Disabler	Показывает ориентировочную оценочную стоимость домена | Автор: Disabler
 
-# file: ../isida3/plugins/psto.py
+# file: ../branch/plugins/psto.py
 What message do you want to find?	Какой пост найти?
 Message posted to Psto.	Сообщение отправлено в блог Psto.
 Miniblogs http://psto.net\npsto [#]post[/[from_comment][-][to_comment]] - show post	Миниблоги http://psto.net\npsto [#]post[/[from_comment][-][to_comment]] - показать пост
 Send message to blog at psto.net	Отправка сообщения в блог на psto.net
 
-# file: ../isida3/plugins/quotes.py
+# file: ../branch/plugins/quotes.py
 Quotes:\n	Цитаты:\n
 rand	случайно
 by number	по номеру
@@ -1429,17 +1429,17 @@ Quote from Internet. Exaples:\nquote list - list of resources\nquote [<key> [num
 Quote from ithappens.ru\nithap [number]	Цитата с ithappens.ru\nithap [номер]
 Show random aphorism from skio.ru	Показывает случайный афоризм с ресурса skio.ru
 
-# file: ../isida3/plugins/redirect.py
+# file: ../branch/plugins/redirect.py
 Redirect command output in private.	Перенаправляет вывод команды в приват.
 Redirect command output in groupchat.	Перенаправляет вывод команды в конференцию.
 
-# file: ../isida3/plugins/say.py
+# file: ../branch/plugins/say.py
 "Say" command. Bot say in conference all text after command.	Команда "Сказать". Бот выдаст в текущую конференцию всё, что будет после команды say.
 "Say" command. Bot say in private all text after command.\npsay <nick>\ntext	Команда "Сказать в приват". Бот скажет заданный текст участнику в приват.\npsay <nick>\ntext
 Global message in all conferences, where bot is present.	Глобальное объявление во всех конференциях, где находится бот.
 Set conference topic.	Установка топика конференции
 
-# file: ../isida3/plugins/sayto.py
+# file: ../branch/plugins/sayto.py
 You access level is to low!	Вам данная функция недоступна!
 for	для
 Not transfered messages: %s	Не переданы сообщения: %s
@@ -1462,19 +1462,19 @@ You ask remember: %s	Ты просил напомнить: %s
 Send message to jid\n sayjid jid message.	Отправить сообщение на jid.\nsayjid jid message
 Send a message to yourself at next join	Послать сообщение самому себе при следующем входе
 
-# file: ../isida3/plugins/setnick.py
+# file: ../branch/plugins/setnick.py
 You can't do it!	Тибе низя!
 Change bot nick. Available only for conference owner.	Смена ника бота. Доступно только владельцу конференции.
 
-# file: ../isida3/plugins/shell.py
+# file: ../branch/plugins/shell.py
 Execute shell command.	Выполнение shell команды.
 Execute shell command without output result.	Выполнение shell команды без показа вывода команды.
 
-# file: ../isida3/plugins/shortlink.py
+# file: ../branch/plugins/shortlink.py
 URL Shortener	Сервис сокращения ссылок
 QR-code generator	Сервис генерации QR-кодов
 
-# file: ../isida3/plugins/shutdown.py
+# file: ../branch/plugins/shutdown.py
 %s by command from %s	%s по команде от %s
 reason: %s	причина: %s
 Shutdown	Завершение работы
@@ -1487,13 +1487,13 @@ Restart the bot. You can set reason.	Завершение работы бота.
 Update from VCS. You can set reason.	Обновление бота из VCS. Можно указать параметр, который будет показан в статусе бота при выходе.
 Soft update from VCS.	Мягкое обновление из VCS.
 
-# file: ../isida3/plugins/sokr.py
+# file: ../branch/plugins/sokr.py
 Abbreviations.\nExamples: sokr abbr, sokr 6 abbr, sokr 3-7 abbr	Аббревиатуры. Примеры использования: sokr abbr, sokr 6 abbr, sokr 3-7 abbr
 
-# file: ../isida3/plugins/spellcheck.py
+# file: ../branch/plugins/spellcheck.py
 Spellchecker. Example: spell [uk|ru|en] sentence	Проверка орфографии. Пример: spell [uk|ru|en] предложение
 
-# file: ../isida3/plugins/spy.py
+# file: ../branch/plugins/spy.py
 what do you want to add?	что добавить?
 not given tracking	не заданы параметры слежения
 is not specified criterion tracking	не указан критерий слежения
@@ -1506,26 +1506,26 @@ I leave your conference because low activity	Сваливаю из-за низк
 I leave conference %s by condition spy plugin: %s	Конференция %s покинута по условию spy плагина: %s
 Check conference activity\nspy add <conference>[ u<number>][ m<number>] - add conference to list. u - count users, m - count message per night. At default At least one condition - the bot will leave the conference\nspy del <conference> - remove conference from list\nspy show - show active monitoring.	Проверка активности конференции\nspy add <conference>[ u<number>][ m<number>] - добавить конференцию в список мониторинга активности. u - среднее число участников, m - количество сообщение за сутки. При невыполнении хотя бы одного условия - бот выйдет из конференции\nspy del <conference> - удалить конференцию из списка мониторинга\nspy show - показать активное слежение
 
-# file: ../isida3/plugins/svn.py
+# file: ../branch/plugins/svn.py
 en_EN.UTF8	ru_RU.UTF8
 Read user manual for commands...	Изучаем инструкции к командам...
 Show svn log.\nsvn [http://]url [limit] - show last revision(s) limit\nsvn [http://]url rXXX - show XXX revision	Показ svn-лога.\nsvn [http://]url [limit] - показ последней ревизий или нескольких, если указан параметр limit\nsvn [http://]url rXXX - показ ревизии с номером XXX
 
-# file: ../isida3/plugins/talkers.py
+# file: ../branch/plugins/talkers.py
 Talkers:\nNick\t\tWords\tPhrases\tEffect\tConf.	Болтуны:\nНик\t\tСлов\tФраз\tКоэф.\tКонфа
 Talkers:\nNick\t\tWords\tPhrases\tEffect	Болтуны:\nНик\t\tСлов\tФраз\tКоэф.
 Show local talkers	Показ локальной базы "Болтунов"
 Show global talkers	Показ глобальной базы "Болтунов"
 
-# file: ../isida3/plugins/test.py
+# file: ../branch/plugins/test.py
 Passed!	Две полоски!
 Check bot activity.	Проверка на "живость" бота.
 
-# file: ../isida3/plugins/th.py
+# file: ../branch/plugins/th.py
 Executed threads: %s | Error(s): %s	Выполнено тредов: %s | Ошибок исполнения тредов: %s
 Threads statistic	Статистика работы тредов
 
-# file: ../isida3/plugins/todate.py
+# file: ../branch/plugins/todate.py
 days	дней
 day	день
 Days	дня
@@ -1537,23 +1537,23 @@ Date has already in past!	Дата уже прошла!
 Calculate count of days for requested date, if the date is holiday, that returned title of holiday.\nSupported date formats: dd.mm.yyyy, dd.mm, dd.mm.yy, yyyy.mm.dd\nSupported splitters: ,-.:/\\ntodate 05.09\ntodate 5/9/2010	Расчёт количества дней от текущей даты до заданной, если на заданную дату выпадает праздник, то возвращается название праздника вместо запрашиваемой даты\nПоддерживаемые форматы даты: dd.mm.yyyy, dd.mm, dd.mm.yy, yyyy.mm.dd\nПоддерживаемые разделители: ,-.:/\\ntodate 05.09\ntodate 5/9/2010
 Calculate count of days for requested date.\nSupported date formats: dd.mm.yyyy, dd.mm, dd.mm.yy, yyyy.mm.dd\nSupported splitter: ,-.:/\\ntodate 05.09 before New year remained\ntodate 5/9/2010 before New year remained	Расчёт количества дней от текущей даты до заданной, с возможностью вставки собственного текста\nПоддерживаемые форматы даты: dd.mm.yyyy, dd.mm, dd.mm.yy, yyyy.mm.dd\nПоддерживаемые разделители: ,-.:/\\ntodate 05.09 До дня победы осталось\ntodate 5/9/2010 До дня победы осталось
 
-# file: ../isida3/plugins/train.py
+# file: ../branch/plugins/train.py
 Train schedules by Yandex. Example: train city1 - city2	Расписание поездов от Яндекса. Пример: train город1 - город2
 
-# file: ../isida3/plugins/turn.py
+# file: ../branch/plugins/turn.py
 qwertyuiop[]asdfghjkl;'zxcvbnm,.`QWERTYUIOP{}ASDFGHJKL:"ZXCVBNM<>~	`1234567890-=qwertyuiop[]\asdfghjkl;'zxcvbnm,./~!@#$%^&*()_+QWERTYUIOP{}|ASDFGHJKL:"ZXCVBNM<>?ё1234567890-=йцукенгшщзхъ\фывапролджэячсмитьбю.Ё!"№;%:?*()_+ЙЦУКЕНГШЩЗХЪ/ФЫВАПРОЛДЖЭЯЧСМИТЬБЮ,
 QWERTYUIOP{}ASDFGHJKL:"ZXCVBNM<>~qwertyuiop[]asdfghjkl;'zxcvbnm,.`	ё1234567890-=йцукенгшщзхъ\фывапролджэячсмитьбю.Ё!"№;%:?*()_+ЙЦУКЕНГШЩЗХЪ/ФЫВАПРОЛДЖЭЯЧСМИТЬБЮ,`1234567890-=qwertyuiop[]\asdfghjkl;'zxcvbnm,./~!@#$%^&*()_+QWERTYUIOP{}|ASDFGHJKL:"ZXCVBNM<>?
 
-# file: ../isida3/plugins/watcher.py
+# file: ../branch/plugins/watcher.py
 Timeout for ask: %s | Timeout for answer: %s | Last ask: %s | Total checks: %s	Таймаут запросов: %s | Таймаут ответов: %s | Последний запрос: %s | Всего проверок: %s
 Connection activity control.	Контроль активности соединения.
 
-# file: ../isida3/plugins/whowas.py
+# file: ../branch/plugins/whowas.py
 For a last day i see: %s	За последние сутки я видела: %s
 All who i see for a last day now is here.	Все, кого я видела за сутки, находятся тут.
 Show list of users for last day	Показ списка участников за сутки
 
-# file: ../isida3/plugins/wtf.py
+# file: ../branch/plugins/wtf.py
 I know that %s is %s	Я знаю, что %s - %s
 from %s: %s	от %s: %s
 What search?	Чего искать то будем?
@@ -1585,7 +1585,7 @@ Show definition.	Показ определения.
 Set definition.\ndfn word=definition - remember definition as word\ndfn word= - remove definition word	Установка определения.\ndfn word=definition - запоминает definition как определение word\ndfn word= - удаляет определение word
 Set global definition.\ngdfn word=definition - remember definition as word\ngdfn word= - remove definition word	Установка глобального определения.\ngdfn word=definition - запоминает definition как определение word\ngdfn word= - удаляет определение word
 
-# file: ../isida3/plugins/www.py
+# file: ../branch/plugins/www.py
 Bad url or rss/atom not found!	Ошибка url или новости не найдены!
 Found feed(s):%s%s	Канал(ы):%s%s
 It's just you. %s is up.	Только у тебя. %s работает.
@@ -1598,12 +1598,12 @@ Show net header	Показывает заголовок файла
 Check works site	Проверка работы сайта
 Search RSS/ATOM feeds	Поиск RSS/ATOM канала
 
-# file: ../isida3/plugins/wz.py
+# file: ../branch/plugins/wz.py
 City not found!	Город не найден!
 Weather by airport code. Full version.	Погода по коду аэропорта. Не оптимизированный вариант.
 Weather by airport code. Short version.	Погода по коду аэропорта. Укороченный вариант.
 Weather by airport code. Optimized version.	Погода по коду аэропорта. Оптимизированный вариант.
 Search weather by code, city, country.	Поиск погоды по коду города, городу, стране.
 
-# file: ../isida3/plugins/youtube.py
+# file: ../branch/plugins/youtube.py
 Search at YouTube	Поиск по YouTube
