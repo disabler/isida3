@@ -51,7 +51,7 @@ def karma_top(jid, nick, text, order):
 		if tmp2:
 			msg += '\n%s. %s\t%s' % (cnt,tmp2,karma_val(int(tmp[1])))
 			cnt += 1
-		if cnt >= lim: break
+		if cnt > lim: break
 	if len(msg): return L('Top karma: %s') % msg
 	else: return L('Karma for members is present not changed!')
 
