@@ -865,6 +865,7 @@ def owner(type, jid, nick, text):
 				j.setTag('c', namespace=xmpp.NS_CAPS, attrs={'node':capsNode,'ver':capsHash,'hash':'sha-1'})
 				sender(j)
 				msg = L('Append: %s') % nnick
+				cur_execute('insert into bot_owner values (%s)',(nnick,))
 			else: msg = L('Wrong jid!')
 		else: msg = L('%s is alredy in list!') % nnick
 	elif do == 'del':
@@ -880,7 +881,7 @@ def owner(type, jid, nick, text):
 			msg = L('Removed: %s') % nnick
 		else: msg = L('Not found!')
 	elif do == 'show':
-		own = cur_execute_fetchone('select * from bot_owner')
+		own = cur_execute_fetchall('select * from bot_owner order by jid')
 		msg = L('Bot owner(s): %s') % ', '.join([t[0] for t in own])
 	else: msg = L('Wrong arguments!')
 	send_msg(type, jid, nick, msg)
@@ -897,7 +898,7 @@ def ignore(type, jid, nick, text):
 	if do == 'add':
 		ign = cur_execute_fetchone('select * from bot_ignore where pattern=%s;',(nnick,))
 		if not ign:
-			cur_execute('insert into bot_ignore values (%s,)',(nnick,))		
+			cur_execute('insert into bot_ignore values (%s)',(nnick,))		
 			msg = L('Append: %s') % nnick
 		else: msg = L('%s alredy in list!') % nnick
 	elif do == 'del':
@@ -907,26 +908,26 @@ def ignore(type, jid, nick, text):
 			msg = L('Removed: %s') % nnick
 		else: msg = L('Not found!')
 	elif do == 'show':
-		ign = cur_execute_fetchone('select * from bot_ignore;')
+		ign = cur_execute_fetchall('select * from bot_ignore order by pattern;')
 		if ign: msg = ', '.join([t[0] for t in ign])
 		else: msg = L('Empty!')
-		msg = L('Ignore list: %s') % msg[:-2]
+		msg = L('Ignore list: %s') % msg
 	else: msg = L('Wrong arguments!')
 	send_msg(type, jid, nick, msg)
 
 def info_where(type, jid, nick):
-	cnf = cur_execute_fetchone('select * from conference;')
+	cnf = cur_execute_fetchall('select * from conference;')
 	msg = L('Active conference(s): %s') % len(cnf)
 	wbase = []
 	for jjid in cnf:
 		cnt = 0
-		rjid = getRoom(jjid)
+		rjid = getRoom(jjid[0])
 		for mega in megabase:
 			if mega[0] == rjid: cnt += 1
-		wbase.append((cnt, jjid))
+		wbase.append((cnt, jjid[0]))
 	wbase.sort(reverse=True)
 	nmb,hr_count = 1,0
-	hr = getFile(hide_conf,[])
+	hr = []#getFile(hide_conf,[])
 	for i in wbase:
 		if getRoom(i[1]) in hr: hr_count += 1
 		else:
@@ -936,19 +937,19 @@ def info_where(type, jid, nick):
 	send_msg(type, jid, nick, msg)
 
 def info_where_plus(type, jid, nick):
-	cnf = cur_execute_fetchone('select * from conference;')
+	cnf = cur_execute_fetchall('select * from conference;')
 	msg = L('Active conference(s): %s') % len(cnf)
 	wbase = []
 	for jjid in cnf:
-		cnt,rjid,ra = 0,getRoom(jjid),L('unknown')
+		cnt,rjid,ra = 0,getRoom(jjid[0]),L('unknown')
 		for mega in megabase:
 			if mega[0] == rjid:
 				cnt += 1
-				if '%s/%s' % mega[0:2] == jjid[0]: ra = L('%s/%s' % mega[2:4])
-		wbase.append((cnt, jjid, ra))
+				if '%s/%s' % tuple(mega[0:2]) == jjid[0]: ra = L('%s/%s' % tuple(mega[2:4]))
+		wbase.append((cnt, jjid[0], ra))
 	wbase.sort(reverse=True)
 	nmb,hr_count = 1,0
-	hr = getFile(hide_conf,[])
+	hr = []#getFile(hide_conf,[])
 	for i in wbase:
 		if getRoom(i[1]) in hr: hr_count += 1
 		else:

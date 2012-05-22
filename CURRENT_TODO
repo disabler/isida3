@@ -9,7 +9,6 @@ remove tban
 remove log_conf
 remove blacklist_base
 remove top_base
-remove hide_conf
 remove time_limit_base
 remove loc_file
 add custom_cens
