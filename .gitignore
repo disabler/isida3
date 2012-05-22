@@ -18,3 +18,4 @@ data/conflogs/chatlogs/*@*
 data/conflogs/syslogs/*@*
 data/log/*.txt
 data/log/*.log
+data/custom_censor.txt

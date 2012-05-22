@@ -870,7 +870,6 @@ Not found: %s	Не найдено: %s
 Last syslogs: %s	Последние системные логи: %s
 Locale set to: %s	Установлена локализация: %s
 Locale not found!	Локализация не найдена!
-Locale set to: en	Установлена локализация: en
 Current locale: %s	Текущая локализация: %s
 Command temporary blocked!	Команда временно блокирована!
 ok	ок

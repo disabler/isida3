@@ -274,22 +274,22 @@ def set_locale(type, jid, nick, text):
 	if len(text) >= 2:
 		text = text.lower()
 		if text != 'en':
-			lf = loc_folder+text+'.txt'
+			lf = loc_folder % text
 			if os.path.isfile(lf):
 				locales = {}
 				lf = readfile(lf).decode('UTF').replace('\r','').split('\n')
 				for c in lf:
 					if '#' not in c[:3] and len(c) and '\t' in c: locales[c.split('\t',1)[0].replace('\\n','\n').replace('\\t','\t')] = c.split('\t',1)[1].replace('\\n','\n').replace('\\t','\t')
-				writefile(loc_file,unicode('\''+text+'\''))
+				PT('bot_locale',text)
 				msg = L('Locale set to: %s') % text
 				CURRENT_LOCALE = text
 			else: msg = L('Locale not found!')
 		else:
 			locales = {}
-			msg = L('Locale set to: en')
-			writefile(loc_file,'\'en\'')
 			CURRENT_LOCALE = 'en'
-	else: msg = L('Current locale: %s') % getFile(loc_file,'\'en\'')
+			msg = L('Locale set to: %s') % CURRENT_LOCALE
+			PT('bot_locale',CURRENT_LOCALE)
+	else: msg = L('Current locale: %s') % GT('bot_locale')
 	send_msg(type, jid, nick, msg)
 
 def shell_execute(cmd):

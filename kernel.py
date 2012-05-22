@@ -362,7 +362,7 @@ def pprint(*text):
 	last_logs_store = ['[%s] %s' % (onlytimeadd(lt),text)] + last_logs_store[:last_logs_size]
 	if debug_console: print zz
 	if CommandsLog:
-		fname = '%s%02d%02d%02d.txt' % (slog_folder,lt[0],lt[1],lt[2])
+		fname = slog_folder % '%02d%02d%02d.txt' % (lt[0],lt[1],lt[2])
 		fbody = '%s|%s\n' % (onlytimeadd(lt),text)
 		fl = open(fname, 'a')
 		fl.write(fbody.encode('utf-8'))
@@ -1775,7 +1775,7 @@ def messageCB(sess,mess):
 		if is_par: no_comm = com_parser(access_mode, nowname, type, room, nick, text, jid)
 		if no_comm:
 			btl = btext.lower()
-			alias = cur_execute_fetchone("select match,cmd from alias where room=%s and (match=%s or %s ilike match||' %')",(room,btl,btl))
+			alias = cur_execute_fetchone("select match,cmd from alias where room=%s and (match=%s or %s ilike match||' %%')",(room,btl,btl))
 			if alias:
 				pprint('%s %s/%s [%s] %s' % (jid,room,nick,access_mode,text),'bright_cyan')
 				argz = btext[len(alias[0])+1:]
@@ -2446,13 +2446,18 @@ try:
 	confbase = cur_execute_fetchall('select * from conference;')
 	confbase.sort()
 except: confbase = [('%s/%s' % (defaultConf.lower(),Settings['nickname']),'')]
+
+censor = []
+
 if os.path.isfile(cens):
-	censor = readfile(cens).decode('UTF').replace('\r','').split('\n')
-	cn = []
-	for c in censor:
-		if '#' not in c and len(c): cn.append(c)
-	censor = cn
-else: censor = []
+	cf = readfile(cens).decode('UTF').replace('\r','').split('\n')
+	for c in cf:
+		if '#' not in c and len(c): censor.append(c)
+
+if os.path.isfile(custom_cens):
+	cf = readfile(cens).decode('UTF').replace('\r','').split('\n')
+	for c in cf:
+		if '#' not in c and len(c): censor.append(c)
 
 pprint('*'*50,'blue')
 pprint('*** Name: %s' % botName,'yellow')
