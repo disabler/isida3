@@ -46,7 +46,7 @@ def bot_soft_update(type, jid, nick, text):
 		pprint('*** Send new hash in to rooms')
 		cnf = cur_execute_fetchall('select * from conference;')
 		for tocon in cnf:
-			if tocon[1]: pprint('->- %s | pass: %s' % tocon),'green')
+			if tocon[1]: pprint('->- %s | pass: %s' % tocon,'green')
 			else: pprint('->- %s' % tocon[0],'green')
 			zz = join(tocon)
 	if Settings['status'] == 'online': caps_and_send(xmpp.Presence(status=Settings['message'], priority=Settings['priority']))

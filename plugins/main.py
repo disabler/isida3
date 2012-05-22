@@ -713,7 +713,7 @@ def bot_join(type, jid, nick, text):
 		if '@' not in text: text = '%s@%s' % (text,lastserver)
 		if '/' not in text: text = '%s/%s' % (text,lastnick)
 		old_text = '%s\n%s' % (text, passwd) if passwd else text
-		if cur_execute_fetchone('select * from blacklist where room=%s', (getRoom(text),): send_msg(type, jid, nick, L('Denied!'))
+		if cur_execute_fetchone('select * from blacklist where room=%s', (getRoom(text),)): send_msg(type, jid, nick, L('Denied!'))
 		else:
 			lastserver = getServer(text.lower())
 			lastnick = getResourse(text)
@@ -920,7 +920,7 @@ def info_where(type, jid, nick):
 	wbase = []
 	for jjid in cnf:
 		cnt = 0
-		rjid = getRoom(jjid[0])
+		rjid = getRoom(jjid)
 		for mega in megabase:
 			if mega[0] == rjid: cnt += 1
 		wbase.append((cnt, jjid))
@@ -1165,18 +1165,9 @@ def html_encode(body):
 #[room, nick, role, affiliation, jid]
 
 def rss_flush(jid,link,break_point):
-	global feedbase, feeds
-	tstop = []
-	feedbase = getFile(feeds,[])
-	for tmp in feedbase:
-		if tmp[4] == jid and tmp[0] == link:
-			try: tstop = tmp[5]
-			except: pass
-			feedbase.remove(tmp)
-			if not break_point: break_point = tstop
-			feedbase.append([tmp[0], tmp[1], tmp[2], int(time.time()), tmp[4], break_point])
-			writefile(feeds,str(feedbase))
-			break
+	tstop = cur_execute('select hash from feed where room=%s and url=%s',(jid,link))[0]
+	if not break_point: break_point = tstop
+	cur_execute('update talkers set time=%s, hash=%s where room=%s and url=%s',(int(time.time()),break_point,jid,link))
 	return tstop
 
 def smart_concat(text):
@@ -1190,7 +1181,6 @@ def smart_concat(text):
 	return '\n'.join(text)
 
 def rss(type, jid, nick, text):
-	global feedbase, feeds,	lastfeeds
 	msg = 'rss show|add|del|clear|new|get'
 	nosend = None
 	text = text.split(' ')
@@ -1201,35 +1191,29 @@ def rss(type, jid, nick, text):
 	elif mode == 'del' and tl < 2: msg,mode = 'rss del [http://]url',''
 	elif mode == 'new' and tl < 4: msg,mode = 'rss new [http://]url max_feed_humber [full|body|head][-url]',''
 	elif mode == 'get' and tl < 4: msg,mode = 'rss get [http://]url max_feed_humber [full|body|head][-url]',''
-	#lastfeeds = getFile(lafeeds,[])
 	if mode == 'clear':
 		if get_level(jid,nick)[0] == 9 and tl > 1: tjid = text[1]
 		else: tjid = jid
-		feedbase = getFile(feeds,[])
-		msg, tf = L('All RSS was cleared!'), []
-		for taa in feedbase:
-			if taa[4] != tjid: tf.append(taa)
-		feedbase = tf
-		writefile(feeds,str(feedbase))
+		msg = L('All RSS was cleared!')
+		cur_execute('delete from feed where room=%s',(tjid,))
 	elif mode == 'all':
-		feedbase = getFile(feeds,[])
+		feedbase = cur_execute_fetchall('select * from feed;')
 		msg = L('No RSS found!')
-		if feedbase != []:
+		if feedbase:
 			msg = L('All schedule feeds:')
 			for rs in feedbase:
 				msg += '\n%s\t%s (%s) %s' % (getName(rs[4]),rs[0],rs[1],rs[2])
 				try: msg += ' - %s' % disp_time(rs[3])
 				except: msg += ' - Unknown'
 	elif mode == 'show':
-		feedbase = getFile(feeds,[])
+		feedbase = cur_execute_fetchall('select * from feed where room=%s;',(jid,))
 		msg = L('No RSS found!')
-		if feedbase != []:
+		if feedbase:
 			msg = ''
 			for rs in feedbase:
-				if rs[4] == jid:
-					msg += '\n%s (%s) %s' % tuple(rs[0:3])
-					try: msg += ' - %s' % disp_time(rs[3])
-					except: msg += ' - Unknown'
+				msg += '\n%s (%s) %s' % tuple(rs[0:3])
+				try: msg += ' - %s' % disp_time(rs[3])
+				except: msg += ' - Unknown'
 			if len(msg): msg = L('Schedule feeds for %s:%s') % (jid,msg)
 			else: msg = L('Schedule feeds for %s not found!') % jid
 	elif mode == 'add':
@@ -1237,37 +1221,29 @@ def rss(type, jid, nick, text):
 		if text[3].split('-')[0] not in mdd:
 			send_msg(type, jid, nick, L('Mode %s not detected!') % text[3])
 			return
-		feedbase = getFile(feeds,[])
 		link = text[1]
-		if '://' not in link[:10]: link = 'http://'+link
-		for dd in feedbase:
-			if dd[0] == link and dd[4] == jid:
-				feedbase.remove(dd)
-				break
+		if '://' not in link[:10]: link = 'http://%s' % link		
+		cur_execute('delete from feed where room=%s and url=%s;',(jid,link))
 		timetype = text[2][-1:].lower()
 		if not timetype in ('h','m'): timetype = 'h'
 		try: ofset = int(text[2][:-1])
 		except: ofset = 4
 		if timetype == 'm' and ofset < GT('rss_min_time_limit'): timetype = '%sm' % GT('rss_min_time_limit')
 		else: timetype = str(ofset)+timetype
-		feedbase.append([link, timetype, text[3], int(time.time()), getRoom(jid),[]]) # url time mode
-		writefile(feeds,str(feedbase))
+		cur_execute('insert into feed values (%s,%s,%s,%s,%s,%s);',(link, timetype, text[3], int(time.time()), getRoom(jid),[]))
 		msg = L('Add feed to schedule: %s (%s) %s') % (link,timetype,text[3])
 		rss(type, jid, nick, 'get %s 1 %s' % (link,text[3]))
 	elif mode == 'del':
-		feedbase = getFile(feeds,[])
 		link = text[1]
-		if '://' not in link[:10]: link = 'http://'+link
+		if '://' not in link[:10]: link = 'http://%s' % link
 		msg = L('Can\'t find in schedule: %s') % link
-		for rs in feedbase:
-			if rs[0] == link and rs[4] == jid:
-				feedbase.remove(rs)
-				msg = L('Delete feed from schedule: %s') % link
-				writefile(feeds,str(feedbase))
-				break
+		fdb = cur_execute_fetchall('select * from feed where room=%s and url=%s;',(jid,link))
+		if fdb:
+			cur_execute('delete from feed where room=%s and url=%s;',(jid,link))
+			msg = L('Delete feed from schedule: %s') % link
 	elif mode == 'new' or mode == 'get':
 		link = text[1]
-		if '://' not in link[:10]: link = 'http://'+link
+		if '://' not in link[:10]: link = 'http://%s' % link
 		try:
 			req = urllib2.Request(link.encode('utf-8'))
 			req.add_header('User-Agent',GT('user_agent'))

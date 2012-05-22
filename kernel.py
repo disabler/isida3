@@ -2136,7 +2136,7 @@ def check_rss():
 	global rss_processed
 	if rss_processed: return
 	l_hl = int(time.time())
-	feedbase = getFile(feeds,[])
+	feedbase = cur_execute_fetchall('select * from feed order by time;')
 	for fd in feedbase:
 		ltime = fd[1]
 		timetype = ltime[-1:].lower()
@@ -2397,7 +2397,7 @@ pprint('*** Loading main plugin','white')
 pl_folder	= 'plugins/%s'
 execfile(pl_folder % 'main.py')
 
-GTIMER_DEF  = []#[check_rss,check_hash_actions,clean_user_and_server_hash]
+GTIMER_DEF  = [check_rss,check_hash_actions,clean_user_and_server_hash]
 pliname		= data_folder % 'ignored.txt'
 gtimer		= GTIMER_DEF
 gpresence	= []

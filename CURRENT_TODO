@@ -1,4 +1,15 @@
 TODO:
 - backup.py c_file
 - backup.py alfile
-remove feeds
+- backup.py feeds
+remove hide_conf
+remove spy_base
+remove ignoreban
+remove tban
+remove log_conf
+remove blacklist_base
+remove top_base
+remove hide_conf
+remove time_limit_base
+remove loc_file
+add custom_cens
