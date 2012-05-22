@@ -109,7 +109,6 @@ def get_spy_stat():
 		writefile(spy_base,str(sb))
 
 def spy_action():
-	global confs, confbase
 	if len(confbase) == 1: return None # Last conference
 	sb = getFile(spy_base,[])
 	for tmp in sb:
@@ -121,9 +120,8 @@ def spy_action():
 				elif tmp2[0] == 'm' and int(tmp2[1:]) > tmp[3]: mist = tmp2
 				sb.remove(tmp)
 				if mist:
-					if arr_semi_find(confbase, tmp[0]) >= 0:
-						confbase = arr_del_semi_find(confbase,tmp[0])
-						writefile(confs,json.dumps(confbase))
+					if cur_execute_fetchall('select * from conference where room ilike %s;', ('%s/%%'%getRoom(tmp[0]),)):
+						cur_execute('delete from conference where room ilike %s;', ('%s/%%'%getRoom(tmp[0]),))
 						leave(tmp[0], L('I leave your conference because low activity'))
 						own = cur_execute_fetchone('select * from bot_owner;')
 						if own:

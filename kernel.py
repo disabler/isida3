@@ -1885,7 +1885,7 @@ def check_hash_actions():
 				pprint('Removed hash action %s in %s' % (hal[0],tmp),'cyan')
 
 def presenceCB(sess,mess):
-	global megabase, pres_answer, confs, confbase, cu_age, presence_in, hashes, last_hash
+	global megabase, pres_answer, cu_age, presence_in, hashes, last_hash
 	presence_in += 1
 	room=unicode(mess.getFrom().getStripped())
 	nick=unicode(mess.getFrom().getResource())
@@ -2038,10 +2038,7 @@ def presenceCB(sess,mess):
 					megabase.remove(mmb)
 					break
 			if to == selfjid and status in ['307','301'] and '%s/%s' % (room,nick) in confbase:
-				if os.path.isfile(confs):
-					confbase = json.loads(readfile(confs))
-					confbase = arr_del_semi_find(confbase,getRoom(room))
-					writefile(confs,json.dumps(confbase))
+				cur_execute('delete from conference where room ilike %s;', ('%s/%%'%getRoom(room),))
 				pprint('*** bot was %s %s %s' % (['banned in','kicked from'][status=='307'],room,exit_message),'red')
 				if GT('kick_ban_notify'):
 					ntf_list = GT('kick_ban_notify_jid').replace(',',' ').replace('|',' ').replace(';',' ')

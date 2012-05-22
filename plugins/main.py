@@ -292,11 +292,6 @@ def set_locale(type, jid, nick, text):
 	else: msg = L('Current locale: %s') % getFile(loc_file,'\'en\'')
 	send_msg(type, jid, nick, msg)
 
-def match_room(room):
-	for tmp in confbase:
-		if getRoom(tmp) == room: return True
-	return None
-
 def shell_execute(cmd):
 	if GT('paranoia_mode'): result = L('Command temporary blocked!')
 	else:
@@ -674,19 +669,17 @@ def helpme(type, jid, nick, text):
 	send_msg(type, jid, nick, msg)
 
 def bot_rejoin(type, jid, nick, text):
-	global lastserver, lastnick, confbase
+	global lastserver, lastnick
 	text=unicode(text)
 	if len(text): text=unicode(text)
 	else: text=jid
 	if '\n' in text: text, passwd = text.split('\n', 1)
 	else: passwd = ''
-	if '@' not in text: text+='@'+lastserver
-	if '/' not in text: text+='/'+lastnick
-	old_text = '%s\n%s' % (text,passwd)
+	if '@' not in text: text = '%s@%s' % (text,lastserver)
+	if '/' not in text: text = '%s@%s' % (text,lastnick)
 	lastserver = getServer(text.lower())
 	lastnick = getResourse(text)
-	lroom = text
-	if arr_semi_find(confbase, getRoom(lroom)) >= 0:
+	if cur_execute_fetchall('select * from conference where room ilike %s;', ('%s/%%'%getRoom(text),)):
 		sm = L('Rejoin by %s') % nick
 		leave(text, sm)
 		time.sleep(1)
@@ -698,10 +691,9 @@ def bot_rejoin(type, jid, nick, text):
 		time.sleep(1)
 		if zz != None: send_msg(type, jid, nick, L('Error! %s') % zz)
 		else:
-			confbase = remove_by_half(confbase, getRoom(lroom))
-			confbase.append(old_text)
-			writefile(confs,json.dumps(confbase))
-	else: send_msg(type, jid, nick, L('I have never been in %s') % getRoom(lroom))
+			cur_execute('delete from conference where room ilike %s;', ('%s/%%'%getRoom(text),))
+			cur_execute('insert into conference values (%s,%s)',(text,passwd))
+	else: send_msg(type, jid, nick, L('I have never been in %s') % getRoom(text))
 
 def remove_by_half(cb,rm):
 	for tmp in cb:
@@ -711,22 +703,23 @@ def remove_by_half(cb,rm):
 	return cb
 
 def bot_join(type, jid, nick, text):
-	global lastserver, lastnick, confs, confbase, blacklist_base
+	global lastserver, lastnick, blacklist_base
 	text = unicode(text)
 	blklist = getFile(blacklist_base, [])
 	if not text or ' ' in getRoom(text): send_msg(type, jid, nick, L('Wrong arguments!'))
 	else:
 		if '\n' in text: text, passwd = text.split('\n', 1)
 		else: passwd = ''
-		if '@' not in text: text += '@%s' % lastserver
-		if '/' not in text: text += '/%s' % lastnick
+		if '@' not in text: text = '%s@%s' % (text,lastserver)
+		if '/' not in text: text = '%s/%s' % (text,lastnick)
 		old_text = '%s\n%s' % (text, passwd) if passwd else text
-		if getRoom(text) in blklist: send_msg(type, jid, nick, L('Denied!'))
+		if cur_execute_fetchone('select * from blacklist where room=%s', (getRoom(text),): send_msg(type, jid, nick, L('Denied!'))
 		else:
 			lastserver = getServer(text.lower())
 			lastnick = getResourse(text)
 			lroom = text.lower().split('/')[0]
-			if arr_semi_find(confbase, lroom) == -1:
+			cnf = cur_execute_fetchall('select * from conference where room ilike %s;', ('%s/%%'%getRoom(text),))
+			if not cnf:
 				zz = join(text, passwd)
 				while unicode(zz)[:3] == '409':
 					time.sleep(1)
@@ -734,10 +727,9 @@ def bot_join(type, jid, nick, text):
 					zz = join(text, passwd)
 				if zz != None: send_msg(type, jid, nick, L('Error! %s') % zz)
 				else:
-					confbase.append(old_text)
-					writefile(confs, json.dumps(confbase))
+					cur_execute('insert into conference values (%s,%s)',(text,passwd))
 					send_msg(type, jid, nick, L('Joined to %s') % text)
-			elif text in confbase: send_msg(type, jid, nick, L('I\'m already in %s with nick %s') % (lroom, lastnick))
+			elif cur_execute_fetchone('select * from conference where room=%s;', (text,)): send_msg(type, jid, nick, L('I\'m already in %s with nick %s') % (lroom, lastnick))
 			else:
 				zz = join(text, passwd)
 				while unicode(zz)[:3] == '409':
@@ -746,30 +738,28 @@ def bot_join(type, jid, nick, text):
 					zz = join(text, passwd)
 				if zz != None: send_msg(type, jid, nick, L('Error! %s') % zz)
 				else:
-					confbase = remove_by_half(confbase, lroom)
-					confbase.append(old_text)
+					cur_execute('delete from conference where room ilike %s;', ('%s/%%'%getRoom(text),))
+					cur_execute('insert into conference values (%s,%s)',(text,passwd))
 					#time.sleep(1)
 					#send_msg(type, jid, nick, L('Changed nick in %s to %s') % (lroom,getResourse(text)))
-					writefile(confs, json.dumps(confbase))
 
 def bot_leave(type, jid, nick, text):
-	global confs, confbase, lastserver, lastnick
+	global lastserver, lastnick
 	domain = getServer(Settings['jid'])
-	if len(confbase) == 1: send_msg(type, jid, nick, L('I can\'t leave last room!'))
+	cnf = cur_execute_fetchall('select * from conference;')
+	if len(cnf) == 1: send_msg(type, jid, nick, L('I can\'t leave last room!'))
 	else:
 		if text == '': text = jid
-		if '@' not in text: text+='@'+lastserver
-		if '/' not in text: text+='/'+lastnick
+		if '@' not in text: text = '%s@%s' % (text,lastserver)
 		if '\n' in text: text, _ = text.split('\n', 1)
 		lastserver = getServer(text)
 		lastnick = getResourse(text)
-		if len(text): text=unicode(text)
-		else: text=jid
+		text=unicode(text)
 		lroom = text
 		if is_owner(jid): nick = getName(jid)
-		if arr_semi_find(confbase, getRoom(lroom)) >= 0:
-			confbase = arr_del_semi_find(confbase,getRoom(lroom))
-			writefile(confs,json.dumps(confbase))
+		cnf = cur_execute_fetchall('select * from conference where room ilike %s;', ('%s/%%'%getRoom(text),))
+		if cfn:
+			cur_execute('delete from conference where room ilike %s;', ('%s/%%'%getRoom(text),))
 			send_msg(type, jid, nick, L('Leave room %s') % text)
 			sm = L('Leave room by %s') % nick
 			leave(getRoom(text), sm)
@@ -925,12 +915,12 @@ def ignore(type, jid, nick, text):
 	send_msg(type, jid, nick, msg)
 
 def info_where(type, jid, nick):
-	global confbase
-	msg = L('Active conference(s): %s') % len(confbase)
+	cnf = cur_execute_fetchone('select * from conference;')
+	msg = L('Active conference(s): %s') % len(cnf)
 	wbase = []
-	for jjid in confbase:
+	for jjid in cnf:
 		cnt = 0
-		rjid = getRoom(jjid)
+		rjid = getRoom(jjid[0])
 		for mega in megabase:
 			if mega[0] == rjid: cnt += 1
 		wbase.append((cnt, jjid))
@@ -946,15 +936,15 @@ def info_where(type, jid, nick):
 	send_msg(type, jid, nick, msg)
 
 def info_where_plus(type, jid, nick):
-	global confbase
-	msg = L('Active conference(s): %s') % len(confbase)
+	cnf = cur_execute_fetchone('select * from conference;')
+	msg = L('Active conference(s): %s') % len(cnf)
 	wbase = []
-	for jjid in confbase:
+	for jjid in cnf:
 		cnt,rjid,ra = 0,getRoom(jjid),L('unknown')
 		for mega in megabase:
 			if mega[0] == rjid:
 				cnt += 1
-				if mega[0]+'/'+mega[1] == jjid: ra = L(mega[2]+'/'+mega[3])
+				if '%s/%s' % mega[0:2] == jjid[0]: ra = L('%s/%s' % mega[2:4])
 		wbase.append((cnt, jjid, ra))
 	wbase.sort(reverse=True)
 	nmb,hr_count = 1,0
@@ -972,8 +962,7 @@ def get_uptime_str():
 	return un_unix(int(time.time()-starttime))
 
 def info(type, jid, nick):
-	global confbase
-	msg = L('Conference(s): %s (for more info use \'where\' command)\n') % len(confbase)
+	msg = L('Conference(s): %s (for more info use \'where\' command)\n') % cur_execute_fetchone('select count(*) from conference;')[0]
 	msg += L('Server: %s | Nick: %s\n') % (lastserver,lastnick)
 	msg += L('Message size limit: %s\n') % msg_limit
 	msg += L('Local time: %s\n') % timeadd(tuple(time.localtime()))
