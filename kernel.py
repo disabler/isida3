@@ -831,8 +831,9 @@ def iqCB(sess,iq):
 					i.setAttr(key='id', val=id)
 					i.setTag('query',namespace=xmpp.NS_DISCO_ITEMS,attrs={'node':node})
 					hr,trooms = getFile(hide_conf,[]),[]
-					for t in confbase:
-						if al == 9 or getRoom(t) not in hr: trooms.append(getRoom(t))
+					cnf = cur_execute_fetchall('select room from conference;')
+					for t in cnf:
+						if al == 9 or getRoom(t[0]) not in hr: trooms.append(getRoom(t[0]))
 					trooms.sort()
 					trooms = [xmpp.Node('item',attrs={'jid':t}) for t in trooms]
 					i.getTag('query',namespace=xmpp.NS_DISCO_ITEMS).setPayload(trooms)
@@ -875,8 +876,9 @@ def iqCB(sess,iq):
 					raise xmpp.NodeProcessed
 				elif node == xmpp.NS_MUC_ROOMS and GT('iq_show_rooms_disco'):
 					hr,trooms = getFile(hide_conf,[]),[]
-					for t in confbase:
-						if al == 9 or getRoom(t) not in hr: trooms.append(getRoom(t))
+					cnf = cur_execute_fetchall('select room from conference;')
+					for t in cnf:
+						if al == 9 or getRoom(t[0]) not in hr: trooms.append(getRoom(t[0]))
 					trooms.sort()
 					trooms = [xmpp.Node('item',attrs={'jid':t}) for t in trooms]
 					i.getTag('query',namespace=xmpp.NS_DISCO_ITEMS).setPayload(trooms)
@@ -1725,8 +1727,7 @@ def com_parser(access_mode, nowname, type, room, nick, text, jid):
 	return no_comm
 
 def messageCB(sess,mess):
-	global lfrom, lto, confbase, confs, lastserver, lastnick, comms
-	global ignorebase, message_in, no_comm, last_hash
+	global lfrom, lto, lastserver, lastnick, comms, message_in, no_comm, last_hash
 	message_in += 1
 	type=unicode(mess.getType())
 	room=unicode(mess.getFrom().getStripped())
@@ -2037,7 +2038,7 @@ def presenceCB(sess,mess):
 				if mmb[0]==room and mmb[1]==nick:
 					megabase.remove(mmb)
 					break
-			if to == selfjid and status in ['307','301'] and '%s/%s' % (room,nick) in confbase:
+			if to == selfjid and status in ['307','301'] and cur_execute_fetchone('select room from conference where room=%s',('%s/%s' % (room,nick),)):
 				cur_execute('delete from conference where room ilike %s;', ('%s/%%'%getRoom(room),))
 				pprint('*** bot was %s %s %s' % (['banned in','kicked from'][status=='307'],room,exit_message),'red')
 				if GT('kick_ban_notify'):
@@ -2146,11 +2147,7 @@ def check_rss():
 		elif timetype == 'm': ofset *= 60
 		try: ll_hl = int(fd[3])
 		except: ll_hl = 0
-		in_room = None
-		for tmp in confbase:
-			if getRoom(tmp) == fd[4]:
-				in_room = True
-				break
+		in_room = cur_execute_fetchone('select room from conference where room ilike %s',('%%%s'%fd[4],))
 		if ofset < 600: ofset = 600
 		if in_room and ll_hl + ofset <= l_hl:
 			rss_processed = True
@@ -2443,10 +2440,11 @@ if os.path.isfile(starttime_file):
 	except: starttime = readfile(starttime_file)
 else: starttime = int(time.time())
 sesstime = int(time.time())
-ignorebase = cur_execute_fetchall('select * from bot_ignore;')
 cu_age = []
 close_age_null()
-try: confbase = cur_execute_fetchall('select * from conference;')
+try:
+	confbase = cur_execute_fetchall('select * from conference;')
+	confbase.sort()
 except: confbase = [('%s/%s' % (defaultConf.lower(),Settings['nickname']),'')]
 if os.path.isfile(cens):
 	censor = readfile(cens).decode('UTF').replace('\r','').split('\n')
@@ -2541,8 +2539,6 @@ for tocon in confbase:
 		time.sleep(1)
 		baseArg += '_'
 		zz = join(baseArg, tocon[1])
-	if tocon[1]: cb.append('%s\n%s' % tocon)
-	else: cb.append(baseArg)
 	if zz:
 		pprint('-!- Error "%s" while join in to %s' % (zz,baseArg),'red')
 		if GT('show_loading_by_status'):
@@ -2551,7 +2547,6 @@ for tocon in confbase:
 			else: caps_and_send(xmpp.Presence(show=GT('show_loading_by_status_show'), status=join_status, priority=Settings['priority']))
 	else: pprint('-<- %s' % baseArg,'bright_green')
 	if game_over: break
-confbase = cb
 is_start = plugins_reload = None
 pprint('Joined','white')
 

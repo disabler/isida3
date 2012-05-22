@@ -63,8 +63,7 @@ def define_message(room, jid, nick, type, text):
 	if s != 'off':
 		cof = getFile(conoff, [])
 		if (room, 'define') in cof: return
-		tmppos = arr_semi_find(confbase, room)
-		nowname = getResourse(confbase[tmppos])
+		nowname = getResourse(cur_execute_fetchone('select room from conference where room ilike %s',('%%%s'%room,))[0])
 		text = re.sub('^%s[,:]\ ' % re.escape(nowname), '', text.strip())
 		what = re.search([u'^(?:(?:что такое)|(?:кто такой)|(?:кто такая)) ([^?]+?)\?$', u'(?:(?:что такое)|(?:кто такой)) ([^?]+?)\?'][s == 'partial'], text, re.I + re.U + re.S)
 		if what:

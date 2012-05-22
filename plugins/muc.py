@@ -54,12 +54,12 @@ def global_ban(type, jid, nick, text):
 			elif '@' not in text or '.' not in text: msg = L('I need jid!')
 			else:
 				reason = L('banned global by %s from %s') % (nick, jid)
-				for tmp in confbase:
+				for tmp in [t[0] for t in cur_execute_fetchall('select room from conference;')]:
 					if not (getRoom(tmp) in hr):
 						i = xmpp.Node('iq', {'id': get_id(), 'type': 'set', 'to':getRoom(tmp)}, payload = [xmpp.Node('query', {'xmlns': xmpp.NS_MUC_ADMIN},[xmpp.Node('item',{'affiliation':'outcast', 'jid':unicode(text)},[xmpp.Node('reason',{},reason)])])])
 						sender(i)
 						time.sleep(0.1)
-				msg = L('jid %s has been banned in %s conferences.') % (text, len(confbase)-len(hr))
+				msg = L('jid %s has been banned in %s conferences.') % (text, cur_execute_fetchall('select count(*) from conference;')[0]-len(hr))
 		else: msg = L('Command temporary blocked!')
 	send_msg(type, jid, nick, msg)
 

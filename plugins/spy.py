@@ -36,10 +36,7 @@ def spy_add(text):
 			return L('is not specified criterion tracking')
 		try: int(tmp[1:])
 		except: return L('incorrect digital parameter')
-	cb = []
-	for tmp in confbase:
-		cb.append(getRoom(tmp))
-	if sconf not in cb: return L('I am not in the %s ') % sconf
+	if sconf not in [t[0] for t in cur_execute_fetchone('select room from conference;')]: return L('I am not in the %s ') % sconf
 	msg = L('Append: %s') % text
 	for tmp in sb:
 		if tmp[0] == sconf:
@@ -109,7 +106,7 @@ def get_spy_stat():
 		writefile(spy_base,str(sb))
 
 def spy_action():
-	if len(confbase) == 1: return None # Last conference
+	if cur_execute_fetchall('select count(*) from conference;')[0] == 1: return None # Last conference
 	sb = getFile(spy_base,[])
 	for tmp in sb:
 		if time.time()-tmp[1] > GT('spy_action_time'):

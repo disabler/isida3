@@ -31,7 +31,7 @@ def psay(type, jid, nick, text):
 	except: send_msg(type, jid, nick, L('Error in parameters. Read the help about command.'))
 
 def gsay(type, jid, nick, text):
-	for jjid in confbase: send_msg('groupchat', getRoom(jjid), '', text)
+	for jjid in [t[0] for t in cur_execute_fetchall('select room from conference;')]: send_msg('groupchat', getRoom(jjid), '', text)
 
 def set_topic(type, jid, nick, text):
 	sender(xmpp.Message(jid, subject=text, typ='groupchat'))

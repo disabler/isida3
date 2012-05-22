@@ -22,18 +22,15 @@
 # --------------------------------------------------------------------------- #
 
 def leave_room(rjid, reason):
-	global confbase, confs
 	msg = ''
-	for i in range(0, len(confbase)):
-		if rjid == getRoom(confbase[i]):
-			confbase.remove(confbase[i])
-			writefile(confs, str(confbase))
-			leave(rjid, reason)
-			msg = L('Leave conference %s\n') % rjid
+	cnf = cur_execute_fetchone('select room from conference where room ilike %s',('%%%s'%rjid,))
+	if cnf:
+		cur_execute('delete from conference where room ilike %s;', ('%s/%%'%rjid,))
+		leave(rjid, reason)
+		msg = L('Leave conference %s\n') % rjid
 	return msg
 
 def blacklist(type, jid, nick, text):
-	global confbase, lastserver
 	text, msg = unicode(text.lower()), ''
 	templist = getFile(blacklist_base, [])
 	reason = L('Conference was added in blacklist')
@@ -42,7 +39,7 @@ def blacklist(type, jid, nick, text):
 		if '@' not in text[1]: text[1] += '@%s' % lastserver
 		if text[0] == 'add':
 			if text[1] in templist: msg = L('This conference already exist in blacklist.')
-			elif len(confbase)==1 and text[1] == getRoom(confbase[0]):
+			elif cur_execute_fetchone('select count(*) from conference;')[0]==1 and getRoom(cur_execute_fetchone('select room from conference;')[0]) == text[1]:
 				msg =L('You can\'t add last conference in blacklist.')
 			else:
 				msg = leave_room(text[1], reason)

@@ -57,8 +57,7 @@ def flood_actions(type, room, nick, answ, msg):
 	text = ''
 	jid = getRoom(get_level(room,nick)[1])
 	cof = getFile(conoff,[])
-	tmppos = arr_semi_find(confbase, room)
-	nowname = getResourse(confbase[tmppos])
+	nowname = getResourse(cur_execute_fetchone('select room from conference where room ilike %s',('%%%s'%room,))[0])
 	access_mode = get_level(room,nick)[0]
 	if (room, answ[1:]) in cof: return
 	if answ == '@ping':
@@ -127,7 +126,7 @@ def flood_action(room,jid,nick,type,text):
 		cur_alias = cur_execute_fetchall('select match from alias where room=%s',(room,))
 		if cur_alias: cur_alias = [t[0] for t in cur_alias]
 		else: cur_alias = []
-		if nick in [get_xnick(room), ''] or jjid in ignorebase or ddos_ignore.has_key(jjid): return
+		if nick in [get_xnick(room), ''] or cur_execute_fetchone('select pattern from bot_ignore where %s ilike pattern',(jjid,)) or ddos_ignore.has_key(jjid): return
 		if first_word in [prefix + i[1] for i in comms] + cur_alias or first_word[:-1] in [d[1] for d in megabase if d[0]==room]:
 			if FLOOD_STATS.has_key(room) and FLOOD_STATS[room][0] != jjid: FLOOD_STATS[room] = ['', 0, 0]
 			return
@@ -154,7 +153,7 @@ def phrases_timer():
 				else:
 					msg = random.choice(list_of_phrases_with_highlight + list_of_phrases_no_highlight).decode('utf-8')
 				if 'NICK' in msg:
-					rand_nicks = [d[1] for d in megabase if d[0]==room if getRoom(d[4]) not in ignorebase and d[1] not in [get_xnick(room), '']]
+					rand_nicks = [d[1] for d in megabase if d[0]==room if cur_execute_fetchone('select pattern from bot_ignore where %s ilike pattern',(getRoom(d[4]),)) and d[1] not in [get_xnick(room), '']]
 					msg = msg.replace('NICK', random.choice(rand_nicks))
 				send_msg('groupchat', room, '', msg)
 				autophrases_time[room] = time.time() + random.normalvariate(int(get_config(room,'autophrasestime')), 2)

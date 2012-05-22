@@ -200,7 +200,7 @@ def log_room(type, jid, nick, text):
 				for tmp in hr: msg += '\n%s' % tmp
 			else: msg = L('Logs are turned off in all conferences.')
 		elif hmode == 'add':
-			if not match_room(hroom): msg = L('I am not in the %s') % hroom
+			if not cur_execute_fetchall('select * from conference where room ilike %s;', ('%s/%%'%getRoom(hroom),)): msg = L('I am not in the %s') % hroom
 			elif hroom in hr: msg = L('Logs for %s already enabled.') % hroom
 			else:
 				hr.append(hroom)

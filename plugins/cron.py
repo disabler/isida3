@@ -117,13 +117,11 @@ def cron_action():
 				tm = crontab.CronTab(t[4]).next() + time.time()
 				m = list(t[:3]) + [tm] + list(t[4:7])
 				cur_execute('insert into cron values (%s,%s,%s,%s,%s,%s,%s)', m)
-			tmppos = arr_semi_find(confbase, t[0])
-			if tmppos == -1:
+			tmp = cur_execute_fetchone('select room from conference where room ilike %s',('%%%s'%t[0],))
+			if not tmp:
 				pprint('Can\'t execute by cron: %s in %s' % (t[5].split()[0],t[0]))
 				return
-			else:
-				nowname = getResourse(confbase[tmppos])
-				if nowname == '': nowname = Settings['nickname']
+			else: nowname = getResourse(tmp[0])
 			if t[2] == '\n': tmp_nick,tmp_type = '%s_cron_%d' % (nowname,time.time()),'chat'
 			else: tmp_nick,tmp_type = t[2],'groupchat'
 			com_parser(t[6], nowname, tmp_type, t[0], tmp_nick, t[5], Settings['jid'])

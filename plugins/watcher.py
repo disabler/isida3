@@ -51,21 +51,24 @@ def watch_room_activity():
 	if not GT('watcher_room_activity'): return
 	global watch_last_activity
 	to = int(time.time())-GT('watch_activity_timeout')
-	for tmp in confbase:
-		try: cw = watch_last_activity[getRoom(tmp)]
-		except: cw = to
-		if cw < to:
-			watch_last_activity[getRoom(tmp)] = int(time.time())
-			text = tmp
-			if '\n' in text: text,passwd = text.split('\n',2)
-			else: passwd = ''
-			zz = join(text, passwd)
-			while unicode(zz)[:3] == '409':
-				time.sleep(1)
-				text += '_'
+	cnf = cur_execute_fetchall('select room from conference;')
+	if cnf:
+		for t in cnf:
+			tmp = t[0]
+			try: cw = watch_last_activity[getRoom(tmp)]
+			except: cw = to
+			if cw < to:
+				watch_last_activity[getRoom(tmp)] = int(time.time())
+				text = tmp
+				if '\n' in text: text,passwd = text.split('\n',2)
+				else: passwd = ''
 				zz = join(text, passwd)
-			time.sleep(1)
-			pprint('Low activity! Try rejoin into %s' % text,'white')
+				while unicode(zz)[:3] == '409':
+					time.sleep(1)
+					text += '_'
+					zz = join(text, passwd)
+				time.sleep(1)
+				pprint('Low activity! Try rejoin into %s' % text,'white')
 
 def watcher_reset(a,b,c,d,e):
 	global watch_reset

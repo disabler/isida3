@@ -150,7 +150,8 @@ def bomb_random():
 		bt -= 1
 	while not game_over:
 		ntime = time.time()
-		for tmp in confbase:
+		cb = [t[0] for t in cur_execute_fetchone('select room from conference;')]
+		for tmp in cb:
 			tconf = getRoom(tmp)
 			try: bla = get_config(tconf,'bomb_random_active') and (ntime - bomb_last_activity[tconf]) < get_config_int(tconf,'bomb_random_active_timer')
 			except: bla = True

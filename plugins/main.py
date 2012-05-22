@@ -886,7 +886,7 @@ def owner(type, jid, nick, text):
 	send_msg(type, jid, nick, msg)
 
 def ignore(type, jid, nick, text):
-	global ignorebase, ignores, god
+	global god
 	text = text.lower().strip()
 	do = text.split(' ',1)[0]
 	try: nnick = text.split(' ',1)[1].lower()

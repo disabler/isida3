@@ -34,7 +34,7 @@ def hide_room(type, jid, nick, text):
 				for tmp in hr: msg += '\n'+tmp
 			else: msg = L('No hidden conferences.')
 		elif hmode == 'add':
-			if not match_room(hroom): msg = L('I am not in the %s') % hroom
+			if not cur_execute_fetchall('select * from conference where room ilike %s;', ('%s/%%'%getRoom(hroom),)): msg = L('I am not in the %s') % hroom
 			elif hroom in hr: msg = L('I\'m already hide a %s') % hroom
 			else:
 				hr.append(hroom)

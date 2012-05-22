@@ -44,15 +44,11 @@ def bot_soft_update(type, jid, nick, text):
 	while not game_over and plugins_reload: time.sleep(1)
 	if GT('soft_update_resend_hash'):
 		pprint('*** Send new hash in to rooms')
-		for tocon in confbase:
-			tocon = tocon.strip()
-			if '\n' in tocon: pprint('->- %s | pass: %s' % tuple(tocon.split('\n',1)),'green')
-			else: pprint('->- %s' % tocon,'green')
-			baseArg = unicode(tocon)
-			if '/' not in baseArg: baseArg += '/%s' % unicode(Settings['nickname'])
-			if '\n' in baseArg: baseArg,passwd = baseArg.split('\n',2)
-			else: passwd = ''
-			zz = join(baseArg, passwd)
+		cnf = cur_execute_fetchall('select * from conference;')
+		for tocon in cnf:
+			if tocon[1]: pprint('->- %s | pass: %s' % tocon),'green')
+			else: pprint('->- %s' % tocon[0],'green')
+			zz = join(tocon)
 	if Settings['status'] == 'online': caps_and_send(xmpp.Presence(status=Settings['message'], priority=Settings['priority']))
 	else: caps_and_send(xmpp.Presence(show=Settings['status'], status=Settings['message'], priority=Settings['priority']))
 	send_msg(type, jid, nick, L('Soft update finished! Plugins loaded: %s. Commands: %s') % (len(plugins)+1,len(comms)))
