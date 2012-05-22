@@ -28,9 +28,9 @@ FLOOD_STATS = {}
 autophrases_time = {}
 
 if os.path.isfile(os.path.join(loc_folder, '%s.txt' % CURRENT_LOCALE)):
-	chat_folder = 'plugins/chat/%s/' % CURRENT_LOCALE
+	chat_folder = data_folder % 'chat/%s/' % CURRENT_LOCALE
 else:
-	chat_folder = 'plugins/chat/en/'
+	chat_folder = data_folder % 'chat/en/'
 
 MIND_FILE = chat_folder + 'mind.txt'
 EMPTY_FILE = chat_folder + 'empty.txt'
@@ -126,18 +126,17 @@ def flood_action(room,jid,nick,type,text):
 		first_word = text.split(' ', 1)[0]
 		if nick in [get_xnick(room), ''] or jjid in ignorebase or ddos_ignore.has_key(jjid): return
 		if first_word in [prefix + i[1] for i in comms] + [i[1] for i in aliases if i[0] == room] or first_word[:-1] in [d[1] for d in megabase if d[0]==room]:
-			if FLOOD_STATS.has_key(room) and FLOOD_STATS[room][0] != jjid:
-				FLOOD_STATS[room] = ['', 0, 0]
+			if FLOOD_STATS.has_key(room) and FLOOD_STATS[room][0] != jjid: FLOOD_STATS[room] = ['', 0, 0]
 			return
-		if not FLOOD_STATS.has_key(room) or FLOOD_STATS[room][0] != jjid:
-			FLOOD_STATS[room] = [jjid, tm, 1]
-		else:
-			FLOOD_STATS[room][2] += 1
+		if not FLOOD_STATS.has_key(room) or FLOOD_STATS[room][0] != jjid: FLOOD_STATS[room] = [jjid, tm, 1]
+		else: FLOOD_STATS[room][2] += 1
 		if FLOOD_STATS.has_key(room) and FLOOD_STATS[room][2] >= get_config_int(room,'floodcount') and tm - FLOOD_STATS[room][1] > get_config_int(room,'floodtime'):
 			pprint('Send msg human: %s/%s [%s] <<< %s' % (room,nick,type,text),'dark_gray')
-			msg = getAnswer(type, room, nick, text)
-			pprint('Send msg human: %s/%s [%s] >>> %s' % (room,nick,type,msg),'dark_gray')
-			thr(send_msg_human,(type, room, nick, msg),'msg_human_auto')
+			try:
+				msg = getAnswer(type, room, nick, text)
+				if text: send_msg_human(type, room, nick, msg, 'msg_human_auto')
+				else: return False
+			except: return False
 			return True
 	return False
 

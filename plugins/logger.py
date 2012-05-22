@@ -29,9 +29,9 @@ last_log_file = {}
 last_log_presence = {}
 log_header = ['','<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml" xml:lang="ru" lang="ru"><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><link href="%s" rel="stylesheet" type="text/css" /><title>\n' % logs_css_path][GT('html_logs_enable')]
 
-if not os.path.exists(log_folder): os.mkdir(log_folder)
-if not os.path.exists(public_log): os.mkdir(public_log)
-if not os.path.exists(system_log) and GT('syslogs_enable'): os.mkdir(system_log)
+if not os.path.exists(log_folder % ''): os.mkdir(log_folder % '')
+if not os.path.exists(public_log % ''): os.mkdir(public_log % '')
+if not os.path.exists(system_log % '') and GT('syslogs_enable'): os.mkdir(system_log % '')
 
 for smilepack in smiles_dirs_case:
 	smile_dictionary[smilepack] = {}
@@ -65,8 +65,8 @@ def initial_log_users(room,ott):
 
 def append_message_to_log(room,jid,nick,type,text):
 	global public_log, system_log
-	hr = getFile(log_conf,[])
-	if len(hr) and room in hr:
+	hr = cur_execute_fetchone('select * from log_rooms where room=%s;',(room,))
+	if hr:
 		if GT('html_logs_enable'): text,jid,nick = html_escape(text).replace('\n','<br>'), html_escape(jid), html_escape(nick)
 		if type == 'groupchat' and text != 'None':
 			if get_config(getRoom(room),'smiles') != 'off': ptext = smile_replace(room, text)
@@ -97,7 +97,7 @@ def write_log_with_end(curr_path,curr_file,log_body,log_he):
 
 def msg_logger(room,jid,nick,type,text,logfile):
 	lt = tuple(time.localtime())
-	curr_path = '%s/%s' % (logfile,room)
+	curr_path = logfile % room
 	if not os.path.exists(curr_path): os.mkdir(curr_path)
 	curr_path = '%s/%s' % (curr_path,lt[0])
 	if not os.path.exists(curr_path): os.mkdir(curr_path)
@@ -118,8 +118,8 @@ def msg_logger(room,jid,nick,type,text,logfile):
 
 def append_presence_to_log(room,jid,nick,type,mass):
 	global public_log, system_log
-	hr = getFile(log_conf,[])
-	if len(hr) and room in hr:
+	hr = cur_execute_fetchone('select * from log_rooms where room=%s;',(room,))
+	if hr:
 		# (text, role, affiliation, exit_type, exit_message, show, priority, not_found)
 		try: llp = [last_log_presence[room+jid+nick],None][type == 'unavailable']
 		except: llp = None
@@ -141,7 +141,7 @@ def presence_logger(room,jid,nick,type,mass,mode,logfile):
 		if not_found == 1 and not GT('aff_role_logs_enable'): return
 		if not_found == 2 and not GT('status_logs_enable'): return
 		lt = tuple(time.localtime())
-		curr_path = '%s/%s' % (logfile,room)
+		curr_path = logfile % room
 		if not os.path.exists(curr_path): os.mkdir(curr_path)
 		curr_path = '%s/%s' % (curr_path,lt[0])
 		if not os.path.exists(curr_path): os.mkdir(curr_path)
@@ -190,7 +190,7 @@ def log_room(type, jid, nick, text):
 		hmode = text[0]
 		try: hroom = text[1]
 		except: hroom = jid
-		hr = getFile(log_conf,[])
+		hr = getFile(log_conf,[]) # !!! hr = cur_execute_fetchone('select * from log_rooms where room=%s;',(room,))
 		if not hmode:
 			if hroom in hr: msg = L('Logs for %s enabled.') % hroom
 			else: msg = L('Logs for %s disabled.') % hroom

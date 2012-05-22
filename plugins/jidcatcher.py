@@ -112,7 +112,7 @@ def jidcatcher_presence(room,jid,nick,type,text):
 
 global execute, presence_control
 
-presence_control = [jidcatcher_presence]
+presence_control = []#[jidcatcher_presence]
 
 execute = [(4, 'res', info_res, 2, L('Without parameters show top10 resources for all conferences, where bot is present.\nwith parameters - search in resources base\ncount - number of results.')),
 		   (6, 'serv', info_serv, 2, L('Wihtout parameters show all servers freom where joined in rooms, where bot is present\nwith parameters - search on servers base\ncount - show number of results.')),

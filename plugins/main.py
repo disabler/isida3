@@ -140,12 +140,9 @@ def kill_all_threads():
 				except: pass
 
 def get_xnick(jid):
-	tmppos = arr_semi_find(confbase, jid)
-	if tmppos == -1: nowname = Settings['nickname']
-	else:
-		nowname = getResourse(confbase[tmppos]).split('\n')[0]
-		if nowname == '': nowname = Settings['nickname']
-	return nowname
+	tmp = cur_execute_fetchone('select room from conference where room ilike %s',('%%%s'%jid,))
+	if tmp: return getResourse(tmp[0])
+	else: return Settings['nickname']
 
 def get_xtype(jid):
 	nowname = get_xnick(jid)
@@ -247,14 +244,7 @@ def get_level(cjid, cnick):
 			if '%s|%s' % (base[2],base[3]) in levl:
 				access_mode = levl['%s|%s' % (base[2],base[3])]
 				break
-	for iib in ignorebase:
-		grj = getRoom(jid.lower())
-		if iib.lower() == grj:
-			access_mode = -1
-			break
-		if not '@' in iib and iib.lower() in grj:
-			access_mode = -1
-			break
+	if cur_execute_fetchone('select pattern from bot_ignore where %s ilike pattern',(getRoom(jid.lower()),)): access_mode = -1			
 	rjid = getRoom(jid)
 	if rjid in ownerbase: access_mode = 9
 	if jid == 'None' and cjid in ownerbase: access_mode = 9
@@ -1877,7 +1867,7 @@ comms = [
 	 (0, 'whois', info_whois, 2, L('Identification.')),
 	 (0, 'status', status, 2, L('Show status.')),
 	 (3, 'prefix', set_prefix, 2, L('Set command prefix. Use \'none\' for disable prefix')),
-	 (9, 'set_locale', set_locale, 2, 'Change bot localization.\nset_locale en|%s' % '|'.join([tmp[:-4] for tmp in os.listdir(loc_folder) if tmp[-4:]=='.txt'])),
+	 (9, 'set_locale', set_locale, 2, 'Change bot localization.\nset_locale en|%s' % '|'.join([tmp[:-4] for tmp in os.listdir(loc_folder[:-6]) if tmp[-4:]=='.txt'])),
 	 (7, 'config', configure, 2, L('Conference configure.\nconfig [show[ status]|help][ item]')),
 	 (4, 'pmlock', muc_filter_lock, 2, L('Deny recieve messages from unaffiliated participants in private')),
 	 (9, 'ddos', ddos_info, 2, L('Temporary ignore with ddos detect.\nddos [show|del jid]'))]

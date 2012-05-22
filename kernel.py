@@ -24,7 +24,6 @@
 from __future__ import with_statement
 
 import calendar
-import chardet
 import crontab
 import datetime
 import gc
@@ -44,6 +43,8 @@ import sys
 import time
 import urllib
 import urllib2
+
+import chardet
 import xmpp
 
 global execute, prefix, comms, hashlib, trace
@@ -61,12 +62,13 @@ def cur_execute(*params):
 		prm = params[0].split()[0].lower()
 		if prm in ['update','insert','delete','create','drop','alter']: conn.commit()
 	except Exception, par:
-		if db_debug:
+		if database_debug:
 			try: par = str(par)
 			except: par = unicode(par)
 			pprint(par)
 		else: par = None
 		conn.rollback()
+		if halt_on_exception: raise
 	cur.close()
 	return par
 
@@ -82,15 +84,17 @@ def cur_execute_fetchone(*params):
 		cur.execute(*params)
 		try: par = cur.fetchone()
 		except Exception, par:
-			if db_debug:
+			if database_debug:
 				try: par = str(par)
 				except: par = unicode(par)
 			else: par = None
+			if halt_on_exception: raise
 	except Exception, par:
-		if db_debug:
+		if database_debug:
 			try: par = str(par)
 			except: par = unicode(par)
 			pprint(par)
+			if halt_on_exception: raise
 		else: par = None
 		conn.rollback()
 	cur.close()
@@ -108,17 +112,19 @@ def cur_execute_fetchall(*params):
 		cur.execute(*params)
 		try: par = cur.fetchall()
 		except Exception, par:
-			if db_debug:
+			if database_debug:
 				try: par = str(par)
 				except: par = unicode(par)
 			else: par = None
+			if halt_on_exception: raise
 	except Exception, par:
-		if db_debug:
+		if database_debug:
 			try: par = str(par)
 			except: par = unicode(par)
 			pprint(par)
 		else: par = None
 		conn.rollback()
+		if halt_on_exception: raise
 	cur.close()
 	return par
 
@@ -133,18 +139,20 @@ def cur_execute_fetchmany(*params):
 		cur.execute(params[0],params[1])
 		try: par = cur.fetchmany(params[-1])
 		except Exception, par:
-			if db_debug:
+			if database_debug:
 				try: par = str(par)
 				except: par = unicode(par)
 				pprint(par)
 			else: par = None
+			if halt_on_exception: raise
 	except Exception, par:
 		conn.rollback()
-		if db_debug:
+		if database_debug:
 			try: par = str(par)
 			except: par = unicode(par)
 			pprint(par)
 		else: par = None
+		if halt_on_exception: raise
 	cur.close()
 	return par
 
@@ -171,6 +179,7 @@ def thr(func,param,name):
 		if thread_type:
 			try: tmp_th.kill()
 			except: pass
+		if halt_on_exception: raise
 
 def log_execute(proc, params):
 	try: proc(*params)
@@ -188,6 +197,7 @@ def send_count(item):
 	except Exception,SM:
 		pprint(item)
 		pprint(SM)
+		if halt_on_exception: raise
 
 def sender(item):
 	global last_stream
@@ -244,10 +254,10 @@ def getFile(filename,default):
 	if os.path.isfile(filename):
 		try: filebody = eval(readfile(filename))
 		except:
-			if os.path.isfile(filename+'.back'):
+			if os.path.isfile(back_file % filename.split('/')[-1]):
 				while True:
 					try:
-						filebody = eval(readfile(filename+'.back'))
+						filebody = eval(readfile(back_file % filename.split('/')[-1]))
 						break
 					except: pass
 			else:
@@ -256,12 +266,12 @@ def getFile(filename,default):
 	else:
 		filebody = default
 		writefile(filename,str(default))
-	writefile(filename+'.back',str(filebody))
+	writefile(back_file % filename.split('/')[-1],str(filebody))
 	return filebody
 
 def get_config(room,item):
-	setup = getFile(c_file,{})
-	try: return setup[room][item]
+	setup = cur_execute_fetchone('select value from config_conf where room=%s and option=%s',(room,item))
+	try: return setup[0]
 	except:
 		try: return config_prefs[item][3]
 		except: return None
@@ -284,8 +294,7 @@ def put_config(room,item,value):
 	writefile(c_file,str(setup))
 
 def GT(item):
-	setup = getFile(ow_file,{})
-	try: gt_result = setup[item]
+	try: gt_result = cur_execute_fetchone('select value from config_owner where option=%s;',(item,))[0]
 	except:
 		try: gt_result = owner_prefs[item][2]
 		except: gt_result = None
@@ -353,7 +362,7 @@ def pprint(*text):
 	lt = tuple(time.localtime())
 	zz = parser('%s[%s]%s %s%s' % (wc,onlytimeadd(lt),c,text,wc))
 	last_logs_store = ['[%s] %s' % (onlytimeadd(lt),text)] + last_logs_store[:last_logs_size]
-	if dm2: print zz
+	if debug_console: print zz
 	if CommandsLog:
 		fname = '%s%02d%02d%02d.txt' % (slog_folder,lt[0],lt[1],lt[2])
 		fbody = '%s|%s\n' % (onlytimeadd(lt),text)
@@ -1699,7 +1708,7 @@ def com_parser(access_mode, nowname, type, room, nick, text, jid):
 		send_msg(type, room, nick, L('Warning! Exceeded the limit of sending the same commands. You to ignore for %s.') % un_unix(GT('ddos_limit')[access_mode]))
 		return None
 	no_comm = True
-	cof = getFile(conoff,[])
+	cof = cur_execute_fetchall('select * from commonoff;')#!!!
 	for parse in comms:
 		if access_mode >= parse[0] and nick != nowname:
 			not_offed = True
@@ -1821,20 +1830,19 @@ def msg_afterwork(mess,room,jid,nick,type,back_text,no_comm,access_mode,nowname)
 		else: is_flood = None
 		if selfjid != jid and access_mode >= 0 and (back_text[:len(nowname)+2] == nowname+': ' or back_text[:len(nowname)+2] == nowname+', ' or type == 'chat') and is_flood:
 			pprint('Send msg human: %s/%s [%s] <<< %s' % (room,nick,type,text),'dark_gray')
-			if len(back_text)>100:
-				text = L('Too many letters!')
-				pprint('Send msg human: %s/%s [%s] >>> %s' % (room,nick,type,text),'dark_gray')
-				send_msg(type, room, nick, text)
+			if len(back_text) > 128: send_msg_human(type, room, nick, L('Too many letters!'), 'msg_human')
 			else:
 				if back_text[:len(nowname)] == nowname: back_text = back_text[len(nowname)+2:]
 				try:
 					text = getAnswer(type, room, nick, back_text)
-					if text:
-						pprint('Send msg human: %s/%s [%s] >>> %s' % (room,nick,type,text),'dark_gray')
-						thr(send_msg_human,(type, room, nick, text),'msg_human')
+					if text: send_msg_human(type, room, nick, text, 'msg_human')
 				except: pass
 
-def send_msg_human(type, room, nick, text):
+def send_msg_human(type, room, nick, text, th):
+	pprint('Send msg human: %s/%s [%s] >>> %s' % (room,nick,type,text),'dark_gray')
+	thr(send_msg_hmn,(type, room, nick, text),th)
+	
+def send_msg_hmn(type, room, nick, text):
 	time.sleep(len(text)/4.0+random.randint(0,3))
 	send_msg(type, room, nick, text)
 
@@ -2208,9 +2216,10 @@ def get_bot_version():
 def update_locale():
 	global CURRENT_LOCALE
 	locales = {}
-	if os.path.isfile(loc_file):
-		CURRENT_LOCALE = getFile(loc_file,'\'en\'')
-		lf = '%s%s.txt' % (loc_folder,CURRENT_LOCALE)
+	CL = cur_execute_fetchone('select value from config_owner where option=%s', ('bot_locale',))
+	if CL:
+		CURRENT_LOCALE = CL[0]
+		lf = loc_folder % CURRENT_LOCALE
 		if os.path.isfile(lf):
 			lf = readfile(lf).decode('UTF').replace('\r','').split('\n')
 			for c in lf:
@@ -2241,15 +2250,15 @@ def get_repo():
 # --------------------- Иницилизация переменных ----------------------
 
 nmbrs = ['0','1','2','3','4','5','6','7','8','9','.']
-ul = 'update.log'					# лог последнего обновление
-debugmode = None					# остановка на ошибках
-dm = None							# отладка xmpppy
-dm2 = False							# отладка действий бота
+ul = 'log/update.log'				# лог последнего обновление
+halt_on_exception = False					# остановка на ошибках
+debug_xmpppy = False				# отладка xmpppy
+debug_console = False				# отладка действий бота
 CommandsLog = None					# логгирование команд
 prefix = '_'						# префикс комманд
 msg_limit = 1000					# лимит размера сообщений
 botName = 'iSida-bot'				# название бота
-botVersionDef = u'v3.0β'			# версия бота
+botVersionDef = u'v3.1β'			# версия бота
 disco_config_node = 'http://isida-bot.com/config'
 pres_answer = []					# результаты посылки презенсов
 iq_request = {}						# iq запросы
@@ -2300,7 +2309,7 @@ server_hash_list = {}
 newbie_msg = {}
 messages_excl = []
 rss_processed = False
-db_debug = False
+database_debug = False
 base_type = 'pgsql'     # тип базы: pgsql или mysql
 base_name = 'isidabot'  # название базы
 base_user = 'isidabot'  # пользователь базы
@@ -2397,8 +2406,8 @@ pprint('*** Loading main plugin','white')
 pl_folder	= 'plugins/%s'
 execfile(pl_folder % 'main.py')
 
-GTIMER_DEF  = [check_rss,check_hash_actions,clean_user_and_server_hash]
-pliname		= pl_folder % 'ignored.txt'
+GTIMER_DEF  = []#[check_rss,check_hash_actions,clean_user_and_server_hash]
+pliname		= data_folder % 'ignored.txt'
 gtimer		= GTIMER_DEF
 gpresence	= []
 gmessage	= []
@@ -2423,7 +2432,7 @@ for pl in plugins:
 		for tmp in message_control: gmessage.append(tmp)
 		for tmp in message_act_control: gactmessage.append(tmp)
 
-aliases = getFile(alfile,[])
+aliases = cur_execute_fetchall('select * from alias;')
 
 '''
 tmp,config_group_commands = comms,[]
@@ -2437,17 +2446,17 @@ for t in tmp:
 for tmp in config_group_commands: config_groups.append(tmp)
 '''
 
-if os.path.isfile('settings/starttime'):
-	try: starttime = int(readfile('settings/starttime'))
-	except: starttime = readfile('settings/starttime')
+if os.path.isfile(starttime_file):
+	try: starttime = int(readfile(starttime_file))
+	except: starttime = readfile(starttime_file)
 else: starttime = int(time.time())
 sesstime = int(time.time())
-ownerbase = getFile(owners,[god])
-ignorebase = getFile(ignores,[])
+ownerbase = cur_execute_fetchall('select * from bot_owner;')
+ignorebase = cur_execute_fetchall('select * from bot_ignore;')
 cu_age = []
 close_age_null()
-try: confbase = json.loads(readfile(confs))
-except: confbase = ['%s/%s' % (defaultConf.lower(),Settings['nickname'])]
+try: confbase = cur_execute_fetchall('select * from conference;')
+except: confbase = [('%s/%s' % (defaultConf.lower(),Settings['nickname']),'')]
 if os.path.isfile(cens):
 	censor = readfile(cens).decode('UTF').replace('\r','').split('\n')
 	cn = []
@@ -2479,7 +2488,7 @@ try:
 		Port = int(server.split(':')[1])
 		pprint('Trying to connect to %s' % server,'yellow')
 	except: Server,Port = None,5222
-	if dm: cl = xmpp.Client(jid.getDomain(),Port,ENABLE_TLS=ENABLE_TLS)
+	if debug_xmpppy: cl = xmpp.Client(jid.getDomain(),Port,ENABLE_TLS=ENABLE_TLS)
 	else: cl = xmpp.Client(jid.getDomain(),Port,debug=[],ENABLE_TLS=ENABLE_TLS)
 	try:
 		Proxy = proxy
@@ -2521,40 +2530,37 @@ thr(sender_stack,(),'sender')
 thr(remove_ignore,(),'ddos_remove')
 cb = []
 is_start = True
-lastserver = getServer(confbase[-1].lower())
-setup = getFile(c_file,{})
+lastserver = getServer(confbase[-1][0].lower())
+#setup = getFile(c_file,{})
 join_percent, join_pers_add = 0, 100.0/len(confbase)
 
 for tocon in confbase:
-	tocon = tocon.strip()
-	if '\n' in tocon: pprint('->- %s | pass: %s' % tuple(tocon.split('\n',1)),'green')
-	else: pprint('->- %s' % tocon,'green')
+	if tocon[1]: pprint('->- %s | pass: %s' % tocon,'green')
+	else: pprint('->- %s' % tocon[0],'green')
 	if GT('show_loading_by_status_percent'):
 		join_percent += join_pers_add
 		join_status = '%s %s%%' % (GT('show_loading_by_status_message'),int(join_percent))
 		if GT('show_loading_by_status'):
-			if GT('show_loading_by_status_room'): join_status = '%s [%s]' % (join_status,tocon)
+			if GT('show_loading_by_status_room'): join_status = '%s [%s]' % (join_status,tocon[0])
 			if GT('show_loading_by_status_show') == 'online': caps_and_send(xmpp.Presence(status=join_status, priority=Settings['priority']))
 			else: caps_and_send(xmpp.Presence(show=GT('show_loading_by_status_show'), status=join_status, priority=Settings['priority']))
-	try: t = setup[getRoom(tocon)]
-	except:
-		setup[getRoom(tocon)] = {}
-		writefile(c_file,str(setup))
-	baseArg = unicode(tocon)
+	#try: t = setup[getRoom(tocon)]
+	#except:
+	#	setup[getRoom(tocon)] = {}
+	#	writefile(c_file,str(setup))
+	baseArg = unicode(tocon[0])
 	if '/' not in baseArg: baseArg += '/%s' % unicode(Settings['nickname'])
-	if '\n' in baseArg: baseArg,passwd = baseArg.split('\n',2)
-	else: passwd = ''
-	zz = join(baseArg, passwd)
+	zz = join(baseArg, tocon[1])
 	while unicode(zz)[:3] == '409' and not game_over:
 		time.sleep(1)
 		baseArg += '_'
-		zz = join(baseArg, passwd)
-	if passwd: cb.append('%s\n%s' % (baseArg, passwd))
+		zz = join(baseArg, tocon[1])
+	if tocon[1]: cb.append('%s\n%s' % tocon)
 	else: cb.append(baseArg)
 	if zz:
 		pprint('-!- Error "%s" while join in to %s' % (zz,baseArg),'red')
 		if GT('show_loading_by_status'):
-			if GT('show_loading_by_status_room'): join_status = 'Error while join in to %s - %s' % (tocon,zz)
+			if GT('show_loading_by_status_room'): join_status = 'Error while join in to %s - %s' % (tocon[0],zz)
 			if GT('show_loading_by_status_show') == 'online': caps_and_send(xmpp.Presence(status=join_status, priority=Settings['priority']))
 			else: caps_and_send(xmpp.Presence(show=GT('show_loading_by_status_show'), status=join_status, priority=Settings['priority']))
 	else: pprint('-<- %s' % baseArg,'bright_green')
@@ -2626,6 +2632,6 @@ while 1:
 		pprint('*** Error *** %s ***' % SM,'red')
 		logging.exception(' [%s] ' % timeadd(tuple(time.localtime())))
 		if 'parsing finished' in SM.lower() or 'database is locked' in SM.lower(): atempt_to_shutdown_with_reason(L('Critical error! Trying to restart in %s sec.') % int(GT('reboot_time')/4),GT('reboot_time')/4,'restart',True)
-		if debugmode: raise
+		if halt_on_exception: raise
 
 # The end is near!

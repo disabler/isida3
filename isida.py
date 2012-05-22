@@ -22,13 +22,23 @@
 # --------------------------------------------------------------------------- #
 
 import os, sys, time, re
-pid_file = 'isida.pid'
-updatelog_file = 'update.log'
-ver_file = 'settings/version'
+
+sys.path = ['./lib'] + sys.path
+
+data_folder = 'data/%s'
+slog_folder	= data_folder % 'log/%s'
+tmp_folder	= 'tmp/%s'
+
+updatelog_file	= slog_folder % 'update.log'
+ver_file		= tmp_folder % 'version'
+old_ver_file	= tmp_folder % 'ver'
+pid_file		= tmp_folder % 'isida.pid'
+starttime_file	= tmp_folder % 'starttime'
+
 id_append = ''
-svn_ver_format = '%s-svn%s'
-git_ver_format = '%s.%s-git%s'
-time_ver_format = '%s-none%s'
+svn_ver_format	= '%s-svn%s'
+git_ver_format	= '%s.%s-git%s'
+time_ver_format	= '%s-none%s'
 
 def readfile(filename):
 	fp = file(filename)
@@ -44,7 +54,7 @@ def writefile(filename, data):
 def printlog(text):
 	print text
 	lt = tuple(time.localtime())
-	fname = 'log/crash_%04d%02d%02d.txt' % lt[0:3]
+	fname = slog_folder % 'crash_%04d%02d%02d.txt' % lt[0:3]
 	fbody = '%s|%s\n' % ('%02d%02d%02d' % lt[3:6],text)
 	fl = open(fname, 'a')
 	fl.write(fbody.encode('utf-8'))
@@ -62,14 +72,14 @@ def crash(text):
 def update(USED_REPO):
 	if USED_REPO == 'svn':
 		if os.name == 'nt':
-			os.system('svnversion > settings/ver')
+			os.system('svnversion > %s' % old_ver_file)
 			os.system('svn up')
-			os.system('svnversion > settings/version')
+			os.system('svnversion > %s' % ver_file)
 		else:
-			os.system('echo `svnversion` > settings/ver')
+			os.system('echo `svnversion` > %s' % old_ver_file)
 			os.system('svn up')
-			os.system('echo `svnversion` > settings/version')
-		try: ver = int(re.findall('[0-9]+',readfile('settings/version'))[0]) - int(re.findall('[0-9]+',readfile('settings/ver'))[0])
+			os.system('echo `svnversion` > %s' % ver_file)
+		try: ver = int(re.findall('[0-9]+',readfile(ver_file))[0]) - int(re.findall('[0-9]+',readfile(old_ver_file))[0])
 		except: ver = -1
 		if ver > 0: os.system('svn log --limit %s > %s' % (ver,updatelog_file))
 		elif ver < 0: os.system('echo Failed to detect version! > %s' % updatelog_file)
@@ -88,7 +98,7 @@ def update(USED_REPO):
 if __name__ == "__main__":
 	if os.name == 'nt': printlog('Warning! Correct work only on *NIX system!')
 
-	try: writefile('settings/starttime',str(int(time.time())))
+	try: writefile(starttime_file,str(int(time.time())))
 	except:
 		printlog(crashtext('Isida is crashed! Incorrent launch!'))
 		raise

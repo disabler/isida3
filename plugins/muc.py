@@ -220,7 +220,7 @@ def check_unban():
 
 global execute, timer
 
-timer = [check_unban]
+#timer = [check_unban]
 
 execute = [(7, 'ban_past', muc_ban_past, 2, L('Ban user.')),
 	   (7, 'ban', muc_ban, 2, L('Ban user.')),

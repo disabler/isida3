@@ -131,8 +131,8 @@ def spy_action():
 
 global execute, timer, message_control
 
-timer = [get_spy_stat, spy_action]
+#timer = [get_spy_stat, spy_action]
 
-message_control = [spy_message]
+#message_control = [spy_message]
 
 execute = [(9, 'spy', conf_spy, 2, L('Check conference activity\nspy add <conference>[ u<number>][ m<number>] - add conference to list. u - count users, m - count message per night. At default At least one condition - the bot will leave the conference\nspy del <conference> - remove conference from list\nspy show - show active monitoring.'))]
