@@ -124,8 +124,11 @@ def flood_action(room,jid,nick,type,text):
 		tm = time.time()
 		prefix = get_local_prefix(room)
 		first_word = text.split(' ', 1)[0]
+		cur_alias = cur_execute_fetchall('select match from alias where room=%s',(room,))
+		if cur_alias: cur_alias = [t[0] for t in cur_alias]
+		else: cur_alias = []
 		if nick in [get_xnick(room), ''] or jjid in ignorebase or ddos_ignore.has_key(jjid): return
-		if first_word in [prefix + i[1] for i in comms] + [i[1] for i in aliases if i[0] == room] or first_word[:-1] in [d[1] for d in megabase if d[0]==room]:
+		if first_word in [prefix + i[1] for i in comms] + cur_alias or first_word[:-1] in [d[1] for d in megabase if d[0]==room]:
 			if FLOOD_STATS.has_key(room) and FLOOD_STATS[room][0] != jjid: FLOOD_STATS[room] = ['', 0, 0]
 			return
 		if not FLOOD_STATS.has_key(room) or FLOOD_STATS[room][0] != jjid: FLOOD_STATS[room] = [jjid, tm, 1]

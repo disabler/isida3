@@ -123,6 +123,11 @@ two_en = ['aa', 'aq', 'bc', 'bd', 'bf', 'bg', 'bh', 'bk', 'bn', 'bp', 'bq', 'bw'
 		  'yn', 'yq', 'yu', 'yv', 'yx', 'yy', 'yz', 'zb', 'zc', 'zd', 'zf', 'zg', 'zh', 'zi', 'zj', 'zk', 'zm', 'zn', 'zp', \
 		  'zq', 'zr', 'zs', 'zt', 'zu', 'zv', 'zw', 'zx']
 
+def is_owner(jid): # FIX THIS SHIT!
+	own = cur_execute_fetchone('select * from bot_owner where jid=%s',(getRoom(jid),))
+	if own: return True
+	else: return False
+
 def validate_nick(nick,count):
 		nick = nick.lower()
 		pairs = 0
@@ -246,8 +251,8 @@ def get_level(cjid, cnick):
 				break
 	if cur_execute_fetchone('select pattern from bot_ignore where %s ilike pattern',(getRoom(jid.lower()),)): access_mode = -1			
 	rjid = getRoom(jid)
-	if rjid in ownerbase: access_mode = 9
-	if jid == 'None' and cjid in ownerbase: access_mode = 9
+	if is_owner(rjid): access_mode = 9
+	if jid == 'None' and is_owner(cjid): access_mode = 9
 	return (access_mode, jid)
 
 def show_syslogs(type, jid, nick, text):
@@ -451,8 +456,6 @@ def unhtml(page): return unhtml_raw(page,None)
 def unhtml_hard(page): return unhtml_raw(page,True)
 
 def alias(type, jid, nick, text):
-	global aliases
-	aliases = getFile(alfile,[])
 	text = text.strip()
 	while '  ' in text: text = text.replace('  ',' ')
 	mode = text.lower().split(' ',1)[0].strip(' ')
@@ -471,42 +474,36 @@ def alias(type, jid, nick, text):
 		if amm < 0: msg = L('Command not found: %s') % tcmd
 		elif amm > am: msg = L('Not allowed create alias for: %s') % tcmd
 		else:
-			fl = 0
-			for i in aliases:
-				if i[1] == cmd and i[0] == jid:
-					aliases.remove(i)
-					fl = 1
-			aliases.append([jid, cmd, cbody])
-			if fl: msg = L('Updated:')
+			fl = cur_execute_fetchone('select match from alias where room=%s and match=%s',(jid,cmd))
+			if fl:
+				cur_execute('delete from alias where room=%s and match=%s',(jid,cmd))
+				msg = L('Updated:')
 			else: msg = L('Added:')
-			msg += ' '+cmd+'='+cbody
+			cur_execute('insert into alias values (%s,%s,%s)',(jid,cmd,cbody))
+			msg = '%s %s=%s' % (msg,cmd,cbody)
 	if mode=='del':
 		msg = L('Unable to remove %s') % cmd
-		for i in aliases:
-			if i[1] == cmd and i[0] == jid:
-				am,amm = get_level(jid,nick)[0],-1
-				tcmd = i[2].split(' ',1)[0].lower()
-				for tmp in comms:
-					if tmp[1] == tcmd:
-						amm = tmp[0]
-						break
-				if amm > am: msg = L('Not allowed remove alias for: %s') % tcmd
-				else:
-					aliases.remove(i)
-					msg = L('Removed: %s') % cmd
+		fl = cur_execute_fetchone('select cmd from alias where room=%s and match=%s',(jid,cmd))
+		if fl:
+			am,amm = get_level(jid,nick)[0],-1
+			tcmd = fl[0].split(' ',1)[0].lower()
+			for tmp in comms:
+				if tmp[1] == tcmd:
+					amm = tmp[0]
+					break
+			if amm > am: msg = L('Not allowed remove alias for: %s') % tcmd
+			else:
+				cur_execute('delete from alias where room=%s and match=%s',(jid,cmd))
+				msg = L('Removed: %s') % cmd
 	if mode=='show':
-		msg = ''
 		if cmd == '':
-			for i in aliases:
-				if i[0] == jid: msg += i[1] + ', '
-			if len(msg): msg = L('Aliases: %s') % msg[:-2]
+			fl = cur_execute_fetchall('select match from alias where room=%s',(jid,))
+			if fl: msg = L('Aliases: %s') % ', '.join([t[0] for t in fl])
 			else: msg = L('Aliases not found!')
 		else:
-			for i in aliases:
-				if cmd.lower() in i[1].lower() and i[0] == jid: msg += '\n'+i[1]+' = '+i[2]
-			if len(msg): msg = L('Aliases: %s') % msg
+			fl = cur_execute_fetchall('select match,cmd from alias where room=%s and match ilike %s',(jid,'%%%s%%'%cmd))
+			if fl: msg = L('Aliases: %s') % '\n%s' % '\n'.join(['%s = %s' % t for t in fl])
 			else: msg = L('Aliases not found!')
-	writefile(alfile,str(aliases))
 	send_msg(type, jid, nick, msg)
 
 def fspace(mass):
@@ -769,7 +766,7 @@ def bot_leave(type, jid, nick, text):
 		if len(text): text=unicode(text)
 		else: text=jid
 		lroom = text
-		if getRoom(jid) in ownerbase: nick = getName(jid)
+		if is_owner(jid): nick = getName(jid)
 		if arr_semi_find(confbase, getRoom(lroom)) >= 0:
 			confbase = arr_del_semi_find(confbase,getRoom(lroom))
 			writefile(confs,json.dumps(confbase))
@@ -859,7 +856,7 @@ def bot_plugin(type, jid, nick, text):
 	send_msg(type, jid, nick, msg)
 
 def owner(type, jid, nick, text):
-	global ownerbase, owners, god
+	global god
 	text = text.lower().strip()
 	do = text.split(' ',1)[0]
 	try: nnick = text.split(' ',1)[1].lower()
@@ -868,9 +865,9 @@ def owner(type, jid, nick, text):
 			send_msg(type, jid, nick, L('Wrong arguments!'))
 			return
 	if do == 'add':
-		if nnick not in ownerbase:
+		own = cur_execute_fetchone('select * from bot_owner where jid=%s',(nnick,))
+		if not own:
 			if '@' in nnick:
-				ownerbase.append(nnick)
 				j = xmpp.Presence(nnick, 'subscribed')
 				j.setTag('c', namespace=xmpp.NS_CAPS, attrs={'node':capsNode,'ver':capsHash,'hash':'sha-1'})
 				sender(j)
@@ -881,8 +878,9 @@ def owner(type, jid, nick, text):
 			else: msg = L('Wrong jid!')
 		else: msg = L('%s is alredy in list!') % nnick
 	elif do == 'del':
-		if nnick in ownerbase and nnick != god:
-			ownerbase.remove(nnick)
+		own = cur_execute_fetchone('select * from bot_owner where jid=%s',(nnick,))
+		if own and nnick != god:
+			cur_execute('delete from bot_owner where jid=%s',(nnick,))
 			j = xmpp.Presence(nnick, 'unsubscribe')
 			j.setTag('c', namespace=xmpp.NS_CAPS, attrs={'node':capsNode,'ver':capsHash,'hash':'sha-1'})
 			sender(j)
@@ -892,11 +890,9 @@ def owner(type, jid, nick, text):
 			msg = L('Removed: %s') % nnick
 		else: msg = L('Not found!')
 	elif do == 'show':
-		msg = ''
-		for jjid in ownerbase: msg += jjid+', '
-		msg = L('Bot owner(s): %s') % msg[:-2]
+		own = cur_execute_fetchone('select * from bot_owner')
+		msg = L('Bot owner(s): %s') % ', '.join([t[0] for t in own])
 	else: msg = L('Wrong arguments!')
-	writefile(owners,str(ownerbase))
 	send_msg(type, jid, nick, msg)
 
 def ignore(type, jid, nick, text):
@@ -909,25 +905,23 @@ def ignore(type, jid, nick, text):
 			send_msg(type, jid, nick, L('Wrong arguments!'))
 			return
 	if do == 'add':
-		if nnick not in ignorebase:
-			ignorebase.append(nnick)
-			if '@' in nnick: msg = L('Append: %s') % nnick
-			else: msg = L('Append: %s') % '*'+nnick+'*'
+		ign = cur_execute_fetchone('select * from bot_ignore where pattern=%s;',(nnick,))
+		if not ign:
+			cur_execute('insert into bot_ignore values (%s,)',(nnick,))		
+			msg = L('Append: %s') % nnick
 		else: msg = L('%s alredy in list!') % nnick
 	elif do == 'del':
-		if nnick in ignorebase and nnick != god:
-			ignorebase.remove(nnick)
-			if '@' in nnick: msg = L('Removed: %s') % nnick
-			else: msg = L('Removed: %s') % '*'+nnick+'*'
+		ign = cur_execute_fetchone('select * from bot_ignore where pattern=%s and pattern!=%s;',(nnick,god))
+		if ign:
+			cur_execute('delete from bot_ignore where pattern=%s',(nnick,))		
+			msg = L('Removed: %s') % nnick
 		else: msg = L('Not found!')
 	elif do == 'show':
-		msg = ''
-		for jjid in ignorebase:
-			if '@' in jjid: msg += jjid+', '
-			else: msg += '*'+jjid+'*, '
+		ign = cur_execute_fetchone('select * from bot_ignore;')
+		if ign: msg = ', '.join([t[0] for t in ign])
+		else: msg = L('Empty!')
 		msg = L('Ignore list: %s') % msg[:-2]
 	else: msg = L('Wrong arguments!')
-	writefile(ignores,str(ignorebase))
 	send_msg(type, jid, nick, msg)
 
 def info_where(type, jid, nick):

@@ -125,7 +125,9 @@ def spy_action():
 						confbase = arr_del_semi_find(confbase,tmp[0])
 						writefile(confs,json.dumps(confbase))
 						leave(tmp[0], L('I leave your conference because low activity'))
-						for tmpo in ownerbase: send_msg('chat', getRoom(tmpo), '', L('I leave conference %s by condition spy plugin: %s') % (tmp[0], mist))
+						own = cur_execute_fetchone('select * from bot_owner;')
+						if own:
+							for tmpo in own: send_msg('chat', tmpo[0], '', L('I leave conference %s by condition spy plugin: %s') % (tmp[0], mist))
 				else: sb.append((tmp[0],int(time.time()),tmp[2], 0,tmp[4]))
 				writefile(spy_base,str(sb))
 

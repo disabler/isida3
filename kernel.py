@@ -277,21 +277,19 @@ def get_config(room,item):
 		except: return None
 
 def get_config_int(room,item):
-	setup = getFile(c_file,{})
-	try: return int(setup[room][item])
+	setup = cur_execute_fetchone('select value from config_conf where room=%s and option=%s',(room,item))
+	try: return int(setup[0])
 	except: return int(config_prefs[item][3])
 
 def get_config_float(room,item):
-	setup = getFile(c_file,{})
-	try: return float(setup[room][item])
+	setup = cur_execute_fetchone('select value from config_conf where room=%s and option=%s',(room,item))
+	try: return float(setup[0])
 	except: return float(config_prefs[item][3])
 
 def put_config(room,item,value):
-	setup = getFile(c_file,{})
-	try: t = setup[room]
-	except: setup[room] = {}
-	setup[room][item] = value
-	writefile(c_file,str(setup))
+	setup = cur_execute_fetchone('select value from config_conf where room=%s and option=%s',(room,item))
+	if setup: cur_execute('update config_conf set value=%s where room=%s and option=%s', (value,room,item))
+	else: cur_execute('insert into config_conf values (%s,%s,%s)', (room,item,value))
 
 def GT(item):
 	try: gt_result = cur_execute_fetchone('select value from config_owner where option=%s;',(item,))[0]
@@ -302,9 +300,9 @@ def GT(item):
 	except: return gt_result
 
 def PT(item,value):
-	setup = getFile(ow_file,{})
-	setup[item] = value
-	writefile(ow_file,str(setup))
+	setup = cur_execute_fetchone('select value from config_owner where option=%s;',(item,))
+	if setup: cur_execute('update config_owner set value=%s where option=%s', (value,item))
+	else: cur_execute('insert into config_owner values (%s,%s)', (item,value))
 
 def get_subtag(body,tag):
 	T = re.findall('%s=\"(.*?)\"' % tag,body,re.S)
@@ -676,7 +674,7 @@ def iqCB(sess,iq):
 	id = iq.getID()
 	if id == None: return None
 	room = unicode(iq.getFrom())
-	if getRoom(room) in ownerbase: towh = selfjid
+	if cur_execute_fetchone('select * from bot_owner where jid=%s',(getRoom(room),)): towh = selfjid
 	else: towh = '%s/%s' % (getRoom(room),get_nick_by_jid_res(getRoom(room), selfjid))
 	query = iq.getTag('query')
 	was_request = id in iq_request
@@ -1217,7 +1215,7 @@ def iqCB(sess,iq):
 						to_nick = getResourse(get_tag_item(msg,'message','to'))
 						tojid = rss_replace(getRoom(get_level(room,to_nick)[1]))
 						nick = rss_replace(unicode(get_nick_by_jid_res(room,jid)))
-						skip_owner = getRoom(jid) in ownerbase
+						skip_owner = is_owner(jid)
 						gr = getRoom(room)
 						if get_tag_item(msg,'message','type') == 'chat' and not skip_owner:
 							tmp = cur_execute_fetchall('select * from muc_lock where room=%s and jid=%s', (room,tojid))
@@ -1380,8 +1378,7 @@ def iqCB(sess,iq):
 				elif msg[:2] == '<p':
 					jid = rss_replace(get_tag_item(msg,'presence','from'))
 					tojid = rss_replace(get_tag_item(msg,'presence','to'))
-					skip_owner = getRoom(jid) in ownerbase
-					if skip_owner: pass
+					if is_owner(jid): pass
 					elif get_config(getRoom(room),'muc_filter') and not mute:
 
 						show = ['online',get_tag(msg,'show')][int('<show>' in msg and '</show>' in msg)]
@@ -1728,8 +1725,8 @@ def com_parser(access_mode, nowname, type, room, nick, text, jid):
 	return no_comm
 
 def messageCB(sess,mess):
-	global lfrom, lto, owners, ownerbase, confbase, confs, lastserver, lastnick, comms
-	global ignorebase, ignores, message_in, no_comm, last_hash
+	global lfrom, lto, confbase, confs, lastserver, lastnick, comms
+	global ignorebase, message_in, no_comm, last_hash
 	message_in += 1
 	type=unicode(mess.getType())
 	room=unicode(mess.getFrom().getStripped())
@@ -1750,7 +1747,7 @@ def messageCB(sess,mess):
 	rn = '%s/%s' % (room,nick)
 	access_mode,jid = get_level(room,nick)
 	nowname = get_xnick(room)
-	if '@' not in jid and (jid == 'None' or jid.startswith('j2j.')) and getRoom(room) in ownerbase: access_mode = 9
+	if '@' not in jid and (jid == 'None' or jid.startswith('j2j.')) and is_owner(room): access_mode = 9
 	if type == 'groupchat' and nick != '' and access_mode >= 0 and jid not in ['None',Settings['jid']]: talk_count(room,jid,nick,text)
 	if nick != '' and nick != None and nick != nowname and len(text)>1 and text != 'None' and text != to_censore(text,room) and access_mode >= 0 and get_config(getRoom(room),'censor'):
 		cens_text = L('Censored!')
@@ -1776,37 +1773,37 @@ def messageCB(sess,mess):
 		if type == 'chat': is_par = True
 		if is_par: no_comm = com_parser(access_mode, nowname, type, room, nick, text, jid)
 		if no_comm:
-			for parse in aliases:
-				if (btext.lower() == parse[1].lower() or btext[:len(parse[1])+1].lower() == parse[1].lower()+' ') and room == parse[0]:
-					pprint('%s %s/%s [%s] %s' % (jid,room,nick,access_mode,text),'bright_cyan')
-					argz = btext[len(parse[1])+1:]
-					if not argz:
-						ppr = parse[2].replace('%*', '').replace('%{reduce}*', '').replace('%{reduceall}*', '').replace('%{unused}*', '')
+			btl = btext.lower()
+			alias = cur_execute_fetchone("select match,cmd from alias where room=%s and (match=%s or %s ilike match||' %')",(room,btl,btl))
+			if alias:
+				pprint('%s %s/%s [%s] %s' % (jid,room,nick,access_mode,text),'bright_cyan')
+				argz = btext[len(alias[0])+1:]
+				if not argz:
+					ppr = alias[1].replace('%*', '').replace('%{reduce}*', '').replace('%{reduceall}*', '').replace('%{unused}*', '')
+					cpar = re.findall('%([0-9]+)', ppr, re.S)
+					if len(cpar):
+						for tmp in cpar:
+							try: ppr = ppr.replace('%'+tmp,'')
+							except: pass
+				else:
+					if '%' not in alias[1]: ppr = '%s %%*' % alias[1]
+					else: ppr = alias[1]
+					ppr = ppr.replace('%*', argz).replace('%{reduce}*', argz.strip()).replace('%{reduceall}*', reduce_spaces_all(argz))
+					if '%' in ppr:
 						cpar = re.findall('%([0-9]+)', ppr, re.S)
 						if len(cpar):
+							argz = argz.split()
+							argzbk = argz
 							for tmp in cpar:
-								try: ppr = ppr.replace('%'+tmp,'')
+								try:
+									it = int(tmp)
+									ppr = ppr.replace('%'+tmp,argz[it])
+									argzbk = argzbk[:it]+argzbk[it+1:]
 								except: pass
-					else:
-						if '%' not in parse[2]: ppr = '%s %%*' % parse[2]
-						else: ppr = parse[2]
-						ppr = ppr.replace('%*', argz).replace('%{reduce}*', argz.strip()).replace('%{reduceall}*', reduce_spaces_all(argz))
-						if '%' in ppr:
-							cpar = re.findall('%([0-9]+)', ppr, re.S)
-							if len(cpar):
-								argz = argz.split()
-								argzbk = argz
-								for tmp in cpar:
-									try:
-										it = int(tmp)
-										ppr = ppr.replace('%'+tmp,argz[it])
-										argzbk = argzbk[:it]+argzbk[it+1:]
-									except: pass
-								ppr = ppr.replace('%{unused}*',' '.join(argzbk))
+							ppr = ppr.replace('%{unused}*',' '.join(argzbk))
 
-					if len(ppr) == ppr.count(' '): ppr = ''
-					no_comm = com_parser(access_mode, nowname, type, room, nick, ppr, jid)
-					break
+				if len(ppr) == ppr.count(' '): ppr = ''
+				no_comm = com_parser(access_mode, nowname, type, room, nick, ppr, jid)
 
 	thr(msg_afterwork,(mess,room,jid,nick,type,back_text,no_comm,access_mode,nowname),'msg_afterwork')
 
@@ -1888,7 +1885,7 @@ def check_hash_actions():
 				pprint('Removed hash action %s in %s' % (hal[0],tmp),'cyan')
 
 def presenceCB(sess,mess):
-	global megabase, ownerbase, pres_answer, confs, confbase, cu_age, presence_in, hashes, last_hash
+	global megabase, pres_answer, confs, confbase, cu_age, presence_in, hashes, last_hash
 	presence_in += 1
 	room=unicode(mess.getFrom().getStripped())
 	nick=unicode(mess.getFrom().getResource())
@@ -2432,8 +2429,6 @@ for pl in plugins:
 		for tmp in message_control: gmessage.append(tmp)
 		for tmp in message_act_control: gactmessage.append(tmp)
 
-aliases = cur_execute_fetchall('select * from alias;')
-
 '''
 tmp,config_group_commands = comms,[]
 for t in range(0,8): config_group_commands.append([L('Turn on/off commands, access %s') % t,'#room-commands%s' % t,[]])
@@ -2451,7 +2446,6 @@ if os.path.isfile(starttime_file):
 	except: starttime = readfile(starttime_file)
 else: starttime = int(time.time())
 sesstime = int(time.time())
-ownerbase = cur_execute_fetchall('select * from bot_owner;')
 ignorebase = cur_execute_fetchall('select * from bot_ignore;')
 cu_age = []
 close_age_null()
@@ -2531,7 +2525,6 @@ thr(remove_ignore,(),'ddos_remove')
 cb = []
 is_start = True
 lastserver = getServer(confbase[-1][0].lower())
-#setup = getFile(c_file,{})
 join_percent, join_pers_add = 0, 100.0/len(confbase)
 
 for tocon in confbase:
@@ -2544,10 +2537,6 @@ for tocon in confbase:
 			if GT('show_loading_by_status_room'): join_status = '%s [%s]' % (join_status,tocon[0])
 			if GT('show_loading_by_status_show') == 'online': caps_and_send(xmpp.Presence(status=join_status, priority=Settings['priority']))
 			else: caps_and_send(xmpp.Presence(show=GT('show_loading_by_status_show'), status=join_status, priority=Settings['priority']))
-	#try: t = setup[getRoom(tocon)]
-	#except:
-	#	setup[getRoom(tocon)] = {}
-	#	writefile(c_file,str(setup))
 	baseArg = unicode(tocon[0])
 	if '/' not in baseArg: baseArg += '/%s' % unicode(Settings['nickname'])
 	zz = join(baseArg, tocon[1])

@@ -38,8 +38,11 @@ def adminmail(type, jid, nick, text):
 		timesent[fjid] = int(time.time())+tmp_lim
 		writefile(time_limit_base, str(timesent))
 		msg = L('User %s (%s) from %s at %s send massage to you: %s') % (nick,fjid,jid,time.strftime("%H:%M %d.%m.%y", time.localtime (time.time())),text)
-		for ajid in ownerbase: send_msg('chat', getRoom(ajid), '', msg)
-		send_msg(type, jid, nick, L('Sent'))
+		own = cur_execute_fetchone('select * from bot_owner;')
+		if own:
+			for ajid in own: send_msg('chat', ajid[0], '', msg)
+			send_msg(type, jid, nick, L('Sent'))
+		else: send_msg(type, jid, nick, L('Owner list is empty!'))
 	else: send_msg(type, jid, nick, L('What?'))
 
 global execute
