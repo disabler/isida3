@@ -73,15 +73,10 @@ def info_serv(type, jid, nick, text):
 #room number date
 
 def info_top(type, jid, nick, text):
-	tp = getFile(top_base,[])
 	if text: room = text
 	else: room = getRoom(jid)
-	ttop = None
-	for tmp in tp:
-		if tmp[0] == room:
-			ttop = tmp
-			break
-	if ttop: msg = L('Max count of members: %s %s') % (ttop[1], '(%s)' % disp_time(ttop[2]))
+	cnf = cur_execute_fetchone('select count,time from top where room=%s',(room,))
+	if cnf: msg = L('Max count of members: %s %s') % (cnf[0], '(%s)' % disp_time(cnf[1]))
 	else: msg = L('Statistic not found!')
 	send_msg(type, jid, nick, msg)
 
@@ -92,27 +87,16 @@ def jidcatcher_presence(room,jid,nick,type,text):
 			tmpp = cur_execute_fetchone('select login from jid where login=%s and server=%s and resourse=%s',tmp)
 			if not tmpp: cur_execute('insert into jid values (%s,%s,%s)', tmp)
 		except: pass
-		tp = getFile(top_base,[])
-		cnt = 0
-		for tmp in megabase:
-			if tmp[0] == room: cnt += 1
-		ltop = None
-		for tmp in tp:
-			if tmp[0] == room:
-				ltop = tmp
-				break
-		if ltop:
-			if ltop[1] <= cnt:
-				tp.remove(ltop)
-				tp.append((room,cnt,int(time.time())))
-				writefile(top_base,unicode(tp))
-		else:
-			tp.append((room,cnt,int(time.time())))
-			writefile(top_base,unicode(tp))
+
+		cnt = len(['' for t in megabase if t[0]==room])
+		cnf = cur_execute_fetchone('select count from top where room=%s',(room,))
+		if cnf:
+			if cnt > cnf[0]: cur_execute('update top set count=%s, time=%s where room=%s;',(cnt,int(time.time()),room))
+		else: cur_execute('insert into top values (%s,%s,%s);',(room,cnt,int(time.time())))
 
 global execute, presence_control
 
-presence_control = []#[jidcatcher_presence]
+presence_control = [jidcatcher_presence]
 
 execute = [(4, 'res', info_res, 2, L('Without parameters show top10 resources for all conferences, where bot is present.\nwith parameters - search in resources base\ncount - number of results.')),
 		   (6, 'serv', info_serv, 2, L('Wihtout parameters show all servers freom where joined in rooms, where bot is present\nwith parameters - search on servers base\ncount - show number of results.')),

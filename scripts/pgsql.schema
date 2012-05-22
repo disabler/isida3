@@ -346,7 +346,7 @@ CREATE INDEX config_owner_o ON config_owner (option);
 CREATE TABLE top (
 	room text unique,
 	count integer,
-	value integer
+	time integer
 );
 
 CREATE INDEX top_r ON top (room);
