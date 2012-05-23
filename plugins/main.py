@@ -703,9 +703,8 @@ def remove_by_half(cb,rm):
 	return cb
 
 def bot_join(type, jid, nick, text):
-	global lastserver, lastnick, blacklist_base
+	global lastserver, lastnick
 	text = unicode(text)
-	blklist = getFile(blacklist_base, [])
 	if not text or ' ' in getRoom(text): send_msg(type, jid, nick, L('Wrong arguments!'))
 	else:
 		if '\n' in text: text, passwd = text.split('\n', 1)
@@ -763,10 +762,7 @@ def bot_leave(type, jid, nick, text):
 			send_msg(type, jid, nick, L('Leave room %s') % text)
 			sm = L('Leave room by %s') % nick
 			leave(getRoom(text), sm)
-			hr = getFile(hide_conf,[])
-			if getRoom(text) in hr:
-				hr.remove(getRoom(text))
-				writefile(hide_conf,str(hr))
+			cur_execute('delete from hiden_rooms where room=%s',(getRoom(text),))
 		else: send_msg(type, jid, nick, L('I have never been in %s') % lroom)
 
 def conf_limit(type, jid, nick, text):
@@ -916,29 +912,26 @@ def ignore(type, jid, nick, text):
 	send_msg(type, jid, nick, msg)
 
 def info_where(type, jid, nick):
-	cnf = cur_execute_fetchall('select * from conference;')
-	msg = L('Active conference(s): %s') % len(cnf)
+	cnf = cur_execute_fetchall("select room from conference where split_part(room,'/',1) not in (select room from hiden_rooms as hrr);")
+	len_cnf = cur_execute_fetchone('select count(*) from conference;')[0]
+	hr_count = cur_execute_fetchone('select count(*) from hiden_rooms;')[0]
+	msg = L('Active conference(s): %s') % len_cnf
 	wbase = []
 	for jjid in cnf:
-		cnt = 0
-		rjid = getRoom(jjid[0])
+		cnt,rjid = 0,getRoom(jjid[0])
 		for mega in megabase:
 			if mega[0] == rjid: cnt += 1
 		wbase.append((cnt, jjid[0]))
 	wbase.sort(reverse=True)
-	nmb,hr_count = 1,0
-	hr = []#getFile(hide_conf,[])
-	for i in wbase:
-		if getRoom(i[1]) in hr: hr_count += 1
-		else:
-			msg += '\n%s. %s [%s]' % (nmb,i[1].split('\n')[0],i[0])
-			nmb += 1
+	msg = '%s\n%s' % (msg,'\n'.join(['%s. %s [%s]' % (i[0]+1,i[1][1].split('\n')[0],i[1][0]) for i in enumerate(wbase)]))
 	if hr_count: msg += L('\nHidden conference(s): %s') % hr_count
 	send_msg(type, jid, nick, msg)
 
 def info_where_plus(type, jid, nick):
-	cnf = cur_execute_fetchall('select * from conference;')
-	msg = L('Active conference(s): %s') % len(cnf)
+	cnf = cur_execute_fetchall("select room from conference where split_part(room,'/',1) not in (select room from hiden_rooms as hrr);")
+	len_cnf = cur_execute_fetchone('select count(*) from conference;')[0]
+	hr_count = cur_execute_fetchone('select count(*) from hiden_rooms;')[0]
+	msg = L('Active conference(s): %s') % len_cnf
 	wbase = []
 	for jjid in cnf:
 		cnt,rjid,ra = 0,getRoom(jjid[0]),L('unknown')
@@ -948,19 +941,11 @@ def info_where_plus(type, jid, nick):
 				if '%s/%s' % tuple(mega[0:2]) == jjid[0]: ra = L('%s/%s' % tuple(mega[2:4]))
 		wbase.append((cnt, jjid[0], ra))
 	wbase.sort(reverse=True)
-	nmb,hr_count = 1,0
-	hr = []#getFile(hide_conf,[])
-	for i in wbase:
-		if getRoom(i[1]) in hr: hr_count += 1
-		else:
-			msg += '\n%s. %s (%s) [%s]' % (nmb,i[1].split('\n')[0],i[2],i[0])
-			nmb += 1
+	msg = '%s\n%s' % (msg,'\n'.join(['%s. %s (%s) [%s]' % (i[0]+1,i[1][1].split('\n')[0],i[1][2],i[1][0]) for i in enumerate(wbase)]))
 	if hr_count: msg += L('\nHidden conference(s): %s') % hr_count
 	send_msg(type, jid, nick, msg)
 
-
-def get_uptime_str():
-	return un_unix(int(time.time()-starttime))
+def get_uptime_str(): return un_unix(int(time.time()-starttime))
 
 def info(type, jid, nick):
 	msg = L('Conference(s): %s (for more info use \'where\' command)\n') % cur_execute_fetchone('select count(*) from conference;')[0]

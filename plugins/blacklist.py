@@ -32,30 +32,34 @@ def leave_room(rjid, reason):
 
 def blacklist(type, jid, nick, text):
 	text, msg = unicode(text.lower()), ''
-	templist = getFile(blacklist_base, [])
 	reason = L('Conference was added in blacklist')
-	try:
-		text = text.split(' ')
-		if '@' not in text[1]: text[1] += '@%s' % lastserver
-		if text[0] == 'add':
-			if text[1] in templist: msg = L('This conference already exist in blacklist.')
-			elif cur_execute_fetchone('select count(*) from conference;')[0]==1 and getRoom(cur_execute_fetchone('select room from conference;')[0]) == text[1]:
-				msg =L('You can\'t add last conference in blacklist.')
-			else:
-				msg = leave_room(text[1], reason)
-				templist.append(text[1])
-				msg += L('Add to blacklist: %s') % text[1]
-		elif text[0] == 'del':
-			if text[1] in templist: msg = L('Removed from blacklist: %s') % templist.pop(templist.index(text[1]))
-			else: msg = L('Address not in blacklist.')
-		else: msg = L('Error in parameters. Read the help about command.')
-	except:
-		if text[0] == 'show':
-			if len(templist) == 0: msg = L('List is empty.')
-			else: msg = '%s%s' % (L('List of conferences:\n'),'\n'.join(['%s. %s' % t for t in enumerate(templist)]))
-		elif text[0] == 'clear': msg, templist = L('Cleared.'), []
-		else: msg = L('Error in parameters. Read the help about command.')
-	writefile(blacklist_base, str(templist))
+	
+	try: cmd,room = text.split(' ',1)
+	except: cmd,room = text,''
+	if room and '@' not in room: room = '%s@%s' % (room,lastserver)
+
+	if cmd == 'show':
+		bl = cur_execute_fetchall('select room from blacklist;')
+		if not bl: msg = L('List is empty.')
+		else: msg = '%s%s' % (L('List of conferences:\n'),'\n'.join(['%s. %s' % (t[0]+1,t[1][0]) for t in enumerate(bl)]))
+	elif cmd == 'clear':
+		msg = L('Cleared.')
+		cur_execute('delete from blacklist;')
+	elif room and cmd == 'add':
+		if cur_execute_fetchone('select * from blacklist where room=%s', (room,)): msg = L('This conference already exist in blacklist.')
+		elif cur_execute_fetchone('select count(*) from conference;')[0]==1 and getRoom(cur_execute_fetchone('select room from conference;')[0]) == room:
+			msg =L('You can\'t add last conference in blacklist.')
+		else:
+			msg = leave_room(room, reason)
+			cur_execute('insert into blacklist values (%s)', (room,))
+			msg += L('Add to blacklist: %s') % room
+	elif room and cmd == 'del':
+		if cur_execute_fetchone('select * from blacklist where room=%s', (room,)): 
+			cur_execute('delete from blacklist where room=%s', (room,))
+			msg = L('Removed from blacklist: %s') % room
+		else: msg = L('Address not in blacklist.')
+	else: msg = L('Error in parameters. Read the help about command.')
+
 	send_msg(type, jid, nick, msg)
 
 global execute

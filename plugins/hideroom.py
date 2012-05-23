@@ -27,24 +27,20 @@ def hide_room(type, jid, nick, text):
 		hmode = text.split(' ')[0]
 		try: hroom = text.split(' ')[1]
 		except: hroom = jid
-		hr = getFile(hide_conf,[])
 		if hmode == 'show':
-			if len(hr):
-				msg = L('Hidden conferences:')
-				for tmp in hr: msg += '\n'+tmp
+			hr = cur_execute_fetchall('select * from hiden_rooms;')
+			if len(hr): msg = '%s\n%s' % (L('Hidden conferences:'),'\n'.join([t[0] for t in hr]))
 			else: msg = L('No hidden conferences.')
 		elif hmode == 'add':
-			if not cur_execute_fetchall('select * from conference where room ilike %s;', ('%s/%%'%getRoom(hroom),)): msg = L('I am not in the %s') % hroom
-			elif hroom in hr: msg = L('I\'m already hide a %s') % hroom
+			if not cur_execute_fetchone('select * from conference where room ilike %s;', ('%s/%%'%getRoom(hroom),)): msg = L('I am not in the %s') % hroom
+			elif cur_execute_fetchone('select * from hiden_rooms where room=%s',(hroom,)): msg = L('I\'m already hide a %s') % hroom
 			else:
-				hr.append(hroom)
+				cur_execute('insert into hiden_rooms values (%s)',(hroom,))
 				msg = L('%s has been hidden') % hroom
-				writefile(hide_conf,str(hr))
 		elif hmode == 'del':
 			if hroom in hr:
-				hr.remove(hroom)
+				cur_execute('delete from hiden_rooms where room=%s',(hroom,))
 				msg = L('%s will be shown') % hroom
-				writefile(hide_conf,str(hr))
 			else: msg = L('I\'m not hide room %s') % hroom
 		else: msg = L('What?')
 	send_msg(type, jid, nick, msg)

@@ -25,18 +25,18 @@
 def adminmail(type, jid, nick, text):
 	if len(text):
 		if len(text) > GT('amsg_limit_size'): text = text[:GT('amsg_limit_size')]+u'[…]'
-		timesent = getFile(time_limit_base, {})
+		#timesent = getFile(time_limit_base, {})
 		ga = get_level(jid, nick)
 		fjid = getRoom(ga[1])
 		tmp_lim = GT('amsg_limit')[ga[0]]
-		if timesent.has_key(fjid):
-			wt = int(timesent[fjid]-time.time())
+		am = cur_execute_fetchone('select time from saytoowner where jid=%s;',(fjid,))
+		if am:
+			wt = int(am[0]-time.time())
 			if wt >= 0:
 				send_msg(type, jid, nick, L('Time limit exceeded. Wait: %s') % un_unix(wt))
 				return None
-			else: del timesent[fjid]
-		timesent[fjid] = int(time.time())+tmp_lim
-		writefile(time_limit_base, str(timesent))
+			else: cur_execute('delete from saytoowner where jid=%s;',(fjid,))
+		cur_execute('insert into saytoowner values (%s,%s)',(fjid,int(time.time())+tmp_lim))
 		msg = L('User %s (%s) from %s at %s send massage to you: %s') % (nick,fjid,jid,time.strftime("%H:%M %d.%m.%y", time.localtime (time.time())),text)
 		own = cur_execute_fetchone('select * from bot_owner;')
 		if own:

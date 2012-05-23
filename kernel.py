@@ -331,7 +331,7 @@ def get_tag_item(body,tag,item):
 def parser(t):
 	try: return ''.join([['?',l][l<='~'] for l in unicode(t)])
 	except:
-		fp = file('log/critical_exception_%s.txt' % int(time.time()), 'wb')
+		fp = file(slog_folder % 'critical_exception_%s.txt' % int(time.time()), 'wb')
 		fp.write(t)
 		fp.close()
 
@@ -830,10 +830,9 @@ def iqCB(sess,iq):
 					i=xmpp.Iq(to=room, typ='result')
 					i.setAttr(key='id', val=id)
 					i.setTag('query',namespace=xmpp.NS_DISCO_ITEMS,attrs={'node':node})
-					hr,trooms = getFile(hide_conf,[]),[]
-					cnf = cur_execute_fetchall('select room from conference;')
-					for t in cnf:
-						if al == 9 or getRoom(t[0]) not in hr: trooms.append(getRoom(t[0]))
+					if al == 9: cnf = cur_execute_fetchall("select room from conference;")
+					cnf = cur_execute_fetchall("select room from conference where split_part(room,'/',1) not in (select room from hiden_rooms as hrr);")
+					trooms = [t[0] for t in cnf]
 					trooms.sort()
 					trooms = [xmpp.Node('item',attrs={'jid':t}) for t in trooms]
 					i.getTag('query',namespace=xmpp.NS_DISCO_ITEMS).setPayload(trooms)
@@ -875,10 +874,9 @@ def iqCB(sess,iq):
 					sender(disco_ext_info_add(i))
 					raise xmpp.NodeProcessed
 				elif node == xmpp.NS_MUC_ROOMS and GT('iq_show_rooms_disco'):
-					hr,trooms = getFile(hide_conf,[]),[]
-					cnf = cur_execute_fetchall('select room from conference;')
-					for t in cnf:
-						if al == 9 or getRoom(t[0]) not in hr: trooms.append(getRoom(t[0]))
+					if al == 9: cnf = cur_execute_fetchall("select room from conference;")
+					cnf = cur_execute_fetchall("select room from conference where split_part(room,'/',1) not in (select room from hiden_rooms as hrr);")
+					trooms = [t[0] for t in cnf]
 					trooms.sort()
 					trooms = [xmpp.Node('item',attrs={'jid':t}) for t in trooms]
 					i.getTag('query',namespace=xmpp.NS_DISCO_ITEMS).setPayload(trooms)
@@ -1415,7 +1413,7 @@ def iqCB(sess,iq):
 								if caps_matcher(c_caps,c_list) ^ caps_negate:
 									pprint('MUC-Filter caps node lock (%s): %s/%s %s %s' % (['black','white'][caps_negate],gr,nick,jid,c_caps),'brown')
 									msg,mute = unicode(xmpp.Node('presence', {'from': tojid, 'type': 'error', 'to':jid}, payload = ['replace_it',xmpp.Node('error', {'type': 'auth','code':'403'}, payload=[xmpp.Node('forbidden',{'xmlns':'urn:ietf:params:xml:ns:xmpp-stanzas'},[]),xmpp.Node('text',{'xmlns':'urn:ietf:params:xml:ns:xmpp-stanzas'},[L('Deny by node lock!')])])])).replace('replace_it',get_tag(msg,'presence')),True
-							if caps_error: writefile('log/bad_stanza_%s.txt' % int(time.time()),unicode(msg_xmpp).encode('utf-8'))
+							if caps_error: writefile(slog_folder % 'bad_stanza_%s.txt' % int(time.time()),unicode(msg_xmpp).encode('utf-8'))
 
 						# Hash lock
 						if get_config(gr,'muc_filter_deny_hash') and msg and not mute:
@@ -1443,7 +1441,7 @@ def iqCB(sess,iq):
 
 								hash_body = '<'.join([unicode(tmp) for tmp in id_avatar,id_photo,id_ver,id_bmver,id_lang]) + '<<'
 								if hash_error:
-									writefile('log/bad_stanza_%s.txt' % int(time.time()),unicode(msg_xmpp).encode('utf-8'))
+									writefile(slog_folder % 'bad_stanza_%s.txt' % int(time.time()),unicode(msg_xmpp).encode('utf-8'))
 									hash_body = parser(hash_body.decode('utf-8'))
 
 								current_hash = hashlib.md5(hash_body.encode('utf-8')).digest().encode('base64').replace('\n','')
@@ -1957,7 +1955,7 @@ def presenceCB(sess,mess):
 
 		hash_body = '<'.join([unicode(tmp) for tmp in id_avatar,id_photo,id_ver,id_bmver,id_lang]) + '<<'
 		if hash_error:
-			writefile('log/bad_stanza_%s.txt' % int(time.time()),unicode(mess).encode('utf-8'))
+			writefile(slog_folder % 'bad_stanza_%s.txt' % int(time.time()),unicode(mess).encode('utf-8'))
 			hash_body = parser(hash_body.decode('utf-8'))
 
 		current_hash = hashlib.md5(hash_body.encode('utf-8')).digest().encode('base64').replace('\n','')
@@ -2241,7 +2239,7 @@ def get_repo():
 # --------------------- Иницилизация переменных ----------------------
 
 nmbrs = ['0','1','2','3','4','5','6','7','8','9','.']
-ul = 'log/update.log'				# лог последнего обновление
+ul = slog_folder % 'update.log'				# лог последнего обновление
 halt_on_exception = False					# остановка на ошибках
 debug_xmpppy = False				# отладка xmpppy
 debug_console = False				# отладка действий бота

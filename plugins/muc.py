@@ -26,40 +26,36 @@
 def global_ban(type, jid, nick, text):
 	text = text.lower()
 	hroom = getRoom(jid)
-	hr = getFile(ignoreban,[])
 	al = get_level(jid,nick)[0]
 	if al == 9: af = 'owner'
 	else: af = get_affiliation(jid,nick)
 	if af != 'owner': msg = L('This command available only for conference owner!')
 	elif text == 'show' and al == 9:
-		if len(hr):
-			msg = L('Global ban is off in:')
-			for tmp in hr: msg += '\n'+tmp
+		ir = cur_execute_fetchone('select * from ignore_ban;')
+		if len(ir): msg = '%s\n%s' % (L('Global ban is off in:'),'\n'.join([t[0] for t in ir]))
 		else: msg = L('Global ban enable without limits!')
 	elif text == 'del' and af == 'owner':
-		if hroom in hr: msg = L('Conference %s already deleted from global ban list!') % hroom
+		if cur_execute_fetchone('select * from ignore_ban where room=%s' % (hroom,)): msg = L('Conference %s already deleted from global ban list!') % hroom
 		else:
-			hr.append(hroom)
+			cur_execute('insert inro ignore_ban values (%s)' % (hroom,))
 			msg = L('Conference %s has been deleted from global ban list!') % hroom
-			writefile(ignoreban,str(hr))
 	elif text == 'add' and af == 'owner':
-		if hroom in hr:
-			hr.remove(hroom)
+		if cur_execute_fetchone('select * from ignore_ban where room=%s' % (hroom,)):
+			cur_execute('delete from ignore_ban where room=%s' % (hroom,))
 			msg = L('Conference %s has been added from global ban list!') % hroom
-			writefile(ignoreban,str(hr))
 		else: msg = L('Conference %s already exist in global ban list!') % hroom
 	else:
 		if al == 9:
-			if hroom in hr: msg = L('Your conference will be ignored for global ban!')
+			if cur_execute_fetchone('select * from ignore_ban where room=%s' % (hroom,)): msg = L('Your conference will be ignored for global ban!')
 			elif '@' not in text or '.' not in text: msg = L('I need jid!')
 			else:
 				reason = L('banned global by %s from %s') % (nick, jid)
-				for tmp in [t[0] for t in cur_execute_fetchall('select room from conference;')]:
-					if not (getRoom(tmp) in hr):
-						i = xmpp.Node('iq', {'id': get_id(), 'type': 'set', 'to':getRoom(tmp)}, payload = [xmpp.Node('query', {'xmlns': xmpp.NS_MUC_ADMIN},[xmpp.Node('item',{'affiliation':'outcast', 'jid':unicode(text)},[xmpp.Node('reason',{},reason)])])])
-						sender(i)
-						time.sleep(0.1)
-				msg = L('jid %s has been banned in %s conferences.') % (text, cur_execute_fetchall('select count(*) from conference;')[0]-len(hr))
+				br = [t[0] for t in cur_execute_fetchall("select room from conference where split_part(room,'/',1) not in (select room from ignore_ban as igb);")]
+				for tmp in br:
+					i = xmpp.Node('iq', {'id': get_id(), 'type': 'set', 'to':getRoom(tmp)}, payload = [xmpp.Node('query', {'xmlns': xmpp.NS_MUC_ADMIN},[xmpp.Node('item',{'affiliation':'outcast', 'jid':unicode(text)},[xmpp.Node('reason',{},reason)])])])
+					sender(i)
+					time.sleep(0.1)
+				msg = L('jid %s has been banned in %s conferences.') % (text, len(br))
 		else: msg = L('Command temporary blocked!')
 	send_msg(type, jid, nick, msg)
 
