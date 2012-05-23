@@ -73,8 +73,7 @@ def remove_from_turner(room,jid,nick,type,text):
 
 def autoturn(room,jid,nick,type,text):
 	if get_config(room,'autoturn') and type == 'groupchat':
-		cof = getFile(conoff,[])
-		if (room,'turn') in cof: return
+		if cur_execute_fetchone('select * from commonoff where room=%s and cmd=%s',(room,'turn')): return
 		nowname = get_xnick(room)
 		if nick == nowname: return
 		text = re.sub('^%s[,:]\ ' % re.escape(nowname), '', text.strip())

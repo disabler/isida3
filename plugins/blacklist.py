@@ -23,7 +23,7 @@
 
 def leave_room(rjid, reason):
 	msg = ''
-	cnf = cur_execute_fetchone('select room from conference where room ilike %s',('%%%s'%rjid,))
+	cnf = cur_execute_fetchone('select room from conference where room ilike %s',('%s/%%'%rjid,))
 	if cnf:
 		cur_execute('delete from conference where room ilike %s;', ('%s/%%'%rjid,))
 		leave(rjid, reason)

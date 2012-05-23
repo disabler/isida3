@@ -145,7 +145,7 @@ def kill_all_threads():
 				except: pass
 
 def get_xnick(jid):
-	tmp = cur_execute_fetchone('select room from conference where room ilike %s',('%%%s'%jid,))
+	tmp = cur_execute_fetchone('select room from conference where room ilike %s',('%s/%%'%jid,))
 	if tmp: return getResourse(tmp[0])
 	else: return Settings['nickname']
 
@@ -325,56 +325,44 @@ def get_affiliation(jid,nick):
 	return xtype
 
 def comm_on_off(type, jid, nick, text):
-	cof = getFile(conoff,[])
-	if len(text):
-		if text[:3] == 'on ':
-			text = text[3:].lower()
-			if len(text):
-				if (jid,text) in cof:
-					if get_affiliation(jid,nick) == 'owner' or get_level(jid,nick)[0] == 9:
-						cof.remove((jid,text))
-						writefile(conoff, str(cof))
-						msg = L('Enabled: %s') % text
-					else: msg = L('Only conference owner can enable commands!')
-				else: msg = L('Command %s is not disabled!') % text
-			else: msg = L('What enable?')
-		if text[:4] == 'off ':
-			if get_affiliation(jid,nick) == 'owner' or get_level(jid,nick)[0] == 9:
-				text = text[4:].lower()
-				if len(text):
-					text = text.split(' ')
-					msg_found = ''
-					msg_notfound = ''
-					msg_offed = ''
-					for tex in text:
-						fl = 0
-						if tex != 'comm':
-							for cm in comms:
-								if cm[1] == tex:
-									fl = 1
-									break
-						if fl:
-							if (jid,tex) not in cof:
-								cof.append((jid,tex))
-								writefile(conoff, str(cof))
-								msg_found += tex + ', '
-							else: msg_offed += tex + ', '
-						else: msg_notfound += tex + ', '
-					if len(msg_found): msg = L('Disabled commands: %s') % msg_found[:-2]
-					else: msg = ''
-					if len(msg_offed):
-						if msg != '': msg += '\n'
-						msg += L('Commands disabled before: %s') % msg_offed[:-2]
-					if len(msg_notfound):
-						if msg != '': msg += '\n'
-						msg += L('Commands not found: %s') % msg_notfound[:-2]
-				else: msg = L('What disable?')
-			else: msg = L('Only conference owner can disable commands!')
+	text = text.strip().lower().split()
+	if text:
+		cmd = text[0]
+		cmds = text[1:]
+		if cmd == 'on':
+			if not cmds: msg = L('What disable?')
+			else:
+				not_found,enabled,already = [],[],[]
+				for t in cmds:
+					if not [True for c in comms if c[1]==t]: not_found.append(t)
+					elif cur_execute_fetchone('select cmd from commonoff where room=%s and cmd=%s;',(jid,t)):
+						cur_execute('delete from commonoff where room=%s and cmd=%s;',(jid,t))
+						enabled.append(t)
+					else: already.append(t)
+				msg = []
+				if enabled: msg.append(L('Enabled commands: %s') % ', '.join(enabled))
+				if already: msg.append(L('Not disabled commands: %s') % ', '.join(already))
+				if not_found: msg.append(L('Commands not found: %s') % ', '.join(not_found))
+				msg = '\n'.join(msg)				
+		elif cmd == 'off':
+			if not cmds: msg = L('What enable?')
+			else:
+				not_found,disabled,already = [],[],[]
+				for t in cmds:
+					if not [True for c in comms if c[1]==t]: not_found.append(t)
+					elif cur_execute_fetchone('select cmd from commonoff where room=%s and cmd=%s;',(jid,t)): already.append(t)
+					else:
+						cur_execute('insert into commonoff values (%s,%s);',(jid,t))
+						disabled.append(t)
+				msg = []
+				if disabled: msg.append(L('Disabled commands: %s') % ', '.join(disabled))
+				if already: msg.append(L('Commands disabled before: %s') % ', '.join(already))
+				if not_found: msg.append(L('Commands not found: %s') % ', '.join(not_found))
+				msg = '\n'.join(msg)
+		else: msg = L('Unknown item!')
 	else:
-		msg = ''
-		for tmp in cof:
-			if tmp[0] == jid: msg += tmp[1] + ', '
-		if len(msg): msg = L('Disabled commands: %s') % msg[:-2]
+		cmd = cur_execute_fetchall('select cmd from commonoff where room=%s;',(jid,)) 
+		if cmd: msg = L('Disabled commands: %s') % ', '.join([t[0] for t in cmd])
 		else: msg = L('Disabled commands not found!')
 	send_msg(type, jid, nick, msg)
 
@@ -938,7 +926,7 @@ def info_where_plus(type, jid, nick):
 		for mega in megabase:
 			if mega[0] == rjid:
 				cnt += 1
-				if '%s/%s' % tuple(mega[0:2]) == jjid[0]: ra = L('%s/%s' % tuple(mega[2:4]))
+				if '%s/%s' % tuple(mega[0:2]) == jjid[0]: ra = L("%s/%s" % tuple(mega[2:4]))
 		wbase.append((cnt, jjid[0], ra))
 	wbase.sort(reverse=True)
 	msg = '%s\n%s' % (msg,'\n'.join(['%s. %s (%s) [%s]' % (i[0]+1,i[1][1].split('\n')[0],i[1][2],i[1][0]) for i in enumerate(wbase)]))

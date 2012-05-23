@@ -2,6 +2,3 @@ TODO:
 - backup.py c_file
 - backup.py alfile
 - backup.py feeds
-remove spy_base
-remove tban
-remove log_conf

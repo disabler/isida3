@@ -56,10 +56,9 @@ for p in readfile(MIND_FILE).split('\n'):
 def flood_actions(type, room, nick, answ, msg):
 	text = ''
 	jid = getRoom(get_level(room,nick)[1])
-	cof = getFile(conoff,[])
-	nowname = getResourse(cur_execute_fetchone('select room from conference where room ilike %s',('%%%s'%room,))[0])
+	nowname = getResourse(cur_execute_fetchone('select room from conference where room ilike %s',('%s/%%'%room,))[0])
 	access_mode = get_level(room,nick)[0]
-	if (room, answ[1:]) in cof: return
+	if cur_execute_fetchone('select * from commonoff where room=%s and cmd=%s',(room,answ[1:])): return
 	if answ == '@ping':
 		nicks = [d[1] for d in megabase if d[0]==room]
 		tmp = [n for n in nicks if n.upper() in msg]

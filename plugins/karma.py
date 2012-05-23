@@ -94,8 +94,7 @@ def karma_show(jid, nick, text):
 		else: return L('%s karma is %s') % (atext, karma_val(int(stat[0]))) + lim_text
 
 def karma_set(jid, nick, text):
-	cof = getFile(conoff,[])
-	if (jid,'karma') in cof: return
+	if cur_execute_fetchone('select * from commonoff where room=%s and cmd=%s',(jid,'karma')): return
 	k_acc = get_level(jid,nick)[0]
 	try:
 		if '\n' in text: text,val = text.split('\n',1)
@@ -114,8 +113,7 @@ def karma_set(jid, nick, text):
 	except: return L('incorrect digital parameter').capitalize()
 
 def karma_clear(jid, nick, text):
-	cof = getFile(conoff,[])
-	if (jid,'karma') in cof: return
+	if cur_execute_fetchone('select * from commonoff where room=%s and cmd=%s',(jid,'karma')): return
 	k_acc = get_level(jid,nick)[0]
 	if k_acc >= 9:
 		if '\n' in text: (param,text) = text.split('\n',1)
@@ -169,7 +167,7 @@ def karma_correct(room):
 	return vm
 
 def karma_action_do(room,text,action):
-	nick = getResourse(cur_execute_fetchone('select room from conference where room ilike %s',('%%%s'%room,))[0])
+	nick = getResourse(cur_execute_fetchone('select room from conference where room ilike %s',('%s/%%'%room,))[0])
 	action = action.replace('ban','outcast')
 	act = {'outcast':muc_affiliation,'none':muc_affiliation,'member':muc_affiliation,
 		   'kick':muc_role,'participant':muc_role,'visitor':muc_role,'moderator':muc_role}
@@ -178,8 +176,7 @@ def karma_action_do(room,text,action):
 def karma_change(room,jid,nick,type,text,value):
 	if type == 'chat': msg = L('You can\'t change karma in private!')
 	else:
-		cof = getFile(conoff,[])
-		if (room,'karma') in cof: return
+		if cur_execute_fetchone('select * from commonoff where room=%s and cmd=%s',(room,'karma')): return
 		if ': ' in text: (text,other) = text.split(': ',1)
 		elif ', ' in text: (text,other) = text.split(', ',1)
 		else: return

@@ -27,7 +27,6 @@ spy_stat_time = int(time.time())	# время последнего сканир�
 def spy_add(text):
 	if text == '': return L('what do you want to add?')
 	text = text.lower()
-	sb = getFile(spy_base,[])
 	sconf = text.split(' ')[0]
 	try: saction = text.split(' ',1)[1]
 	except: return L('not given tracking')
@@ -37,35 +36,25 @@ def spy_add(text):
 		try: int(tmp[1:])
 		except: return L('incorrect digital parameter')
 	if sconf not in [t[0] for t in cur_execute_fetchone('select room from conference;')]: return L('I am not in the %s ') % sconf
-	msg = L('Append: %s') % text
-	for tmp in sb:
-		if tmp[0] == sconf:
-			sb.remove(tmp)
-			msg = L('Updated: %s') % text
-			break
-	cnt = 0
-	for mega in megabase:
-		if mega[0] == sconf: cnt += 1
-	sb.append((sconf,int(time.time()),cnt,0,saction))
-	writefile(spy_base,str(sb))
+	if cur_execute_fetchone('select room from spy where room=%s;',(sconf,)):
+		msg = L('Updated: %s') % text
+		cur_execute('delete from spy where room=%s;',(sconf,))
+	else: msg = L('Append: %s') % text
+	cnt = len(['' for t in megabase if t[0]==tmp[0]])
+	cur_execute('insert into spy values (%s,%s,%s,%s,%s)',(sconf,int(time.time()),cnt,0,saction))
 	return msg
 
 def spy_del(text):
 	if text == '': return L('what do you want remove?')
 	text = text.lower().split(' ')[0]
-	sb = getFile(spy_base,[])
-	msg = L('Not found: %s') % text
-	for tmp in sb:
-		if tmp[0] == text:
-			sb.remove(tmp)
-			msg = L('Removed: %s') % text
-			writefile(spy_base,str(sb))
-			break
-	return msg
+	if cur_execute_fetchone('select room from spy where room=%s;',(text,)):
+		cur_execute('delete from spy where room=%s;',(text,))
+		return L('Removed: %s') % text
+	else: return L('Not found: %s') % text
 
 def spy_show():
-	sb = getFile(spy_base,[])
-	if not len(sb): return L('List is empty.')
+	sb = cur_execute_fetchall('select * from spy;')
+	if not sb: return L('List is empty.')
 	msg = L('Monitoring conferences:')
 	msg += '\n%s' % '\n'.join(['%s %s (%s|u%s|m%s)' % (tmp[0],tmp[4],un_unix(int(time.time()-tmp[1])),tmp[2],tmp[3]) for tmp in sb])
 	msg += L('\nNext scanning across %s') % un_unix(int(GT('scan_time')-(time.time()-spy_stat_time)))
@@ -81,55 +70,42 @@ def conf_spy(type, jid, nick,text):
 	send_msg(type, jid, nick, msg)
 
 def spy_message(room,jid,nick,type,text):
-	sb = getFile(spy_base,[])
-	for tmp in sb:
-		if tmp[0] == getRoom(room):
-			ms = (tmp[0],tmp[1],tmp[2],tmp[3]+1,tmp[4])
-			sb.remove(tmp)
-			sb.append(ms)
-			writefile(spy_base,str(sb))
-			break
+	sb = cur_execute_fetchone('select message from spy where room=%s;',(room,))
+	if sb: cur_execute('update spy set message=message+1 where room=%s',(room,))
 
 def get_spy_stat():
 	global spy_stat_time
 	if time.time()-spy_stat_time < GT('scan_time'): return None
 	spy_stat_time = time.time()
-	sb = getFile(spy_base,[])
-	for tmp in sb:
-		cnt = 0
-		for mega in megabase:
-			if mega[0] == tmp[0]:
-				cnt += 1
-		ms = (tmp[0],tmp[1],(tmp[2]+cnt)/2.0,tmp[3],tmp[4])
-		sb.remove(tmp)
-		sb.append(ms)
-		writefile(spy_base,str(sb))
+	sb = cur_execute_fetchone('select room from spy;')
+	if sb:
+		for tmp in sb:
+			cnt = len(['' for t in megabase if t[0]==tmp[0]])
+			cur_execute('update spy set participant=(participant+%s)/2 where room=%s',(cnt,tmp[0]))
 
 def spy_action():
-	if cur_execute_fetchall('select count(*) from conference;')[0] == 1: return None # Last conference
-	sb = getFile(spy_base,[])
+	if cur_execute_fetchone('select count(*) from conference;')[0] == 1: return None # Last conference
+	sb = cur_execute_fetchall('select * from spy where %s-time>%s;',(int(time.time()),GT('spy_action_time')))
 	for tmp in sb:
-		if time.time()-tmp[1] > GT('spy_action_time'):
-			act = tmp[4].split(' ')
-			mist = None
-			for tmp2 in act:
-				if tmp2[0] == 'u' and int(tmp2[1:]) > tmp[2]: mist = tmp2
-				elif tmp2[0] == 'm' and int(tmp2[1:]) > tmp[3]: mist = tmp2
-				sb.remove(tmp)
-				if mist:
-					if cur_execute_fetchall('select * from conference where room ilike %s;', ('%s/%%'%getRoom(tmp[0]),)):
-						cur_execute('delete from conference where room ilike %s;', ('%s/%%'%getRoom(tmp[0]),))
-						leave(tmp[0], L('I leave your conference because low activity'))
-						own = cur_execute_fetchone('select * from bot_owner;')
-						if own:
-							for tmpo in own: send_msg('chat', tmpo[0], '', L('I leave conference %s by condition spy plugin: %s') % (tmp[0], mist))
-				else: sb.append((tmp[0],int(time.time()),tmp[2], 0,tmp[4]))
-				writefile(spy_base,str(sb))
+		act = tmp[4].split(' ')
+		mist = None
+		for tmp2 in act:
+			if tmp2[0] == 'u' and int(tmp2[1:]) > tmp[2]: mist = tmp2
+			elif tmp2[0] == 'm' and int(tmp2[1:]) > tmp[3]: mist = tmp2
+			cur_execute('delete from spy where room=%s',(tmp[0],))
+			if mist:
+				if cur_execute_fetchall('select * from conference where room ilike %s;', ('%s/%%'%getRoom(tmp[0]),)):
+					cur_execute('delete from conference where room ilike %s;', ('%s/%%'%getRoom(tmp[0]),))
+					leave(tmp[0], L('I leave your conference because low activity'))
+					own = cur_execute_fetchone('select * from bot_owner;')
+					if own:
+						for tmpo in own: send_msg('chat', tmpo[0], '', L('I leave conference %s by condition spy plugin: %s') % (tmp[0], mist))
+			else: cur_execute('insert into spy values (%s,%s,%s,%s,%s)',(tmp[0],int(time.time()),tmp[2], 0,tmp[4]))
 
 global execute, timer, message_control
 
-#timer = [get_spy_stat, spy_action]
+timer = [get_spy_stat, spy_action]
 
-#message_control = [spy_message]
+message_control = [spy_message]
 
 execute = [(9, 'spy', conf_spy, 2, L('Check conference activity\nspy add <conference>[ u<number>][ m<number>] - add conference to list. u - count users, m - count message per night. At default At least one condition - the bot will leave the conference\nspy del <conference> - remove conference from list\nspy show - show active monitoring.'))]

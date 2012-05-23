@@ -59,79 +59,55 @@ def global_ban(type, jid, nick, text):
 		else: msg = L('Command temporary blocked!')
 	send_msg(type, jid, nick, msg)
 
-def muc_tempo_ban(type, jid, nick,text):
-	if text[:4].lower() == 'show' and '\n' not in text:
-		text = text[5:]
-		if not len(text): text = '.'
-		ubl = getFile(tban,[])
-		msg = ''
-		for ub in ubl:
-			if ub[0] == jid and text.lower() in ub[1]:
-				if ub[2]-int(time.time()) > 0: msg += '\n%s\t%s' % (ub[1],un_unix(ub[2]-int(time.time())))
-				else: msg += '\n%s\t < %s' % (ub[1],un_unix(GT('schedule_time')))
-		if len(msg): msg = L('Found: %s') % msg
+def muc_tempo_ban(type, jid, nick, text):
+	text = text.strip().split()
+	cmd = text[0].lower()
+	if cmd == 'show':
+		par = ' '.join(text[1:])
+		if not par: par = '%'
+		tb = cur_execute_fetchall('select jid,time from tmp_ban where room=%s and jid ilike %s',(jid,par))
+		if tb: msg = L('Found: %s') % '\n%s' % '\n'.join([['%s\t%s' % (ub[0],un_unix(ub[1]-int(time.time()))),'%s\t < %s' % (ub[0],un_unix(GT('schedule_time')))][ub[1] > int(time.time())] for ub in tb])
 		else: msg = L('Not found.')
-		send_msg(type, jid, nick, msg)
 
-	elif text[:3].lower() == 'del' and '\n' not in text:
-		text = text[4:]
-		if not len(text): text = '@@'
-		ubl = getFile(tban,[])
-		msg = ''
-		for ub in ubl:
-			if ub[0] == jid and ub[1] == text.lower():
-				msg += ub[1]+'\t'+un_unix(ub[2]-int(time.time()))
-				i = xmpp.Node('iq', {'id': get_id(), 'type': 'set', 'to':ub[0]}, payload = [xmpp.Node('query', {'xmlns': xmpp.NS_MUC_ADMIN},[xmpp.Node('item',{'affiliation':'none', 'jid':getRoom(unicode(ub[1]))},[])])])
-				sender(i)
-				ubl.remove(ub)
-		if len(msg):
-			msg = L('Removed: %s') % msg
-			writefile(tban,str(ubl))
-		else: msg = L('Not found.')
-		send_msg(type, jid, nick, msg)
-	else: muc_tempo_ban2(type, jid, nick,text)
+	elif cmd == 'del':
+		par = ' '.join(text[1:])
+		if par:
+			tb = cur_execute_fetchall('select jid,time from tmp_ban where room=%s and jid ilike %s',(jid,par))
+			if tb:
+				msg = L('Removed: %s') % '\n%s' % '\n'.join([['%s\t%s' % (ub[0],un_unix(ub[1]-int(time.time()))),'%s\t < %s' % (ub[0],un_unix(GT('schedule_time')))][ub[1] > int(time.time())] for ub in tb])
+				for ub in tb: sender(xmpp.Node('iq', {'id': get_id(), 'type': 'set', 'to':jid}, payload = [xmpp.Node('query', {'xmlns': xmpp.NS_MUC_ADMIN},[xmpp.Node('item',{'affiliation':'none', 'jid':getRoom(unicode(ub[0]))},[])])]))
+				tb = cur_execute('detete from tmp_ban where room=%s and jid ilike %s',(jid,par))
+			else: msg = L('Not found.')
+		else: msg = L('What?')
 
-def muc_tempo_ban2(type, jid, nick,text):
-	skip = None
-	if len(text):
-		who = text.split('\n',2)[0]
-		try:
-			ttime = text.split('\n',2)[1]
-			tttime = int(ttime[:-1])
-			tmode = ttime[-1:].lower()
-			tkpd = {'s':1, 'm':60, 'h':3600, 'd':86400}
-			tttime = tttime*tkpd[tmode]
-		except: tttime = 0
-		if tttime:
-			try: reason = text.split('\n',2)[2]
-			except: reason = L('No reason!')
-			reason = L('ban on %s since %s because: %s') % \
-				(un_unix(tttime), timeadd(tuple(time.localtime())), reason)
-			fnd = cur_execute_fetchall('select jid from age where room=%s and (nick=%s or jid=%s) group by jid',(jid,who,who))
-			if len(fnd) == 1: msg, whojid = L('done'), getRoom(unicode(fnd[0][0]))
-			elif len(fnd) > 1:
-				whojid = getRoom(get_level(jid,who)[1])
-				if whojid != 'None': msg = L('done')
-				else: msg, skip = L('I seen some peoples with this nick. Get more info!'), True
-			else:
-				if '.' in who:
-					msg = L('I don\'n know %s, and use as is!') % who
-					whojid = who
-				else: msg, skip = L('I don\'t know %s') % who , True
-		else: msg, skip = L('Time format error!'), True
-	else: msg, skip = L('What?'), True
-
-	if skip: send_msg(type, jid, nick, msg)
-	else:
-		i = xmpp.Node('iq', {'id': get_id(), 'type': 'set', 'to':jid}, payload = [xmpp.Node('query', {'xmlns': xmpp.NS_MUC_ADMIN},[xmpp.Node('item',{'affiliation':'outcast', 'jid':unicode(whojid)},[xmpp.Node('reason',{},reason)])])])
-		sender(i)
-
-		ubl = getFile(tban,[])
-		for ub in ubl:
-			if ub[0] == jid and ub[1] == whojid: ubl.remove(ub)
-		ubl.append((jid,whojid,tttime+int(time.time())))
-		writefile(tban,str(ubl))
-		send_msg(type, jid, nick, msg)
+	elif text:
+		try: ban_time = int(text[1][:-1]) * {'s':1, 'm':60, 'h':3600, 'd':86400}[text[1][-1].lower()]
+		except: ban_time = None
+		if ban_time:
+			reason = ' '.join(text[2:])
+			if not reason: reason = L('No reason!')
+			reason = L('ban on %s since %s because: %s') % (un_unix(ban_time), timeadd(tuple(time.localtime())), reason)
+			who,msg = text[0],L('done')
+			whojid = [t[4] for t in megabase if t[0]==jid and t[1]==who]
+			if not whojid:
+				fnd = cur_execute_fetchall('select jid from age where room=%s and (nick=%s or jid=%s) group by jid',(jid,who,who))
+				if len(fnd) == 1: whojid = getRoom(fnd[0][0])
+				elif len(fnd) > 1: msg = L('I seen different people with this nick!')
+				else: msg,whojid = L('I don\'n know %s, and use as is!') % who,who
+			if whojid:				
+				sender(xmpp.Node('iq', {'id': get_id(), 'type': 'set', 'to':jid}, payload = [xmpp.Node('query', {'xmlns': xmpp.NS_MUC_ADMIN},[xmpp.Node('item',{'affiliation':'outcast', 'jid':unicode(whojid)},[xmpp.Node('reason',{},reason)])])]))
+				was_banned = cur_execute_fetchone('select * from tmp_ban where room=%s and jid=%s;',(jid,whojid))
+				if was_banned:
+					cur_execute('delete from tmp_ban where room=%s and jid=%s;',(jid,whojid))
+					ban_tm = was_banned[0]-int(time.time())
+					if ban_tm > 0: ban_nm = L('old ban time is %s') % un_unix(ban_nm)
+					else: ban_nm = L('just passed!')
+					msg = L('Updated: %s') % ban_nm
+				cur_execute('insert into tmp_ban values (%s,%s,%s)',(jid,whojid,ban_time+int(time.time())))
+		else: msg = L('Time format error!')
+	else: msg = L('What?')
+	
+	send_msg(type, jid, nick, msg)
 
 def muc_ban(type, jid, nick,text): muc_affiliation(type, jid, nick, text, 'outcast',0)
 def muc_banjid(type, jid, nick,text): muc_affiliation(type, jid, nick, text, 'outcast',1)
@@ -204,19 +180,15 @@ def muc_role(type, jid, nick, text, role, unused):
 	else: send_msg(type, jid, nick, L('What?'))
 
 def check_unban():
-	unban_log = getFile(tban,[])
-	if unban_log != '[]':
-		ubl = []
-		for ub in unban_log:
-			if ub[2] > int(time.time()): ubl.append(ub)
-			else:
-				i = xmpp.Node('iq', {'id': get_id(), 'type': 'set', 'to':ub[0]}, payload = [xmpp.Node('query', {'xmlns': xmpp.NS_MUC_ADMIN},[xmpp.Node('item',{'affiliation':'none', 'jid':getRoom(unicode(ub[1]))},[])])])
-				sender(i)
-		if unban_log != ubl: writefile(tban,str(ubl))
+	tt = int(time.time())
+	ul = cur_execute_fetchall('select room,jid from tmp_ban where time<%s;',(tt,))
+	if ul:
+		for t in ul: sender(xmpp.Node('iq', {'id': get_id(), 'type': 'set', 'to':t[0]}, payload = [xmpp.Node('query', {'xmlns': xmpp.NS_MUC_ADMIN},[xmpp.Node('item',{'affiliation':'none', 'jid':getRoom(unicode(t[1]))},[])])]))
+		cur_execute('delete from tmp_ban where time<%s;',(tt,))
 
 global execute, timer
 
-#timer = [check_unban]
+timer = [check_unban]
 
 execute = [(7, 'ban_past', muc_ban_past, 2, L('Ban user.')),
 	   (7, 'ban', muc_ban, 2, L('Ban user.')),

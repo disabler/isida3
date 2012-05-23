@@ -117,7 +117,7 @@ def cron_action():
 				tm = crontab.CronTab(t[4]).next() + time.time()
 				m = list(t[:3]) + [tm] + list(t[4:7])
 				cur_execute('insert into cron values (%s,%s,%s,%s,%s,%s,%s)', m)
-			tmp = cur_execute_fetchone('select room from conference where room ilike %s',('%%%s'%t[0],))
+			tmp = cur_execute_fetchone('select room from conference where room ilike %s',('%s/%%'%t[0],))
 			if not tmp:
 				pprint('Can\'t execute by cron: %s in %s' % (t[5].split()[0],t[0]))
 				return

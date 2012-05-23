@@ -2145,7 +2145,7 @@ def check_rss():
 		elif timetype == 'm': ofset *= 60
 		try: ll_hl = int(fd[3])
 		except: ll_hl = 0
-		in_room = cur_execute_fetchone('select room from conference where room ilike %s',('%%%s'%fd[4],))
+		in_room = cur_execute_fetchone('select room from conference where room ilike %s',('%s/%%'%fd[4],))
 		if ofset < 600: ofset = 600
 		if in_room and ll_hl + ofset <= l_hl:
 			rss_processed = True

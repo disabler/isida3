@@ -21,7 +21,7 @@
 #                                                                             #
 # --------------------------------------------------------------------------- #
 
-import os, sys, time, re
+import os, sys, time, re, traceback
 
 sys.path = ['./lib'] + sys.path
 
@@ -149,5 +149,6 @@ if __name__ == "__main__":
 			except: SM = unicode(SM)
 			printlog(crashtext('Isida is crashed! It\'s imposible, but You do it!'))
 			printlog('%s\n' % SM)
-			raise
+			traceback.print_exc()
+			break
 	os._exit(0)
