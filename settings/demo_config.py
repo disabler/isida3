@@ -41,7 +41,7 @@ msg_limit		=	1024									# Лимит размера сообщений
 #ignore_owner	=	True									# не исполнять для владельца бота отключенные команды
 #halt_on_exception = True									# останавливать работу бота при исключениях
 #debug_xmpppy = True										# режим отладки xmpppy
-debug_console = True										# режим показа действий бота в консоле
+#debug_console = True										# режим показа действий бота в консоле
 #database_debug = True										# режим отладки PostgreSQL
 CommandsLog = True											# Логгирование команд бота
 #thread_type = None											# тип тредов thread/threading. по умолчанию - threading
@@ -58,7 +58,7 @@ base_host = 'localhost' # хост базы
 base_pass = '******'    # пароль базы
 base_port = '5432'		# порт для подключения. стандартные для postgresql - 5432; mysql - 3306
 #base_port = '3306'		# порт для подключения. стандартные для postgresql - 5432; mysql - 3306
-base_charset = 'utf8'   # кодировка для mysql
+#base_charset = 'utf8'   # кодировка для mysql
 
 
 #-------------------------------------------------------#
