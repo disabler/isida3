@@ -1375,8 +1375,12 @@ def iqCB(sess,iq):
 						if mute: msg = unicode(xmpp.Message(to=jid,body=mute_reason,typ=mute_type,frm=mute_room))
 					else: msg = None
 
-				elif msg[:2] == '<p':
-					jid = rss_replace(get_tag_item(msg,'presence','from'))
+				elif msg[:2] == '<p':	
+					jid = rss_replace(get_tag_item(msg,'presence','from'))				
+					if server_hash_list.has_key('%s/%s' % (getRoom(room),getServer(jid))):
+						pprint('MUC-Filter drop by previous ban: %s %s' % (room,jid),'brown')
+						raise xmpp.NodeProcessed
+
 					tojid = rss_replace(get_tag_item(msg,'presence','to'))
 					if is_owner(jid): pass
 					elif get_config(getRoom(room),'muc_filter') and not mute:

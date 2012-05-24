@@ -34,6 +34,7 @@ def last_text_cnt(text,c):
 	return text,cnt
 
 def last_check_ascii(type, jid, nick, text):
+	if not text: text = nick
 	for tmp in text:
 		if tmp > '~' or tmp < ' ':
 			send_msg(type, jid, nick, L('Error!'))
