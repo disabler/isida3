@@ -57,10 +57,10 @@ def conf_backup(type, jid, nick, text):
 		mode = text[0]
 
 		if mode == 'show':
-			a = os.listdir(back_folder)
+			a = os.listdir(back_folder % '')
 			b = []
 			for c in a:
-				if not c.endswith('.txt'): b.append((c,os.path.getmtime(back_folder+c)))
+				if not c.endswith('.txt') and not c.endswith('.back'): b.append((c,os.path.getmtime(back_folder % c)))
 			if len(b): msg = '%s %s' % (L('Available copies:'), ', '.join(['%s (%s)' % (c[0],disp_time(c[1])) for c in b]))
 			else: msg = L('Backup copies not found.')
 		elif mode == 'now':
@@ -79,12 +79,10 @@ def conf_backup(type, jid, nick, text):
 				iqid = get_id()
 				i = xmpp.Node('iq', {'id': iqid, 'type': 'set', 'to':jid}, payload = [xmpp.Node('query', {'xmlns': xmpp.NS_MUC_ADMIN},[xmpp.Node('item',{'affiliation':'admin', 'jid':getRoom(str(selfjid))},[])])])
 				sender(i)
-				backup_async[back_id]['alias'] = [tmp[1:] for tmp in getFile(alfile,[]) if tmp[0]==jid]
-				setup = getFile(c_file,{})
-				try: backup_async[back_id]['bot_config'] = setup[jid]
-				except: backup_async[back_id]['bot_config'] = ''
+				backup_async[back_id]['alias'] = cur_execute_fetchall('select match,cmd from alias where room=%s',(jid,))
+				backup_async[back_id]['bot_config'] = cur_execute_fetchall('select option,value from config_conf where room=%s',(jid,))
 				backup_async[back_id]['acl'] = cur_execute_fetchall('select action,type,text,command,time,level from acl where jid=%s',(jid,))
-				backup_async[back_id]['rss'] = [tmp[0:4]+[tmp[5]] for tmp in getFile(feeds,[]) if tmp[4]==jid]
+				backup_async[back_id]['rss'] = cur_execute_fetchall('select url,update,type,time,hash from feed where room=%s',(jid,))
 
 				msg = L('Copying completed!')
 				msg += L('\nOwners: %s | Admins: %s | Members: %s | Banned: %s') % (\
@@ -100,13 +98,13 @@ def conf_backup(type, jid, nick, text):
 					len(backup_async[back_id]['acl']),\
 					len(backup_async[back_id]['rss']))
 
-				writefile(back_folder+unicode(jid),json.dumps(backup_async[back_id]))
+				writefile(back_folder % unicode(jid),json.dumps(backup_async[back_id]))
 
 		elif mode == 'restore':
 			if len(text)>1:
-				if text[1] in os.listdir(back_folder):
+				if text[1] in os.listdir(back_folder % ''):
 					if text[1].endswith('.acl'):
-						raw_back = json.loads(readfile(back_folder+unicode(text[1])))
+						raw_back = json.loads(readfile(back_folder % unicode(text[1])))
 						cnt = 0
 						for tmp in raw_back:
 							isit = cur_execute_fetchall('select action,type,text,command,time from acl where jid=%s and action=%s and type=%s and text=%s and level=%s',(jid,tmp[0],tmp[1],tmp[2],tmp[5]))
@@ -117,7 +115,7 @@ def conf_backup(type, jid, nick, text):
 					elif get_xtype(jid) != 'owner': msg = L('I need an owner affiliation for restore settings!')
 					else:
 						bst = GT('backup_sleep_time')
-						raw_back=json.loads(readfile(back_folder+unicode(text[1])))
+						raw_back=json.loads(readfile(back_folder % unicode(text[1])))
 						for tmp in ['outcast','member','admin','owner']:
 							for t in make_stanzas_array(raw_back[tmp],jid,tmp):
 								sender(t)
@@ -133,25 +131,17 @@ def conf_backup(type, jid, nick, text):
 						time.sleep(bst)
 						sender(xmpp.Node('iq', {'id': get_id(), 'type': 'set', 'to':jid}, payload = [xmpp.Node('query', {'xmlns': xmpp.NS_MUC_ADMIN},[xmpp.Node('item',{'affiliation':'admin', 'jid':getRoom(unicode(selfjid))},[])])]))
 						time.sleep(bst)
-						setup = getFile(c_file,{})
-						setup[jid] = raw_back['bot_config']
-						writefile(c_file,str(setup))
-						aliases = getFile(alfile,[])
+						cur_execute_fetchall('delete from config_conf where room=%s',(jid,))
+						for tmp in raw_back['bot_config']: cur_execute('insert into config_conf (room,option,value) values (%s,%s,%s)',(jid,tmp[0],tmp[1]))
 						for tmp in raw_back['alias']:
-							if [jid]+tmp not in aliases: aliases.append([jid]+tmp)
-						writefile(alfile,str(aliases))
+							cur_execute('delete from alias where room=%s and match=%s',(jid,tmp[0]))
+							cur_execute('insert into alias (room,match,cmd) values (%s,%s,%s)',(jid,tmp[0],tmp[1]))						
 						for tmp in raw_back['acl']:
 							isit = cur_execute_fetchall('select action,type,text,command,time from acl where jid=%s and action=%s and type=%s and text=%s and level=%s',(jid,tmp[0],tmp[1],tmp[2],tmp[5]))
-							if not isit: cur_execute('insert into acl values (%s,%s,%s,%s,%s,%s,%s)', tuple([jid]+list(tmp)))
-						feedbase = getFile(feeds,[])
+							if not isit: cur_execute('insert into acl values (%s,%s,%s,%s,%s,%s,%s)', tuple([jid]+list(tmp)))						
 						for tmp in raw_back['rss']:
-							isit = False
-							for t in feedbase:
-								if t[0] == tmp[0] and t[4] == jid:
-									isit = True
-									break
-							if not isit: feedbase.append(tmp[0:4]+[jid]+[tmp[4]])
-						writefile(feeds,str(feedbase))
+							isit = cur_execute_fetchone('select * from feed where room=%s and url=%s',(jid,tmp[0]))
+							if not isit: cur_execute('insert into feeed (url,update,type,time,room,hash) values (%s,%s,%s,%s,%s,%s)',(tmp[0],tmp[1],tmp[2],tmp[3],jid,tmp[4]))
 						msg = L('Restore completed.')
 						msg += L('\nOwners: %s | Admins: %s | Members: %s | Banned: %s') % (\
 							len(raw_back['owner'])-1,\

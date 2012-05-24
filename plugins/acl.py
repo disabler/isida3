@@ -126,7 +126,7 @@ def acl_clear(room,nick):
 	if get_level(room,nick)[0] < 8: return L('You have no rights to do it!')
 	acl_back = cur_execute_fetchall('select * from acl where jid=%s',(room,))
 	if acl_back:
-		fname = '%s%s_%s.acl' % (back_folder,unicode(room),''.join(['%02d' % t for t in time.localtime()[:6]]))
+		fname = back_folder % '%s_%s.acl' % (unicode(room),''.join(['%02d' % t for t in time.localtime()[:6]]))
 		writefile(fname,json.dumps(acl_back))
 	cur_execute('delete from acl where jid=%s',(room,))
 	return L('ACL cleared. Removed %s action(s).') % len(acl_back)
