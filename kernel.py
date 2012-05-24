@@ -271,7 +271,10 @@ def getFile(filename,default):
 
 def get_config(room,item):
 	setup = cur_execute_fetchone('select value from config_conf where room=%s and option=%s',(room,item))
-	try: return setup[0]
+	try:
+		if setup[0] == 'True': return True
+		elif setup[0] in ['False','None']: return False
+		else: return setup[0]
 	except:
 		try: return config_prefs[item][3]
 		except: return None
