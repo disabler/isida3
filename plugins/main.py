@@ -1141,7 +1141,7 @@ def html_encode(body):
 def rss_flush(jid,link,break_point):
 	tstop = cur_execute_fetchone('select hash from feed where room=%s and url=%s',(jid,link))[0]
 	if not break_point: break_point = tstop
-	cur_execute('update talkers set time=%s, hash=%s where room=%s and url=%s',(int(time.time()),break_point,jid,link))
+	cur_execute('update feed set time=%s, hash=%s where room=%s and url=%s',(int(time.time()),break_point,jid,link))
 	return tstop
 
 def smart_concat(text):
