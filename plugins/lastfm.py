@@ -34,7 +34,6 @@ def last_text_cnt(text,c):
 	return text,cnt
 
 def last_check_ascii(type, jid, nick, text):
-	if not text: text = nick
 	for tmp in text:
 		if tmp > '~' or tmp < ' ':
 			send_msg(type, jid, nick, L('Error!'))
@@ -56,6 +55,7 @@ def last_date_now(body):
 		except: return 'Unknown'
 
 def lastonetrack(type, jid, nick, text):
+	if not text: text = nick
 	if last_check_ascii(type, jid, nick, text): return
 	ms = lf_api('user.getrecenttracks',text, '<track')
 	if len(ms): cnt = len(ms)
@@ -70,6 +70,7 @@ def lf_api(method, user, splitter):
 	return rss_replace(html_encode(load_page(link))).split(splitter)
 
 def lasttracks(type, jid, nick, text):
+	if not text: text = nick
 	if last_check_ascii(type, jid, nick, text): return
 	text,cnt = last_text_cnt(text,1)
 	ms = lf_api('user.getrecenttracks',text, '<track')
@@ -78,6 +79,7 @@ def lasttracks(type, jid, nick, text):
 	send_msg(type, jid, nick, msg)
 
 def lastfriends(type, jid, nick, text):
+	if not text: text = nick
 	if last_check_ascii(type, jid, nick, text): return
 	ms = lf_api('user.getfriends',text, '<user')
 	msg = L('Friends %s:') % text
@@ -89,6 +91,7 @@ def lastfriends(type, jid, nick, text):
 	send_msg(type, jid, nick, msg)
 
 def lastloved(type, jid, nick, text):
+	if not text: text = nick
 	if last_check_ascii(type, jid, nick, text): return
 	text,cnt = last_text_cnt(text,1)
 	ms = lf_api('user.getlovedtracks',text, '<track')
@@ -97,6 +100,7 @@ def lastloved(type, jid, nick, text):
 	send_msg(type, jid, nick, msg)
 
 def lastneighbours(type, jid, nick, text):
+	if not text: text = nick
 	if last_check_ascii(type, jid, nick, text): return
 	text,cnt = last_text_cnt(text,1)
 	ms = lf_api('user.getneighbours',text, '<user')
@@ -105,6 +109,7 @@ def lastneighbours(type, jid, nick, text):
 	send_msg(type, jid, nick, msg)
 
 def lastplaylist(type, jid, nick, text):
+	if not text: text = nick
 	if last_check_ascii(type, jid, nick, text): return
 	text,cnt = last_text_cnt(text,2)
 	ms = lf_api('user.getplaylists',text, '<playlist')
@@ -113,6 +118,7 @@ def lastplaylist(type, jid, nick, text):
 	send_msg(type, jid, nick, msg)
 
 def topalbums(type, jid, nick, text):
+	if not text: text = nick
 	if last_check_ascii(type, jid, nick, text): return
 	text,cnt = last_text_cnt(text,1)
 	ms = lf_api('user.gettopalbums',text, '<album')
@@ -121,6 +127,7 @@ def topalbums(type, jid, nick, text):
 	send_msg(type, jid, nick, msg)
 
 def topartists(type, jid, nick, text):
+	if not text: text = nick
 	if last_check_ascii(type, jid, nick, text): return
 	text,cnt = last_text_cnt(text,1)
 	ms = lf_api('user.gettopartists',text, '<artist')
@@ -129,6 +136,7 @@ def topartists(type, jid, nick, text):
 	send_msg(type, jid, nick, msg)
 
 def toptags(type, jid, nick, text):
+	if not text: text = nick
 	if last_check_ascii(type, jid, nick, text): return
 	text,cnt = last_text_cnt(text,1)
 	ms = lf_api('user.gettoptags',text, '<tag')
@@ -137,6 +145,7 @@ def toptags(type, jid, nick, text):
 	send_msg(type, jid, nick, msg)
 
 def toptracks(type, jid, nick, text):
+	if not text: text = nick
 	if last_check_ascii(type, jid, nick, text): return
 	text,cnt = last_text_cnt(text,1)
 	ms = lf_api('user.gettoptracks',text, '<track')
@@ -148,6 +157,7 @@ def toptracks(type, jid, nick, text):
 	send_msg(type, jid, nick, msg)
 
 def tasteometer(type, jid, nick, text):
+	if not text: text = nick
 	if last_check_ascii(type, jid, nick, text): return
 	text = reduce_spaces_all(text.lower().encode('utf-8').replace('\\x','%')).split(' ',1)
 	try: (user1,user2) = text

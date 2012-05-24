@@ -2373,7 +2373,7 @@ except: botOs = os_version()
 tmp_os,tmp_ver = os_version_disco()
 bot_softwareinfo = {'software':botName,'software_version':'%s-%s-%s' % (botVersionDef,get_repo().replace('unknown','none'),base_type),'os':tmp_os,'os_version':tmp_ver}
 
-sm_f = os.path.join(public_log,smile_folder)
+sm_f = os.path.join(public_log % smile_folder)
 if os.path.isdir(sm_f):
 	smiles_dirs_case = [sd for sd in os.listdir(sm_f) if sd[0] != '.' and os.path.isfile(os.path.join(sm_f,sd,smile_descriptor))]
 	smiles_dirs = [sd.lower() for sd in smiles_dirs_case]

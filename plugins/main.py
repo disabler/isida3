@@ -745,7 +745,7 @@ def bot_leave(type, jid, nick, text):
 		lroom = text
 		if is_owner(jid): nick = getName(jid)
 		cnf = cur_execute_fetchall('select * from conference where room ilike %s;', ('%s/%%'%getRoom(text),))
-		if cfn:
+		if cnf:
 			cur_execute('delete from conference where room ilike %s;', ('%s/%%'%getRoom(text),))
 			send_msg(type, jid, nick, L('Leave room %s') % text)
 			sm = L('Leave room by %s') % nick
@@ -1139,7 +1139,7 @@ def html_encode(body):
 #[room, nick, role, affiliation, jid]
 
 def rss_flush(jid,link,break_point):
-	tstop = cur_execute('select hash from feed where room=%s and url=%s',(jid,link))[0]
+	tstop = cur_execute_fetchone('select hash from feed where room=%s and url=%s',(jid,link))[0]
 	if not break_point: break_point = tstop
 	cur_execute('update talkers set time=%s, hash=%s where room=%s and url=%s',(int(time.time()),break_point,jid,link))
 	return tstop
