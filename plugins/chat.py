@@ -27,7 +27,7 @@ FLOOD_STATS = {}
 
 autophrases_time = {}
 
-if os.path.isfile(os.path.join(loc_folder, '%s.txt' % CURRENT_LOCALE)):
+if os.path.isfile(loc_folder % CURRENT_LOCALE):
 	chat_folder = data_folder % 'chat/%s/' % CURRENT_LOCALE
 else:
 	chat_folder = data_folder % 'chat/en/'
