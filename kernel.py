@@ -2451,7 +2451,10 @@ try:
 	confbase = cur_execute_fetchall('select * from conference;')
 	if confbase: confbase.sort()
 	else: raise
-except: confbase = [('%s/%s' % (defaultConf.lower(),Settings['nickname']),'')]
+except:
+	c_room,c_passwd = '%s/%s' % (defaultConf.lower(),Settings['nickname']),''
+	confbase = [(c_room,c_passwd)]
+	cur_execute('insert into conference (room,passwd) values (%s,%s);',(c_room,c_passwd))	
 
 censor = []
 
