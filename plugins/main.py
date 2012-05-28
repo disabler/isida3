@@ -123,10 +123,7 @@ two_en = ['aa', 'aq', 'bc', 'bd', 'bf', 'bg', 'bh', 'bk', 'bn', 'bp', 'bq', 'bw'
 		  'yn', 'yq', 'yu', 'yv', 'yx', 'yy', 'yz', 'zb', 'zc', 'zd', 'zf', 'zg', 'zh', 'zi', 'zj', 'zk', 'zm', 'zn', 'zp', \
 		  'zq', 'zr', 'zs', 'zt', 'zu', 'zv', 'zw', 'zx']
 
-def is_owner(jid): # FIX THIS SHIT!
-	own = cur_execute_fetchone('select * from bot_owner where jid=%s',(getRoom(jid),))
-	if own: return True
-	else: return False
+def is_owner(jid): return cur_execute_fetchone('select * from bot_owner where jid=%s',(getRoom(jid),)) != None
 
 def validate_nick(nick,count):
 		nick = nick.lower()

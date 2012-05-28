@@ -2385,12 +2385,16 @@ else: smiles_dirs, smiles_dirs_case = [], []
 logging.basicConfig(filename=LOG_FILENAME,level=logging.DEBUG,)	# включение логгирования
 capsNode = 'http://isida-bot.com'
 god = SuperAdmin
+
 pprint('-'*50,'blue')
 if os.path.basename(sys.argv[0]) != 'isida.py': errorHandler('Ugly launch detect! Read wiki!')
 
 if base_type == 'pgsql': conn = psycopg2.connect(database=base_name, user=base_user, host=base_host, password=base_pass, port=base_port)
 elif base_type == 'mysql': conn = MySQLdb.connect(db=base_name, user=base_user, host=base_host, passwd=base_pass, port=int(base_port), charset=base_charset)
 else: errorHandler('Can\'t connect to `%s` base type!' % base_type)
+
+own = cur_execute_fetchall('select * from bot_owner;')
+if not own: cur_execute('insert into bot_owner values (%s)',(SuperAdmin,))
 
 pprint('*** Loading localization','white')
 locales,CURRENT_LOCALE = update_locale()
