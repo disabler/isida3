@@ -595,10 +595,37 @@ because: %s	по причине: %s
 Invite to conference.\ninvite nick|jid\n[reason]	Пригласить участника в конференцию.\ninvite nick|jid\n[причина]
 
 # file: plugins/iq.py
+FN	ФИО
+NICKNAME	Ник
+N.FAMILY	Фамилия
+N.GIVEN	Имя
+N.MIDDLE	Отчество
+ADR.LOCALITY	Город
+ADR.REGION	Регион
+ADR.PCODE	Почтовый код
+ADR.CTRY	Страна
+CELL.NUMBER.TEL	Мобильный
+EMAIL.INTERNET.USERID	Публичный E-Mail
+EMAIL	E-Mail
+JABBERID	JabberID
+ROLE	Должность
+BDAY	День рождения
+URL	Ссылка
+DESC	О себе
+BDAY	День рождения
+ADR.CTRY.HOME	Страна
+ROLE	Должность
+BDAY	День рождения
+ORG.ORGNAME	Огранизация
+ORG.ORGUNIT	Подразделение
+NUMBER.TEL.VOICE.WORK	Рабочий телефон
+HOME.NUMBER.TEL.VOICE	Домашний телефон
+EMAIL.USERID	E-Mail
 I can't get caps of %s	Я не знаю капс %s
 %s has empty caps!	У %s пустой капс!
 vCard:	Визитка:
 Empty!	Пусто!
+type %s, %s byte(s)	тип %s, %s байт
 vCard tags:	Теги из визитки:
 Nick	Ник
 Name	Имя
@@ -874,15 +901,13 @@ Locale not found!	Локализация не найдена!
 Current locale: %s	Текущая локализация: %s
 Command temporary blocked!	Команда временно блокирована!
 ok	ок
-Enabled: %s	Включено: %s
-Only conference owner can enable commands!	Включение команд доступно только владельцу конференции!
-Command %s is not disabled!	Для данной конференции команда %s не была отключена!
+What disable?	Что отключить?
+Enabled commands: %s	Включены команды: %s
+Not disabled commands: %s	Не отключены команды: %s
+Commands not found: %s	Не найдены команды: %s
 What enable?	Что включить?
 Disabled commands: %s	Отключены команды: %s
 Commands disabled before: %s	Отключенные ранее команды: %s
-Commands not found: %s	Не найдены команды: %s
-What disable?	Что отключить?
-Only conference owner can disable commands!	Отключение команд доступно только владельцу конференции!
 Disabled commands not found!	Для данной конференции нет отключенных команд!
 leave this room.	покинул данную конференцию.
 I can't see %s here...	Я могу ошибаться, но %s тут нету...
@@ -1363,9 +1388,13 @@ banned global by %s from %s	глобальный бан от %s из конфе�
 jid %s has been banned in %s conferences.	jid %s забанен в %s конференциях.
 No reason!	Причина не указана!
 ban on %s since %s because: %s	бан сроком %s начиная с %s по причине: %s
+I seen different people with this nick!	Я видела разных людей с таким ником!
 I don'n know %s, and use as is!	Я не в курсе кто такой %s и использую как есть!
-I don't know %s	Я не знаю кто такой %s
+old ban time is %s	время старого бана %s
+just passed!	только прошло!
+Updated: %s	Обновлено: %s
 Command is locked!	Команда заблокирована!
+I don't know %s	Я не знаю кто такой %s
 Ban user.	Забанить участника.
 Ban user by jid.	Забанить участника по jid.
 Unban user.	Разбанить участника
@@ -1498,7 +1527,6 @@ what do you want to add?	что добавить?
 not given tracking	не заданы параметры слежения
 is not specified criterion tracking	не указан критерий слежения
 I am not in the %s 	Меня нет в %s
-Updated: %s	Обновлено: %s
 what do you want remove?	что удалить?
 Monitoring conferences:	Слежение за конференциями:
 \nNext scanning across %s	\nСледующее сканирование через %s

@@ -21,6 +21,10 @@
 #                                                                             #
 # --------------------------------------------------------------------------- #
 
+# translate: FN,NICKNAME,N.FAMILY,N.GIVEN,N.MIDDLE,ADR.LOCALITY,ADR.REGION,ADR.PCODE,ADR.CTRY,CELL.NUMBER.TEL,EMAIL.INTERNET.USERID,EMAIL,JABBERID,ROLE,BDAY,URL,DESC,BDAY,ADR.CTRY.HOME,ROLE,BDAY,ORG.ORGNAME,ORG.ORGUNIT,NUMBER.TEL.VOICE.WORK,HOME.NUMBER.TEL.VOICE,EMAIL.USERID
+
+VCARD_LIMIT_LONG = 256
+VCARD_LIMIT_SHORT = 128
 iq_ping_minimal = 0
 
 def get_who_iq(text,jid,nick):
@@ -58,34 +62,48 @@ def iq_vcard(type, jid, nick, text):
 	sender(i)
 
 def vcard_async(type, jid, nick, text, args, is_answ):
-	isa = is_answ[1][0]
-	if isa == '<vCard xmlns="vcard-temp" />': msg = L('vCard:') + ' ' + L('Empty!')
-	elif isa[:6] == '<vCard' and isa[-8:] == '</vCard>':
-		while '<BINVAL>' in isa and '</BINVAL>' in isa: isa=isa[:isa.find('<BINVAL>')]+isa[isa.find('</BINVAL>')+9:]
-		while '<PHOTO>' in isa and '</PHOTO>' in isa: isa=isa[:isa.find('<PHOTO>')]+isa[isa.find('</PHOTO>')+8:]
-		msg = ''
-		if args.lower() == 'show':
-			msg_header = '%s ' % L('vCard tags:')
-			for i in range(0,len(isa)):
-				if isa[i] == '<':
-					tag = isa[i+1:isa.find('>',i)]
-					if '</%s>' % tag in isa[i:]: msg += '%s, ' % tag
-			msg = msg[:-2]
-		elif args != '':
-			msg_header = '%s ' % L('vCard:')
-			for tmp in args.split('|'):
-				if ':' in tmp: tname,ttag = tmp.split(':')[1],tmp.split(':')[0]
-				else: tname,ttag = tmp,tmp
-				tt = get_tag(isa,ttag.upper())
-				if tt != '': msg += '\n%s: %s' % (tname,rss_del_nn(remove_ltgt(tt.replace('><','> <').replace('>\n<','> <'))))
+	try: vc,err = is_answ[1][1].getTag('vCard',namespace=xmpp.NS_VCARD),False
+	except: vc,err = is_answ[1][0],True
+	if not vc: msg = '%s %s' % (L('vCard:'),L('Empty!'))
+	elif err: msg = '%s %s' % (L('vCard:'),vc[:VCARD_LIMIT_LONG])
+	else:
+		data = []
+		for t in vc.getChildren():
+			if t.getChildren():
+				m,c,cm = [t.getName()],0,[]
+				for r in t.getChildren():
+					m.append(r.getName())
+					if r.getData():
+						c += 1
+						cm.append(('%s.%s' % (t.getName(),r.getName()),unicode(r.getData())))
+				m.sort()
+				if c == 1: data.append(('.'.join(m),cm[0][1]))
+				else: data += cm
+			elif t.getData(): data.append((t.getName(),t.getData()))
+		dict_data = dict(data)
+		try: 
+			photo_size = sys.getsizeof(dict_data.pop('PHOTO.BINVAL').decode('base64'))
+			photo_type = dict_data.pop('PHOTO.TYPE')
+			dict_data['PHOTO'] = L('type %s, %s byte(s)') % (photo_type,photo_size)
+			data = (t for t in list(data) if t[0] not in ['PHOTO.BINVAL','PHOTO.TYPE'])
+			data.append(dict_data['PHOTO'])
+		except: pass
+		args = args.lower()
+		if not args:
+			dd = [(t,dict_data[t]) for t in ['NICKNAME','FN','BDAY','URL','PHOTO','DESC'] if dict_data.has_key(t)]
+			if dd: msg = '%s\n%s' % (L('vCard:'),'\n'.join(['%s: %s' % ([L(t[0]),t[0].capitalize()][L(t[0])==t[0]],[u'%s…' % t[1][:VCARD_LIMIT_LONG],t[1]][len(t[1])<VCARD_LIMIT_LONG]) for t in dd])) 
+			else: msg = '%s %s' % (L('vCard:'),L('Not found!'))
+		elif args == 'all': msg = '%s\n%s' % (L('vCard:'),'\n'.join(['%s: %s' % ([L(t[0]),t[0].capitalize()][L(t[0])==t[0]],[u'%s…' % t[1][:VCARD_LIMIT_SHORT],t[1]][len(t[1])<VCARD_LIMIT_SHORT]) for t in data]))
+		elif args == 'show': msg = '%s %s' % (L('vCard:'),', '.join([t[0] for t in data]))
 		else:
-			msg_header = L('vCard:')
-			for tmp in [(L('Nick'),'NICKNAME'),(L('Name'),'FN'),(L('About'),'DESC'),(L('URL'),'URL')]:
-				tt = esc_min2(remove_ltgt(get_tag(isa,tmp[1])))
-				if len(tt): msg += '\n%s: %s' % (tmp[0],tt)
-		if len(msg): msg = msg_header + msg
-		else: msg = msg_header + L('Empty!')
-	else: msg = '%s %s' % (L('vCard:'),L('Not found!'))
+			args,dd = args.split('|'),[]
+			for t in args:
+				if ':' in t: val,loc = t.split(':',1)
+				else: val,loc = t,t
+				val = val.upper()
+				if dict_data.has_key(val): dd.append((loc,dict_data[val]))
+			if dd: msg = '%s\n%s' % (L('vCard:'),'\n'.join(['%s: %s' % ([L(t[0]),t[0].capitalize()][L(t[0])==t[0]],[u'%s…' % t[1][:VCARD_LIMIT_LONG],t[1]][len(t[1])<VCARD_LIMIT_LONG]) for t in dd])) 
+			else: msg = '%s %s' % (L('vCard:'),L('Not found!'))			
 	send_msg(type, jid, nick, msg)
 
 def iq_uptime(type, jid, nick, text):

@@ -707,24 +707,21 @@ def iqCB(sess,iq):
 		iq_async(id,time.time(),er_name,'error')
 
 	elif iq.getType()=='result' and was_request:
-		is_vcard = iq.getTag('vCard')
-		if is_vcard: iq_async(id,time.time(), unicode(is_vcard))
-		else:
-			try: nspace = query.getNamespace()
-			except: nspace = 'None'
-			if nspace == xmpp.NS_MUC_ADMIN: iq_async(id,time.time(),iq)
-			elif nspace == xmpp.NS_MUC_OWNER: iq_async(id,time.time(),iq)
-			elif nspace == xmpp.NS_VERSION:
-				ver_client = unicode(query.getTagData(tag='name'))
-				ver_version = unicode(query.getTagData(tag='version'))
-				ver_os = unicode(query.getTagData(tag='os'))
-				t = cur_execute_fetchone('select jid from versions where room=%s and jid=%s and client=%s and version=%s and os=%s',(getRoom(room),tjid,ver_client,ver_version,ver_os))
-				if not t: cur_execute('insert into versions values (%s,%s,%s,%s,%s,%s)',(getRoom(room),tjid,ver_client,ver_version,ver_os,int(time.time())))
-				iq_async(id,time.time(),ver_client,ver_version,ver_os)
-			elif nspace == xmpp.NS_TIME: iq_async(id,time.time(),query.getTagData(tag='display'),query.getTagData(tag='utc'),query.getTagData(tag='tz'))
-			elif iq.getTag('time',namespace=xmpp.NS_URN_TIME): iq_async(id,time.time(),iq.getTag('time').getTagData(tag='utc'),iq.getTag('time').getTagData(tag='tzo'))
-			elif iq.getTag('ping',namespace=xmpp.NS_URN_PING): iq_async(id,time.time(),unicode(iq))
-			else: iq_async(id,time.time(),unicode(iq),iq)
+		try: nspace = query.getNamespace()
+		except: nspace = 'None'
+		if nspace == xmpp.NS_MUC_ADMIN: iq_async(id,time.time(),iq)
+		elif nspace == xmpp.NS_MUC_OWNER: iq_async(id,time.time(),iq)
+		elif nspace == xmpp.NS_VERSION:
+			ver_client = unicode(query.getTagData(tag='name'))
+			ver_version = unicode(query.getTagData(tag='version'))
+			ver_os = unicode(query.getTagData(tag='os'))
+			t = cur_execute_fetchone('select jid from versions where room=%s and jid=%s and client=%s and version=%s and os=%s',(getRoom(room),tjid,ver_client,ver_version,ver_os))
+			if not t: cur_execute('insert into versions values (%s,%s,%s,%s,%s,%s)',(getRoom(room),tjid,ver_client,ver_version,ver_os,int(time.time())))
+			iq_async(id,time.time(),ver_client,ver_version,ver_os)
+		elif nspace == xmpp.NS_TIME: iq_async(id,time.time(),query.getTagData(tag='display'),query.getTagData(tag='utc'),query.getTagData(tag='tz'))
+		elif iq.getTag('time',namespace=xmpp.NS_URN_TIME): iq_async(id,time.time(),iq.getTag('time').getTagData(tag='utc'),iq.getTag('time').getTagData(tag='tzo'))
+		elif iq.getTag('ping',namespace=xmpp.NS_URN_PING): iq_async(id,time.time(),unicode(iq))
+		else: iq_async(id,time.time(),unicode(iq),iq)
 
 	elif iq.getType()=='get' and nnj and not ddos_ignore.has_key(tjid):
 		iq_ddos_requests,iq_ddos_limit = GT('ddos_iq_requests'),GT('ddos_iq_limit')

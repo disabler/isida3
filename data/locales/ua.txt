@@ -594,6 +594,8 @@ because: %s	з приводу: %s
 Invite to conference.\ninvite nick|jid\n[reason]	Запросити учасника в конференцію.\ninvite nick|jid\n[привід]
 
 # file: plugins/iq.py
+JABBERID	JabberID
+URL	Посилання
 I can't get caps of %s	Я не знаю капс %s
 %s has empty caps!	У %s пустий капс!
 vCard:	Візитка:
@@ -873,15 +875,11 @@ Locale not found!	Локалізація не знайдена!
 Current locale: %s	Поточна локалізація: %s
 Command temporary blocked!	Команда тимчасово блокована
 ok	ок
-Enabled: %s	Увімкнено: %s
-Only conference owner can enable commands!	Ввімкнення команд доступне лише власнику конференції!
-Command %s is not disabled!	Для даної конференції команда %s не була вимкнена!
+What disable?	Що вимкнути?
+Commands not found: %s	Не знайдені команди: %s
 What enable?	Що ввімкнути?
 Disabled commands: %s	Вимкнені команди: %s
 Commands disabled before: %s	Вимкнені раніше команди: %s
-Commands not found: %s	Не знайдені команди: %s
-What disable?	Що вимкнути?
-Only conference owner can disable commands!	Вимкнення команд доступне лише власнику конференції!
 Disabled commands not found!	Для даної конференції немає вимкнених команд!
 leave this room.	залишив цю конференцію.
 I can't see %s here...	Я можу помилятися, але %s тут немає...
@@ -1363,8 +1361,9 @@ jid %s has been banned in %s conferences.	jid %s забанений в %s кон
 No reason!	Привід не вказаний!
 ban on %s since %s because: %s	бан терміном %s починаючи з %s через: %s
 I don'n know %s, and use as is!	Я не в курсі, хто такий %s - баню як є!
-I don't know %s	Я не знаю, хто такий %s
+Updated: %s	Поновлено: %s
 Command is locked!	Команда заблокована!
+I don't know %s	Я не знаю, хто такий %s
 Ban user.	Забанити учасника.
 Ban user by jid.	Забанити учасника за jid'ом.
 Unban user.	Розбанити учасника
@@ -1497,7 +1496,6 @@ what do you want to add?	що додати?
 not given tracking	не задані параметри спостереження
 is not specified criterion tracking	не вказаний критерій спостереження
 I am not in the %s 	Мене немає в %s
-Updated: %s	Поновлено: %s
 what do you want remove?	що видалити?
 Monitoring conferences:	Спостереження за конференціями:
 \nNext scanning across %s	\nНаступне сканування через %s
