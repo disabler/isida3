@@ -715,12 +715,10 @@ def iqCB(sess,iq):
 			if nspace == xmpp.NS_MUC_ADMIN: iq_async(id,time.time(),iq)
 			elif nspace == xmpp.NS_MUC_OWNER: iq_async(id,time.time(),iq)
 			elif nspace == xmpp.NS_VERSION:
-				ver_client = query.getTagData(tag='name')
-				ver_version = query.getTagData(tag='version')
-				ver_os = query.getTagData(tag='os')
-				for t in [ver_client,ver_version,ver_os]:
-					if not t: t = 'None'
-				t = cur_execute_fetchone('select * from versions where room=%s and jid=%s and client=%s and version=%s and os=%s',(getRoom(room),tjid,ver_client,ver_version,ver_os))
+				ver_client = unicode(query.getTagData(tag='name'))
+				ver_version = unicode(query.getTagData(tag='version'))
+				ver_os = unicode(query.getTagData(tag='os'))
+				t = cur_execute_fetchone('select jid from versions where room=%s and jid=%s and client=%s and version=%s and os=%s',(getRoom(room),tjid,ver_client,ver_version,ver_os))
 				if not t: cur_execute('insert into versions values (%s,%s,%s,%s,%s,%s)',(getRoom(room),tjid,ver_client,ver_version,ver_os,int(time.time())))
 				iq_async(id,time.time(),ver_client,ver_version,ver_os)
 			elif nspace == xmpp.NS_TIME: iq_async(id,time.time(),query.getTagData(tag='display'),query.getTagData(tag='utc'),query.getTagData(tag='tz'))
