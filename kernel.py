@@ -2449,7 +2449,8 @@ cu_age = []
 close_age_null()
 try:
 	confbase = cur_execute_fetchall('select * from conference;')
-	confbase.sort()
+	if confbase: confbase.sort()
+	else: raise
 except: confbase = [('%s/%s' % (defaultConf.lower(),Settings['nickname']),'')]
 
 censor = []
