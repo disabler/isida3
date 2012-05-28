@@ -604,33 +604,26 @@ ADR.LOCALITY	Город
 ADR.REGION	Регион
 ADR.PCODE	Почтовый код
 ADR.CTRY	Страна
-CELL.NUMBER.TEL	Мобильный
-EMAIL.INTERNET.USERID	Публичный E-Mail
+ARD.STREET	Улица
+TEL.NUMBER	Номер телефона
+EMAIL.USERID	E-Mail
 EMAIL	E-Mail
 JABBERID	JabberID
 ROLE	Должность
 BDAY	День рождения
 URL	Ссылка
 DESC	О себе
-BDAY	День рождения
-ADR.CTRY.HOME	Страна
 ROLE	Должность
-BDAY	День рождения
 ORG.ORGNAME	Огранизация
 ORG.ORGUNIT	Подразделение
-NUMBER.TEL.VOICE.WORK	Рабочий телефон
-HOME.NUMBER.TEL.VOICE	Домашний телефон
-EMAIL.USERID	E-Mail
+GEO.LAT	Широта
+GEO.LON	Долгота
+TITLE	Организация
 I can't get caps of %s	Я не знаю капс %s
 %s has empty caps!	У %s пустой капс!
 vCard:	Визитка:
 Empty!	Пусто!
 type %s, %s byte(s)	тип %s, %s байт
-vCard tags:	Теги из визитки:
-Nick	Ник
-Name	Имя
-About	О себе
-URL	Ссылка
 Uptime: %s	Аптайм: %s
 I can't do it	Не получается...
 Remote server not found	Удалённый сервер не найден

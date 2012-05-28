@@ -600,11 +600,6 @@ I can't get caps of %s	Я не знаю капс %s
 %s has empty caps!	У %s пустий капс!
 vCard:	Візитка:
 Empty!	Пусто!
-vCard tags:	Теги з візитки:
-Nick	Нік
-Name	Ім'я
-About	Про себе
-URL	Посилання
 Uptime: %s	Аптайм: %s
 I can't do it	Не виходить...
 Remote server not found	Віддалений сервер не знайдено

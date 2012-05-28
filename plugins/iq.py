@@ -21,7 +21,7 @@
 #                                                                             #
 # --------------------------------------------------------------------------- #
 
-# translate: FN,NICKNAME,N.FAMILY,N.GIVEN,N.MIDDLE,ADR.LOCALITY,ADR.REGION,ADR.PCODE,ADR.CTRY,CELL.NUMBER.TEL,EMAIL.INTERNET.USERID,EMAIL,JABBERID,ROLE,BDAY,URL,DESC,BDAY,ADR.CTRY.HOME,ROLE,BDAY,ORG.ORGNAME,ORG.ORGUNIT,NUMBER.TEL.VOICE.WORK,HOME.NUMBER.TEL.VOICE,EMAIL.USERID
+# translate: FN,NICKNAME,N.FAMILY,N.GIVEN,N.MIDDLE,ADR.LOCALITY,ADR.REGION,ADR.PCODE,ADR.CTRY,ARD.STREET,TEL.NUMBER,EMAIL.USERID,EMAIL,JABBERID,ROLE,BDAY,URL,DESC,ROLE,ORG.ORGNAME,ORG.ORGUNIT,GEO.LAT,GEO.LON,TITLE
 
 VCARD_LIMIT_LONG = 256
 VCARD_LIMIT_SHORT = 128
@@ -61,6 +61,17 @@ def iq_vcard(type, jid, nick, text):
 	iq_request[iqid]=(time.time(),vcard_async,[type, jid, nick, text, args])
 	sender(i)
 
+def get_value_from_array2(a,v):
+	for t in a:
+		if t[0] == v: return t[1]
+	return None
+	
+def get_array_from_array2(a1,a2):
+	a_res = []
+	for t in a1:
+		if t[0] in a2: a_res.append(t)
+	return a_res
+	
 def vcard_async(type, jid, nick, text, args, is_answ):
 	try: vc,err = is_answ[1][1].getTag('vCard',namespace=xmpp.NS_VCARD),False
 	except: vc,err = is_answ[1][0],True
@@ -70,38 +81,37 @@ def vcard_async(type, jid, nick, text, args, is_answ):
 		data = []
 		for t in vc.getChildren():
 			if t.getChildren():
-				m,c,cm = [t.getName()],0,[]
+				cm = []
 				for r in t.getChildren():
-					m.append(r.getName())
-					if r.getData():
-						c += 1
-						cm.append(('%s.%s' % (t.getName(),r.getName()),unicode(r.getData())))
-				m.sort()
-				if c == 1: data.append(('.'.join(m),cm[0][1]))
-				else: data += cm
+					if r.getData(): cm.append(('%s.%s' % (t.getName(),r.getName()),unicode(r.getData())))
+				data += cm
 			elif t.getData(): data.append((t.getName(),t.getData()))
-		dict_data = dict(data)
 		try: 
-			photo_size = sys.getsizeof(dict_data.pop('PHOTO.BINVAL').decode('base64'))
-			photo_type = dict_data.pop('PHOTO.TYPE')
-			dict_data['PHOTO'] = L('type %s, %s byte(s)') % (photo_type,photo_size)
+			photo_size = sys.getsizeof(get_value_from_array2(data,'PHOTO.BINVAL').decode('base64'))
+			photo_type = get_value_from_array2(data,'PHOTO.TYPE')
+			data_photo = L('type %s, %s byte(s)') % (photo_type,photo_size)
 			data = (t for t in list(data) if t[0] not in ['PHOTO.BINVAL','PHOTO.TYPE'])
-			data.append(dict_data['PHOTO'])
+			data.append(('PHOTO',data_photo))
 		except: pass
 		args = args.lower()
 		if not args:
-			dd = [(t,dict_data[t]) for t in ['NICKNAME','FN','BDAY','URL','PHOTO','DESC'] if dict_data.has_key(t)]
+			dd = get_array_from_array2(data,['NICKNAME','FN','BDAY','URL','PHOTO','DESC'])
 			if dd: msg = '%s\n%s' % (L('vCard:'),'\n'.join(['%s: %s' % ([L(t[0]),t[0].capitalize()][L(t[0])==t[0]],[u'%s…' % t[1][:VCARD_LIMIT_LONG],t[1]][len(t[1])<VCARD_LIMIT_LONG]) for t in dd])) 
 			else: msg = '%s %s' % (L('vCard:'),L('Not found!'))
 		elif args == 'all': msg = '%s\n%s' % (L('vCard:'),'\n'.join(['%s: %s' % ([L(t[0]),t[0].capitalize()][L(t[0])==t[0]],[u'%s…' % t[1][:VCARD_LIMIT_SHORT],t[1]][len(t[1])<VCARD_LIMIT_SHORT]) for t in data]))
-		elif args == 'show': msg = '%s %s' % (L('vCard:'),', '.join([t[0] for t in data]))
+		elif args == 'show': 
+			dd = []
+			for t in data:
+				if t[0] not in dd: dd.append(t[0])
+			msg = '%s %s' % (L('vCard:'),', '.join([[t.capitalize(),'%s (%s)' % (t.capitalize(),L(t))][L(t)!=t] for t in dd]))
 		else:
 			args,dd = args.split('|'),[]
 			for t in args:
 				if ':' in t: val,loc = t.split(':',1)
 				else: val,loc = t,t
 				val = val.upper()
-				if dict_data.has_key(val): dd.append((loc,dict_data[val]))
+				dv = get_array_from_array2(data,(val))
+				if dv: dd += dv
 			if dd: msg = '%s\n%s' % (L('vCard:'),'\n'.join(['%s: %s' % ([L(t[0]),t[0].capitalize()][L(t[0])==t[0]],[u'%s…' % t[1][:VCARD_LIMIT_LONG],t[1]][len(t[1])<VCARD_LIMIT_LONG]) for t in dd])) 
 			else: msg = '%s %s' % (L('vCard:'),L('Not found!'))			
 	send_msg(type, jid, nick, msg)
