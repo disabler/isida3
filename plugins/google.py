@@ -107,11 +107,11 @@ def translate(type, jid, nick, text):
 			if len(text)>1 and trlang.has_key(text[0].lower()):
 				if len(text)>2 and trlang.has_key(text[1].lower()): lfrom,lto,tr_text = text[0].lower(),text[1].lower(),text[2]
 				else: lfrom,lto,tr_text = '',text[0].lower(),' '.join(text[1:])
-				search_results = html_encode(load_page(url, {'client':'x',\
-															 'text':tr_text.encode("utf-8"),\
-															 'hl':lfrom,\
-															 'sl':lfrom,\
-															 'tl':lto}))
+				search_results = load_page(url, {'client':'x',\
+												 'text':tr_text.encode("utf-8"),\
+												 'hl':lfrom,\
+												 'sl':lfrom,\
+												 'tl':lto})
 				try: jsonl = json.loads(search_results)['sentences']
 				except ValueError: jsonl = None
 				if jsonl: msg = rss_replace(''.join(f['trans'] for f in jsonl))
