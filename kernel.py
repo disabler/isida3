@@ -272,8 +272,8 @@ def getFile(filename,default):
 def get_config(room,item):
 	setup = cur_execute_fetchone('select value from config_conf where room=%s and option=%s',(room,item))
 	try:
-		if setup[0] == 'True': return True
-		elif setup[0] in ['False','None']: return False
+		if setup[0] in ['True','true']: return True
+		elif setup[0] in ['False','false','None','none']: return False
 		else: return setup[0]
 	except:
 		try: return config_prefs[item][3]
@@ -290,12 +290,15 @@ def get_config_float(room,item):
 	except: return float(config_prefs[item][3])
 
 def put_config(room,item,value):
+	if value in [True,False,None]: value = str(value)
 	setup = cur_execute_fetchone('select value from config_conf where room=%s and option=%s',(room,item))
 	if setup: cur_execute('update config_conf set value=%s where room=%s and option=%s', (value,room,item))
 	else: cur_execute('insert into config_conf values (%s,%s,%s)', (room,item,value))
 
 def GT(item):
-	try: gt_result = cur_execute_fetchone('select value from config_owner where option=%s;',(item,))[0]
+	try:
+		gt_result = cur_execute_fetchone('select value from config_owner where option=%s;',(item,))[0]
+		if gt_result in ['true','false','none']: gt_result = gt_result.capitalize()
 	except:
 		try: gt_result = owner_prefs[item][2]
 		except: gt_result = None
@@ -303,6 +306,7 @@ def GT(item):
 	except: return gt_result
 
 def PT(item,value):
+	if value in [True,False,None]: value = str(value)
 	setup = cur_execute_fetchone('select value from config_owner where option=%s;',(item,))
 	if setup: cur_execute('update config_owner set value=%s where option=%s', (value,item))
 	else: cur_execute('insert into config_owner values (%s,%s)', (item,value))
