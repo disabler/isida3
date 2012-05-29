@@ -37,18 +37,16 @@ EMPTY_FILE = chat_folder + 'empty.txt'
 ANSWER_FILE = chat_folder + 'answer.txt'
 PHRASES_FILE = chat_folder + 'phrases.txt'
 
-list_of_answers = readfile(ANSWER_FILE).split('\n')
-list_of_empty = readfile(EMPTY_FILE).split('\n')
+list_of_answers = readfile(ANSWER_FILE).decode('utf-8').split('\n')
+list_of_empty = readfile(EMPTY_FILE).decode('utf-8').split('\n')
 list_of_phrases_with_highlight = []
 list_of_phrases_no_highlight = []
 for phrase in readfile(PHRASES_FILE).split('\n'):
-	if 'NICK' in phrase:
-		list_of_phrases_with_highlight.append(phrase)
-	else:
-		list_of_phrases_no_highlight.append(phrase)
+	if 'NICK' in phrase: list_of_phrases_with_highlight.append(phrase.decode('utf-8'))
+	else: list_of_phrases_no_highlight.append(phrase.decode('utf-8'))
 
 dict_of_mind = {}
-for p in readfile(MIND_FILE).split('\n'):
+for p in readfile(MIND_FILE).decode('utf-8').split('\n'):
 	if '||' in p:
 		tmp1, tmp2 = p.strip().split('||')
 		dict_of_mind[tmp1] = tmp2.split('|')
@@ -94,14 +92,14 @@ def getSmartAnswer(type, room, nick, text):
 		if sc > score: score,var = sc,dict_of_mind[answer]
 		elif sc == score: var += dict_of_mind[answer]
 		
-	answ = random.choice(var).decode('utf-8')
+	answ = random.choice(var)
 	if answ[0] != '@': return answ
 	else:
 		flood_actions(type, room, nick, answ, text)
 		return ''
 
 def rating(s, text, room):
-	r,s = 0.0,s.decode('utf-8').split('|')
+	r,s = 0.0,s.split('|')
 	for k in s:
 		if k in text: r += 1
 		if k in ANSW_PREV.get(room, ''): r += 0.5
@@ -148,9 +146,9 @@ def phrases_timer():
 				autophrases_time[room] = time.time() + random.normalvariate(int(get_config(room,'autophrasestime')), 2) / 2
 			if time.time() > autophrases_time[room]:
 				if get_config(room,'autophrases') == 'without highlight':
-					msg = random.choice(list_of_phrases_no_highlight).decode('utf-8')
+					msg = random.choice(list_of_phrases_no_highlight)
 				else:
-					msg = random.choice(list_of_phrases_with_highlight + list_of_phrases_no_highlight).decode('utf-8')
+					msg = random.choice(list_of_phrases_with_highlight + list_of_phrases_no_highlight)
 				if 'NICK' in msg:
 					rand_nicks = [d[1] for d in megabase if d[0]==room if cur_execute_fetchone('select pattern from bot_ignore where %s ilike pattern',(getRoom(d[4]),)) and d[1] not in [get_xnick(room), '']]
 					msg = msg.replace('NICK', random.choice(rand_nicks))

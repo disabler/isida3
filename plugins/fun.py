@@ -23,6 +23,7 @@
 # --------------------------------------------------------------------------- #
 
 LAST_RANDOM_POKE = {}
+LAST_POKE_PHRASE = {}
 
 def poem(type, jid, nick):
 	dict = [[u'я помню',u'не помню',u'забыть бы',u'купите',u'очкуешь',u'какое',u'угробил',u'открою',u'ты чуешь?'],
@@ -129,8 +130,15 @@ def to_poke(type, jid, nick, text):
 					is_found = True
 					break
 		if is_found:
-			msg = '/me %s' % random.choice(dpoke).replace('NICK',text)
-			nick,type = '','groupchat'
+			try: hl_pokes = list_of_phrases_with_highlight
+			except: hl_pokes = []
+			dp = ['/me %s' % t for t in dpoke] + hl_pokes
+			try: last_poke = LAST_POKE_PHRASE[jid]
+			except: last_poke = ''
+			msg = random.choice(dp)
+			while last_poke == msg: msg = random.choice(dp)
+			LAST_POKE_PHRASE[jid] = msg
+			msg,nick,type = msg.replace('NICK',text),'','groupchat'
 		elif text: msg = L('I could be wrong, but %s not is here...') % text
 		else: msg = L('Masochist? 8-D')
 	send_msg(type, jid, nick, msg)
