@@ -142,11 +142,12 @@ def kill_all_threads():
 				except: pass
 
 def get_xnick(jid):
-	tmp = cur_execute_fetchone('select room from conference where room ilike %s',('%s/%%'%jid,))
+	tmp = cur_execute_fetchone('select room from conference where room ilike %s',('%s/%%'%getRoom(jid),))
 	if tmp: return getResourse(tmp[0])
 	else: return Settings['nickname']
 
 def get_xtype(jid):
+	jid,xtype = getRoom(jid),owner
 	nowname = get_xnick(jid)
 	for base in megabase:
 		if base[0].lower() == jid and base[1] == nowname:

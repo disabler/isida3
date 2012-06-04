@@ -132,7 +132,9 @@ def to_poke(type, jid, nick, text):
 		if is_found:
 			try: hl_pokes = list_of_phrases_with_highlight
 			except: hl_pokes = []
-			dp = ['/me %s' % t for t in dpoke] + hl_pokes
+			dp = ['/me %s' % t for t in dpoke]
+			for t in hl_pokes:
+				if t and t not in dp: dp.append(t)
 			try: last_poke = LAST_POKE_PHRASE[jid]
 			except: last_poke = ''
 			msg = random.choice(dp)

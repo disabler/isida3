@@ -2134,7 +2134,8 @@ def now_schedule():
 			to -= 1
 			time.sleep(1)
 		if not game_over:
-			for tmp in gtimer: thr(tmp,(),'time_thread_%s' % tmp)
+			for tmp in gtimer: 
+				if not game_over: thr(tmp,(),'time_thread_%s' % tmp)
 
 def check_rss():
 	global rss_processed
