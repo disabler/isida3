@@ -147,7 +147,7 @@ def get_xnick(jid):
 	else: return Settings['nickname']
 
 def get_xtype(jid):
-	jid,xtype = getRoom(jid),owner
+	jid,xtype = getRoom(jid),'owner'
 	nowname = get_xnick(jid)
 	for base in megabase:
 		if base[0].lower() == jid and base[1] == nowname:
