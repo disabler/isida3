@@ -1221,7 +1221,9 @@ def iqCB(sess,iq):
 						gr = getRoom(room)
 						if get_tag_item(msg,'message','type') == 'chat' and not skip_owner:
 							tmp = cur_execute_fetchall('select * from muc_lock where room=%s and jid=%s', (room,tojid))
-							if tmp: mute,mute_type,mute_room,mute_reason = True,'chat', '%s/%s' % (room,to_nick),L('Warning! This participant don\'t want to receive private messages!')
+							if tmp:
+								mute,mute_type,mute_room,mute_reason = True,'chat', '%s/%s' % (room,to_nick),L('Warning! This participant don\'t want to receive private messages!')
+								pprint('MUC-Filter lock private: %s/%s [%s] > %s: %s' % (room,nick,jid,to_nick,get_tag(msg,'body')),'brown')
 						if skip_owner: pass
 						elif get_config(gr,'muc_filter') and not mute:
 							body = get_tag(msg,'body')
