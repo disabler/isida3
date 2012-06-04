@@ -142,18 +142,19 @@ def flood_action(room,jid,nick,type,text):
 def phrases_timer():
 	for room in list(set([i[0] for i in megabase])):
 		if get_config(room,'autophrases') != 'off':
+			a_time = int(get_config(room,'autophrasestime'))
 			if not room in autophrases_time:
-				autophrases_time[room] = time.time() + random.normalvariate(int(get_config(room,'autophrasestime')), 2) / 2
+				autophrases_time[room] = time.time() + random.normalvariate(a_time, a_time/12.0)/2
 			if time.time() > autophrases_time[room]:
-				if get_config(room,'autophrases') == 'without highlight':
+				if get_config(room,'autophrases') == 'all':
+					rand_nicks = [d[1] for d in megabase if d[0]==room if not cur_execute_fetchone('select pattern from bot_ignore where %s ilike pattern',(getRoom(d[4]),)) and d[1] not in [get_xnick(room), '']]
+					if rand_nicks:
+						msg = random.choice(list_of_phrases_with_highlight + list_of_phrases_no_highlight)
+						msg = msg.replace('NICK', random.choice(rand_nicks))
+				if get_config(room,'autophrases') == 'without highlight' or not rand_nicks:
 					msg = random.choice(list_of_phrases_no_highlight)
-				else:
-					msg = random.choice(list_of_phrases_with_highlight + list_of_phrases_no_highlight)
-				if 'NICK' in msg:
-					rand_nicks = [d[1] for d in megabase if d[0]==room if cur_execute_fetchone('select pattern from bot_ignore where %s ilike pattern',(getRoom(d[4]),)) and d[1] not in [get_xnick(room), '']]
-					msg = msg.replace('NICK', random.choice(rand_nicks))
 				send_msg('groupchat', room, '', msg)
-				autophrases_time[room] = time.time() + random.normalvariate(int(get_config(room,'autophrasestime')), 2)
+				autophrases_time[room] = time.time() + random.normalvariate(a_time, a_time/12.0)
 
 global execute, message_act_control, timer
 
