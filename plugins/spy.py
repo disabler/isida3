@@ -97,7 +97,8 @@ def spy_action():
 				if cur_execute_fetchall('select * from conference where room ilike %s;', ('%s/%%'%getRoom(tmp[0]),)):
 					cur_execute('delete from conference where room ilike %s;', ('%s/%%'%getRoom(tmp[0]),))
 					leave(tmp[0], L('I leave your conference because low activity'))
-					own = cur_execute_fetchone('select * from bot_owner;')
+					pprint('*** Leave room: %s by spy activity!' % tmp[0],'red')
+					own = cur_execute_fetchall('select * from bot_owner;')
 					if own:
 						for tmpo in own: send_msg('chat', tmpo[0], '', L('I leave conference %s by condition spy plugin: %s') % (tmp[0], mist))
 			else: cur_execute('insert into spy values (%s,%s,%s,%s,%s)',(tmp[0],int(time.time()),tmp[2], 0,tmp[4]))
