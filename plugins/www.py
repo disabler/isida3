@@ -164,7 +164,7 @@ def parse_url_in_message(room,jid,nick,type,text):
 							mt = mt / 1024.0
 						if tt: mt = '%.2f%s' % (mt,tt)
 						else: mt = '%sb' % int(mt)
-						if mt: send_msg(type, room, '', L('Length of %s is %s') % (u'…/%s' % link.rsplit('/',1)[-1],mt))
+						if mt: send_msg(type, room, '', L('Length of %s is %s') % (u'…/%s' % urllib2.unquote(link.rsplit('/',1)[-1]).decode('utf-8'),mt))
 		except: pass
 
 global execute
