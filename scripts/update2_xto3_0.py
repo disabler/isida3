@@ -23,6 +23,8 @@
 
 import os, sys, sqlite3, psycopg2, re, time
 
+os.chdir('..')
+
 set_folder = u'settings/%s'
 
 agestat = set_folder % 'agestat.db'

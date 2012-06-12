@@ -18,8 +18,7 @@
 --                                                                             --
 -- --------------------------------------------------------------------------- --
 
-
---
+-- --------------------------------------------------------------------------- --
 -- Conference config
 --
 CREATE TABLE config_conf (
@@ -31,9 +30,7 @@ CREATE TABLE config_conf (
 CREATE INDEX config_conf_r ON config_conf (room);
 CREATE INDEX config_conf_ro ON config_conf (room,option);
 
-
-
---
+-- --------------------------------------------------------------------------- --
 -- Owner config
 --
 CREATE TABLE config_owner (
@@ -43,9 +40,7 @@ CREATE TABLE config_owner (
 
 CREATE INDEX config_owner_o ON config_owner (option);
 
-
-
---
+-- --------------------------------------------------------------------------- --
 -- Top command
 --
 CREATE TABLE top (
@@ -57,9 +52,7 @@ CREATE TABLE top (
 CREATE INDEX top_r ON top (room);
 CREATE INDEX top_rc ON top (room,count);
 
-
-
---
+-- --------------------------------------------------------------------------- --
 -- Aliases
 --
 CREATE TABLE alias (
@@ -71,18 +64,14 @@ CREATE TABLE alias (
 CREATE INDEX alias_r ON alias (room);
 CREATE INDEX alias_rm ON alias (room,match);
 
-
-
---
+-- --------------------------------------------------------------------------- --
 -- Blacklist for rooms
 --
 CREATE TABLE blacklist (
 	room text unique
 );
 
-
-
---
+-- --------------------------------------------------------------------------- --
 -- Comm ON/OFF
 --
 CREATE TABLE commonoff (
@@ -93,9 +82,7 @@ CREATE TABLE commonoff (
 CREATE INDEX commonoff_r ON commonoff (room);
 CREATE INDEX commonoff_rm ON commonoff (room,cmd);
 
-
-
---
+-- --------------------------------------------------------------------------- --
 -- Rooms list
 --
 CREATE TABLE conference (
@@ -103,8 +90,7 @@ CREATE TABLE conference (
 	passwd text
 );
 
-
---
+-- --------------------------------------------------------------------------- --
 -- Feeds
 --
 CREATE TABLE feed (
@@ -119,18 +105,14 @@ CREATE TABLE feed (
 CREATE INDEX feed_r ON feed (room);
 CREATE INDEX feed_rt ON feed (room,time);
 
-
-
---
+-- --------------------------------------------------------------------------- --
 -- Hiden rooms
 --
 CREATE TABLE hiden_rooms (
 	room text unique
 );
 
-
-
---
+-- --------------------------------------------------------------------------- --
 -- Bot Ignore
 --
 CREATE TABLE bot_ignore (
@@ -139,9 +121,7 @@ CREATE TABLE bot_ignore (
 
 CREATE INDEX bot_ignore_p ON bot_ignore (pattern);
 
-
-
---
+-- --------------------------------------------------------------------------- --
 -- Bot Owner
 --
 CREATE TABLE bot_owner (
@@ -150,9 +130,7 @@ CREATE TABLE bot_owner (
 
 CREATE INDEX bot_owner_j ON bot_owner (jid);
 
-
-
---
+-- --------------------------------------------------------------------------- --
 -- Logs in rooms
 --
 CREATE TABLE log_rooms (
@@ -161,8 +139,7 @@ CREATE TABLE log_rooms (
 
 CREATE INDEX log_rooms_r ON log_rooms (room);
 
-
---
+-- --------------------------------------------------------------------------- --
 -- Spy for activity
 --
 CREATE TABLE spy (
@@ -176,9 +153,7 @@ CREATE TABLE spy (
 CREATE INDEX spy_r ON spy (room);
 CREATE INDEX spy_rt ON spy (room,time);
 
-
-
---
+-- --------------------------------------------------------------------------- --
 -- Temporary ban
 --
 CREATE TABLE tmp_ban (
@@ -190,8 +165,7 @@ CREATE TABLE tmp_ban (
 CREATE INDEX tmp_ban_r ON tmp_ban (room);
 CREATE INDEX tmp_ban_rt ON tmp_ban (room,time);
 
-
---
+-- --------------------------------------------------------------------------- --
 -- Say to owner
 --
 CREATE TABLE saytoowner (
@@ -199,15 +173,13 @@ CREATE TABLE saytoowner (
 	time integer
 );
 
-
---
+-- --------------------------------------------------------------------------- --
 -- Ignore ban for global_ban
 --
 CREATE TABLE ignore_ban (
 	room text unique
 );
 
-
---
+-- --------------------------------------------------------------------------- --
 -- THE END
---
+-- --------------------------------------------------------------------------- --

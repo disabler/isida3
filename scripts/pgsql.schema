@@ -18,11 +18,9 @@
 --                                                                             --
 -- --------------------------------------------------------------------------- --
 
-
---
+-- --------------------------------------------------------------------------- --
 -- Base of ages
 --
-
 CREATE TABLE age (
 	room text,
 	nick text,
@@ -49,11 +47,9 @@ CREATE INDEX jid_log ON jid (login);
 CREATE INDEX jid_srv ON jid (server);
 CREATE INDEX jid_res ON jid (resourse);
 
-
---
+-- --------------------------------------------------------------------------- --
 -- Base of talkers
 --
-
 CREATE TABLE talkers (
 	room text,
 	jid text,
@@ -65,11 +61,9 @@ CREATE TABLE talkers (
 CREATE INDEX talkers_rj ON talkers (room,jid);
 CREATE INDEX talkers_rjn ON talkers (room,jid,nick);
 
-
---
+-- --------------------------------------------------------------------------- --
 -- Base for `WTF` commands
 --
-
 CREATE TABLE wtf (
 	ind integer,
 	room text,
@@ -85,11 +79,9 @@ CREATE INDEX wtf_r ON wtf (room);
 CREATE INDEX wtf_rj ON wtf (room,jid);
 CREATE INDEX wtf_rw ON wtf (room,wtfword);
 
-
---
+-- --------------------------------------------------------------------------- --
 -- Answers base for random flood
 --
-
 CREATE TABLE answer (
 	ind integer,
 	body text
@@ -99,11 +91,9 @@ CREATE TABLE answer (
 -- INSERT INTO answer VALUES(2,'Hi!');
 CREATE INDEX answer_id ON answer (ind);
 
-
---
+-- --------------------------------------------------------------------------- --
 -- Base for `SayTo` plugin
 --
-
 CREATE TABLE sayto (
 	who text,
 	room text,
@@ -113,11 +103,9 @@ CREATE TABLE sayto (
 
 CREATE INDEX sayto_rj ON sayto (room,jid);
 
-
---
+-- --------------------------------------------------------------------------- --
 -- User distances for `Dist` plugin
 --
-
 CREATE TABLE dist (
 	point text,
 	latitude text,
@@ -134,11 +122,9 @@ CREATE TABLE dist_user (
 
 CREATE INDEX dist_user_di ON dist_user (point);
 
-
---
+-- --------------------------------------------------------------------------- --
 -- Karma base
 --
-
 CREATE TABLE karma (
 	room text,
 	jid text,
@@ -165,11 +151,9 @@ CREATE TABLE karma_limits (
 
 CREATE INDEX karma_limits_lrj ON karma_limits (room,jid);
 
-
---
+-- --------------------------------------------------------------------------- --
 -- Action list base
 --
-
 CREATE TABLE acl (
 	jid text,
 	action text,
@@ -182,11 +166,9 @@ CREATE TABLE acl (
 
 CREATE INDEX acl_jid ON acl (jid,action,type);
 
-
---
+-- --------------------------------------------------------------------------- --
 -- Base for `GisMeteo` plugin
 --
-
 CREATE TABLE gis (
 	code text,
 	city text,
@@ -195,11 +177,9 @@ CREATE TABLE gis (
 
 CREATE INDEX gis_clcc ON gis (code,lcity,city);
 
-
---
+-- --------------------------------------------------------------------------- --
 -- DEF-Codes
 --
-
 CREATE TABLE def_ru_stat (
 	phone text,
 	region text,
@@ -227,11 +207,9 @@ CREATE TABLE def_ru_mobile (
 
 CREATE INDEX def_ru_mobile_ph ON def_ru_mobile (def,defbegin,defend);
 
-
---
+-- --------------------------------------------------------------------------- --
 -- WZ Weather base
 --
-
 CREATE TABLE wz (
 	code text,
 	city text,
@@ -240,11 +218,9 @@ CREATE TABLE wz (
 	
 CREATE INDEX wz_ccc ON wz (code,city,counry);
 
-
---
+-- --------------------------------------------------------------------------- --
 -- Muc-filter lock base
 --
-
 CREATE TABLE muc_lock (
 	room text,
 	jid text
@@ -252,11 +228,9 @@ CREATE TABLE muc_lock (
 
 CREATE INDEX muc_lock_rj ON muc_lock (room,jid);
 
-
---
+-- --------------------------------------------------------------------------- --
 -- Versions base
 --
-
 CREATE TABLE versions (
 	room text,
 	jid text,
@@ -270,11 +244,9 @@ CREATE INDEX versions_rj ON versions (room,jid);
 CREATE INDEX versions_cvo ON versions (client,version,os);
 CREATE INDEX versions_rjcvo ON versions (room,jid,client,version,os);
 
-
---
+-- --------------------------------------------------------------------------- --
 -- Issues base
 --
-
 CREATE TABLE issues (
 	id integer,
 	room text,
@@ -293,11 +265,9 @@ CREATE TABLE issues (
 CREATE INDEX issues_r ON issues (room,id);
 CREATE INDEX issues_d ON issues (room,date);
 
-
---
+-- --------------------------------------------------------------------------- --
 -- Cron base
 --
-
 CREATE TABLE cron (
 	room text,
 	jid text,
@@ -312,9 +282,7 @@ CREATE INDEX cron_r ON cron (room);
 CREATE INDEX cron_rt ON cron (room,time);
 CREATE INDEX cron_rtr ON cron (room,time,repeat);
 
-
-
---
+-- --------------------------------------------------------------------------- --
 -- Conference config
 --
 CREATE TABLE config_conf (
@@ -326,9 +294,7 @@ CREATE TABLE config_conf (
 CREATE INDEX config_conf_r ON config_conf (room);
 CREATE INDEX config_conf_ro ON config_conf (room,option);
 
-
-
---
+-- --------------------------------------------------------------------------- --
 -- Owner config
 --
 CREATE TABLE config_owner (
@@ -338,9 +304,7 @@ CREATE TABLE config_owner (
 
 CREATE INDEX config_owner_o ON config_owner (option);
 
-
-
---
+-- --------------------------------------------------------------------------- --
 -- Top command
 --
 CREATE TABLE top (
@@ -352,9 +316,7 @@ CREATE TABLE top (
 CREATE INDEX top_r ON top (room);
 CREATE INDEX top_rc ON top (room,count);
 
-
-
---
+-- --------------------------------------------------------------------------- --
 -- Aliases
 --
 CREATE TABLE alias (
@@ -366,18 +328,14 @@ CREATE TABLE alias (
 CREATE INDEX alias_r ON alias (room);
 CREATE INDEX alias_rm ON alias (room,match);
 
-
-
---
+-- --------------------------------------------------------------------------- --
 -- Blacklist for rooms
 --
 CREATE TABLE blacklist (
 	room text unique
 );
 
-
-
---
+-- --------------------------------------------------------------------------- --
 -- Comm ON/OFF
 --
 CREATE TABLE commonoff (
@@ -388,9 +346,7 @@ CREATE TABLE commonoff (
 CREATE INDEX commonoff_r ON commonoff (room);
 CREATE INDEX commonoff_rm ON commonoff (room,cmd);
 
-
-
---
+-- --------------------------------------------------------------------------- --
 -- Rooms list
 --
 CREATE TABLE conference (
@@ -398,8 +354,7 @@ CREATE TABLE conference (
 	passwd text
 );
 
-
---
+-- --------------------------------------------------------------------------- --
 -- Feeds
 --
 CREATE TABLE feed (
@@ -414,18 +369,14 @@ CREATE TABLE feed (
 CREATE INDEX feed_r ON feed (room);
 CREATE INDEX feed_rt ON feed (room,time);
 
-
-
---
+-- --------------------------------------------------------------------------- --
 -- Hiden rooms
 --
 CREATE TABLE hiden_rooms (
 	room text unique
 );
 
-
-
---
+-- --------------------------------------------------------------------------- --
 -- Bot Ignore
 --
 CREATE TABLE bot_ignore (
@@ -434,9 +385,7 @@ CREATE TABLE bot_ignore (
 
 CREATE INDEX bot_ignore_p ON bot_ignore (pattern);
 
-
-
---
+-- --------------------------------------------------------------------------- --
 -- Bot Owner
 --
 CREATE TABLE bot_owner (
@@ -445,9 +394,7 @@ CREATE TABLE bot_owner (
 
 CREATE INDEX bot_owner_j ON bot_owner (jid);
 
-
-
---
+-- --------------------------------------------------------------------------- --
 -- Logs in rooms
 --
 CREATE TABLE log_rooms (
@@ -456,8 +403,7 @@ CREATE TABLE log_rooms (
 
 CREATE INDEX log_rooms_r ON log_rooms (room);
 
-
---
+-- --------------------------------------------------------------------------- --
 -- Spy for activity
 --
 CREATE TABLE spy (
@@ -471,9 +417,7 @@ CREATE TABLE spy (
 CREATE INDEX spy_r ON spy (room);
 CREATE INDEX spy_rt ON spy (room,time);
 
-
-
---
+-- --------------------------------------------------------------------------- --
 -- Temporary ban
 --
 CREATE TABLE tmp_ban (
@@ -485,8 +429,7 @@ CREATE TABLE tmp_ban (
 CREATE INDEX tmp_ban_r ON tmp_ban (room);
 CREATE INDEX tmp_ban_rt ON tmp_ban (room,time);
 
-
---
+-- --------------------------------------------------------------------------- --
 -- Say to owner
 --
 CREATE TABLE saytoowner (
@@ -494,15 +437,13 @@ CREATE TABLE saytoowner (
 	time integer
 );
 
-
---
+-- --------------------------------------------------------------------------- --
 -- Ignore ban for global_ban
 --
 CREATE TABLE ignore_ban (
 	room text unique
 );
 
-
---
+-- --------------------------------------------------------------------------- --
 -- THE END
---
+-- --------------------------------------------------------------------------- --
