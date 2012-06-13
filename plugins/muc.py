@@ -60,7 +60,7 @@ def global_ban(type, jid, nick, text):
 	send_msg(type, jid, nick, msg)
 
 def muc_tempo_ban(type, jid, nick, text):
-	text = text.strip().split()
+	text,mute = text.strip().split(),False
 	if text:
 		cmd = text[0].lower()
 		if cmd == 'show':
@@ -75,9 +75,13 @@ def muc_tempo_ban(type, jid, nick, text):
 			if par:
 				tb = cur_execute_fetchall('select jid,time from tmp_ban where room=%s and jid ilike %s',(jid,par))
 				if tb:
-					msg = L('Removed: %s') % '\n%s' % '\n'.join([['%s\t%s' % (ub[0],un_unix(ub[1]-int(time.time()))),'%s\t < %s' % (ub[0],un_unix(GT('schedule_time')))][ub[1] > int(time.time())] for ub in tb])
+					pprint(tb)
+					msg = L('Removed: %s') % '\n%s' % '\n'.join([['%s\t%s' % (ub[0],un_unix(ub[1]-int(time.time()))),'%s\t< %s' % (ub[0],un_unix(GT('schedule_time')))][ub[1] < int(time.time())] for ub in tb])
 					for ub in tb: sender(xmpp.Node('iq', {'id': get_id(), 'type': 'set', 'to':jid}, payload = [xmpp.Node('query', {'xmlns': xmpp.NS_MUC_ADMIN},[xmpp.Node('item',{'affiliation':'none', 'jid':getRoom(unicode(ub[0]))},[])])]))
-					tb = cur_execute('detete from tmp_ban where room=%s and jid ilike %s',(jid,par))
+					pprint(jid)
+					pprint(par)
+					cur_execute('delete from tmp_ban where room=%s and jid ilike %s',(jid,par))
+					pprint('passed')
 				else: msg = L('Not found.')
 			else: msg = L('What?')
 
@@ -89,7 +93,8 @@ def muc_tempo_ban(type, jid, nick, text):
 				if not reason: reason = L('No reason!')
 				reason = L('ban on %s since %s because: %s') % (un_unix(ban_time), timeadd(tuple(time.localtime())), reason)
 				who,msg = text[0],L('done')
-				whojid = [t[4] for t in megabase if t[0]==jid and t[1]==who]
+				try: whojid = getRoom([t[4] for t in megabase if t[0]==jid and t[1]==who][0])
+				except: whojid = None
 				if not whojid:
 					fnd = cur_execute_fetchall('select jid from age where room=%s and (nick=%s or jid=%s) group by jid',(jid,who,who))
 					if len(fnd) == 1: whojid = getRoom(fnd[0][0])
@@ -105,10 +110,11 @@ def muc_tempo_ban(type, jid, nick, text):
 						else: ban_nm = L('just passed!')
 						msg = L('Updated: %s') % ban_nm
 					cur_execute('insert into tmp_ban values (%s,%s,%s)',(jid,whojid,ban_time+int(time.time())))
+				if who == nick: mute = True
 			else: msg = L('Time format error!')
 	else: msg = L('What?')
 	
-	send_msg(type, jid, nick, msg)
+	if not mute: send_msg(type, jid, nick, msg)
 
 def muc_ban(type, jid, nick,text): muc_affiliation(type, jid, nick, text, 'outcast',0)
 def muc_banjid(type, jid, nick,text): muc_affiliation(type, jid, nick, text, 'outcast',1)
