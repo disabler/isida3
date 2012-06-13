@@ -75,13 +75,9 @@ def muc_tempo_ban(type, jid, nick, text):
 			if par:
 				tb = cur_execute_fetchall('select jid,time from tmp_ban where room=%s and jid ilike %s',(jid,par))
 				if tb:
-					pprint(tb)
 					msg = L('Removed: %s') % '\n%s' % '\n'.join([['%s\t%s' % (ub[0],un_unix(ub[1]-int(time.time()))),'%s\t< %s' % (ub[0],un_unix(GT('schedule_time')))][ub[1] < int(time.time())] for ub in tb])
 					for ub in tb: sender(xmpp.Node('iq', {'id': get_id(), 'type': 'set', 'to':jid}, payload = [xmpp.Node('query', {'xmlns': xmpp.NS_MUC_ADMIN},[xmpp.Node('item',{'affiliation':'none', 'jid':getRoom(unicode(ub[0]))},[])])]))
-					pprint(jid)
-					pprint(par)
 					cur_execute('delete from tmp_ban where room=%s and jid ilike %s',(jid,par))
-					pprint('passed')
 				else: msg = L('Not found.')
 			else: msg = L('What?')
 
