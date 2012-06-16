@@ -122,7 +122,9 @@ def muc_memberjid(type, jid, nick,text): muc_affiliation(type, jid, nick, text, 
 def muc_affiliation(type, jid, nick, text, aff, is_jid):
 	nowname = get_xnick(jid)
 	xtype = get_xtype(jid)
-	if xtype == 'owner': send_msg(type, jid, nick, L('Command is locked!'))
+	if xtype == 'owner':
+		if is_start: return
+		else: send_msg(type, jid, nick, L('Command is locked!'))
 	elif len(text):
 		skip = None
 		if '\n' in text: who, reason = text.split('\n',1)[0], text.split('\n',1)[1]
@@ -140,7 +142,9 @@ def muc_member_past(type, jid, nick,text): muc_affiliation_past(type, jid, nick,
 def muc_affiliation_past(type, jid, nick, text, aff):
 	nowname = get_xnick(jid)
 	xtype = get_xtype(jid)
-	if xtype == 'owner': msg, text = L('Command is locked!'), ''
+	if xtype == 'owner':
+		if is_start: return
+		else: msg, text = L('Command is locked!'), ''
 	else: msg = L('What?')
 	if len(text):
 		skip = None
@@ -171,7 +175,9 @@ def muc_moderator(type, jid, nick, text): muc_role(type, jid, nick, text, 'moder
 def muc_role(type, jid, nick, text, role, unused):
 	nowname = get_xnick(jid)
 	xtype = get_xtype(jid)
-	if xtype == 'owner': send_msg(type, jid, nick, L('Command is locked!'))
+	if xtype == 'owner':
+		if is_start: return
+		else: send_msg(type, jid, nick, L('Command is locked!'))
 	elif len(text):
 		skip = None
 		if '\n' in text: who, reason = text.split('\n',1)[0], text.split('\n',1)[1]
