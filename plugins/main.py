@@ -662,7 +662,7 @@ def bot_rejoin(type, jid, nick, text):
 	if '\n' in text: text, passwd = text.split('\n', 1)
 	else: passwd = ''
 	if '@' not in text: text = '%s@%s' % (text,lastserver)
-	if '/' not in text: text = '%s@%s' % (text,lastnick)
+	if '/' not in text: text = '%s/%s' % (text,lastnick)
 	lastserver = getServer(text.lower())
 	lastnick = getResourse(text)
 	if cur_execute_fetchall('select * from conference where room ilike %s;', ('%s/%%'%getRoom(text),)):

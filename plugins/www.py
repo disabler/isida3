@@ -46,15 +46,15 @@ def rss_search(type, jid, nick, text):
 				m = []
 				for t in l:
 					rss_type = get_subtag(t,'type')
-					rss_title = get_subtag(t,'title')
-					rss_href = get_subtag(t,'href')
-					if rss_type == 'application/rss+xml': m.append('%s [%s]' % (rss_href,rss_title))
+					if rss_type in ['application/rss+xml','application/atom+xml']: 
+						if rss_type == 'application/rss+xml': rss_type = 'RSS'
+						else: rss_type = 'ATOM'
+						rss_title = get_subtag(t,'title')
+						rss_href = get_subtag(t,'href')
+						if rss_href == '/': rss_href = '/'.join(text.split('/',3)[:3]) + rss_href
+						m.append('[%s] %s - %s' % (rss_type,rss_href,rss_title))
 				if m:
-					mm = []
-					for t in m:
-						if t[0] == '/': mm.append('/'.join(text.split('/',3)[:3])+t)
-						else: mm.append(t)
-					m = '\n'.join(mm)
+					m = '\n'.join(m)
 					msg = L('Found feed(s):%s%s') % ([' ','\n']['\n' in m],unescape(m))
 	else: msg = L('What?')
 	send_msg(type, jid, nick, msg)
