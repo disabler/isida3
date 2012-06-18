@@ -60,7 +60,7 @@ def global_ban(type, jid, nick, text):
 	send_msg(type, jid, nick, msg)
 
 def muc_tempo_ban(type, jid, nick, text):
-	text,mute = text.strip().split(),False
+	text,mute = text.strip().split('\n'),False
 	if text:
 		cmd = text[0].lower()
 		if cmd == 'show':
