@@ -137,6 +137,11 @@ if __name__ == "__main__":
 		try: execfile('kernel.py')
 		except KeyboardInterrupt: break
 		except SystemExit, mode:
+			for t in threading.enumerate():
+				try:
+					if str(t).startswith('<KThread'): t.kill()
+					elif str(t).startswith('<_Timer'): t.cancel()
+				except: pass
 			mode = str(mode)
 			if mode == 'update': update(USED_REPO)
 			elif mode == 'exit': break

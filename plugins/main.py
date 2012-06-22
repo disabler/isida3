@@ -132,15 +132,6 @@ def validate_nick(nick,count):
 			pairs += sum([t.count(k) for k in two_en])
 		return pairs-len(nick.split()) < count, pairs
 
-def kill_all_threads():
-	if thread_type:
-		threading_list = threading.enumerate()
-		threading_list.remove(threading.currentThread())
-		for tmp in threading_list:
-			if not tmp.name.startswith('_MainThread'):
-				try: tmp.kill()
-				except: pass
-
 def get_xnick(jid):
 	tmp = cur_execute_fetchone('select room from conference where room ilike %s',('%s/%%'%getRoom(jid),))
 	if tmp: return getResourse(tmp[0])
@@ -215,7 +206,6 @@ def atempt_to_shutdown(critical):
 		except: pass
 	conn.commit()
 	conn.close()
-	kill_all_threads()
 	flush_stats()
 
 def atempt_to_shutdown_with_reason(text,sleep_time,exit_type,critical):

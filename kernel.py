@@ -52,7 +52,7 @@ global execute, prefix, comms, hashlib, trace
 def cur_execute(*params):
 	cur = conn.cursor()
 	if base_type == 'pgsql': psycopg2.extensions.register_type(psycopg2.extensions.UNICODE, cur)
-	par = None
+	par = True
 	try:
 		if base_type == 'mysql':
 			params = list(params)
@@ -73,7 +73,8 @@ def cur_execute(*params):
 	return par
 
 def cur_execute_fetchone(*params):
-	cur = conn.cursor()
+	try: cur = conn.cursor()
+	except: return None
 	if base_type == 'pgsql': psycopg2.extensions.register_type(psycopg2.extensions.UNICODE, cur)
 	par = None
 	try:
@@ -101,7 +102,8 @@ def cur_execute_fetchone(*params):
 	return par
 
 def cur_execute_fetchall(*params):
-	cur = conn.cursor()
+	try: cur = conn.cursor()
+	except: return None
 	if base_type == 'pgsql': psycopg2.extensions.register_type(psycopg2.extensions.UNICODE, cur)
 	par = None
 	try:
@@ -129,7 +131,8 @@ def cur_execute_fetchall(*params):
 	return par
 
 def cur_execute_fetchmany(*params):
-	cur = conn.cursor()
+	try: cur = conn.cursor()
+	except: return None
 	if base_type == 'pgsql': psycopg2.extensions.register_type(psycopg2.extensions.UNICODE, cur)
 	try:
 		if base_type == 'mysql':
@@ -167,7 +170,7 @@ def thr(func,param,name):
 	try:
 		if thread_type:
 			with sema:
-				tmp_th = KThread(group=None,target=log_execute,name='%s_%s' % (str(th_cnt),name),args=(func,param))
+				tmp_th = KThread(group=None,target=log_execute,name='%s_%s' % (th_cnt,name),args=(func,param))
 				tmp_th.start()
 		else: thread.start_new_thread(log_execute,(func,param))
 	except SystemExit: pass
@@ -2363,10 +2366,12 @@ if thread_type:
 			return self.localtrace
 
 		def kill(self): self.killed = True
+
 	def garbage_collector():
 		gc.collect()
 		garbage_collector_timer = threading.Timer(3600,garbage_collector)
 		garbage_collector_timer.start()
+
 	garbage_collector()
 
 else: import thread
