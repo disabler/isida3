@@ -146,6 +146,7 @@ def phrases_timer():
 			if not room in autophrases_time:
 				autophrases_time[room] = time.time() + random.normalvariate(a_time, a_time/12.0)/2
 			if time.time() > autophrases_time[room]:
+				autophrases_time[room] = time.time() + random.normalvariate(a_time, a_time/12.0)
 				if get_config(room,'autophrases') == 'all':
 					rand_nicks = [d[1] for d in megabase if d[0]==room if not cur_execute_fetchone('select pattern from bot_ignore where %s ilike pattern',(getRoom(d[4]),)) and d[1] not in [get_xnick(room), '']]
 					if rand_nicks:
@@ -154,7 +155,6 @@ def phrases_timer():
 				if get_config(room,'autophrases') == 'without highlight' or not rand_nicks:
 					msg = random.choice(list_of_phrases_no_highlight)
 				send_msg('groupchat', room, '', msg)
-				autophrases_time[room] = time.time() + random.normalvariate(a_time, a_time/12.0)
 
 global execute, message_act_control, timer
 
