@@ -1,5 +1,3 @@
-PRAGMA foreign_keys=OFF;
-BEGIN TRANSACTION;
 CREATE TABLE gis (code text, city text, lcity text);
 INSERT INTO "gis" VALUES('73469','Норкросс','норкросс');
 INSERT INTO "gis" VALUES('73468','Фаллон','фаллон');

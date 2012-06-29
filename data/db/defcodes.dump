@@ -1,5 +1,3 @@
-PRAGMA foreign_keys=OFF;
-BEGIN TRANSACTION;
 CREATE TABLE def_ru_stat (phone text, region text, city text);
 INSERT INTO "def_ru_stat" VALUES('73012xxxxxx','Бурятия','Улан-Удэ');
 INSERT INTO "def_ru_stat" VALUES('730130xxxxx','Бурятия','Нижнеангарск, Северобайкальск');

@@ -1,5 +1,3 @@
-PRAGMA foreign_keys=OFF;
-BEGIN TRANSACTION;
 CREATE TABLE wz (code text, city text, counry text);
 INSERT INTO "wz" VALUES('AABS','None','None');
 INSERT INTO "wz" VALUES('AAXX','None','None');
