@@ -154,6 +154,7 @@ def phrases_timer():
 						msg = msg.replace('NICK', random.choice(rand_nicks))
 				if get_config(room,'autophrases') == 'without highlight' or not rand_nicks:
 					msg = random.choice(list_of_phrases_no_highlight)
+				pprint('Send autophrase: %s >>> %s' % (room, msg), 'dark_gray')
 				send_msg('groupchat', room, '', msg)
 
 global execute, message_act_control, timer
