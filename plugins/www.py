@@ -46,7 +46,7 @@ def rss_search(type, jid, nick, text):
 				m = []
 				for t in l:
 					rss_type = get_subtag(t,'type')
-					if rss_type in ['application/rss+xml','application/atom+xml']: 
+					if rss_type in ['application/rss+xml','application/atom+xml']:
 						if rss_type == 'application/rss+xml': rss_type = 'RSS'
 						else: rss_type = 'ATOM'
 						rss_title = get_subtag(t,'title')

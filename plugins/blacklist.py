@@ -54,7 +54,7 @@ def blacklist(type, jid, nick, text):
 			cur_execute('insert into blacklist values (%s)', (room,))
 			msg += L('Add to blacklist: %s') % room
 	elif room and cmd == 'del':
-		if cur_execute_fetchone('select * from blacklist where room=%s', (room,)): 
+		if cur_execute_fetchone('select * from blacklist where room=%s', (room,)):
 			cur_execute('delete from blacklist where room=%s', (room,))
 			msg = L('Removed from blacklist: %s') % room
 		else: msg = L('Address not in blacklist.')
