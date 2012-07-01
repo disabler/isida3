@@ -21,7 +21,7 @@
 #                                                                             #
 # --------------------------------------------------------------------------- #
 
-# translate: random,smart,full,partial,on,off,kick,ban,replace,mute,visitor,truncate,paste,chat,online,away,xa,dnd,on start,on shutdown,by time,black,white,without highlight,all
+# translate: random,smart,full,partial,on,off,kick,ban,replace,mute,visitor,truncate,paste,chat,online,away,xa,dnd,on start,on shutdown,by time,black,white,without highlight,all,ban server
 
 rlmas_min = (('&','&amp;'),('\"','&quot;'),('\'','&apos;'),('<','&lt;'),('>','&gt;'))
 
@@ -349,7 +349,7 @@ def comm_on_off(type, jid, nick, text):
 				msg = '\n'.join(msg)
 		else: msg = L('Unknown item!')
 	else:
-		cmd = cur_execute_fetchall('select cmd from commonoff where room=%s;',(jid,)) 
+		cmd = cur_execute_fetchall('select cmd from commonoff where room=%s;',(jid,))
 		if cmd: msg = L('Disabled commands: %s') % ', '.join([t[0] for t in cmd])
 		else: msg = L('Disabled commands not found!')
 	send_msg(type, jid, nick, msg)
@@ -1480,6 +1480,16 @@ config_prefs = {'url_title': [L('Url title is %s'), L('Automatic show title of u
 				#'muc_filter_caps_smart': [L('Smart lists %s'), L('Smart lists for caps'), [True,False], False],
 				#'muc_filter_caps_white_smart': [L('Smart whitelist %s'), L('Smart whitelist for caps'), None, '\n'],
 				#'muc_filter_caps_black_smart': [L('Smart blacklist %s'), L('Smart blacklist for caps'), None, '\n'],
+				'muc_filter_validate_action': [L('Action for invalid items %s'), L('Action for invalid items'), ['off','ban','ban server'], 'ban'],
+				'muc_filter_validate_nick': [L('Validate nick %s'), L('Validate nick'), [True,False], True],
+				'muc_filter_validate_login': [L('Validate login %s'), L('Validate login'), [True,False], True],
+				'muc_filter_validate_resource': [L('Validate resource %s'), L('Validate resource'), [True,False], True],
+				'muc_filter_validate_caps_node': [L('Validate caps node %s'), L('Validate caps node'), [True,False], True],
+				'muc_filter_validate_caps_version': [L('Validate caps version %s'), L('Validate caps version'), [True,False], True],
+				'muc_filter_validate_count': [L('Count of invalid items %s'), L('Count of invalid items for action'), None, '2'],
+				'muc_filter_validate_ban_server_exception': [L('Exception for ban servers %s'), L('Exception for ban servers'), None, ''],
+				'muc_filter_validate_ban_server_notify_jid': [L('Jid\'s for servers ban notify %s'), L('Jid\'s for servers ban notify'), None, ''],
+				
 
 				# Bomb
 
@@ -1564,6 +1574,11 @@ config_group_mucfilter_caps = [L('Muc-filter settings for while/black lists by c
 				#'muc_filter_caps','muc_filter_caps_smart','muc_filter_caps_white_smart','muc_filter_caps_black_smart',
 				'muc_filter_caps_black'],None]
 
+config_group_mucfilter_validate = [L('Muc-filter settings for validate items'),'#room-mucfilter-validate',
+				['muc_filter_validate_nick','muc_filter_validate_login','muc_filter_validate_resource',
+				'muc_filter_validate_caps_node','muc_filter_validate_caps_version','muc_filter_validate_count',
+				'muc_filter_validate_action','muc_filter_validate_ban_server_exception','muc_filter_validate_ban_server_notify_jid'],None]
+
 config_group_bomb = [L('Settings for bomb-joke'),'#room-bombjoke',
 				['bomb','bomb_fault','bomb_fault_persent','bomb_random','bomb_random_timer',
 				'bomb_timer','bomb_wire','bomb_action','bomb_action_level','bomb_reason','bomb_random_active',
@@ -1580,7 +1595,7 @@ config_group_flood = [L('Flood settings'),'#room-flood',
 
 config_groups = [config_group_mucfilter,config_group_mucfilter_newbie,config_group_mucfilter_hash,config_group_mucfilter_content,
 				config_group_mucfilter_raw,config_group_mucfilter_censor,config_group_mucfilter_lists,config_group_mucfilter_caps,
-				config_group_other,config_group_bomb,config_group_karma,config_group_censor,config_group_flood]
+				config_group_mucfilter_validate,config_group_other,config_group_bomb,config_group_karma,config_group_censor,config_group_flood]
 
 # type:
 # b - binary (true\false)

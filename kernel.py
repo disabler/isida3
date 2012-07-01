@@ -539,7 +539,7 @@ def os_version():
 	return isidaOs
 
 def caps_and_send(tmp):
-	tmp.setTag('c', namespace=xmpp.NS_CAPS, attrs={'node':capsNode,'ver':capsHash,'hash':'sha-1'})
+	tmp.setTag('c', namespace=xmpp.NS_CAPS, attrs={'node':capsNode,'ver':capsHash,'hash':'md5'})
 	sender(tmp)
 
 def join(conference,passwd):
@@ -1384,23 +1384,77 @@ def iqCB(sess,iq):
 
 				elif msg[:2] == '<p':	
 					jid = rss_replace(get_tag_item(msg,'presence','from'))				
-					if server_hash_list.has_key('%s/%s' % (getRoom(room),getServer(jid))):
+					gr = getRoom(room)
+					if server_hash_list.has_key('%s/%s' % (gr,getServer(jid))) or server_hash_list.has_key('%s/%s' % (gr,getRoom(jid))):
 						pprint('MUC-Filter drop by previous ban: %s %s' % (room,jid),'brown')
 						raise xmpp.NodeProcessed
 
 					tojid = rss_replace(get_tag_item(msg,'presence','to'))
 					if is_owner(jid): pass
-					elif get_config(getRoom(room),'muc_filter') and not mute:
-
+					elif get_config(gr,'muc_filter') and not mute:
 						show = ['online',get_tag(msg,'show')][int('<show>' in msg and '</show>' in msg)]
 						if show not in ['chat','online','away','xa','dnd']: msg = msg.replace(get_tag_full(msg,'show'), '<show>online</show>')
 						status = ['',get_tag(msg,'status')][int('<status>' in msg and '</status>' in msg)]
 						nick = ['',tojid[tojid.find('/')+1:]]['/' in tojid]
-						gr,newjoin = getRoom(room),True
+						newjoin = True
 						for tmp in megabase:
 							if tmp[0] == gr and tmp[4] == jid:
 								newjoin = False
 								break
+								
+						# Validate items
+						if get_config(gr,'muc_filter_validate_action') != 'off' and msg and not mute:
+							is_valid = True
+							validate_limit = get_config(gr,'muc_filter_validate_count')
+							validate_count = 0
+							id_node,id_ver,id_hash = 'empty','empty','empty'
+							if get_config(gr,'muc_filter_validate_nick'):
+								iv,vc = validate_nick(nick,validate_count)
+								validate_count += vc
+								if validate_count > validate_limit or not iv: is_valid = False
+							if is_valid and get_config(gr,'muc_filter_validate_login'):
+								iv,vc = validate_nick(getName(jid),validate_count)
+								validate_count += vc
+								if validate_count > validate_limit or not iv: is_valid = False
+							if is_valid and get_config(gr,'muc_filter_validate_resource'):
+								iv,vc = validate_nick(getResourse(jid),validate_count)
+								validate_count += vc
+								if validate_count > validate_limit or not iv: is_valid = False
+							if is_valid:
+								msg_xmpp_tmp = msg_xmpp.getTag('presence')
+								caps_error = False
+								try: id_node = get_eval_item(msg_xmpp_tmp,'getTag("c",namespace=xmpp.NS_CAPS).getAttr("node")').decode('utf-8')
+								except: id_node,caps_error = get_eval_item(msg_xmpp_tmp,'getTag("c",namespace=xmpp.NS_CAPS).getAttr("node")'),True
+								try: id_ver = get_eval_item(msg_xmpp_tmp,'getTag("c",namespace=xmpp.NS_CAPS).getAttr("ver")').decode('utf-8')
+								except: id_ver,caps_error = get_eval_item(msg_xmpp_tmp,'getTag("c",namespace=xmpp.NS_CAPS).getAttr("ver")'),True
+								try: id_hash = get_eval_item(msg_xmpp_tmp,'getTag("c",namespace=xmpp.NS_CAPS).getAttr("hash")').decode('utf-8')
+								except: id_hash,caps_error = get_eval_item(msg_xmpp_tmp,'getTag("c",namespace=xmpp.NS_CAPS).getAttr("hash")'),True
+								if caps_error: writefile(slog_folder % 'bad_stanza_%s.txt' % int(time.time()),unicode(msg_xmpp).encode('utf-8'))								
+								if get_config(gr,'muc_filter_validate_caps_node'):
+									iv,vc = validate_nick(id_node,validate_count)
+									validate_count += vc
+									if validate_count > validate_limit or not iv: is_valid = False
+								if is_valid and get_config(gr,'muc_filter_validate_caps_version') and [len(id_ver),id_hash] in [[24,'md5'],[28,'sha-1']] and not id_ver.endswith('='):
+									iv,vc = validate_nick(id_ver,validate_count)
+									validate_count += vc
+									if validate_count > validate_limit or not iv: is_valid = False
+							if not is_valid:
+								act = get_config(gr,'muc_filter_validate_action')
+								pprint('MUC-Filter invalid items [%s]: %s/%s %s [%s] %s %s %s' % (act,gr,nick,jid,validate_count,id_node,id_ver,id_hash),'brown')
+								msg,mute = unicode(xmpp.Node('presence', {'from': tojid, 'type': 'error', 'to':jid}, payload = ['replace_it',xmpp.Node('error', {'type': 'auth','code':'403'}, payload=[xmpp.Node('forbidden',{'xmlns':'urn:ietf:params:xml:ns:xmpp-stanzas'},[]),xmpp.Node('text',{'xmlns':'urn:ietf:params:xml:ns:xmpp-stanzas'},[L('Deny by validation!')])])])).replace('replace_it',get_tag(msg,'presence')),True
+								tmp_server = getServer(jid)
+								tmp2_server = '%s/%s' % (gr,tmp_server)	
+								if act == 'ban' and not server_hash_list.has_key('%s/%s' % (gr,getRoom(jid))):
+									server_hash_list['%s/%s' % (gr,getRoom(jid))] = time.time()
+									sender(xmpp.Node('iq',{'id': get_id(), 'type': 'set', 'to':gr},payload = [xmpp.Node('query', {'xmlns': xmpp.NS_MUC_ADMIN},[xmpp.Node('item',{'affiliation':'outcast', 'jid':jid},[xmpp.Node('reason',{},'Banned by invalid items at %s' % timeadd(tuple(time.localtime())))])])]))
+								elif act == 'ban server' and tmp_server not in get_config(gr,'muc_filter_validate_ban_server_exception').split() and not server_hash_list.has_key(tmp2_server):
+									server_hash_list[tmp2_server] = time.time()
+									sender(xmpp.Node('iq',{'id': get_id(), 'type': 'set', 'to':gr},payload = [xmpp.Node('query', {'xmlns': xmpp.NS_MUC_ADMIN},[xmpp.Node('item',{'affiliation':'outcast', 'jid':tmp_server},[xmpp.Node('reason',{},'Banned by invalid items at %s' % timeadd(tuple(time.localtime())))])])]))
+									tmp_notify = get_config(gr,'muc_filter_validate_ban_server_notify_jid')
+									if len(tmp_notify):
+										for tmp in tmp_notify.split():
+											if len(tmp): send_msg('chat', tmp, '', L('Server %s was banned in %s') % (tmp_server,gr))
+
 
 						# Lock by caps
 						if get_config(gr,'muc_filter_caps_list') != 'off' and msg and not mute:
@@ -1921,7 +1975,7 @@ def presenceCB(sess,mess):
 		except: error_code = None
 		try: error_type = mess.getTagAttr('error','type')
 		except: error_type = None
-		try: 
+		try:
 			error_text = mess.getTag('error').getTagData(tag='text')
 			if not error_text: raise
 		except:
@@ -2139,7 +2193,7 @@ def now_schedule():
 			to -= 1
 			time.sleep(1)
 		if not game_over:
-			for tmp in gtimer: 
+			for tmp in gtimer:
 				if not game_over: thr(tmp,(),'time_thread_%s' % tmp)
 
 def check_rss():
@@ -2567,7 +2621,7 @@ for tocon in confbase:
 	if zz:
 		pprint('-!- Error "%s" while join in to %s' % (zz,baseArg),'red')
 		if GT('show_loading_by_status'):
-			if GT('show_loading_by_status_room'): join_status = 'Error while join in to %s - %s' % (tocon[0],zz)
+			if GT('show_loading_by_status_room'): join_status = L('Error while join in to %s - %s') % (tocon[0],zz)
 			if GT('show_loading_by_status_show') == 'online': caps_and_send(xmpp.Presence(status=join_status, priority=Settings['priority']))
 			else: caps_and_send(xmpp.Presence(show=GT('show_loading_by_status_show'), status=join_status, priority=Settings['priority']))
 	else: pprint('-<- %s' % baseArg,'bright_green')

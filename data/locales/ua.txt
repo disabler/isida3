@@ -41,9 +41,9 @@ Blocked by censor!	Блоковано цензором
 Blocked by raw censor!	Блокування прихованого мата цензором!
 Large message%s %s	Велике повідомлення%s %s
 Large message block!	Велике повідомлення заблоковано!
+Server %s was banned in %s	Сервер %s забанено в конференції %s
 Deny by node lock!	Заборонено по ноді!
 Deny by hash lock!	Обмеження по хешу клієнта!
-Server %s was banned in %s	Сервер %s забанено в конференції %s
 Deny by blacklist!	Обмеження по чорному списку!
 Deny by whitelist!	Обмеження по білому списку
 Large status block!	Блокування довгого статусного повідомлення

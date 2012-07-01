@@ -41,9 +41,10 @@ Blocked by censor!	Блокировано цензором!
 Blocked by raw censor!	Блокировка скрытого мата цензором!
 Large message%s %s	Большое сообщение%s %s
 Large message block!	Большое сообщение!
+Deny by validation!	Недопустимый параметр!
+Server %s was banned in %s	Забанен сервер %s в конференции %s
 Deny by node lock!	Запрещено по ноде!
 Deny by hash lock!	Ограничение по хешу клиента!
-Server %s was banned in %s	Забанен сервер %s в конференции %s
 Deny by blacklist!	Ограничение по чёрному списку!
 Deny by whitelist!	Ограничение по белому списку!
 Large status block!	Блокировка длинного статусного сообщения!
@@ -68,6 +69,7 @@ kicked from	выгнали из
 Bot was %s %s with reason: %s	Бота %s %s по причине: %s
 Plugin %s. %s	Плагин %s. %s
 Turn on/off commands, access %s	Команды, уровень %s
+Error while join in to %s - %s	Ошибка при входе в %s - %s
 Shutdown by CTRL+C...	Какой-то умник нажал CTRL+C в консоли...
 System Shutdown. Trying to restart in %s sec.	Сервер потух. Попытаюсь перезапуститься через %s сек.
 Critical error! Trying to restart in %s sec.	Критическая ошибка! Попытаюсь перезапуститься через %s сек.
@@ -831,6 +833,7 @@ black	черный
 white	белый
 without highlight	без подсветки
 all	все
+ban server	банить сервер
 no limit	без ограничений
 visitor/none	гость без полномочий
 visitor/member	гость и постоянный участник
@@ -1138,6 +1141,22 @@ Smart whitelist %s	Умный белый список %s
 Smart whitelist for caps	Умный белый список для капсов
 Smart blacklist %s	Умный чёрный список %s
 Smart blacklist for caps	Умный чёрный список для капсов
+Action for invalid items %s	Действие для некорректных элементов %s
+Action for invalid items	Действие для некорректных элементов
+Validate nick %s	Проверка ника %s
+Validate nick	Проверка ника
+Validate login %s	Проверка логина %s
+Validate login	Проверка логина
+Validate resource %s	Проверка ресурса %s
+Validate resource	Проверка ресурса
+Validate caps node %s	Проверка ноды в капсе %s
+Validate caps node	Проверка ноды в капсе
+Validate caps version %s	Проверка версии в капсе %s
+Validate caps version	Проверка версии в капсе
+Count of invalid items %s	Количество некорректных элементов %s
+Count of invalid items for action	Количество некорректных элементов для действия
+Exception for ban servers %s	Исключение серверов для бана %s
+Jid's for servers ban notify %s	Jid'ы для нотификаций о бане серверов
 Bomb. Allow take a bomb %s	Bomb. Разрешить раздачу бомб: %s
 Allow take a bomb in current conference	Разрешить раздачу бомб в текущей конференции
 Bomb. Allow random unexplosive bombs %s	Bomb. Иногда не взрывать бомбы %s
@@ -1216,6 +1235,7 @@ Muc-filter settings for raw-actions	Muc-фильтр для подозрител
 Muc-filter settings for censor/ad-block	Muc-фильтр для цензора/блокировки рекламы
 Muc-filter settings for while/black lists	Muc-фильтр для белого/чёрного списков
 Muc-filter settings for while/black lists by caps	Muc-фильтр для списков по капсам
+Muc-filter settings for validate items	Muc-фильтр для проверки корректности элементов
 Settings for bomb-joke	Настройки для бомбы-шутки
 Actions for karma change	Действия при смене кармы
 Flood settings	Настройки флуда

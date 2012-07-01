@@ -54,7 +54,7 @@ def currency_converter(type, jid, nick, text):
 			try:
 				curr = body.split('<select name="tid_from" class="n">')[1].split('</select>')[0]
 				curr_list = dict(re.findall('<option value="(.*?)".*?>(.*?)</option>',curr,re.S+re.I+re.U))
-			except: curr_list = {} 
+			except: curr_list = {}
 			try: body = body.split('<table id="rTable" class="table">',1)[1]
 			except: body = ''
 			regex = '<tbody>.*?<td>(.*?)</td>.*?<td class="b">(.*?)</td>.*?<td class="b">(.*?)</td>.*?<td>(.*?)</td>.*?<td class="b">(.*?)</td>'

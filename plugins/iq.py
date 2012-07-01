@@ -86,7 +86,7 @@ def vcard_async(type, jid, nick, text, args, is_answ):
 					if r.getData(): cm.append(('%s.%s' % (t.getName(),r.getName()),unicode(r.getData())))
 				data += cm
 			elif t.getData(): data.append((t.getName(),t.getData()))
-		try: 
+		try:
 			photo_size = sys.getsizeof(get_value_from_array2(data,'PHOTO.BINVAL').decode('base64'))
 			photo_type = get_value_from_array2(data,'PHOTO.TYPE')
 			data_photo = L('type %s, %s byte(s)') % (photo_type,photo_size)
@@ -96,10 +96,10 @@ def vcard_async(type, jid, nick, text, args, is_answ):
 		args = args.lower()
 		if not args:
 			dd = get_array_from_array2(data,['NICKNAME','FN','BDAY','URL','PHOTO','DESC'])
-			if dd: msg = '%s\n%s' % (L('vCard:'),'\n'.join(['%s: %s' % ([L(t[0]),t[0].capitalize()][L(t[0])==t[0]],[u'%s…' % t[1][:VCARD_LIMIT_LONG],t[1]][len(t[1])<VCARD_LIMIT_LONG]) for t in dd])) 
+			if dd: msg = '%s\n%s' % (L('vCard:'),'\n'.join(['%s: %s' % ([L(t[0]),t[0].capitalize()][L(t[0])==t[0]],[u'%s…' % t[1][:VCARD_LIMIT_LONG],t[1]][len(t[1])<VCARD_LIMIT_LONG]) for t in dd]))
 			else: msg = '%s %s' % (L('vCard:'),L('Not found!'))
 		elif args == 'all': msg = '%s\n%s' % (L('vCard:'),'\n'.join(['%s: %s' % ([L(t[0]),t[0].capitalize()][L(t[0])==t[0]],[u'%s…' % t[1][:VCARD_LIMIT_SHORT],t[1]][len(t[1])<VCARD_LIMIT_SHORT]) for t in data]))
-		elif args == 'show': 
+		elif args == 'show':
 			dd = []
 			for t in data:
 				if t[0] not in dd: dd.append(t[0])
@@ -112,7 +112,7 @@ def vcard_async(type, jid, nick, text, args, is_answ):
 				val = val.upper()
 				dv = get_array_from_array2(data,(val))
 				if dv: dd += dv
-			if dd: msg = '%s\n%s' % (L('vCard:'),'\n'.join(['%s: %s' % ([L(t[0]),t[0].capitalize()][L(t[0])==t[0]],[u'%s…' % t[1][:VCARD_LIMIT_LONG],t[1]][len(t[1])<VCARD_LIMIT_LONG]) for t in dd])) 
+			if dd: msg = '%s\n%s' % (L('vCard:'),'\n'.join(['%s: %s' % ([L(t[0]),t[0].capitalize()][L(t[0])==t[0]],[u'%s…' % t[1][:VCARD_LIMIT_LONG],t[1]][len(t[1])<VCARD_LIMIT_LONG]) for t in dd]))
 			else: msg = '%s %s' % (L('vCard:'),L('Not found!'))			
 	send_msg(type, jid, nick, msg)
 
