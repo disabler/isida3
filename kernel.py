@@ -1409,15 +1409,15 @@ def iqCB(sess,iq):
 							validate_count = 0
 							id_node,id_ver,id_hash = 'empty','empty','empty'
 							if get_config(gr,'muc_filter_validate_nick'):
-								iv,vc = validate_nick(nick,validate_count)
+								iv,vc = validate_nick(nick,validate_limit)
 								validate_count += vc
 								if validate_count > validate_limit or not iv: is_valid = False
 							if is_valid and get_config(gr,'muc_filter_validate_login'):
-								iv,vc = validate_nick(getName(jid),validate_count)
+								iv,vc = validate_nick(getName(jid),validate_limit)
 								validate_count += vc
 								if validate_count > validate_limit or not iv: is_valid = False
 							if is_valid and get_config(gr,'muc_filter_validate_resource'):
-								iv,vc = validate_nick(getResourse(jid),validate_count)
+								iv,vc = validate_nick(getResourse(jid),validate_limit)
 								validate_count += vc
 								if validate_count > validate_limit or not iv: is_valid = False
 							if is_valid:
@@ -1431,11 +1431,11 @@ def iqCB(sess,iq):
 								except: id_hash,caps_error = get_eval_item(msg_xmpp_tmp,'getTag("c",namespace=xmpp.NS_CAPS).getAttr("hash")'),True
 								if caps_error: writefile(slog_folder % 'bad_stanza_%s.txt' % int(time.time()),unicode(msg_xmpp).encode('utf-8'))								
 								if get_config(gr,'muc_filter_validate_caps_node'):
-									iv,vc = validate_nick(id_node,validate_count)
+									iv,vc = validate_nick(id_node,validate_limit)
 									validate_count += vc
 									if validate_count > validate_limit or not iv: is_valid = False
 								if is_valid and get_config(gr,'muc_filter_validate_caps_version') and [len(id_ver),id_hash] in [[24,'md5'],[28,'sha-1']] and not id_ver.endswith('='):
-									iv,vc = validate_nick(id_ver,validate_count)
+									iv,vc = validate_nick(id_ver,validate_limit)
 									validate_count += vc
 									if validate_count > validate_limit or not iv: is_valid = False
 							if not is_valid:
