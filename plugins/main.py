@@ -1486,11 +1486,10 @@ config_prefs = {'url_title': [L('Url title is %s'), L('Automatic show title of u
 				'muc_filter_validate_resource': [L('Validate resource %s'), L('Validate resource'), [True,False], True],
 				'muc_filter_validate_caps_node': [L('Validate caps node %s'), L('Validate caps node'), [True,False], True],
 				'muc_filter_validate_caps_version': [L('Validate caps version %s'), L('Validate caps version'), [True,False], True],
-				'muc_filter_validate_count': [L('Count of invalid items %s'), L('Count of invalid items for action'), None, '2'],
+				'muc_filter_validate_count': [L('Count of invalid items %s'), L('Count of invalid items for action'), None, '4'],
 				'muc_filter_validate_ban_server_exception': [L('Exception for ban servers %s'), L('Exception for ban servers'), None, ''],
 				'muc_filter_validate_ban_server_notify_jid': [L('Jid\'s for servers ban notify %s'), L('Jid\'s for servers ban notify'), None, ''],
 				
-
 				# Bomb
 
 				'bomb': [L('Bomb. Allow take a bomb %s'), L('Allow take a bomb in current conference'), [True,False], True],

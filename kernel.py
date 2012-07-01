@@ -1405,7 +1405,7 @@ def iqCB(sess,iq):
 						# Validate items
 						if get_config(gr,'muc_filter_validate_action') != 'off' and msg and not mute:
 							is_valid = True
-							validate_limit = get_config(gr,'muc_filter_validate_count')
+							validate_limit = get_config_int(gr,'muc_filter_validate_count')
 							validate_count = 0
 							id_node,id_ver,id_hash = 'empty','empty','empty'
 							if get_config(gr,'muc_filter_validate_nick'):
