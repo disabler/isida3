@@ -41,6 +41,7 @@ Blocked by censor!	Блоковано цензором
 Blocked by raw censor!	Блокування прихованого мата цензором!
 Large message%s %s	Велике повідомлення%s %s
 Large message block!	Велике повідомлення заблоковано!
+Deny by validation!	Недопустимий параметр!
 Server %s was banned in %s	Сервер %s забанено в конференції %s
 Deny by node lock!	Заборонено по ноді!
 Deny by hash lock!	Обмеження по хешу клієнта!
@@ -68,6 +69,7 @@ kicked from	вигнали з
 Bot was %s %s with reason: %s	Бота %s %s з приводу: %s
 Plugin %s. %s	Плагін %s. %s
 Turn on/off commands, access %s	Команди, рівень %s
+Error while join in to %s - %s	Помилка при вході в %s - %s
 Shutdown by CTRL+C...	Якийсь розумник натиснув CTRL+C у консолі...
 System Shutdown. Trying to restart in %s sec.	Сервер погас. Спробую перезавантажитися через %s сек.
 Critical error! Trying to restart in %s sec.	Критична помилка! Спробую перезавантажитися через %s сек.
@@ -93,6 +95,7 @@ Actions list.\nacl show - show list\nacl del [/silent] item - remove item from l
 Time limit exceeded. Wait: %s	Перевищено ліміт швидкості відправлення повідомлень. Чекайте: %s
 User %s (%s) from %s at %s send massage to you: %s	Користувач %s (%s) з конференції %s в %s відправив(ила) вам повідомлення: %s
 Sent	Відправила
+Owner list is empty!	Список власників порожній!
 What?	Шо?
 Send message to bot's owner\nmsgtoadmin text	Надіслати повідомлення власнику бота.\nmsgtoadmin текст повідомлення
 
@@ -594,12 +597,35 @@ because: %s	з приводу: %s
 Invite to conference.\ninvite nick|jid\n[reason]	Запросити учасника в конференцію.\ninvite nick|jid\n[привід]
 
 # file: plugins/iq.py
+FN	ПІБ
+NICKNAME	Нік
+N.FAMILY	Прізвище
+N.GIVEN	Ім'я
+N.MIDDLE	По батькові
+ADR.LOCALITY	Місто
+ADR.REGION	Регіон
+ADR.PCODE	Поштовий код
+ADR.CTRY	Країна
+ADR.STREET	Вулиця
+TEL.NUMBER	Номер телефону
+EMAIL.USERID	E-Mail
+EMAIL	E-Mail
 JABBERID	JabberID
+ROLE	Посада
+BDAY	День народження
 URL	Посилання
+DESC	Про себе
+ROLE	Посада
+ORG.ORGNAME	Організація
+ORG.ORGUNIT	Підрозділ
+GEO.LAT	Широта
+GEO.LON	Довгота
+TITLE	Організація
 I can't get caps of %s	Я не знаю капс %s
 %s has empty caps!	У %s пустий капс!
 vCard:	Візитка:
 Empty!	Пусто!
+type %s, %s byte(s)	тип %s, %s байт
 Uptime: %s	Аптайм: %s
 I can't do it	Не виходить...
 Remote server not found	Віддалений сервер не знайдено
@@ -807,6 +833,7 @@ black	чорний
 white	білий
 without highlight	без підсвічування
 all	всі
+ban server	банити сервер
 no limit	без обмежень 
 visitor/none	гість без повноважень 
 visitor/member	гість і постійний учасник 
@@ -871,6 +898,8 @@ Current locale: %s	Поточна локалізація: %s
 Command temporary blocked!	Команда тимчасово блокована
 ok	ок
 What disable?	Що вимкнути?
+Enabled commands: %s	Увімкнені команди: %s
+Not disabled commands: %s	Не відключені команди: %s
 Commands not found: %s	Не знайдені команди: %s
 What enable?	Що ввімкнути?
 Disabled commands: %s	Вимкнені команди: %s
@@ -1112,6 +1141,22 @@ Smart whitelist %s	Розумний білий список %s
 Smart whitelist for caps	Розумний білий список для капсів
 Smart blacklist %s	Розумний чорний список %s
 Smart blacklist for caps	Розумний чорний список для капсів
+Action for invalid items %s	Дія для некоректних елементів %s
+Action for invalid items	Дія для некоректних елементів
+Validate nick %s	Перевірка ніку %s
+Validate nick	Перевірка ніку
+Validate login %s	Перевірка логіну %s
+Validate login	Перевірка логіну
+Validate resource %s	Перевірка ресурсу %s
+Validate resource	Перевірка ресурсу
+Validate caps node %s	Перевірка ноди в капсі %s
+Validate caps node	Перевірка ноди в капсі
+Validate caps version %s	Перевірка версії в капсі %s
+Validate caps version	Перевірка версії в капсі
+Count of invalid items %s	Кількість некоректних елементів %s
+Count of invalid items for action	Кількість некоректних елементів для дії
+Exception for ban servers %s	Виключення серверів для бану %s
+Jid's for servers ban notify %s	Jid'и для нотифікацій про бан серверів
 Bomb. Allow take a bomb %s	Bomb. Дозволити роздачу бомб: %s
 Allow take a bomb in current conference	Дозволити роздачу бомб в даній конференції
 Bomb. Allow random unexplosive bombs %s	Bomb. Іноді не підривати бомби: %s
@@ -1190,6 +1235,7 @@ Muc-filter settings for raw-actions	Muc-фільтр для підозрілих
 Muc-filter settings for censor/ad-block	Muc-фільтр для цензора/блокування реклами
 Muc-filter settings for while/black lists	Muc-фільтр для білого/чорного списків
 Muc-filter settings for while/black lists by caps	Muc-фільтр для списків по капсам
+Muc-filter settings for validate items	Muc-фільтр для перевірки коректності елементів
 Settings for bomb-joke	Налаштування бомби-жарту
 Actions for karma change	Дії при зміні карми
 Flood settings	Налаштування флуду
@@ -1355,7 +1401,10 @@ banned global by %s from %s	глобальний бан від %s з конфе�
 jid %s has been banned in %s conferences.	jid %s забанений в %s конференціях.
 No reason!	Привід не вказаний!
 ban on %s since %s because: %s	бан терміном %s починаючи з %s через: %s
+I seen different people with this nick!	Я бачила різних людей з таким ніком!
 I don'n know %s, and use as is!	Я не в курсі, хто такий %s - баню як є!
+old ban time is %s	час старого бану %s
+just passed!	тільки прошло!
 Updated: %s	Поновлено: %s
 Command is locked!	Команда заблокована!
 I don't know %s	Я не знаю, хто такий %s
