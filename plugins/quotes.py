@@ -21,7 +21,7 @@
 #                                                                             #
 # --------------------------------------------------------------------------- #
 
-try: quotes_list = json.loads(readfile('plugins/quotes.txt'),encoding='utf-8')
+try: quotes_list = json.loads(readfile(data_folder % 'quotes.txt'),encoding='utf-8')
 except:
     quotes_list = {'bash':
         {'title': u'bash.org.ru - Цитатник Рунета',
@@ -67,10 +67,10 @@ def quote(type, jid, nick, text):
 
 def ithap(type, jid, nick, text): quote(type, jid, nick, 'ithap %s' % text)
 
-def afor(type, jid, nick, text): quote(type, jid, nick, 'afor %s' % text)
+def afor(type, jid, nick): quote(type, jid, nick, 'afor')
 	
 global execute
 
 execute = [(3, 'quote', quote, 2, L('Quote from Internet. Exaples:\nquote list - list of resources\nquote [<key> [number|text]]')),
 		(3, 'ithap', ithap, 2, L('Quote from ithappens.ru\nithap [number]')),
-		(3, 'afor', afor, 2, L('Show random aphorism from skio.ru'))]
+		(3, 'afor', afor, 1, L('Show random aphorism from skio.ru'))]

@@ -25,7 +25,7 @@
     "random": ["http://bashbox.net/random", "<blockquote>((?:.|\\s)+?)</blockquote>"],
     "number": ["http://bashbox.net/quote/%s", "<blockquote>((?:.|\\s)+?)</blockquote>"]},
 "lor":
-    {"title": "Избранные цитаты с сайта Linux.Org.R",
+    {"title": "Избранные цитаты с сайта Linux.Org.Ru",
     "number": ["http://www.lorquotes.ru/view-quote.php?id=%s", "<div class=&quot;q-text&quot;>((?:.|\\s)+?)</div>\\s+?<div class=&quot;q-sign&quot;>"]},  
 "wotq":
     {"title": "Цитатник Мира Танков",
