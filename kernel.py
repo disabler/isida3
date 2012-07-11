@@ -164,6 +164,10 @@ def get_color(c):
 	colors = {'clear':'[0m','blue':'[34m','red':'[31m','magenta':'[35m','green':'[32m','cyan':'[36m','brown':'[33m','light_gray':'[37m','black':'[30m','bright_blue':'[34;1m','bright_red':'[31;1m','purple':'[35;1m','bright_green':'[32;1m','bright_cyan':'[36;1m','yellow':'[33;1m','dark_gray':'[30;1m','white':'[37;1m'}
 	return ['','\x1b%s' % colors[c]][color]
 
+def get_color_win32(c):
+	colors = {'clear':7,'blue':1,'red':4,'magenta':5,'green':2,'cyan':3,'brown':6,'light_gray':7,'black':0,'bright_blue':9,'bright_red':12,'purple':13,'bright_green':10,'bright_cyan':11,'yellow':14,'dark_gray':8,'white':15}
+	return colors[c]
+
 def thr(func,param,name):
 	global th_cnt, thread_error_count, sema
 	th_cnt += 1
@@ -364,8 +368,10 @@ def onlytimeadd(lt): return '%02d:%02d:%02d' % (lt[3],lt[4],lt[5])
 
 def pprint(*text):
 	global last_logs_store
-	if len(text) > 1: c,wc = get_color(text[1]),get_color('clear')
-	else: c,wc = '',''
+	c,wc = '',''
+	if len(text) > 1:
+		if is_win32: ctypes.windll.Kernel32.SetConsoleTextAttribute(win_console_color, get_color_win32(text[1]))
+		else: c,wc = get_color(text[1]),get_color('clear')
 	text = text[0]
 	lt = tuple(time.localtime())
 	zz = parser('%s[%s]%s %s%s' % (wc,onlytimeadd(lt),c,text,wc))
@@ -2234,6 +2240,7 @@ def flush_stats():
 	pprint('Iq in %s | out %s' % (iq_in,iq_out),'bright_blue')
 	pprint('Unknown out %s' % unknown_out,'bright_blue')
 	pprint('Cycles used %s | unused %s' % (cycles_used,cycles_unused),'bright_blue')
+	if is_win32: ctypes.windll.Kernel32.SetConsoleTextAttribute(win_console_color, get_color_win32('clear'))
 
 def disconnecter():
 	global bot_exit_type, game_over
@@ -2381,6 +2388,7 @@ lt=tuple(time.localtime())
 if lt[0:3] == gt[0:3]: timeofset = int(lt[3])-int(gt[3])
 elif lt[0:3] > gt[0:3]: timeofset = int(lt[3])-int(gt[3]) + 24
 else: timeofset = int(gt[3])-int(lt[3]) + 24
+is_win32 = sys.platform == 'win32'
 
 if os.path.isfile(configname): execfile(configname)
 else: errorHandler('%s is missed.' % configname)
@@ -2429,6 +2437,11 @@ if thread_type:
 	garbage_collector()
 
 else: import thread
+
+if is_win32:
+	import ctypes
+	ctypes.windll.Kernel32.GetStdHandle.restype = ctypes.c_ulong
+	win_console_color = ctypes.windll.Kernel32.GetStdHandle(ctypes.c_ulong(0xfffffff5))
 
 botVersion = get_bot_version()
 try: tmp = botOs
