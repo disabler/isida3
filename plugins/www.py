@@ -125,7 +125,7 @@ def parse_url_in_message(room,jid,nick,type,text):
 				for t in url_watch_ignore:
 					if ll.endswith('.%s' % t): raise
 				last_url_watch = link = enidna(link)
-				pprint('Show url-title: %s in %s' % (link,room))
+				pprint('Show url-title: %s in %s' % (link,room),'white')
 				original_page = load_page(urllib2.Request(link))[:4192]
 				page = html_encode(original_page)
 				if '<title' in page: tag = 'title'
@@ -154,7 +154,7 @@ def parse_url_in_message(room,jid,nick,type,text):
 				if is_file:
 					last_url_watch = link = enidna(link)
 					body, result = get_opener(link)
-					pprint('Show content length: %s in %s' % (link,room))
+					pprint('Show content length: %s in %s' % (link,room),'white')
 					if result:
 						body = unicode(body.headers)
 						mt = float(re.findall('Content-Length.*?([0-9]+)', body, re.S+re.U+re.I)[0])

@@ -65,7 +65,7 @@ def cur_execute(*params):
 		if database_debug:
 			try: par = str(par)
 			except: par = unicode(par)
-			pprint(par)
+			pprint(par,'red')
 		else: par = None
 		conn.rollback()
 		if halt_on_exception: raise
@@ -94,7 +94,7 @@ def cur_execute_fetchone(*params):
 		if database_debug:
 			try: par = str(par)
 			except: par = unicode(par)
-			pprint(par)
+			pprint(par,'red')
 			if halt_on_exception: raise
 		else: par = None
 		conn.rollback()
@@ -123,7 +123,7 @@ def cur_execute_fetchall(*params):
 		if database_debug:
 			try: par = str(par)
 			except: par = unicode(par)
-			pprint(par)
+			pprint(par,'red')
 		else: par = None
 		conn.rollback()
 		if halt_on_exception: raise
@@ -145,7 +145,7 @@ def cur_execute_fetchmany(*params):
 			if database_debug:
 				try: par = str(par)
 				except: par = unicode(par)
-				pprint(par)
+				pprint(par,'red')
 			else: par = None
 			if halt_on_exception: raise
 	except Exception, par:
@@ -153,7 +153,7 @@ def cur_execute_fetchmany(*params):
 		if database_debug:
 			try: par = str(par)
 			except: par = unicode(par)
-			pprint(par)
+			pprint(par,'red')
 		else: par = None
 		if halt_on_exception: raise
 	cur.close()
@@ -202,8 +202,8 @@ def send_count(item):
 	else: unknown_out += 1
 	try: cl.send(item)
 	except Exception,SM:
-		pprint(item)
-		pprint(SM)
+		pprint(item,'red')
+		pprint(SM,'red')
 		if halt_on_exception: raise
 
 def sender(item):
@@ -372,6 +372,7 @@ def pprint(*text):
 	if len(text) > 1:
 		if is_win32: ctypes.windll.Kernel32.SetConsoleTextAttribute(win_console_color, get_color_win32(text[1]))
 		else: c,wc = get_color(text[1]),get_color('clear')
+	elif is_win32: ctypes.windll.Kernel32.SetConsoleTextAttribute(win_console_color, get_color_win32('clear'))
 	text = text[0]
 	lt = tuple(time.localtime())
 	zz = parser('%s[%s]%s %s%s' % (wc,onlytimeadd(lt),c,text,wc))

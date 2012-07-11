@@ -43,7 +43,7 @@ def bot_soft_update(type, jid, nick, text):
 	plugins_reload = True
 	while not game_over and plugins_reload: time.sleep(1)
 	if GT('soft_update_resend_hash'):
-		pprint('*** Send new hash in to rooms')
+		pprint('*** Send new hash in to rooms','bright_green')
 		cnf = cur_execute_fetchall('select * from conference;')
 		for tocon in cnf:
 			if tocon[1]: pprint('->- %s | pass: %s' % tocon,'green')

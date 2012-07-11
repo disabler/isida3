@@ -119,7 +119,7 @@ def cron_action():
 				cur_execute('insert into cron values (%s,%s,%s,%s,%s,%s,%s)', m)
 			tmp = cur_execute_fetchone('select room from conference where room ilike %s',('%s/%%'%t[0],))
 			if not tmp:
-				pprint('Can\'t execute by cron: %s in %s' % (t[5].split()[0],t[0]))
+				pprint('Can\'t execute by cron: %s in %s' % (t[5].split()[0],t[0]),'red')
 				return
 			else: nowname = getResourse(tmp[0])
 			if t[2] == '\n': tmp_nick,tmp_type = '%s_cron_%d' % (nowname,time.time()),'chat'
