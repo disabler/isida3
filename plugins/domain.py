@@ -62,7 +62,7 @@ def domaininfo(type, jid, nick, text):
 							tmp_body[tmp] = tmp
 							newbody.append(tmp)
 				msg += '\n'+'\n'.join(newbody)
-		except: raise#msg = L('Unexpected error')
+		except: msg = L('Unexpected error')
 	else: msg = L('Error!')
 	send_msg(type, jid, nick, msg)
 
