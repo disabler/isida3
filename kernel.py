@@ -2293,7 +2293,7 @@ def init_hash():
 	id_category = 'client'
 	id_type = 'bot'
 	id_lang = CURRENT_LOCALE
-	id_name = 'iSida Jabber Bot'
+	id_name = 'iSida'
 	capsHash = '%s<' % '/'.join([t.replace('/','//') for t in [id_category,id_type,id_lang,id_name]])
 	bot_features.sort()
 	capsHash += ''.join(['%s<' % t for t in bot_features])
@@ -2320,7 +2320,7 @@ debug_console = False				# отладка действий бота
 CommandsLog = None					# логгирование команд
 prefix = '_'						# префикс комманд
 msg_limit = 1000					# лимит размера сообщений
-botName = 'iSida-bot'				# название бота
+botName = 'iSida'					# название бота
 botVersionDef = u'v3.1β'			# версия бота
 disco_config_node = 'http://isida-bot.com/config'
 pres_answer = []					# результаты посылки презенсов
