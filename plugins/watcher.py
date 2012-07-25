@@ -25,6 +25,7 @@ watch_time = time.time()
 watch_count = 0
 watch_reset = True
 watch_last_activity = {}
+watch_activity = {}
 
 def connect_watch():
 	global iq_request, watch_time, game_over, watch_count, bot_exit_type, watch_reset, plugins_reload
@@ -76,9 +77,26 @@ def watcher_reset(a,b,c,d,e):
 
 def c_watcher(type, jid, nick): send_msg(type, jid, nick, L('Timeout for ask: %s | Timeout for answer: %s | Last ask: %s | Total checks: %s') % (GT('watch_size'),GT('timeout'),un_unix(int(time.time() - watch_time)),watch_count))
 
+def activity_watch(type, jid, nick):
+	rooms = cur_execute_fetchall("select split_part(room,'/',1) from conference;")
+	cnf = [[watch_activity[t],t] for t in watch_activity.keys()]
+	cnf.sort()
+	tt = int(time.time())
+	msg = '\n'.join(['%s - %s' % (t[1],un_unix(tt-t[0])) for t in cnf])
+	rooms = ['%s - %s' % (t[0],L('Unknown')) for t in rooms if t[0] not in watch_activity.keys()]
+	if rooms: msg = '%s\n%s' % (msg,'\n'.join(rooms))
+	msg = L('Last activity in room(s):\n%s') % msg
+	if type == 'groupchat':
+		send_msg('chat', jid, nick, msg)
+		msg = L('Send for you in private')
+	send_msg(type, jid, nick, msg)
+
 def connect_watch_uni(room,jid,nick,type,mass):
 	global watch_last_activity
-	if jid != 'None': watch_last_activity[getRoom(room)] = int(time.time())
+	if jid != 'None':
+		gr = getRoom(room)
+		watch_last_activity[gr] = int(time.time())
+		if jid != Settings['jid']: watch_activity[gr] = int(time.time())
 
 global execute, timer
 
@@ -86,4 +104,5 @@ if GT('iq_version_enable'): timer = [connect_watch,watch_room_activity]
 presence_control = [connect_watch_uni]
 message_control = [connect_watch_uni]
 
-execute = [(6,'watcher',c_watcher,1,L('Connection activity control.'))]
+execute = [(6,'watcher',c_watcher,1,L('Connection activity control.')),
+		   (9,'activity',activity_watch,1,L('Show activity of conferences.'))]

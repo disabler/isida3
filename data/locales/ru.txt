@@ -1587,7 +1587,9 @@ QWERTYUIOP{}ASDFGHJKL:"ZXCVBNM<>~qwertyuiop[]asdfghjkl;'zxcvbnm,.`	ё1234567890-
 
 # file: plugins/watcher.py
 Timeout for ask: %s | Timeout for answer: %s | Last ask: %s | Total checks: %s	Таймаут запросов: %s | Таймаут ответов: %s | Последний запрос: %s | Всего проверок: %s
+Last activity in room(s):\n%s	Последняя активность в конференций:\n%s
 Connection activity control.	Контроль активности соединения.
+Show activity of conferences.	Показ активности конференций.
 
 # file: plugins/whowas.py
 For a last day i see: %s	За последние сутки я видела: %s
