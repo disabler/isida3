@@ -80,7 +80,7 @@ def c_watcher(type, jid, nick): send_msg(type, jid, nick, L('Timeout for ask: %s
 def activity_watch(type, jid, nick):
 	rooms = cur_execute_fetchall("select split_part(room,'/',1) from conference;")
 	cnf = [[watch_activity[t],t] for t in watch_activity.keys()]
-	cnf.sort()
+	cnf.sort(reverse=1)
 	tt = int(time.time())
 	msg = '\n'.join(['%s - %s' % (t[1],un_unix(tt-t[0])) for t in cnf])
 	rooms = ['%s - %s' % (t[0],L('Unknown')) for t in rooms if t[0] not in watch_activity.keys()]
