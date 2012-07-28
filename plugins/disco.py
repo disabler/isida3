@@ -434,7 +434,7 @@ def disco_async(type, jid, nick, what, where, hm, disco_type, raw_type, isa_prev
 		elif disco_type and '@' in where:
 			cm = []
 			for ii in [t.getAttr('name') for t in is_answ[1][1].getTag('query',namespace=xmpp.NS_DISCO_ITEMS).getTags('item')]:
-				if not what or what in ii.lower(): cm.append(ii)
+				if ii and (not what or what in ii.lower()): cm.append(ii)
 			cm = smart_sort(cm)
 			if len(cm):
 				d_name = reduce_spaces_all(isa_prev.getTag('query',namespace=xmpp.NS_DISCO_INFO).getTagAttr('identity','name'))

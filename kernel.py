@@ -368,16 +368,23 @@ def onlytimeadd(lt): return '%02d:%02d:%02d' % (lt[3],lt[4],lt[5])
 
 def pprint(*text):
 	global last_logs_store
-	c,wc = '',''
+	c,wc,win_color = '','',''
 	if len(text) > 1:
-		if is_win32: ctypes.windll.Kernel32.SetConsoleTextAttribute(win_console_color, get_color_win32(text[1]))
+		if is_win32: win_color = get_color_win32(text[1])
 		else: c,wc = get_color(text[1]),get_color('clear')
-	elif is_win32: ctypes.windll.Kernel32.SetConsoleTextAttribute(win_console_color, get_color_win32('clear'))
+	elif is_win32: win_color = get_color_win32('clear')
 	text = text[0]
 	lt = tuple(time.localtime())
 	zz = parser('%s[%s]%s %s%s' % (wc,onlytimeadd(lt),c,text,wc))
 	last_logs_store = ['[%s] %s' % (onlytimeadd(lt),text)] + last_logs_store[:last_logs_size]
-	if debug_console: print zz
+	if debug_console:
+		if is_win32 and win_color:
+			ctypes.windll.Kernel32.SetConsoleTextAttribute(win_console_color, get_color_win32('clear'))
+			print zz.split(' ',1)[0],
+			ctypes.windll.Kernel32.SetConsoleTextAttribute(win_console_color, win_color)
+			print zz.split(' ',1)[1]
+			ctypes.windll.Kernel32.SetConsoleTextAttribute(win_console_color, get_color_win32('clear'))
+		else: print zz
 	if CommandsLog:
 		fname = slog_folder % '%02d%02d%02d.txt' % (lt[0],lt[1],lt[2])
 		fbody = '%s|%s\n' % (onlytimeadd(lt),text)
