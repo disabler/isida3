@@ -24,14 +24,14 @@
 currency_conv_list = ['ATS','AUD','BEF','BYR','CAD','CHF','CNY','DEM','DKK','EEK',\
 					  'EGP','ESP','EUR','FIM','FRF','GBP','GRD','IEP','ISK','ITL',\
 					  'JPY','KGS','KWD','KZT','LTL','NLG','NOK','PTE','SDR','SEK',\
-					  'SGD','TRL','TRY','UAH','USD','XDR','YUN','RUR']
+					  'SGD','TRL','TRY','UAH','USD','XDR','YUN','RUB']
 
 def currency_converter(type, jid, nick, text):
 	msg = L('Error in parameters. Read the help about command.')
 	text = text.strip().upper()
-	if text == 'LIST': msg = L('Available values:\n%s') % ', '.join(currency_conv_list)
+	if text == 'LIST': msg = L('Available values:\n%s') % ', '.join(currency_conv_list).replace('RUB','RUR')
 	else:
-		repl_curr = ((u'€','EUR'),('$','USD'),(u'¥','JPY'),(u'£','GBP'),(',','.'))
+		repl_curr = ((u'RUR','RUB'),(u'€','EUR'),('$','USD'),(u'¥','JPY'),(u'£','GBP'),(',','.'))
 		for tmp in repl_curr: text = text.replace(tmp[0],' %s ' % tmp[1])
 		c_from,c_to,c_summ = '','',''
 		val = [t for t in re.findall('[A-Z]{3,4}', text, re.S) if t in currency_conv_list]
@@ -66,7 +66,7 @@ def currency_converter(type, jid, nick, text):
 				if curr_list.has_key(mt[3]): tov = curr_list[mt[3]]
 				else: tov = mt[3]
 				msg = '%s %s (%s) = %s %s (%s) | 1 %s = %s %s' % (c_summ,c_from,frv,mt[4],c_to,tov,c_from,mt[2],c_to)
-				msg = msg.replace('BASE','RUR')
+				msg = msg.replace('RUB','RUR')
 	send_msg(type, jid, nick, msg)
 
 global execute
