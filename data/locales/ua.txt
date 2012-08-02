@@ -632,8 +632,7 @@ Remote server not found	Віддалений сервер не знайдено
 Ping from you %s sec.	Пінг від тебе - %s сек.
 Ping from %s %s sec.	Пінг від %s - %s сек.
 Unknown server answer!	Невідома відповідь сервера
-Server statistic: %s | Total/Online: %s/%s	Статистика серверу: %s | Всього/Онлайн: %s/%s
-Total/Online on all hosts: %s/%s	Всього/Онлайн на всіх хостах: %s/%s
+Unavailable!	Недоступно!
 Client version.	Версія клієнта.
 Client version with caps.	Версія клієнта з капсом.
 Show caps node and version of client.	Показ ноди та версії капса клієнта.
@@ -763,7 +762,6 @@ Show user's nick changes.	Показ зміни ніків.
 
 # file: plugins/lastfm.py
 Last track %s: %s - %s %s	Остання доріжка %s: %s – %s %s
-Unavailable!	Недоступно!
 Last tracks %s:	Останні доріжки %s:
 Friends %s:	Друзі %s:
 Loved tracks %s:	Улюблені треки %s:

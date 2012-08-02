@@ -21,7 +21,7 @@
 #                                                                             #
 # --------------------------------------------------------------------------- #
 
-# translate: FN,NICKNAME,N.FAMILY,N.GIVEN,N.MIDDLE,ADR.LOCALITY,ADR.REGION,ADR.PCODE,ADR.CTRY,ADR.STREET,TEL.NUMBER,EMAIL.USERID,EMAIL,JABBERID,ROLE,BDAY,URL,DESC,ROLE,ORG.ORGNAME,ORG.ORGUNIT,GEO.LAT,GEO.LON,TITLE
+# translate: FN,NICKNAME,N.FAMILY,N.GIVEN,N.MIDDLE,ADR.LOCALITY,ADR.REGION,ADR.PCODE,ADR.CTRY,ADR.STREET,TEL.NUMBER,EMAIL.USERID,EMAIL,JABBERID,ROLE,BDAY,URL,DESC,ROLE,ORG.ORGNAME,ORG.ORGUNIT,GEO.LAT,GEO.LON,TITLE,uptime,seconds,users/registered,users,users/online,contacts/online,contacts,contacts/total,messages/in,messages,messages/out,memory-usage,KB,users/all-hosts/total,users/all-hosts/online,users/total
 
 VCARD_LIMIT_LONG = 256
 VCARD_LIMIT_SHORT = 128
@@ -226,39 +226,39 @@ def version_async(type, jid, nick, text, with_caps, is_answ):
 		if caps: msg += ' || %s' % caps
 	send_msg(type, jid, nick, msg)
 
-def iq_stats_host(type, jid, nick, text): iq_stats_raw(type, jid, nick, text, True)
-
-def iq_stats(type, jid, nick, text): iq_stats_raw(type, jid, nick, text, False)
-
-def iq_stats_raw(type, jid, nick, text, flag):
+def iq_stats(type, jid, nick, text):
 	global iq_request
 	if text == '':
 		send_msg(type, jid, nick, L('What?'))
 		return
 	iqid = get_id()
-	i = xmpp.Node('iq', {'id': iqid, 'type': 'get', 'to':text}, payload = [xmpp.Node('query', {'xmlns': xmpp.NS_STATS},[xmpp.Node('stat', {'name':'users/total'},[]),xmpp.Node('stat', {'name':'users/online'},[]),xmpp.Node('stat', {'name':'users/all-hosts/online'},[]),xmpp.Node('stat', {'name':'users/all-hosts/total'},[])])])
-	iq_request[iqid]=(time.time(),stats_async,[type, jid, nick, text, flag])
+	i = xmpp.Node('iq', {'id': iqid, 'type': 'get', 'to':text}, payload = [xmpp.Node('query', {'xmlns': xmpp.NS_STATS},[])])
+	iq_request[iqid]=(time.time(),stats_async_features,[type, jid, nick, text])
 	sender(i)
 
-def stats_async(type, jid, nick, text, flag, is_answ):
+def stats_async_features(type, jid, nick, text, is_answ):
+	isa = is_answ[1]
+	if isa[0].startswith(L('Error! %s')%''): send_msg(type, jid, nick, isa[0])
+	else:
+		try: stats_list = [t.getAttr('name') for t in isa[1].getTag('query',namespace=xmpp.NS_STATS).getTags('stat')]
+		except: stats_list = []
+		if stats_list:
+			iqid = get_id()
+			i = xmpp.Node('iq', {'id': iqid, 'type': 'get', 'to':text}, payload = [xmpp.Node('query', {'xmlns': xmpp.NS_STATS},[xmpp.Node('stat', {'name':t},[]) for t in stats_list])])
+			iq_request[iqid]=(time.time(),stats_async,[type, jid, nick, text])
+			sender(i)		
+		else: send_msg(type, jid, nick, L('Unavailable!'))
+
+def stats_async(type, jid, nick, text, is_answ):
 	isa = is_answ[1]
 	if isa[0].startswith(L('Error! %s')%''): msg = isa[0]
 	else:
-		isa = unicode(isa)
-		if isa == 'None': ans = [0,0,0,0]
-		else:
-			stat_mas = {}
-			while len(get_tag(isa,'query')):
-				tmp_stat = get_tag_full(isa,'stat')
-				stat_mas[get_tag_item(tmp_stat,'stat','name')] = get_tag_item(tmp_stat,'stat','value')
-				isa = isa.replace(tmp_stat,'')
-			ans = []
-			for tmp in ['users/total','users/online','users/all-hosts/total','users/all-hosts/online']:
-				try: t_ans = int(stat_mas[tmp])
-				except: t_ans = 0
-				ans.append(t_ans)
-		msg = L('Server statistic: %s | Total/Online: %s/%s') % (text,ans[0],ans[1])
-		if flag and ans[2:] != [0,0]: msg += ' | ' + L('Total/Online on all hosts: %s/%s') % (ans[2],ans[3])
+		try: stats_list = [[L(t.getAttr('name')),L(t.getAttr('value')),L(t.getAttr('units'))] for t in isa[1].getTag('query',namespace=xmpp.NS_STATS).getTags('stat')]
+		except: stats_list = []
+		if stats_list:
+			stats_list = ['%s: %s' % (t[0].capitalize(),t[1]) if t[2] in t[0] else '%s: %s %s' % (t[0].capitalize(),t[1],t[2]) for t in stats_list]
+			msg = L('Server statistic: %s\n%s') % (text,'\n'.join(stats_list))
+		else: msg = L('Unavailable!')
 	send_msg(type, jid, nick, msg)
 
 global execute
@@ -273,6 +273,5 @@ execute = [(3, 'ver', iq_version, 2, L('Client version.')),
 		   (3, 'time_old_raw', iq_time_raw, 2, L('Client side time + raw time format.')),
 		   (3, 'time_raw', iq_utime_raw, 2, L('Client side time + raw time format.')),
 		   (3, 'stats', iq_stats, 2, L('Users server statistic.')),
-		   (3, 'stats+', iq_stats_host, 2, L('Users server statistic.')),
 		   (3, 'vcard_raw', iq_vcard, 2, L('vCard query. Recomends make command base alias for query needs info.\nvcard_raw [nick] - query generic info\nvcard_raw nick\nshow - show available fields\nvcard_raw nick\n[field:name|field:name] - show requested fields from vcard.')),
 		   (3, 'uptime', iq_uptime, 2, L('Server or jid uptime.'))]

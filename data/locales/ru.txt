@@ -621,6 +621,22 @@ ORG.ORGUNIT	Подразделение
 GEO.LAT	Широта
 GEO.LON	Долгота
 TITLE	Организация
+uptime	аптайм
+seconds	секунд
+users/registered	зарегистрированно пользователей
+users	пользователей
+users/online	онлайн пользователей
+contacts/online	онлайн контактов
+contacts	контактов
+contacts/total	всего контактов
+messages/in	исходящих сообщений
+messages	сообщений
+messages/out	входящих сообщений
+memory-usage	использование памяти
+KB	КБ
+users/all-hosts/total	пользователей всего на всех хостах
+users/all-hosts/online	пользователей онлайн на всех хостах
+users/total	пользователей всего
 I can't get caps of %s	Я не знаю капс %s
 %s has empty caps!	У %s пустой капс!
 vCard:	Визитка:
@@ -632,8 +648,8 @@ Remote server not found	Удалённый сервер не найден
 Ping from you %s sec.	Пинг от тебя %s сек.
 Ping from %s %s sec.	Пинг от %s %s сек.
 Unknown server answer!	Неизвестный ответ сервера!
-Server statistic: %s | Total/Online: %s/%s	Статистика сервера: %s | Всего/Онлайн: %s/%s
-Total/Online on all hosts: %s/%s	Всего/Онлайн на всех хостах: %s/%s
+Unavailable!	Недоступно!
+Server statistic: %s\n%s	Статистика сервера: %s\n%s
 Client version.	Версия клиента.
 Client version with caps.	Версия клиента с капсом.
 Show caps node and version of client.	Показ ноды и версии капса клиента.
@@ -763,7 +779,6 @@ Show user's nick changes.	Показ смены ников.
 
 # file: plugins/lastfm.py
 Last track %s: %s - %s %s	Последняя дорожка %s: %s - %s %s
-Unavailable!	Недоступно!
 Last tracks %s:	Последние дорожки %s:
 Friends %s:	Друзья %s:
 Loved tracks %s:	Любимые треки %s:
