@@ -623,7 +623,7 @@ GEO.LON	Долгота
 TITLE	Организация
 uptime	аптайм
 seconds	секунд
-users/registered	зарегистрированно пользователей
+users/registered	зарегистрировано пользователей
 users	пользователей
 users/online	онлайн пользователей
 contacts/online	онлайн контактов
@@ -634,9 +634,9 @@ messages	сообщений
 messages/out	входящих сообщений
 memory-usage	использование памяти
 KB	КБ
-users/all-hosts/total	пользователей всего на всех хостах
-users/all-hosts/online	пользователей онлайн на всех хостах
-users/total	пользователей всего
+users/all-hosts/total	всего пользователей на всех хостах
+users/all-hosts/online	онлайн пользователей на всех хостах
+users/total	всего пользователей
 I can't get caps of %s	Я не знаю капс %s
 %s has empty caps!	У %s пустой капс!
 vCard:	Визитка:
