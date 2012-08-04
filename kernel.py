@@ -2215,23 +2215,24 @@ def check_rss():
 	if rss_processed: return
 	l_hl = int(time.time())
 	feedbase = cur_execute_fetchall('select * from feed order by time;')
-	for fd in feedbase:
-		ltime = fd[1]
-		timetype = ltime[-1:].lower()
-		if not timetype in ('h','m'): timetype = 'h'
-		try: ofset = int(ltime[:-1])
-		except: ofset = 4
-		if timetype == 'h': ofset *= 3600
-		elif timetype == 'm': ofset *= 60
-		try: ll_hl = int(fd[3])
-		except: ll_hl = 0
-		in_room = cur_execute_fetchone('select room from conference where room ilike %s',('%s/%%'%fd[4],))
-		if ofset < 600: ofset = 600
-		if in_room and ll_hl + ofset <= l_hl:
-			rss_processed = True
-			pprint('check rss: %s in %s' % (fd[0],fd[4]),'green')
-			rss('groupchat', fd[4], 'RSS', 'new %s 10 %s silent' % (fd[0],fd[2]))
-			break
+	if feedbase:
+		for fd in feedbase:
+			ltime = fd[1]
+			timetype = ltime[-1:].lower()
+			if not timetype in ('h','m'): timetype = 'h'
+			try: ofset = int(ltime[:-1])
+			except: ofset = 4
+			if timetype == 'h': ofset *= 3600
+			elif timetype == 'm': ofset *= 60
+			try: ll_hl = int(fd[3])
+			except: ll_hl = 0
+			in_room = cur_execute_fetchone('select room from conference where room ilike %s',('%s/%%'%fd[4],))
+			if ofset < 600: ofset = 600
+			if in_room and ll_hl + ofset <= l_hl:
+				rss_processed = True
+				pprint('check rss: %s in %s' % (fd[0],fd[4]),'green')
+				rss('groupchat', fd[4], 'RSS', 'new %s 10 %s silent' % (fd[0],fd[2]))
+				break
 	rss_processed = False
 
 def talk_count(room,jid,nick,text):
@@ -2706,6 +2707,8 @@ while 1:
 	except KeyboardInterrupt: atempt_to_shutdown_with_reason(L('Shutdown by CTRL+C...'),0,'exit',False)
 
 	except xmpp.SystemShutdown: atempt_to_shutdown_with_reason(L('System Shutdown. Trying to restart in %s sec.') % GT('reboot_time'),GT('reboot_time'),'restart',False)
+	
+	except InterfaceError: atempt_to_shutdown_with_reason(L('Interface error! Trying to restart in %s sec.') % int(GT('reboot_time')/4),int(GT('reboot_time')/4),'restart',False)
 
 	except Exception, SM:
 		try: SM = str(SM)

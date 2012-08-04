@@ -84,7 +84,9 @@ def get_spy_stat():
 			cur_execute('update spy set participant=(participant+%s)/2 where room=%s',(cnt,tmp[0]))
 
 def spy_action():
-	if cur_execute_fetchone('select count(*) from conference;')[0] == 1: return None # Last conference
+	try:
+		if cur_execute_fetchone('select count(*) from conference;')[0] == 1: raise
+	except: return None # Last conference
 	sb = cur_execute_fetchall('select * from spy where %s-time>%s;',(int(time.time()),GT('spy_action_time')))
 	for tmp in sb:
 		act = tmp[4].split(' ')
