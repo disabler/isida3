@@ -2708,7 +2708,7 @@ while 1:
 
 	except xmpp.SystemShutdown: atempt_to_shutdown_with_reason(L('System Shutdown. Trying to restart in %s sec.') % GT('reboot_time'),GT('reboot_time'),'restart',False)
 	
-	except InterfaceError: atempt_to_shutdown_with_reason(L('Interface error! Trying to restart in %s sec.') % int(GT('reboot_time')/4),int(GT('reboot_time')/4),'restart',False)
+	except psycopg2.InterfaceError: atempt_to_shutdown_with_reason(L('Interface error! Trying to restart in %s sec.') % int(GT('reboot_time')/4),int(GT('reboot_time')/4),'restart',False)
 
 	except Exception, SM:
 		try: SM = str(SM)
