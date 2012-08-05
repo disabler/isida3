@@ -2588,8 +2588,9 @@ try:
 		Secure = secure
 		pprint('Tryins secured connection','cyan')
 	except NameError: Secure = None
-	cl.connect(Server,Proxy,Secure,ENABLE_TLS=ENABLE_TLS)
-	pprint('Connected','yellow')
+	con_stat = cl.connect(Server,Proxy,Secure,ENABLE_TLS=ENABLE_TLS)
+	if con_stat: pprint('Connected as %s' % con_stat,'yellow')
+	else: raise
 except:
 	pprint('No connection. Restart in %s sec.' % GT('reboot_time'),'red')
 	time.sleep(GT('reboot_time'))
