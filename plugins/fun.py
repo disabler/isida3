@@ -189,10 +189,24 @@ def life(type, jid, nick, text):
 		send_msg('chat', jid, nick, msg)
 	except: send_msg(type, jid, nick, L('Smoke help about command!'))
 
+def zalgo(type, jid, nick, text):
+	zalgo_threshold = 10
+	zalgo_chars = [unichr(i) for i in range(0x0300, 0x036F + 1)]
+	zalgo_chars.extend([u'\u0488', u'\u0489'])
+	zalgoized = []
+	for letter in text:
+		zalgoized.append(letter)
+		zalgo_num = random.randint(0, zalgo_threshold) + 1
+		for _ in range(zalgo_num):
+			zalgoized.append(random.choice(zalgo_chars))
+	msg = random.choice(zalgo_chars).join(zalgoized)
+	send_msg(type,jid,nick,msg)
+
 global execute
 
 execute = [(3, 'poem', poem, 1, L('Just funny poem')),
 		(3, 'oracle', oracle, 2, L('Prophecy oracle. Example: oracle your_answer?')),
 		(3, 'coin', coin, 2, L('Heads or tails')),
 		(3, 'poke', to_poke, 2, L('"Poke" command\npoke nick - say a random phrase for nick\nControls command, available only for bot owner:\npoke show - show list of phrases\npoke add phrase - add phrase\npoke del phrase_number - remove phrase.')),
-		(3, 'life', life, 2, L('Info about your life. Example: life dd.mm.yy [hour:min:sec]'))]
+		(3, 'life', life, 2, L('Info about your life. Example: life dd.mm.yy [hour:min:sec]')),
+		(3, 'zalgo', zalgo, 2, L('Zalgo translate'))]
