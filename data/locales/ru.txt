@@ -72,6 +72,7 @@ Turn on/off commands, access %s	Команды, уровень %s
 Error while join in to %s - %s	Ошибка при входе в %s - %s
 Shutdown by CTRL+C...	Какой-то умник нажал CTRL+C в консоли...
 System Shutdown. Trying to restart in %s sec.	Сервер потух. Попытаюсь перезапуститься через %s сек.
+Interface error! Trying to restart in %s sec.	Ошибка взаимодействия! Перезапуск через %s секунд.
 Critical error! Trying to restart in %s sec.	Критическая ошибка! Попытаюсь перезапуститься через %s сек.
 
 # file: plugins/acl.py
@@ -460,6 +461,7 @@ Prophecy oracle. Example: oracle your_answer?	Предсказания орак�
 Heads or tails	Орёл или решка
 "Poke" command\npoke nick - say a random phrase for nick\nControls command, available only for bot owner:\npoke show - show list of phrases\npoke add phrase - add phrase\npoke del phrase_number - remove phrase.	Команда "тык"\npoke nick - сказать случайную фразу nick\nКоманды управления, доступные только владельцу бота:\npoke show - показать список фраз\npoke add фраза - добавить фразу\npoke del номер_фразы - удалить фразу
 Info about your life. Example: life dd.mm.yy [hour:min:sec]	Информация о твоей жизни. Пример: life дд.мм.гг [час:мин:сек]
+Zalgo translate	Залго-транслитерация
 
 # file: plugins/gis.py
 Night	Ночь
@@ -1602,7 +1604,7 @@ QWERTYUIOP{}ASDFGHJKL:"ZXCVBNM<>~qwertyuiop[]asdfghjkl;'zxcvbnm,.`	ё1234567890-
 
 # file: plugins/watcher.py
 Timeout for ask: %s | Timeout for answer: %s | Last ask: %s | Total checks: %s	Таймаут запросов: %s | Таймаут ответов: %s | Последний запрос: %s | Всего проверок: %s
-Last activity in room(s):\n%s	Последняя активность в конференций:\n%s
+Last activity in room(s):\n%s	Последняя активность в конференции:\n%s
 Connection activity control.	Контроль активности соединения.
 Show activity of conferences.	Показ активности конференций.
 

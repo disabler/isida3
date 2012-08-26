@@ -72,6 +72,7 @@ Turn on/off commands, access %s	Команди, рівень %s
 Error while join in to %s - %s	Помилка при вході в %s - %s
 Shutdown by CTRL+C...	Якийсь розумник натиснув CTRL+C у консолі...
 System Shutdown. Trying to restart in %s sec.	Сервер погас. Спробую перезавантажитися через %s сек.
+Interface error! Trying to restart in %s sec.	Помилка взаємодії! Перезапуск через %s секунд.
 Critical error! Trying to restart in %s sec.	Критична помилка! Спробую перезавантажитися через %s сек.
 
 # file: plugins/acl.py
@@ -460,6 +461,7 @@ Prophecy oracle. Example: oracle your_answer?	Пророцтва оракула.
 Heads or tails	Орел чи решка
 "Poke" command\npoke nick - say a random phrase for nick\nControls command, available only for bot owner:\npoke show - show list of phrases\npoke add phrase - add phrase\npoke del phrase_number - remove phrase.	Команда "тик"\npoke nick - сказати випадкову фразу nick\nКоманди управління, доступні лише власнику бота:\npoke show - показати список фраз\npoke add фраза - додати фразу\npoke del номер_фрази - видалити фразу
 Info about your life. Example: life dd.mm.yy [hour:min:sec]	Інформація про твоє життя. Приклад: life дд.мм.рр [год:хв:сек]
+Zalgo translate	Залго-транслітерація
 
 # file: plugins/gis.py
 Night	Ніч
@@ -621,6 +623,22 @@ ORG.ORGUNIT	Підрозділ
 GEO.LAT	Широта
 GEO.LON	Довгота
 TITLE	Організація
+uptime	аптайм
+seconds	секунд
+users/registered	зареєстровано користувачів
+users	користувачів
+users/online	онлайн користувачів
+contacts/online	онлайн контактів
+contacts	контактів
+contacts/total	всього контактів
+messages/in	вихідних повідомленнь
+messages	повідомленнь
+messages/out	вхідних повідомленнь
+memory-usage	використання пам'яті
+KB	КБ
+users/all-hosts/total	всього користувачів на всіх хостах
+users/all-hosts/online	онлайн користувачів на всіх хостах
+users/total	всього користувачів
 I can't get caps of %s	Я не знаю капс %s
 %s has empty caps!	У %s пустий капс!
 vCard:	Візитка:
@@ -633,6 +651,7 @@ Ping from you %s sec.	Пінг від тебе - %s сек.
 Ping from %s %s sec.	Пінг від %s - %s сек.
 Unknown server answer!	Невідома відповідь сервера
 Unavailable!	Недоступно!
+Server statistic: %s\n%s	Статистика серверу: %s\n%s
 Client version.	Версія клієнта.
 Client version with caps.	Версія клієнта з капсом.
 Show caps node and version of client.	Показ ноди та версії капса клієнта.
@@ -1585,7 +1604,9 @@ QWERTYUIOP{}ASDFGHJKL:"ZXCVBNM<>~qwertyuiop[]asdfghjkl;'zxcvbnm,.`	qwertyuiop[]a
 
 # file: plugins/watcher.py
 Timeout for ask: %s | Timeout for answer: %s | Last ask: %s | Total checks: %s	Таймаут запитів: %s | Таймаут відповідей: %s | Останній запит: %s | Усього перевірок: %s
+Last activity in room(s):\n%s	Остання активність в конференції:\n%s
 Connection activity control.	Контроль активності з'єднання.
+Show activity of conferences.	Відображення активності конференцій.
 
 # file: plugins/whowas.py
 For a last day i see: %s	Протягом останньої доби я бачила: %s
