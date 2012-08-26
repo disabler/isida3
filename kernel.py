@@ -313,7 +313,7 @@ def GT(item):
 	except: return gt_result
 
 def PT(item,value):
-	if value in [True,False,None]: value = str(value)
+	if value in [True,False,None] or isinstance(value,type([])): value = str(value)
 	setup = cur_execute_fetchone('select value from config_owner where option=%s;',(item,))
 	if setup: cur_execute('update config_owner set value=%s where option=%s', (value,item))
 	else: cur_execute('insert into config_owner values (%s,%s)', (item,value))

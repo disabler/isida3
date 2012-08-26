@@ -490,7 +490,7 @@ Weather in %s:\nDate\t t%s\tWind\tClouds	Погода в %s:\nДата\t t%s\tВ
 \tCalm	\tШтиль
 Found:	Найдено:
 Weather forecast (short). Courtesy Gismeteo.Ru | http://www.gismeteo.ru	Краткий прогноз погоды. Предоставлено Gismeteo.Ru | http://www.gismeteo.ru
-Weather forecast (full). Courtesy Gismeteo.Ru | http://www.gismeteo.ru	Полный прогноз погоды. Предоставлено Gismeteo.Ru | http://www.gismeteo.ru'
+Weather forecast (full). Courtesy Gismeteo.Ru | http://www.gismeteo.ru	Полный прогноз погоды. Предоставлено Gismeteo.Ru | http://www.gismeteo.ru
 
 # file: plugins/google.py
 %s site:en.wikipedia.org	%s site:ru.wikipedia.org
