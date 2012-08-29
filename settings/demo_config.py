@@ -22,7 +22,7 @@ Settings = {
 SuperAdmin		=	u'username@server.tld'					# JID владельца бота
 defaultConf		=	u'room@conference.server.tld'			# Стартовая конференция
 prefix			=	u'_'									# Префикс команд по умолчанию
-msg_limit		=	1024									# Лимит размера сообщений
+msg_limit		=	2048									# Лимит размера сообщений
 
 
 #-------------------------------------------------------#
@@ -43,9 +43,10 @@ msg_limit		=	1024									# Лимит размера сообщений
 #debug_xmpppy = True										# режим отладки xmpppy
 #debug_console = True										# режим показа действий бота в консоле
 #database_debug = True										# режим отладки PostgreSQL
-CommandsLog = True											# Логгирование команд бота
+CommandsLog = True											# логгирование команд бота
 #thread_type = None											# тип тредов thread/threading. по умолчанию - threading
-#ENABLE_TLS = False
+#ENABLE_TLS = False											# принудительное отключение TLS при сбоях на больших станзах на старых версиях OpenSSL
+
 
 
 #-------------------------------------------------------#

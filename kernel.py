@@ -375,16 +375,19 @@ def pprint(*text):
 	elif is_win32: win_color = get_color_win32('clear')
 	text = text[0]
 	lt = tuple(time.localtime())
-	zz = parser('%s[%s]%s %s%s' % (wc,onlytimeadd(lt),c,text,wc))
+	zz = '%s[%s]%s %s%s' % (wc,onlytimeadd(lt),c,text,wc)
 	last_logs_store = ['[%s] %s' % (onlytimeadd(lt),text)] + last_logs_store[:last_logs_size]
 	if debug_console:
 		if is_win32 and win_color:
 			ctypes.windll.Kernel32.SetConsoleTextAttribute(win_console_color, get_color_win32('clear'))
 			print zz.split(' ',1)[0],
 			ctypes.windll.Kernel32.SetConsoleTextAttribute(win_console_color, win_color)
-			print zz.split(' ',1)[1]
+			try: print zz.split(' ',1)[1]
+			except: print parser(zz.split(' ',1)[1])
 			ctypes.windll.Kernel32.SetConsoleTextAttribute(win_console_color, get_color_win32('clear'))
-		else: print zz
+		else:
+			try: print zz
+			except: print parser(zz)
 	if CommandsLog:
 		fname = slog_folder % '%02d%02d%02d.txt' % (lt[0],lt[1],lt[2])
 		fbody = '%s|%s\n' % (onlytimeadd(lt),text)
@@ -2353,7 +2356,6 @@ configname = 'settings/config.py'	# конфиг бота
 topics = {}							# временное хранение топиков
 last_msg_base = {}					# последние сообщения
 last_msg_time_base = {}				# время между последними сообщениями последние сообщения
-paranoia_mode = False				# режим для параноиков. запрет любых исполнений внешнего кода
 no_comm = True
 muc_rejoins = {}
 muc_statuses = {}
@@ -2589,7 +2591,7 @@ try:
 		pprint('Tryins secured connection','cyan')
 	except NameError: Secure = None
 	con_stat = cl.connect(Server,Proxy,Secure,ENABLE_TLS=ENABLE_TLS)
-	if con_stat: pprint('Connected as %s' % con_stat,'yellow')
+	if con_stat: pprint('Connected as %s' % con_stat.upper(),'yellow')
 	else: raise
 except:
 	pprint('No connection. Restart in %s sec.' % GT('reboot_time'),'red')
