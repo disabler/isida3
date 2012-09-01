@@ -123,6 +123,13 @@ two_en = ['aa', 'aq', 'bc', 'bd', 'bf', 'bg', 'bh', 'bk', 'bn', 'bp', 'bq', 'bw'
 		  'yn', 'yq', 'yu', 'yv', 'yx', 'yy', 'yz', 'zb', 'zc', 'zd', 'zf', 'zg', 'zh', 'zi', 'zj', 'zk', 'zm', 'zn', 'zp', \
 		  'zq', 'zr', 'zs', 'zt', 'zu', 'zv', 'zw', 'zx']
 
+def get_size_human(mt):
+	if mt < 1024: return '%sb' % int(mt)
+	for t in ['Kb','Mb','Gb']:
+		mt = mt / 1024.0
+		if mt < 1024: break
+	return '%.2f%s' % (mt,t)
+		  
 def is_owner(jid): return cur_execute_fetchone('select * from bot_owner where jid=%s',(getRoom(jid),)) != None
 
 def validate_nick(nick,count):
@@ -237,7 +244,7 @@ def get_level(cjid, cnick):
 			if '%s|%s' % (base[2],base[3]) in levl:
 				access_mode = levl['%s|%s' % (base[2],base[3])]
 				break
-	if cur_execute_fetchone('select pattern from bot_ignore where %s ilike pattern',(getRoom(jid.lower()),)): access_mode = -1			
+	if cur_execute_fetchone('select pattern from bot_ignore where %s ilike pattern',(getRoom(jid.lower()),)): access_mode = -1
 	rjid = getRoom(jid)
 	if is_owner(rjid): access_mode = 9
 	if jid == 'None' and is_owner(cjid): access_mode = 9
@@ -331,7 +338,7 @@ def comm_on_off(type, jid, nick, text):
 				if enabled: msg.append(L('Enabled commands: %s') % ', '.join(enabled))
 				if already: msg.append(L('Not disabled commands: %s') % ', '.join(already))
 				if not_found: msg.append(L('Commands not found: %s') % ', '.join(not_found))
-				msg = '\n'.join(msg)				
+				msg = '\n'.join(msg)
 		elif cmd == 'off':
 			if not cmds: msg = L('What enable?')
 			else:
@@ -870,13 +877,13 @@ def ignore(type, jid, nick, text):
 	if do == 'add':
 		ign = cur_execute_fetchone('select * from bot_ignore where pattern=%s;',(nnick,))
 		if not ign:
-			cur_execute('insert into bot_ignore values (%s)',(nnick,))		
+			cur_execute('insert into bot_ignore values (%s)',(nnick,))
 			msg = L('Append: %s') % nnick
 		else: msg = L('%s alredy in list!') % nnick
 	elif do == 'del':
 		ign = cur_execute_fetchone('select * from bot_ignore where pattern=%s and pattern!=%s;',(nnick,god))
 		if ign:
-			cur_execute('delete from bot_ignore where pattern=%s',(nnick,))		
+			cur_execute('delete from bot_ignore where pattern=%s',(nnick,))
 			msg = L('Removed: %s') % nnick
 		else: msg = L('Not found!')
 	elif do == 'show':
@@ -938,6 +945,10 @@ def info(type, jid, nick):
 	msg += L('\nIq in: %s | out: %s') % (iq_in,iq_out)
 	msg += L('\nUnknown out: %s') % unknown_out
 	msg += L('\nCycles used: %s | unused: %s') % (cycles_used,cycles_unused)
+	if not GT('paranoia_mode'):
+		try: memstat = tuple([get_size_human(int(t)/1024.0) for t in shell_execute('ps -o vsz,rss -p %s' % os.getpid()).split()[2:]])
+		except: memstat = (L('Unknown'),L('Unknown'))
+		msg += L('\nUsed virtual ram: %s, Used real ram: %s') % memstat
 	send_msg(type, jid, nick, msg)
 
 # 0 - конфа
@@ -1184,7 +1195,7 @@ def rss(type, jid, nick, text):
 			send_msg(type, jid, nick, L('Mode %s not detected!') % text[3])
 			return
 		link = text[1]
-		if '://' not in link[:10]: link = 'http://%s' % link		
+		if '://' not in link[:10]: link = 'http://%s' % link
 		cur_execute('delete from feed where room=%s and url=%s;',(jid,link))
 		timetype = text[2][-1:].lower()
 		if not timetype in ('h','m'): timetype = 'h'
@@ -1489,7 +1500,7 @@ config_prefs = {'url_title': [L('Url title is %s'), L('Automatic show title of u
 				'muc_filter_validate_count': [L('Count of invalid items %s'), L('Count of invalid items for action'), None, '4'],
 				'muc_filter_validate_ban_server_exception': [L('Exception for ban servers %s'), L('Exception for ban servers'), None, ''],
 				'muc_filter_validate_ban_server_notify_jid': [L('Jid\'s for servers ban notify %s'), L('Jid\'s for servers ban notify'), None, ''],
-				
+
 				# Bomb
 
 				'bomb': [L('Bomb. Allow take a bomb %s'), L('Allow take a bomb in current conference'), [True,False], True],
@@ -1530,7 +1541,7 @@ config_prefs = {'url_title': [L('Url title is %s'), L('Automatic show title of u
 				'floodtime': [L('Time period for autoflood\'s start: %s'), L('Time period for autoflood\'s start'), None, '1800'],
 				'autophrases': [L('Autophrases is %s'), L('Autophrases'), ['off','without highlight','all'], 'off'],
 				'autophrasestime': [L('Time period for autophrases is %s'), L('Time period for autophrases'), None, '7200']
-				
+
 				}
 
 config_group_other = [L('Other settings'),'#room-other',

@@ -1002,6 +1002,7 @@ Local time: %s\n	Локальное время: %s\n
 \nIq in: %s | out: %s	\nIq запросов вх: %s | исх: %s
 \nUnknown out: %s	\nОшибок исх: %s
 \nCycles used: %s | unused: %s	\nРабочих циклов: %s | холостых: %s
+\nUsed virtual ram: %s, Used real ram: %s	\nПамять виртуальная: %s, реальная: %s
 What need find?	Что найти?
 I see you as %s/%s	Ты виден мне как %s/%s
 What do you need to find?	Чего искать то будем?
