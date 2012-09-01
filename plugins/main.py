@@ -946,7 +946,7 @@ def info(type, jid, nick):
 	msg += L('\nUnknown out: %s') % unknown_out
 	msg += L('\nCycles used: %s | unused: %s') % (cycles_used,cycles_unused)
 	if not GT('paranoia_mode'):
-		try: memstat = tuple([get_size_human(int(t)/1024.0) for t in shell_execute('ps -o vsz,rss -p %s' % os.getpid()).split()[2:]])
+		try: memstat = tuple([get_size_human(int(t)*1024.0) for t in shell_execute('ps -o vsz,rss -p %s' % os.getpid()).split()[2:]])
 		except: memstat = (L('Unknown'),L('Unknown'))
 		msg += L('\nUsed virtual ram: %s, Used real ram: %s') % memstat
 	send_msg(type, jid, nick, msg)
