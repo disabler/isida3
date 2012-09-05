@@ -22,11 +22,12 @@
 # --------------------------------------------------------------------------- #
 
 acl_acts = ['msg','message','prs','prs_change','prs_join','presence','presence_change','presence_join',
-			'role','role_change','role_join','affiliation','affiliation_change','affiliation_join',
-			'nick','nick_change','nick_join','all','all_change','all_join','jid','jidfull','res','age','ver','version']
+			'role','role_change','role_join','affiliation','affiliation_change','affiliation_join','aff','aff_change','aff_join',
+			'nick','nick_change','nick_join','all','all_change','all_join','jid','jidfull','res','age','ver','version','vcard']
 acl_actions = ['show','del','clear'] + acl_acts
 
 acl_ver_tmp = {}
+acl_vcard_tmp = {}
 
 acl_actions.sort()
 
@@ -71,7 +72,7 @@ def acl_add_del(jid,text,flag):
 		try: re.compile(ttext.split('${EXP}',1)[1].split('${/EXP}',1)[0].replace('%20','\ ').replace('*','*?'))
 		except: return L('Error in RegExp!')
 	try:
-		acl_cmd = text[0].lower()
+		acl_cmd = acl_replace(text[0])
 		text = text[1:]
 	except: return L('Error in parameters. Read the help about command.')
 	if not acl_cmd in acl_acts: msg = L('Items: %s') % ', '.join(acl_acts)
@@ -131,6 +132,8 @@ def acl_clear(room,nick):
 	cur_execute('delete from acl where jid=%s',(room,))
 	return L('ACL cleared. Removed %s action(s).') % len(acl_back)
 
+def acl_replace(t): return t.lower().replace('msg','message').replace('presence','prs').replace('version','ver').replace('affiliation','aff')
+
 def muc_acl(type, jid, nick, text):
 	text = text.replace('\ ','%20').replace(' // ','\n').replace(' \/\/ ',' // ').split(' ')
 	if len(text) >= 3 and text[2] == '->': text[2] = ''
@@ -138,12 +141,12 @@ def muc_acl(type, jid, nick, text):
 	elif text[0].isdigit() and len(text) >= 5 and text[4] == '->': text[4] = ''
 	elif text[0].lower() == 'del' and len(text) >= 5 and text[4] == '->': text[4] = ''
 	while '' in text: text.remove('')
-	if len(text): acl_cmd = text[0].lower()
+	if len(text): acl_cmd = acl_replace(text[0])
 	else: acl_cmd = '!'
 	if not acl_cmd in acl_actions and acl_cmd[0] != '/' and not acl_cmd.isdigit(): msg = L('Items: %s') % ', '.join(acl_actions)
 	elif acl_cmd == 'clear': msg = acl_clear(jid,nick)
 	elif acl_cmd == 'show':
-		try: t = text[1]
+		try: t = acl_replace(text[1])
 		except: t = '%'
 		msg = acl_show(jid,t)
 	elif acl_cmd == 'del': msg = acl_del(jid,text[1:])
@@ -205,7 +208,7 @@ def bool_compare(a,b,c):
 		or (b == '>=' and a >= c)
 
 def acl_presence(room,jid,nick,type,mass):
-	global iq_request,acl_ver_tmp
+	global iq_request,acl_ver_tmp,acl_vcard_tmp
 	#if get_level(room,nick)[0] < 0: return
 	if getRoom(jid) == getRoom(Settings['jid']): return
 	was_joined = not mass[7] or is_start
@@ -213,14 +216,16 @@ def acl_presence(room,jid,nick,type,mass):
 	elif type == 'unavailable':
 		try: acl_ver_tmp.pop('%s/%s' % (room,nick))
 		except: pass
+		try: acl_vcard_tmp.pop('%s/%s' % (room,nick))
+		except: pass
 		return
 	# actions only on joins
 	#if was_joined: return
-	a = cur_execute_fetchall('select action,type,text,command,time,level from acl where jid=%s and (action ilike %s or action ilike %s or action ilike %s or action ilike %s or action ilike %s or action ilike %s or action=%s or action=%s or action=%s or action=%s or action=%s or action=%s) order by level',(room,'prs%','presence%','nick%','all%','role%','affiliation%','jid','jidfull','res','age','ver','version'))
+	a = cur_execute_fetchall('select action,type,text,command,time,level from acl where jid=%s and (action ilike %s or action ilike %s or action ilike %s or action ilike %s or action ilike %s or action ilike %s or action=%s or action=%s or action=%s or action=%s or action=%s or action=%s or action=%s) order by level',(room,'prs%','presence%','nick%','all%','role%','affiliation%','jid','jidfull','res','age','ver','version','vcard'))
 	if a: acl_selector(a,room,jid,nick,mass,was_joined)
 
 def acl_selector(a,room,jid,nick,mass,was_joined):
-	global iq_request,acl_ver_tmp
+	global iq_request,acl_ver_tmp,acl_vcard_tmp
 	lvl = get_level(room,nick)[0]
 	for tmp in a:
 		if (tmp[5] == 9 or lvl == tmp[5]) and tmp[0] == 'age':
@@ -228,16 +233,25 @@ def acl_selector(a,room,jid,nick,mass,was_joined):
 			if not r_age: r_age = 0
 			break
 
+	r_ver,r_vcard = None,None
 	for tmp in a:
-		if (tmp[5] == 9 or lvl == tmp[5]) and tmp[0] in ['ver','version'] and was_joined:
+		if (tmp[5] == 9 or lvl == tmp[5]) and tmp[0] == 'ver' and was_joined:
 			try: r_ver = acl_ver_tmp['%s/%s' % (room,nick)]
 			except:
 				iqid,who = get_id(), '%s/%s' % (room,nick)
 				i = xmpp.Node('iq', {'id': iqid, 'type': 'get', 'to':who}, payload = [xmpp.Node('query', {'xmlns': xmpp.NS_VERSION},[])])
-				iq_request[iqid]=(time.time(),acl_version_async,[a, nick, jid, room, mass[0],lvl])
+				iq_request[iqid]=(time.time(),acl_version_async,[a, nick, jid, room, mass[0], lvl])
 				sender(i)
-				r_ver = None
 				pprint('*** ACL version request for [%s] %s/%s' % (tmp[5],room,nick),'purple')
+				break
+		elif (tmp[5] == 9 or lvl == tmp[5]) and tmp[0] == 'vcard' and was_joined:
+			try: r_vcard = acl_vcard_tmp['%s/%s' % (room,nick)]
+			except:
+				iqid,who = get_id(), '%s/%s' % (room,nick)
+				i = xmpp.Node('iq', {'id': iqid, 'type': 'get', 'to':who}, payload = [xmpp.Node('vCard', {'xmlns': xmpp.NS_VCARD},[])])
+				iq_request[iqid]=(time.time(),acl_vcard_async,[a, nick, jid, room, mass[0], lvl])
+				sender(i)
+				pprint('*** ACL vcard request for [%s] %s/%s' % (tmp[5],room,nick),'purple')
 				break
 
 	acl_ma = get_config(room,'acl_multiaction')
@@ -245,15 +259,16 @@ def acl_selector(a,room,jid,nick,mass,was_joined):
 		if tmp[5] == 9 or lvl == tmp[5]:
 			itm = ''
 			if tmp[4] <= time.time() and tmp[4]: cur_execute('delete from acl where jid=%s and action=%s and type=%s and text=%s',(room,tmp[0],tmp[1],tmp[2]))
-			if tmp[0].split('_')[0] in ['presence','prs'] and (('_join' in tmp[0] and was_joined) or ('_change' in tmp[0] and not was_joined) or ('_join' not in tmp[0] and '_change' not in tmp[0])): itm = mass[0]
+			if tmp[0].split('_')[0] == 'prs' and (('_join' in tmp[0] and was_joined) or ('_change' in tmp[0] and not was_joined) or ('_join' not in tmp[0] and '_change' not in tmp[0])): itm = mass[0]
 			elif tmp[0].split('_')[0] == 'nick' and (('_join' in tmp[0] and was_joined) or ('_change' in tmp[0] and not was_joined) or ('_join' not in tmp[0] and '_change' not in tmp[0])): itm = nick
 			elif tmp[0].split('_')[0] == 'role' and (('_join' in tmp[0] and was_joined) or ('_change' in tmp[0] and not was_joined) or ('_join' not in tmp[0] and '_change' not in tmp[0])): itm = mass[1]
-			elif tmp[0].split('_')[0] == 'affiliation' and (('_join' in tmp[0] and was_joined) or ('_change' in tmp[0] and not was_joined) or ('_join' not in tmp[0] and '_change' not in tmp[0])): itm = mass[2]
+			elif tmp[0].split('_')[0] == 'aff' and (('_join' in tmp[0] and was_joined) or ('_change' in tmp[0] and not was_joined) or ('_join' not in tmp[0] and '_change' not in tmp[0])): itm = mass[2]
 			elif tmp[0].split('_')[0] == 'all' and (('_join' in tmp[0] and was_joined) or ('_change' in tmp[0] and not was_joined) or ('_join' not in tmp[0] and '_change' not in tmp[0])): itm = '|'.join((jid,nick,mass[0],mass[1],mass[2]))
 			elif tmp[0] == 'jid' and was_joined: itm = getRoom(jid)
 			elif tmp[0] == 'jidfull' and was_joined: itm = jid
 			elif tmp[0] == 'res' and was_joined: itm = getResourse(jid)
-			elif tmp[0] in ['ver','version'] and was_joined and r_ver: itm = r_ver
+			elif tmp[0] == 'ver' and was_joined and r_ver: itm = r_ver
+			elif tmp[0] == 'vcard' and was_joined and r_vcard: itm = r_vcard
 			elif tmp[0] == 'age' and was_joined and bool_compare(r_age,tmp[1],tmp[2]):
 				acl_action(tmp[3],nick,jid,room,None)
 				if not acl_ma: break
@@ -282,7 +297,50 @@ def acl_version_async(a, nick, jid, room, mass, lvl, is_answ):
 	else: itm = ' '.join(isa)
 	acl_ver_tmp['%s/%s' % (room,nick)] = itm.replace('\r','[LF]').replace('\n','[CR]').replace('\t','[TAB]')
 	for tmp in a:
-		if tmp[0] in ['ver','version'] and (tmp[5] == 9 or lvl == tmp[5]):
+		if tmp[0] == 'ver' and (tmp[5] == 9 or lvl == tmp[5]):
+			was_match = False
+			if tmp[1] in ['exp','!exp']:
+				if tmp[1][0] == '!' and not re.findall(tmp[2].replace('*','*?'),itm,re.I+re.S+re.U): was_match = True
+				elif re.findall(tmp[2].replace('*','*?'),itm,re.I+re.S+re.U): was_match = True
+			elif tmp[1] in ['cexp','!cexp']:
+				if tmp[1][0] == '!' and not re.findall(tmp[2].replace('*','*?'),itm,re.S+re.U): was_match = True
+				elif re.findall(tmp[2].replace('*','*?'),itm,re.S+re.U): was_match = True
+			elif tmp[1] in ['sub','!sub']:
+				if tmp[1][0] == '!' and tmp[2].lower() not in itm.lower(): was_match = True
+				elif tmp[2].lower() in itm.lower(): was_match = True
+			elif tmp[1] in ['=','!=']:
+				if tmp[1][0] == '!' and (itm.lower() != tmp[2].lower() or tmp[0] == 'all' and tmp[2].lower() not in (jid.lower(),nick.lower(),'\n'.join(mass).lower())): was_match = True
+				elif itm.lower() == tmp[2].lower() or (tmp[0] == 'all' and tmp[2].lower() in (jid.lower(),nick.lower(),'\n'.join(mass).lower())): was_match = True
+			if was_match: acl_action(tmp[3],nick,jid,room,None)
+
+def acl_vcard_async(a, nick, jid, room, mass, lvl, is_answ):
+	global acl_vcard_tmp
+	try: vc,err = is_answ[1][1].getTag('vCard',namespace=xmpp.NS_VCARD),False
+	except: vc,err = is_answ[1][0],True
+	if not vc or unicode(vc) == '<vCard xmlns="vcard-temp" />': itm = 'empty'
+	elif err: itm = vc[:VCARD_LIMIT_LONG]
+	else:
+		data = []
+		for t in vc.getChildren():
+			if t.getChildren():
+				cm = []
+				for r in t.getChildren():
+					if r.getData(): cm.append(('%s.%s' % (t.getName(),r.getName()),unicode(r.getData())))
+				data += cm
+			elif t.getData(): data.append((t.getName(),t.getData()))
+		try:
+			photo_size = sys.getsizeof(get_value_from_array2(data,'PHOTO.BINVAL').decode('base64'))
+			photo_type = get_value_from_array2(data,'PHOTO.TYPE')
+			data_photo = '%s, %s' % (photo_type,get_size_human(photo_size))
+			data = [t for t in list(data) if t[0] not in ['PHOTO.BINVAL','PHOTO.TYPE']]
+			data.append(('PHOTO',data_photo))
+		except: pass
+		data.sort()
+		itm = '\n'.join(['%s:%s' % (t[0],t[1].replace('\r','[LF]').replace('\n','[CR]').replace('\t','[TAB]')) for t in data])
+
+	acl_vcard_tmp['%s/%s' % (room,nick)] = itm
+	for tmp in a:
+		if tmp[0] == 'vcard' and (tmp[5] == 9 or lvl == tmp[5]):
 			was_match = False
 			if tmp[1] in ['exp','!exp']:
 				if tmp[1][0] == '!' and not re.findall(tmp[2].replace('*','*?'),itm,re.I+re.S+re.U): was_match = True
@@ -303,4 +361,4 @@ global execute, presence_control, message_act_control
 presence_control = [acl_presence]
 message_act_control = [acl_message]
 
-execute = [(7, 'acl', muc_acl, 2, L('Actions list.\nacl show - show list\nacl del [/silent] item - remove item from list\nacl [/time] [/silent] msg|message|prs|presence|role|affiliation|nick|jid|jidfull|res|age|ver|version|all [sub|exp|cexp] pattern command - execute command by condition\nallowed variables in commands: ${NICK}, ${JID}, ${SERVER}, ${EXP} and ${/EXP}\nsub = substring, exp = regular expression, cexp = case sensitive regular expression\ntime format is /number+identificator. s = sec, m = min, d = day, w = week, M = month, y = year. only one identificator allowed!'))]
+execute = [(7, 'acl', muc_acl, 2, L('Actions list.\nacl show - show list\nacl del [/silent] item - remove item from list\nacl [/time] [/silent] msg|prs|role|aff|nick|jid|jidfull|res|age|ver|vcard|all [sub|exp|cexp] pattern command - execute command by condition\nallowed variables in commands: ${NICK}, ${JID}, ${SERVER}, ${EXP} and ${/EXP}\nsub = substring, exp = regular expression, cexp = case sensitive regular expression\ntime format is /number+identificator. s = sec, m = min, d = day, w = week, M = month, y = year. only one identificator allowed!'))]

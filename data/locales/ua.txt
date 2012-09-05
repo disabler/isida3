@@ -90,7 +90,7 @@ Added:	Додано:
 done	виконано
 You have no rights to do it!	У Вас недостатньо прав для цього!
 ACL cleared. Removed %s action(s).	ACL очищені. Видалено дій: %s
-Actions list.\nacl show - show list\nacl del [/silent] item - remove item from list\nacl [/time] [/silent] msg|message|prs|presence|role|affiliation|nick|jid|jidfull|res|age|ver|version|all [sub|exp|cexp] pattern command - execute command by condition\nallowed variables in commands: ${NICK}, ${JID}, ${SERVER}, ${EXP} and ${/EXP}\nsub = substring, exp = regular expression, cexp = case sensitive regular expression\ntime format is /number+identificator. s = sec, m = min, d = day, w = week, M = month, y = year. only one identificator allowed!	Список дій.\nacl show - показати список\nacl del [/silent] item - видалити елемент із списку\nacl [/time] [/silent] msg|message|prs|presence|role|affiliation|nick|jid|jidfull|res|age|ver|version|all [sub|exp|cexp] pattern command - виконати команду за умовою\nдоступні змінні в командах: ${NICK}, ${JID}, ${SERVER}, ${EXP} и ${/EXP}\nsub = підрядок, exp = регулярний вираз, cexp = регістрозалежний регулярний вираз\nформат часу - /число+ідентифікатор. s = секунди, m = хвилини, d = дні, w = тижні, M = місяці, y = роки. можливий тільки один ідентифікатор!
+Actions list.\nacl show - show list\nacl del [/silent] item - remove item from list\nacl [/time] [/silent] msg|prs|role|aff|nick|jid|jidfull|res|age|ver|vcard|all [sub|exp|cexp] pattern command - execute command by condition\nallowed variables in commands: ${NICK}, ${JID}, ${SERVER}, ${EXP} and ${/EXP}\nsub = substring, exp = regular expression, cexp = case sensitive regular expression\ntime format is /number+identificator. s = sec, m = min, d = day, w = week, M = month, y = year. only one identificator allowed!	Список дій.\nacl show - показати список\nacl del [/silent] item - видалити елемент із списку\nacl [/time] [/silent] msg|prs|role|aff|nick|jid|jidfull|res|age|ver|vcard|all [sub|exp|cexp] pattern command - виконати команду за умовою\nдоступні змінні в командах: ${NICK}, ${JID}, ${SERVER}, ${EXP} и ${/EXP}\nsub = підрядок, exp = регулярний вираз, cexp = регістрозалежний регулярний вираз\nформат часу - /число+ідентифікатор. s = секунди, m = хвилини, d = дні, w = тижні, M = місяці, y = роки. можливий тільки один ідентифікатор!
 
 # file: plugins/adminmail.py
 Time limit exceeded. Wait: %s	Перевищено ліміт швидкості відправлення повідомлень. Чекайте: %s
@@ -643,7 +643,7 @@ I can't get caps of %s	Я не знаю капс %s
 %s has empty caps!	У %s пустий капс!
 vCard:	Візитка:
 Empty!	Пусто!
-type %s, %s byte(s)	тип %s, %s байт
+type %s, %s	тип %s, %s
 Uptime: %s	Аптайм: %s
 I can't do it	Не виходить...
 Remote server not found	Віддалений сервер не знайдено

@@ -21,7 +21,7 @@
 #                                                                             #
 # --------------------------------------------------------------------------- #
 
-# translate: FN,NICKNAME,N.FAMILY,N.GIVEN,N.MIDDLE,ADR.LOCALITY,ADR.REGION,ADR.PCODE,ADR.CTRY,ADR.STREET,TEL.NUMBER,EMAIL.USERID,EMAIL,JABBERID,ROLE,BDAY,URL,DESC,ROLE,ORG.ORGNAME,ORG.ORGUNIT,GEO.LAT,GEO.LON,TITLE,uptime,seconds,users/registered,users,users/online,contacts/online,contacts,contacts/total,messages/in,messages,messages/out,memory-usage,KB,users/all-hosts/total,users/all-hosts/online,users/total
+# translate: FN,NICKNAME,N.FAMILY,N.GIVEN,N.MIDDLE,ADR.LOCALITY,ADR.REGION,ADR.PCODE,ADR.CTRY,ADR.STREET,TEL.NUMBER,EMAIL.USERID,EMAIL,JABBERID,ROLE,BDAY,URL,DESC,ROLE,ORG.ORGNAME,ORG.ORGUNIT,GEO.LAT,GEO.LON,TITLE,PHOTO,uptime,seconds,users/registered,users,users/online,contacts/online,contacts,contacts/total,messages/in,messages,messages/out,memory-usage,KB,users/all-hosts/total,users/all-hosts/online,users/total
 
 VCARD_LIMIT_LONG = 256
 VCARD_LIMIT_SHORT = 128
@@ -65,17 +65,17 @@ def get_value_from_array2(a,v):
 	for t in a:
 		if t[0] == v: return t[1]
 	return None
-	
+
 def get_array_from_array2(a1,a2):
 	a_res = []
 	for t in a1:
 		if t[0] in a2: a_res.append(t)
 	return a_res
-	
+
 def vcard_async(type, jid, nick, text, args, is_answ):
 	try: vc,err = is_answ[1][1].getTag('vCard',namespace=xmpp.NS_VCARD),False
 	except: vc,err = is_answ[1][0],True
-	if not vc: msg = '%s %s' % (L('vCard:'),L('Empty!'))
+	if not vc or unicode(vc) == '<vCard xmlns="vcard-temp" />': msg = '%s %s' % (L('vCard:'),L('Empty!'))
 	elif err: msg = '%s %s' % (L('vCard:'),vc[:VCARD_LIMIT_LONG])
 	else:
 		data = []
@@ -89,16 +89,16 @@ def vcard_async(type, jid, nick, text, args, is_answ):
 		try:
 			photo_size = sys.getsizeof(get_value_from_array2(data,'PHOTO.BINVAL').decode('base64'))
 			photo_type = get_value_from_array2(data,'PHOTO.TYPE')
-			data_photo = L('type %s, %s byte(s)') % (photo_type,photo_size)
-			data = (t for t in list(data) if t[0] not in ['PHOTO.BINVAL','PHOTO.TYPE'])
+			data_photo = L('type %s, %s') % (photo_type,get_size_human(photo_size))
+			data = [t for t in list(data) if t[0] not in ['PHOTO.BINVAL','PHOTO.TYPE']]
 			data.append(('PHOTO',data_photo))
 		except: pass
 		args = args.lower()
 		if not args:
 			dd = get_array_from_array2(data,['NICKNAME','FN','BDAY','URL','PHOTO','DESC'])
-			if dd: msg = '%s\n%s' % (L('vCard:'),'\n'.join(['%s: %s' % ([L(t[0]),t[0].capitalize()][L(t[0])==t[0]],[u'%s…' % t[1][:VCARD_LIMIT_LONG],t[1]][len(t[1])<VCARD_LIMIT_LONG]) for t in dd]))
+			if dd: msg = '%s\n%s' % (L('vCard:'),'\n'.join(['%s: %s' % ([L(t[0]),t[0].capitalize()][L(t[0])==t[0]],[u'%s…' % t[1][:VCARD_LIMIT_LONG].strip(),t[1].strip()][len(t[1])<VCARD_LIMIT_LONG]) for t in dd]))
 			else: msg = '%s %s' % (L('vCard:'),L('Not found!'))
-		elif args == 'all': msg = '%s\n%s' % (L('vCard:'),'\n'.join(['%s: %s' % ([L(t[0]),t[0].capitalize()][L(t[0])==t[0]],[u'%s…' % t[1][:VCARD_LIMIT_SHORT],t[1]][len(t[1])<VCARD_LIMIT_SHORT]) for t in data]))
+		elif args == 'all': msg = '%s\n%s' % (L('vCard:'),'\n'.join(['%s: %s' % ([L(t[0]),t[0].capitalize()][L(t[0])==t[0]],[u'%s…' % t[1][:VCARD_LIMIT_SHORT].strip(),t[1].strip()][len(t[1])<VCARD_LIMIT_SHORT]) for t in data]))
 		elif args == 'show':
 			dd = []
 			for t in data:
@@ -113,7 +113,7 @@ def vcard_async(type, jid, nick, text, args, is_answ):
 				dv = get_array_from_array2(data,(val))
 				if dv: dd += dv
 			if dd: msg = '%s\n%s' % (L('vCard:'),'\n'.join(['%s: %s' % ([L(t[0]),t[0].capitalize()][L(t[0])==t[0]],[u'%s…' % t[1][:VCARD_LIMIT_LONG],t[1]][len(t[1])<VCARD_LIMIT_LONG]) for t in dd]))
-			else: msg = '%s %s' % (L('vCard:'),L('Not found!'))			
+			else: msg = '%s %s' % (L('vCard:'),L('Not found!'))
 	send_msg(type, jid, nick, msg)
 
 def iq_uptime(type, jid, nick, text):
@@ -246,7 +246,7 @@ def stats_async_features(type, jid, nick, text, is_answ):
 			iqid = get_id()
 			i = xmpp.Node('iq', {'id': iqid, 'type': 'get', 'to':text}, payload = [xmpp.Node('query', {'xmlns': xmpp.NS_STATS},[xmpp.Node('stat', {'name':t},[]) for t in stats_list])])
 			iq_request[iqid]=(time.time(),stats_async,[type, jid, nick, text])
-			sender(i)		
+			sender(i)
 		else: send_msg(type, jid, nick, L('Unavailable!'))
 
 def stats_async(type, jid, nick, text, is_answ):
