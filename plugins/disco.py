@@ -289,6 +289,427 @@ disco_features_list =  {'dnssrv':'Support for DNS SRV lookups of XMPP services.,
 						'jabber:iq:inband':'jabber:iq:inband',
 						'jabber:iq:jidlink':'jabber:iq:jidlink'}
 
+def disco_features_add(i):
+	for t in bot_features: i.getTag('query').setTag('feature',attrs={'var':t})
+	return i
+
+def disco_ext_info_add(i):
+	i.getTag('query').setTag('identity',attrs={'xml:lang':CURRENT_LOCALE,'category':id_category,'type':id_type,'name':id_name})
+	i.getTag('query').setTag('x',namespace=xmpp.NS_DATA,attrs={'type':'result'})
+	i.getTag('query').getTag('x',namespace=xmpp.NS_DATA).setTag('field',attrs={'var':'FORM_TYPE','type':'hidden'})
+	i.getTag('query').getTag('x',namespace=xmpp.NS_DATA).getTag('field',attrs={'var':'FORM_TYPE','type':'hidden'}).setTagData('value',xmpp.NS_SOFTWAREINFO)
+	for t in bot_softwareinfo.keys():
+		i.getTag('query').getTag('x',namespace=xmpp.NS_DATA).setTag('field',attrs={'var':t})
+		i.getTag('query').getTag('x',namespace=xmpp.NS_DATA).getTag('field',attrs={'var':t}).setTagData('value',bot_softwareinfo[t])
+	return i
+
+def disco_iq_get(iq,id,room,acclvl,query,towh):
+	if iq.getTag(name='query', namespace=xmpp.NS_DISCO_INFO):
+		node=get_tag_item(unicode(query),'query','node')
+		if node.split('#')[0] in ['', disco_config_node, xmpp.NS_COMMANDS] or node in [xmpp.NS_MUC_ROOMS, '%s#%s' % (capsNode,capsHash)]:
+			pprint('*** iq:disco_info from %s node "%s"' % (unicode(room),node),'magenta')
+			i=xmpp.Iq(to=room, typ='result')
+			i.setAttr(key='id', val=id)
+			if node == '': i.setQueryNS(namespace=xmpp.NS_DISCO_INFO)
+			else: i.setTag('query',namespace=xmpp.NS_DISCO_INFO,attrs={'node':node})
+			if node == '' or node == '%s#%s' % (capsNode,capsHash):
+				i = disco_features_add(i)
+				sender(disco_ext_info_add(i))
+				raise xmpp.NodeProcessed
+			elif node == xmpp.NS_MUC_ROOMS:
+				#i.getTag('query').setTag('feature',attrs={'var':xmpp.NS_MUC_ROOMS})
+				return i
+			elif node.split('#')[0] == disco_config_node or node == xmpp.NS_COMMANDS:
+				#i.getTag('query').setTag('feature',attrs={'var':xmpp.NS_COMMANDS})
+				#i.getTag('query').setTag('feature',attrs={'var':disco_config_node})
+				try: tn = '#' + node.split('#')[1]
+				except: tn = ''
+				if tn:
+					if tn.split('-',1)[0] == '#owner': settz = owner_groups
+					elif tn.split('-',1)[0] == '#room': settz = config_groups
+					else: settz = None
+					if settz:
+						for tmp in settz:
+							if tn == tmp[1]:
+								i.getTag('query').setTag('identity',attrs={'category':'automation','type':'command-node','name':tmp[0]})
+								break
+				return i
+
+	elif iq.getTag(name='query', namespace=xmpp.NS_DISCO_ITEMS) and acclvl:
+		node=get_tag_item(unicode(query),'query','node')
+		pprint('*** iq:disco_items from %s node "%s"' % (unicode(room),node),'magenta')
+		if node == xmpp.NS_MUC_ROOMS and GT('iq_show_rooms_disco'):
+				i=xmpp.Iq(to=room, typ='result')
+				i.setAttr(key='id', val=id)
+				i.setTag('query',namespace=xmpp.NS_DISCO_ITEMS,attrs={'node':node})
+				if al == 9: cnf = cur_execute_fetchall("select room from conference;")
+				cnf = cur_execute_fetchall("select room from conference where split_part(room,'/',1) not in (select room from hiden_rooms as hrr);")
+				trooms = [t[0] for t in cnf]
+				trooms.sort()
+				trooms = [xmpp.Node('item',attrs={'jid':t}) for t in trooms]
+				i.getTag('query',namespace=xmpp.NS_DISCO_ITEMS).setPayload(trooms)
+				return i
+		elif node.split('#')[0] in [disco_config_node, xmpp.NS_COMMANDS]:
+			try: tn = '#' + node.split('#')[1]
+			except: tn = ''
+			i=xmpp.Iq(to=room, typ='result')
+			i.setAttr(key='id', val=id)
+			if node == '': i.setQueryNS(namespace=xmpp.NS_DISCO_ITEMS)
+			else: i.setTag('query',namespace=xmpp.NS_DISCO_ITEMS,attrs={'node':node})
+			if node == '' or node == xmpp.NS_COMMANDS:
+				if towh == selfjid: settings_set = owner_groups
+				else: settings_set = config_groups
+				for tmp in settings_set: i.getTag('query').setTag('item',attrs={'node':disco_config_node+tmp[1], 'name':tmp[0],'jid':towh})
+			return i
+		elif node == '':
+			i=xmpp.Iq(to=room, typ='result')
+			i.setAttr(key='id', val=id)
+			i.setQueryNS(namespace=xmpp.NS_DISCO_ITEMS)
+			i.getTag('query').setTag('item',attrs={'node':xmpp.NS_COMMANDS, 'name':L('AD-Hoc commands'),'jid':towh})
+			i.getTag('query').setTag('item',attrs={'node':xmpp.NS_MUC_ROOMS, 'name':L('Current bot rooms'),'jid':towh})
+			return i
+	return None
+
+def disco_iq_set(iq,id,room,acclvl,query,towh):
+	if iq.getTag(name='command', namespace=xmpp.NS_COMMANDS) and acclvl:
+		node=get_tag_item(unicode(iq),'command','node')
+		if get_tag_item(unicode(iq),'command','action') == 'execute' and (node.split('#')[0] in ['', disco_config_node, xmpp.NS_COMMANDS] or node == xmpp.NS_MUC_ROOMS):
+			pprint('*** iq:ad-hoc commands from %s node "%s"' % (unicode(room),node),'magenta')
+			i=xmpp.Iq(to=room, typ='result')
+			i.setAttr(key='id', val=id)
+			if node == '': i.setQueryNS(namespace=xmpp.NS_DISCO_INFO)
+			else: i.setTag('query',namespace=xmpp.NS_DISCO_ITEMS,attrs={'node':node})
+			if node == '':
+				i = disco_features_add(i)
+				sender(disco_ext_info_add(i))
+				raise xmpp.NodeProcessed
+			elif node == xmpp.NS_MUC_ROOMS and GT('iq_show_rooms_disco'):
+				if al == 9: cnf = cur_execute_fetchall("select room from conference;")
+				cnf = cur_execute_fetchall("select room from conference where split_part(room,'/',1) not in (select room from hiden_rooms as hrr);")
+				trooms = [t[0] for t in cnf]
+				trooms.sort()
+				trooms = [xmpp.Node('item',attrs={'jid':t}) for t in trooms]
+				i.getTag('query',namespace=xmpp.NS_DISCO_ITEMS).setPayload(trooms)
+				return i
+			elif node.split('#')[0] == disco_config_node or node == xmpp.NS_COMMANDS:
+				#i.getTag('query').setTag('feature',attrs={'var':xmpp.NS_COMMANDS})
+				#i.getTag('query').setTag('feature',attrs={'var':disco_config_node})
+				try: tn = '#' + node.split('#')[1]
+				except: tn = ''
+				try: tmpn = tn.split('-',1)[1]
+				except: tmpn = ''
+				if tmpn:
+					action=get_tag_item(unicode(iq),'command','action')
+					i=xmpp.Iq(to=room, typ='result')
+					i.setAttr(key='id', val=id)
+					if action == 'cancel': i.setTag('command',namespace=xmpp.NS_COMMANDS,attrs={'status':'canceled', 'node':disco_config_node+tn,'sessionid':id})
+					elif towh == selfjid:
+						if get_tag_item(unicode(iq),'x','type') == 'submit':
+							varz = iq.getTag('command').getTag('x')
+							sucess_label,unsucess = True,[]
+							for t in owner_prefs.keys():
+								try:
+									tp = owner_prefs[t][1]
+									tm = varz.getTag('field',attrs={'var':t}).getTags('value')
+									tm = '\n'.join([tm2.getData() for tm2 in tm])
+									old_tm = GT(t)
+									try:
+										if   tp[0] == 'b': tm = [False,True][int(tm)]
+										elif tp[0] == 'f': tm = float(tm)
+										elif tp[0] == 'i': tm = int(tm)
+										elif tp[0] == 't': tm = tm[:int(tp.replace('e','')[1:])]
+										elif tp[0] == 'm': tm = tm[:int(tp.replace('e','')[1:])]
+										elif tp[0] == 'l' and len(json.loads(tm)) == int(tp.replace('e','')[1:]): tm = json.loads(tm)
+										elif tp[0] == 'd' and tm not in owner_prefs[t][3]: tm = owner_prefs[t][2]
+									except:
+										tm,sucess_label = GT(t),False
+										unsucess.append(owner_prefs[t][0])
+									PT(t,tm)
+									if tp[-1] == 'e' and old_tm != tm: eval(owner_prefs[t][-1])
+								except: pass
+							sucess_answer = [L('Settings unsuccesfully accepted:\n%s') % '\n'.join(unsucess),L('Settings succesfully accepted')][sucess_label]
+							i.setTag('command',namespace=xmpp.NS_COMMANDS,attrs={'status':'completed', 'node':disco_config_node+tn,'sessionid':id})
+							i.getTag('command').setTag('note',attrs={'type':'info'})
+							i.getTag('command').setTagData('note',sucess_answer)
+							i.getTag('command').setTag('x',namespace=xmpp.NS_DATA)
+							i.getTag('command').getTag('x').setTagData('title',L('Settings'))
+							i.getTag('command').getTag('x').setTagData('instrustion',sucess_answer)
+							pprint('*** bot reconfigure by %s' % unicode(room),'purple')
+						else:
+							i.setTag('command',namespace=xmpp.NS_COMMANDS,attrs={'status':'executing', 'node':disco_config_node+tn,'sessionid':id})
+							i.getTag('command').setTag('x',namespace=xmpp.NS_DATA,attrs={'type':'form'})
+							#i.getTag('command').getTag('x').setTag('item',attrs={'node':disco_config_node+tn, 'name':'Configuration','jid':selfjid})
+							#i.getTag('command').getTag('x').setTagData('instructions',L('For configure required x:data-compatible client'))
+							tkeys = []
+							for tmp in owner_groups: tkeys.append(tmp[1])
+							if tn in tkeys:
+								for tmp in owner_groups:
+									if tn == tmp[1]:
+										c_prefs,c_name = tmp[2],tmp[0]
+										break
+								i.getTag('command').getTag('x').setTagData('title',c_name)
+								cnf_prefs = {}
+								for tmp in c_prefs: cnf_prefs[tmp] = owner_prefs[tmp]
+								tmp = cnf_prefs.keys()
+								tt = []
+								for t in tmp: tt.append((owner_prefs[t][0],t))
+								tt.sort()
+								tmp = []
+								for t in tt: tmp.append(t[1])
+								for t in tmp:
+									itm = owner_prefs[t]
+									itm_label = itm[0].replace('%s','').replace(':','').strip()
+									if itm[1][0] == 'b':
+										dc = GT(t) in [True,1,'1','on']
+										i.getTag('command').getTag('x').setTag('field',attrs={'type':'boolean','label':itm_label,'var':t})\
+										.setTagData('value',[0,1][dc])
+									elif itm[1][0] in ['t','i','f','l']:
+										i.getTag('command').getTag('x').setTag('field',attrs={'type':'text-single','label':itm_label,'var':t})\
+										.setTagData('value',unicode(GT(t)))
+									elif itm[1][0] == 'm':
+										tprm = [xmpp.Node('value',payload=prm) for prm in unicode(GT(t)).split('\n')]
+										i.getTag('command').getTag('x').setTag('field',attrs={'type':'text-multi','label':itm_label,'var':t})\
+										.setPayload(tprm)
+									else:
+										i.getTag('command').getTag('x').setTag('field',\
+										attrs={'type':'list-single','label':itm_label,'var':t})\
+										.setTagData('value',GT(t))
+										for t2 in itm[3]:
+											i.getTag('command').getTag('x').getTag('field',\
+											attrs={'type':'list-single','label':itm_label,'var':t})\
+											.setTag('option',attrs={'label':L(t2)})\
+											.setTagData('value',t2)
+					else:
+						if get_tag_item(unicode(iq),'x','type') == 'submit':
+							varz = iq.getTag('command').getTag('x')
+							for t in config_prefs.keys():
+								try:
+									tmtype = varz.getTagAttr('field','type')
+									tm = varz.getTag('field',attrs={'var':t}).getTags('value')
+									tm = '\n'.join([tm2.getData() for tm2 in tm])
+									if tmtype == 'boolean' and tm in ['0','1']: tm = [False,True][int(tm)]
+									elif config_prefs[t][2] != None:
+										if config_prefs[t][2] == [True,False] and tm in ['0','1']: tm = [False,True][int(tm)]
+										elif tm in config_prefs[t][2]: pass
+										else: tm = config_prefs[t][3]
+									put_config(getRoom(room),t,tm)
+								except: pass
+							sucess_answer = L('Settings succesfully accepted')
+							i.setTag('command',namespace=xmpp.NS_COMMANDS,attrs={'status':'completed', 'node':disco_config_node+tn,'sessionid':id})
+							i.getTag('command').setTag('note',attrs={'type':'info'})
+							i.getTag('command').setTagData('note',sucess_answer)
+							i.getTag('command').setTag('x',namespace=xmpp.NS_DATA)
+							i.getTag('command').getTag('x').setTagData('title',L('Settings'))
+							i.getTag('command').getTag('x').setTagData('instrustion',sucess_answer)
+							pprint('*** reconfigure by %s' % unicode(room),'purple')
+						else:
+							i.setTag('command',namespace=xmpp.NS_COMMANDS,attrs={'status':'executing', 'node':disco_config_node+tn,'sessionid':id})
+							i.getTag('command').setTag('x',namespace=xmpp.NS_DATA,attrs={'type':'form'})
+							#i.getTag('command').getTag('x').setTag('item',attrs={'node':disco_config_node+tn, 'name':'Configuration','jid':selfjid})
+							#i.getTag('command').getTag('x').setTagData('instructions',L('For configure required x:data-compatible client'))
+							tkeys = []
+							for tmp in config_groups: tkeys.append(tmp[1])
+							if tn in tkeys:
+								for tmp in config_groups:
+									if tn == tmp[1]:
+										c_prefs,c_name = tmp[2],tmp[0]
+										break
+								i.getTag('command').getTag('x').setTagData('title',c_name)
+								cnf_prefs = {}
+								for tmp in c_prefs: cnf_prefs[tmp] = config_prefs[tmp]
+								tmp = cnf_prefs.keys()
+								tmp.sort()
+								for t in tmp:
+									itm = config_prefs[t]
+									itm_label = itm[0].replace('%s','').replace(':','').strip()
+									if itm[2] == [True,False]:
+										dc = get_config(getRoom(room),t) in [True,1,'1','on']
+										i.getTag('command').getTag('x').setTag('field',attrs={'type':'boolean','label':itm_label,'var':t})\
+										.setTagData('value',[0,1][dc])
+									elif itm[2] == None:
+										if '\n' in itm[3]:
+											tprm = [xmpp.Node('value',payload=prm) for prm in get_config(getRoom(room),t).split('\n')]
+											i.getTag('command').getTag('x').setTag('field',attrs={'type':'text-multi','label':itm_label,'var':t})\
+											.setPayload(tprm)
+										else:
+											i.getTag('command').getTag('x').setTag('field',attrs={'type':'text-single','label':itm_label,'var':t})\
+											.setTagData('value',get_config(getRoom(room),t))
+									else:
+										i.getTag('command').getTag('x').setTag('field',\
+										attrs={'type':'list-single','label':itm_label,'var':t})\
+										.setTagData('value',get_config(getRoom(room),t))
+										for t2 in itm[2]:
+											i.getTag('command').getTag('x').getTag('field',\
+											attrs={'type':'list-single','label':itm_label,'var':t})\
+											.setTag('option',attrs={'label':onoff(t2)})\
+											.setTagData('value',t2)
+							else: i.getTag('command').getTag('x').setTagData('title',L('Unknown configuration request!'))
+					return i
+				else:
+					if tn:
+						if tn.split('-',1)[0] == '#owner': settz = owner_groups
+						elif tn.split('-',1)[0] == '#room': settz = config_groups
+						else: settz = None
+						if settz:
+							for tmp in settz:
+								if tn == tmp[1]:
+									i.getTag('query').setTag('identity',attrs={'category':'automation','type':'command-node','name':tmp[0]})
+									break
+					return i
+		else:
+			pprint('*** iq:disco_set from %s node "%s"' % (unicode(room),node),'magenta')
+			try: tn = '#' + node.split('#')[1]
+			except: tn = ''
+			if node.split('#')[0] == disco_config_node or node == xmpp.NS_COMMANDS:
+				action=get_tag_item(unicode(iq),'command','action')
+				i=xmpp.Iq(to=room, typ='result')
+				i.setAttr(key='id', val=id)
+				if action == 'cancel': i.setTag('command',namespace=xmpp.NS_COMMANDS,attrs={'status':'canceled', 'node':disco_config_node+tn,'sessionid':id})
+				elif towh == selfjid:
+					if get_tag_item(unicode(iq),'x','type') == 'submit':
+						varz = iq.getTag('command').getTag('x')
+						sucess_label,unsucess = True,[]
+						for t in owner_prefs.keys():
+							try:
+								tp = owner_prefs[t][1]
+								tm = varz.getTag('field',attrs={'var':t}).getTags('value')
+								tm = '\n'.join([tm2.getData() for tm2 in tm])
+								old_tm = GT(t)
+								try:
+									if   tp[0] == 'b': tm = [False,True][int(tm)]
+									elif tp[0] == 'f': tm = float(tm)
+									elif tp[0] == 'i': tm = int(tm)
+									elif tp[0] == 't': tm = tm[:int(tp.replace('e','')[1:])]
+									elif tp[0] == 'm': tm = tm[:int(tp.replace('e','')[1:])]
+									elif tp[0] == 'l' and len(json.loads(tm)) == int(tp.replace('e','')[1:]): tm = json.loads(tm)
+									elif tp[0] == 'd' and tm not in owner_prefs[t][3]: tm = owner_prefs[t][2]
+								except:
+									tm,sucess_label = GT(t),False
+									unsucess.append(owner_prefs[t][0])
+								PT(t,tm)
+								if tp[-1] == 'e' and old_tm != tm: eval(owner_prefs[t][-1])
+							except: pass
+						sucess_answer = [L('Settings unsuccesfully accepted:\n%s') % '\n'.join(unsucess),L('Settings succesfully accepted')][sucess_label]
+						i.setTag('command',namespace=xmpp.NS_COMMANDS,attrs={'status':'completed', 'node':disco_config_node+tn,'sessionid':id})
+						i.getTag('command').setTag('note',attrs={'type':'info'})
+						i.getTag('command').setTagData('note',sucess_answer)
+						i.getTag('command').setTag('x',namespace=xmpp.NS_DATA)
+						i.getTag('command').getTag('x').setTagData('title',L('Settings'))
+						i.getTag('command').getTag('x').setTagData('instrustion',sucess_answer)
+						pprint('*** bot reconfigure by %s' % unicode(room),'purple')
+					else:
+						i.setTag('command',namespace=xmpp.NS_COMMANDS,attrs={'status':'executing', 'node':disco_config_node+tn,'sessionid':id})
+						i.getTag('command').setTag('x',namespace=xmpp.NS_DATA,attrs={'type':'form'})
+						#i.getTag('command').getTag('x').setTag('item',attrs={'node':disco_config_node+tn, 'name':'Configuration','jid':selfjid})
+						#i.getTag('command').getTag('x').setTagData('instructions',L('For configure required x:data-compatible client'))
+						tkeys = []
+						for tmp in owner_groups: tkeys.append(tmp[1])
+						if tn in tkeys:
+							for tmp in owner_groups:
+								if tn == tmp[1]:
+									c_prefs,c_name = tmp[2],tmp[0]
+									break
+							i.getTag('command').getTag('x').setTagData('title',c_name)
+							cnf_prefs = {}
+							for tmp in c_prefs: cnf_prefs[tmp] = owner_prefs[tmp]
+							tmp = cnf_prefs.keys()
+							tt = []
+							for t in tmp: tt.append((owner_prefs[t][0],t))
+							tt.sort()
+							tmp = []
+							for t in tt: tmp.append(t[1])
+							for t in tmp:
+								itm = owner_prefs[t]
+								itm_label = itm[0].replace('%s','').replace(':','').strip()
+								if itm[1] == 'b':
+									dc = GT(t) in [True,1,'1','on']
+									i.getTag('command').getTag('x').setTag('field',attrs={'type':'boolean','label':itm_label,'var':t})\
+									.setTagData('value',[0,1][dc])
+								elif itm[1][0] in ['t','i','f','l']:
+									i.getTag('command').getTag('x').setTag('field',attrs={'type':'text-single','label':itm_label,'var':t})\
+									.setTagData('value',unicode(GT(t)))
+								elif itm[1][0] == 'm':
+									tprm = [xmpp.Node('value',payload=prm) for prm in unicode(GT(t)).split('\n')]
+									i.getTag('command').getTag('x').setTag('field',attrs={'type':'text-multi','label':itm_label,'var':t})\
+									.setPayload(tprm)
+								else:
+									i.getTag('command').getTag('x').setTag('field',\
+									attrs={'type':'list-single','label':itm_label,'var':t})\
+									.setTagData('value',GT(t))
+									for t2 in itm[3]:
+										i.getTag('command').getTag('x').getTag('field',\
+										attrs={'type':'list-single','label':itm_label,'var':t})\
+										.setTag('option',attrs={'label':L(t2)})\
+										.setTagData('value',t2)
+				else:
+					if get_tag_item(unicode(iq),'x','type') == 'submit':
+						varz = iq.getTag('command').getTag('x')
+						for t in config_prefs.keys():
+							try:
+								tmtype = varz.getTagAttr('field','type')
+								tm = varz.getTag('field',attrs={'var':t}).getTags('value')
+								tm = '\n'.join([tm2.getData() for tm2 in tm])
+								if tmtype == 'boolean' and tm in ['0','1']: tm = [False,True][int(tm)]
+								elif config_prefs[t][2] != None:
+									if config_prefs[t][2] == [True,False] and tm in ['0','1']: tm = [False,True][int(tm)]
+									elif tm in config_prefs[t][2]: pass
+									else: tm = config_prefs[t][3]
+								put_config(getRoom(room),t,tm)
+							except: pass
+						sucess_answer = L('Settings succesfully accepted')
+						i.setTag('command',namespace=xmpp.NS_COMMANDS,attrs={'status':'completed', 'node':disco_config_node+tn,'sessionid':id})
+						i.getTag('command').setTag('note',attrs={'type':'info'})
+						i.getTag('command').setTagData('note',sucess_answer)
+						i.getTag('command').setTag('x',namespace=xmpp.NS_DATA)
+						i.getTag('command').getTag('x').setTagData('title',L('Settings'))
+						i.getTag('command').getTag('x').setTagData('instrustion',sucess_answer)
+
+						pprint('*** reconfigure by %s' % unicode(room),'purple')
+					else:
+						i.setTag('command',namespace=xmpp.NS_COMMANDS,attrs={'status':'executing', 'node':disco_config_node+tn,'sessionid':id})
+						i.getTag('command').setTag('x',namespace=xmpp.NS_DATA,attrs={'type':'form'})
+						#i.getTag('command').getTag('x').setTag('item',attrs={'node':disco_config_node+tn, 'name':'Configuration','jid':selfjid})
+						#i.getTag('command').getTag('x').setTagData('instructions',L('For configure required x:data-compatible client'))
+						tkeys = []
+						for tmp in config_groups: tkeys.append(tmp[1])
+						if tn in tkeys:
+							for tmp in config_groups:
+								if tn == tmp[1]:
+									c_prefs,c_name = tmp[2],tmp[0]
+									break
+							i.getTag('command').getTag('x').setTagData('title',c_name)
+							cnf_prefs = {}
+							for tmp in c_prefs: cnf_prefs[tmp] = config_prefs[tmp]
+							tmp = cnf_prefs.keys()
+							tmp.sort()
+							for t in tmp:
+								itm = config_prefs[t]
+								itm_label = itm[0].replace('%s','').replace(':','').strip()
+								if itm[2] == [True,False]:
+									dc = get_config(getRoom(room),t) in [True,1,'1','on']
+									i.getTag('command').getTag('x').setTag('field',attrs={'type':'boolean','label':itm_label,'var':t})\
+									.setTagData('value',[0,1][dc])
+								elif itm[2] == None:
+									if '\n' in itm[3]:
+										tprm = [xmpp.Node('value',payload=prm) for prm in get_config(getRoom(room),t).split('\n')]
+										i.getTag('command').getTag('x').setTag('field',attrs={'type':'text-multi','label':itm_label,'var':t})\
+										.setPayload(tprm)
+									else:
+										i.getTag('command').getTag('x').setTag('field',attrs={'type':'text-single','label':itm_label,'var':t})\
+										.setTagData('value',get_config(getRoom(room),t))
+								else:
+									i.getTag('command').getTag('x').setTag('field',\
+									attrs={'type':'list-single','label':itm_label,'var':t})\
+									.setTagData('value',get_config(getRoom(room),t))
+									for t2 in itm[2]:
+										i.getTag('command').getTag('x').getTag('field',\
+										attrs={'type':'list-single','label':itm_label,'var':t})\
+										.setTag('option',attrs={'label':onoff(t2)})\
+										.setTagData('value',t2)
+						else: i.getTag('command').getTag('x').setTagData('title',L('Unknown configuration request!'))
+				return i
+	return None
+
 def disco_exclude_update():
 	global disco_excl
 	excl = GT('disco_exclude').replace('\r','').replace('\t','').split('\n')
@@ -526,7 +947,9 @@ def whereis_collect_async(whereis_id,who,is_answ):
 			whereis_answers[whereis_id].append(result)
 		except: whereis_answers[whereis_id].append([])
 
-global execute
+global execute, iq_hook
+
+iq_hook = [[100,'get',disco_iq_get],[100,'set',disco_iq_set]]
 
 disco_exclude_update()
 

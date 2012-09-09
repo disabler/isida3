@@ -756,7 +756,7 @@ def conf_limit(type, jid, nick, text):
 	send_msg(type, jid, nick, L('Temporary message size limit %s') % str(msg_limit))
 
 def bot_plugin(type, jid, nick, text):
-	global plname, plugins, execute, gtimer, gpresence, gmassage
+	global plname, plugins, execute, gtimer, gpresence, gmassage, giq_hook
 	text = text.split()
 	opt = text[0]
 	try: name = '%s.py' % text[1]
@@ -769,7 +769,7 @@ def bot_plugin(type, jid, nick, text):
 			pl_ignore.remove(name)
 			writefile(pliname,str(pl_ignore))
 		if name not in plugins: plugins.append(name)
-		presence_control,message_control,message_act_control,iq_control,timer,execute = [],[],[],[],[],[]
+		presence_control,message_control,message_act_control,iq_control,timer,execute,iq_hook = [],[],[],[],[],[],[]
 		execfile(pl_folder % name)
 		tmsg = ''
 		for cm in execute:
@@ -781,13 +781,15 @@ def bot_plugin(type, jid, nick, text):
 		for tmp in presence_control: gpresence.append(tmp)
 		for tmp in message_control: gmessage.append(tmp)
 		for tmp in message_act_control: gactmessage.append(tmp)
+		for tmp in iq_hook: giq_hook.append(tmp)
+		giq_hook.sort()
 
 	elif opt == 'del' and name in plugins:
 		if name not in pl_ignore:
 			pl_ignore.append(name)
 			writefile(pliname,str(pl_ignore))
 		plugins.remove(name)
-		presence_control,message_control,message_act_control,iq_control,timer,execute = [],[],[],[],[],[]
+		presence_control,message_control,message_act_control,iq_control,timer,execute,iq_hook = [],[],[],[],[],[],[]
 		execfile(pl_folder % name)
 		tmsg = ''
 		for cm in execute:
@@ -800,6 +802,8 @@ def bot_plugin(type, jid, nick, text):
 		for tmp in presence_control: gpresence.remove(tmp)
 		for tmp in message_control: gmessage.remove(tmp)
 		for tmp in message_act_control: gactmessage.remove(tmp)
+		for tmp in iq_hook: giq_hook.remove(tmp)
+		giq_hook.sort()
 
 	elif opt == 'local':
 		a = os.listdir(pl_folder % '')
@@ -1138,7 +1142,8 @@ def html_encode(body):
 #[room, nick, role, affiliation, jid]
 
 def rss_flush(jid,link,break_point):
-	tstop = cur_execute_fetchone('select hash from feed where room=%s and url=%s',(jid,link))[0]
+	tstop = cur_execute_fetchone('select hash from feed where room=%s and url=%s',(jid,link))
+	if not tstop: tstop = []
 	if not break_point: break_point = tstop
 	cur_execute('update feed set time=%s, hash=%s where room=%s and url=%s',(int(time.time()),break_point,jid,link))
 	return tstop
@@ -1214,7 +1219,7 @@ def rss(type, jid, nick, text):
 		if fdb:
 			cur_execute('delete from feed where room=%s and url=%s;',(jid,link))
 			msg = L('Delete feed from schedule: %s') % link
-	elif mode == 'new' or mode == 'get':
+	elif mode in ['new','get']:
 		link = text[1]
 		if '://' not in link[:10]: link = 'http://%s' % link
 		try:

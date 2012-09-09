@@ -27,6 +27,56 @@ VCARD_LIMIT_LONG = 256
 VCARD_LIMIT_SHORT = 128
 iq_ping_minimal = 0
 
+def iq_iq_get(iq,id,room,acclvl,query,towh):
+	if iq.getTag(name='query', namespace=xmpp.NS_VERSION) and GT('iq_version_enable'):
+		pprint('*** iq:version from %s' % unicode(room),'magenta')
+		i=xmpp.Iq(to=room, typ='result')
+		i.setAttr(key='id', val=id)
+		i.setQueryNS(namespace=xmpp.NS_VERSION)
+		i.getTag('query').setTagData(tag='name', val=botName)
+		i.getTag('query').setTagData(tag='version', val=botVersion)
+		i.getTag('query').setTagData(tag='os', val=botOs)
+		return i
+
+	elif iq.getTag(name='query', namespace=xmpp.NS_TIME) and GT('iq_time_enable'):
+		pprint('*** iq:time from %s' % unicode(room),'magenta')
+		t_utc,t_tz,t_display = nice_time(time.time())
+		i=xmpp.Iq(to=room, typ='result')
+		i.setAttr(key='id', val=id)
+		i.setQueryNS(namespace=xmpp.NS_TIME)
+		i.getTag('query').setTagData(tag='utc', val=t_utc)
+		i.getTag('query').setTagData(tag='tz', val=t_tz)
+		i.getTag('query').setTagData(tag='display', val=t_display)
+		return i
+
+	elif iq.getTag(name='time', namespace=xmpp.NS_URN_TIME) and GT('iq_time_enable'):
+		pprint('*** iq:urn:time from %s' % unicode(room),'magenta')
+		if timeofset in [-12,-11,-10]: t_tz = '-%s:00' % timeofset
+		elif timeofset in range(-9,-1): t_tz = '-0%s:00' % timeofset
+		elif timeofset in range(0,9): t_tz = '+0%s:00' % timeofset
+		else: t_tz = '+%s:00' % timeofset
+		i=xmpp.Iq(to=room, typ='result')
+		i.setAttr(key='id', val=id)
+		i.setTag('time',namespace=xmpp.NS_URN_TIME)
+		i.getTag('time').setTagData(tag='tzo', val=t_tz)
+		i.getTag('time').setTagData(tag='utc', val=str(time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())))
+		return i
+
+	elif iq.getTag(name='ping', namespace=xmpp.NS_URN_PING) and GT('iq_ping_enable'):
+		pprint('*** iq:urn:ping from %s' % unicode(room),'magenta')
+		i=xmpp.Iq(to=room, typ='result')
+		i.setAttr(key='id', val=id)
+		return i
+
+	elif iq.getTag(name='query', namespace=xmpp.NS_LAST) and GT('iq_uptime_enable'):
+		pprint('*** iq:uptime from %s' % unicode(room),'magenta')
+		i=xmpp.Iq(to=room, typ='result')
+		i.setAttr(key='id', val=id)
+		i.setTag('query',namespace=xmpp.NS_LAST,attrs={'seconds':str(int(time.time())-starttime)})
+		i.setTagData('query','%s (%s) [%s]' % (Settings['message'],Settings['status'],Settings['priority']))
+		return i
+	return None
+
 def get_who_iq(text,jid,nick):
 	if text == '': who = '%s/%s' % (getRoom(jid),nick)
 	else:
@@ -261,7 +311,9 @@ def stats_async(type, jid, nick, text, is_answ):
 		else: msg = L('Unavailable!')
 	send_msg(type, jid, nick, msg)
 
-global execute
+global execute, iq_hook
+
+iq_hook = [[50,'get',iq_iq_get]]
 
 execute = [(3, 'ver', iq_version, 2, L('Client version.')),
 		   (3, 'ver+', iq_version_caps, 2, L('Client version with caps.')),

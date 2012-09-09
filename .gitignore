@@ -16,6 +16,8 @@ data/backup/*.back
 data/backup/*@*
 data/conflogs/chatlogs/*@*
 data/conflogs/syslogs/*@*
+data/conflogs/*
 data/log/*.txt
 data/log/*.log
 data/custom_censor.txt
+plugins/_*.py
