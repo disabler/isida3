@@ -1143,7 +1143,8 @@ def html_encode(body):
 
 def rss_flush(jid,link,break_point):
 	tstop = cur_execute_fetchone('select hash from feed where room=%s and url=%s',(jid,link))
-	if not tstop: tstop = []
+	if tstop: tstop[0]
+	else: tstop = []
 	if not break_point: break_point = tstop
 	cur_execute('update feed set time=%s, hash=%s where room=%s and url=%s',(int(time.time()),break_point,jid,link))
 	return tstop
