@@ -96,7 +96,7 @@ def muc_tempo_ban(type, jid, nick, text):
 					if len(fnd) == 1: whojid = getRoom(fnd[0][0])
 					elif len(fnd) > 1: msg = L('I seen different people with this nick!')
 					else: msg,whojid = L('I don\'n know %s, and use as is!') % who,who
-				if whojid:				
+				if whojid:
 					sender(xmpp.Node('iq', {'id': get_id(), 'type': 'set', 'to':jid}, payload = [xmpp.Node('query', {'xmlns': xmpp.NS_MUC_ADMIN},[xmpp.Node('item',{'affiliation':'outcast', 'jid':unicode(whojid)},[xmpp.Node('reason',{},reason)])])]))
 					was_banned = cur_execute_fetchone('select * from tmp_ban where room=%s and jid=%s;',(jid,whojid))
 					if was_banned:
@@ -109,7 +109,7 @@ def muc_tempo_ban(type, jid, nick, text):
 				if who == nick: mute = True
 			else: msg = L('Time format error!')
 	else: msg = L('What?')
-	
+
 	if not mute: send_msg(type, jid, nick, msg)
 
 def muc_ban(type, jid, nick,text): muc_affiliation(type, jid, nick, text, 'outcast',0)

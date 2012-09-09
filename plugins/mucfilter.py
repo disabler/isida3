@@ -194,8 +194,8 @@ def muc_filter_set(iq,id,room,acclvl,query,towh):
 				if mute: msg = unicode(xmpp.Message(to=jid,body=mute_reason,typ=mute_type,frm=mute_room))
 			else: msg = None
 
-		elif msg[:2] == '<p':	
-			jid = rss_replace(get_tag_item(msg,'presence','from'))				
+		elif msg[:2] == '<p':
+			jid = rss_replace(get_tag_item(msg,'presence','from'))
 			gr = getRoom(room)
 			if server_hash_list.has_key('%s/%s' % (gr,getServer(jid))) or server_hash_list.has_key('%s/%s' % (gr,getRoom(jid))):
 				pprint('MUC-Filter drop by previous ban: %s %s' % (room,jid),'brown')
@@ -213,7 +213,7 @@ def muc_filter_set(iq,id,room,acclvl,query,towh):
 					if tmp[0] == gr and tmp[4] == jid:
 						newjoin = False
 						break
-						
+
 				# Validate items
 				if get_config(gr,'muc_filter_validate_action') != 'off' and msg and not mute:
 					is_valid = True
@@ -241,7 +241,7 @@ def muc_filter_set(iq,id,room,acclvl,query,towh):
 						except: id_ver,caps_error = get_eval_item(msg_xmpp_tmp,'getTag("c",namespace=xmpp.NS_CAPS).getAttr("ver")'),True
 						try: id_hash = get_eval_item(msg_xmpp_tmp,'getTag("c",namespace=xmpp.NS_CAPS).getAttr("hash")').decode('utf-8')
 						except: id_hash,caps_error = get_eval_item(msg_xmpp_tmp,'getTag("c",namespace=xmpp.NS_CAPS).getAttr("hash")'),True
-						if caps_error: writefile(slog_folder % 'bad_stanza_%s.txt' % int(time.time()),unicode(msg_xmpp).encode('utf-8'))								
+						if caps_error: writefile(slog_folder % 'bad_stanza_%s.txt' % int(time.time()),unicode(msg_xmpp).encode('utf-8'))
 						if get_config(gr,'muc_filter_validate_caps_node'):
 							iv,vc = validate_nick(id_node,validate_limit)
 							validate_count += vc
@@ -255,7 +255,7 @@ def muc_filter_set(iq,id,room,acclvl,query,towh):
 						pprint('MUC-Filter invalid items [%s]: %s/%s %s [%s] %s %s %s' % (act,gr,nick,jid,validate_count,id_node,id_ver,id_hash),'brown')
 						msg,mute = unicode(xmpp.Node('presence', {'from': tojid, 'type': 'error', 'to':jid}, payload = ['replace_it',xmpp.Node('error', {'type': 'auth','code':'403'}, payload=[xmpp.Node('forbidden',{'xmlns':'urn:ietf:params:xml:ns:xmpp-stanzas'},[]),xmpp.Node('text',{'xmlns':'urn:ietf:params:xml:ns:xmpp-stanzas'},[L('Deny by validation!')])])])).replace('replace_it',get_tag(msg,'presence')),True
 						tmp_server = getServer(jid)
-						tmp2_server = '%s/%s' % (gr,tmp_server)	
+						tmp2_server = '%s/%s' % (gr,tmp_server)
 						if act == 'ban' and not server_hash_list.has_key('%s/%s' % (gr,getRoom(jid))):
 							server_hash_list['%s/%s' % (gr,getRoom(jid))] = time.time()
 							sender(xmpp.Node('iq',{'id': get_id(), 'type': 'set', 'to':gr},payload = [xmpp.Node('query', {'xmlns': xmpp.NS_MUC_ADMIN},[xmpp.Node('item',{'affiliation':'outcast', 'jid':jid},[xmpp.Node('reason',{},'Banned by invalid items at %s' % timeadd(tuple(time.localtime())))])])]))
@@ -522,7 +522,7 @@ def muc_filter_set(iq,id,room,acclvl,query,towh):
 			i.setTag('query',namespace=xmpp.NS_MUC_FILTER).setTagData(tag='message', val='')
 			try: return unicode(i).replace('<message />',msg)
 			except: pass
-			
+
 	return None
 
 global iq_hook

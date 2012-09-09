@@ -946,7 +946,7 @@ def msg_afterwork(mess,room,jid,nick,type,back_text,no_comm,access_mode,nowname)
 def send_msg_human(type, room, nick, text, th):
 	pprint('Send msg human: %s/%s [%s] >>> %s' % (room,nick,type,text),'dark_gray')
 	thr(send_msg_hmn,(type, room, nick, text),th)
-	
+
 def send_msg_hmn(type, room, nick, text):
 	time.sleep(len(text)/4.0+random.randint(0,3))
 	send_msg(type, room, nick, text)
@@ -1573,7 +1573,7 @@ try:
 except:
 	c_room,c_passwd = '%s/%s' % (defaultConf.lower(),Settings['nickname']),''
 	confbase = [(c_room,c_passwd)]
-	cur_execute('insert into conference (room,passwd) values (%s,%s);',(c_room,c_passwd))	
+	cur_execute('insert into conference (room,passwd) values (%s,%s);',(c_room,c_passwd))
 
 censor = []
 
@@ -1742,7 +1742,7 @@ while 1:
 	except KeyboardInterrupt: atempt_to_shutdown_with_reason(L('Shutdown by CTRL+C...'),0,'exit',False)
 
 	except xmpp.SystemShutdown: atempt_to_shutdown_with_reason(L('System Shutdown. Trying to restart in %s sec.') % GT('reboot_time'),GT('reboot_time'),'restart',False)
-	
+
 	except psycopg2.InterfaceError: atempt_to_shutdown_with_reason(L('Interface error! Trying to restart in %s sec.') % int(GT('reboot_time')/4),int(GT('reboot_time')/4),'restart',False)
 
 	except Exception, SM:

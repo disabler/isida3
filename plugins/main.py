@@ -810,6 +810,7 @@ def bot_plugin(type, jid, nick, text):
 		b = []
 		for c in a:
 			if c[-3:] == '.py' and c[0] != '.' and c != 'main.py': b.append(c[:-3].decode('utf-8'))
+		b.sort()
 		msg = L('Available plugins: %s') % ', '.join(b)
 		if len(pl_ignore):
 			b = []
@@ -817,9 +818,9 @@ def bot_plugin(type, jid, nick, text):
 			msg += L('\nIgnored plugins: %s') % ', '.join(b)
 
 	elif opt == 'show':
-		msg = ''
-		for jjid in plugins: msg += jjid[:-3]+', '
-		msg = L('Active plugins: %s') % msg[:-2]
+
+		msg = L('Active plugins: %s') % ', '.join([t[:-3] for t in plugins])
+		msg[:-2]
 		if len(pl_ignore):
 			b = []
 			for tmp in pl_ignore: b.append(tmp[:-3])

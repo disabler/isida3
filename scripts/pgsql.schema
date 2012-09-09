@@ -215,7 +215,7 @@ CREATE TABLE wz (
 	city text,
 	counry text
 );
-	
+
 CREATE INDEX wz_ccc ON wz (code,city,counry);
 
 -- --------------------------------------------------------------------------- --
