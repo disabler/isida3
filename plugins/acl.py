@@ -21,9 +21,8 @@
 #                                                                             #
 # --------------------------------------------------------------------------- #
 
-acl_acts = ['msg','message','prs','prs_change','prs_join','presence','presence_change','presence_join',
-			'role','role_change','role_join','affiliation','affiliation_change','affiliation_join','aff','aff_change','aff_join',
-			'nick','nick_change','nick_join','all','all_change','all_join','jid','jidfull','res','age','ver','version','vcard']
+acl_acts = ['msg','prs','prs_change','prs_join','role','role_change','role_join','aff','aff_change','aff_join',
+			'nick','nick_change','nick_join','all','all_change','all_join','jid','jidfull','res','age','ver','vcard']
 acl_actions = ['show','del','clear'] + acl_acts
 
 acl_ver_tmp = {}
@@ -72,7 +71,7 @@ def acl_add_del(jid,text,flag):
 		try: re.compile(ttext.split('${EXP}',1)[1].split('${/EXP}',1)[0].replace('%20','\ ').replace('*','*?'))
 		except: return L('Error in RegExp!')
 	try:
-		acl_cmd = acl_replace(text[0])
+		acl_cmd = text[0]
 		text = text[1:]
 	except: return L('Error in parameters. Read the help about command.')
 	if not acl_cmd in acl_acts: msg = L('Items: %s') % ', '.join(acl_acts)
@@ -107,7 +106,7 @@ def acl_add_del(jid,text,flag):
 			if atime: msg += ' %s | [%s] %s %s %s -> %s' % (unlevl[level], disp_time(atime),acl_cmd, acl_sub_act, text[0], ' '.join(text[1:]).replace('%20','\ ').replace('\n',' // '))
 			else: msg += ' %s | %s %s %s -> %s' % (unlevl[level], acl_cmd, acl_sub_act, text[0], ' '.join(text[1:]).replace('%20','\ ').replace('\n',' // '))
 		if not reduce_spaces_all(msg).split('->',1)[1]: msg = msg.split('->',1)[0]
-		if flag and acl_cmd not in['msg','message']:
+		if flag and acl_cmd != 'msg':
 			mb = [t[1:] for t in megabase if t[0] == jid and getRoom(t[4]) != getRoom(Settings['jid'])]
 			a = [(acl_cmd, acl_sub_act, text[0], ' '.join(text[1:]).replace('%20','\ '), 0, level)]
 			was_joined = True
@@ -132,8 +131,6 @@ def acl_clear(room,nick):
 	cur_execute('delete from acl where jid=%s',(room,))
 	return L('ACL cleared. Removed %s action(s).') % len(acl_back)
 
-def acl_replace(t): return t.lower().replace('msg','message').replace('presence','prs').replace('version','ver').replace('affiliation','aff')
-
 def muc_acl(type, jid, nick, text):
 	text = text.replace('\ ','%20').replace(' // ','\n').replace(' \/\/ ',' // ').split(' ')
 	if len(text) >= 3 and text[2] == '->': text[2] = ''
@@ -141,12 +138,12 @@ def muc_acl(type, jid, nick, text):
 	elif text[0].isdigit() and len(text) >= 5 and text[4] == '->': text[4] = ''
 	elif text[0].lower() == 'del' and len(text) >= 5 and text[4] == '->': text[4] = ''
 	while '' in text: text.remove('')
-	if len(text): acl_cmd = acl_replace(text[0])
+	if len(text): acl_cmd = text[0]
 	else: acl_cmd = '!'
 	if not acl_cmd in acl_actions and acl_cmd[0] != '/' and not acl_cmd.isdigit(): msg = L('Items: %s') % ', '.join(acl_actions)
 	elif acl_cmd == 'clear': msg = acl_clear(jid,nick)
 	elif acl_cmd == 'show':
-		try: t = acl_replace(text[1])
+		try: t = text[1]
 		except: t = '%'
 		msg = acl_show(jid,t)
 	elif acl_cmd == 'del': msg = acl_del(jid,text[1:])
@@ -173,7 +170,7 @@ def acl_message(room,jid,nick,type,text):
 	lvl = get_level(room,nick)[0]
 	if lvl < 0: return
 	if getRoom(jid) == getRoom(Settings['jid']): return
-	a = cur_execute_fetchall('select action,type,text,command,time,level from acl where jid=%s and (action=%s or action=%s or action ilike %s) order by level',(room,'msg','message','all%'))
+	a = cur_execute_fetchall('select action,type,text,command,time,level from acl where jid=%s and (action=%s or action=%s) order by level',(room,'msg','all%'))
 	no_comm = True
 	if a:
 		acl_ma = get_config(room,'acl_multiaction')
@@ -221,7 +218,7 @@ def acl_presence(room,jid,nick,type,mass):
 		return
 	# actions only on joins
 	#if was_joined: return
-	a = cur_execute_fetchall('select action,type,text,command,time,level from acl where jid=%s and (action ilike %s or action ilike %s or action ilike %s or action ilike %s or action ilike %s or action ilike %s or action=%s or action=%s or action=%s or action=%s or action=%s or action=%s or action=%s) order by level',(room,'prs%','presence%','nick%','all%','role%','affiliation%','jid','jidfull','res','age','ver','version','vcard'))
+	a = cur_execute_fetchall('select action,type,text,command,time,level from acl where jid=%s and (action ilike %s or action ilike %s or action ilike %s or action ilike %s or action ilike %s or action ilike %s or action=%s or action=%s or action=%s or action=%s or action=%s) order by level',(room,'prs%','nick%','all%','role%','aff%','jid','jidfull','res','age','ver','vcard'))
 	if a: acl_selector(a,room,jid,nick,mass,was_joined)
 
 def acl_selector(a,room,jid,nick,mass,was_joined):
