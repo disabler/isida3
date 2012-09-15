@@ -21,9 +21,16 @@
 #                                                                             #
 # --------------------------------------------------------------------------- #
 
-def true_age_stat(type, jid, nick):
-	try: llim = GT('age_default_limit')
-	except: llim = 10
+AGE_DEFAULT_LIMIT = 10
+AGE_MAX_LIMIT = 100
+
+def true_age_stat(type, jid, nick, text):
+	text = text.strip()
+	if text and text.isdigit(): llim = int(text)
+	else:	
+		try: llim = GT('age_default_limit')
+		except: llim = AGE_DEFAULT_LIMIT
+	if llim not in range(1,AGE_MAX_LIMIT): llim = AGE_DEFAULT_LIMIT
 	t_age_tmp = cur_execute_fetchmany('select jid,sum(age+(status = 0)::boolean::int*(%s-time)) as sum_age from age where room=%s group by jid order by sum_age desc;',(int(time.time()),jid),llim)
 	t_age = []
 	for t in t_age_tmp:
@@ -179,6 +186,6 @@ execute = [(3, 'age', true_age, 2, L('Show age of jid in conference.')),
 	 (3, 'age_split', true_age_split, 2, L('Show age of jid in conference splitted by nicks.')),
 	 (3, 'seen', seen, 2, L('Show time of join/leave.')),
 	 (3, 'seen_split', seen_split, 2, L('Show time of join/leave splitted by nicks.')),
-	 (3, 'agestat', true_age_stat, 1, L('Show age statistic for conference.')),
+	 (3, 'agestat', true_age_stat, 2, L('Show age statistic for conference.')),
 	 (7, 'seenjid', seenjid, 2, L('Show time of join/leave + jid.')),
 	 (7, 'seenjid_split', seenjid_split, 2, L('Show time of join/leave + jid splitted by nicks.'))]

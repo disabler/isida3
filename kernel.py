@@ -747,13 +747,13 @@ def iqCB(sess,iq):
 		for t in [tmp[2] for tmp in giq_hook if tmp[1] == 'get']:
 			to_send = t(iq,id,room,acclvl,query,towh)
 			if to_send:
-				sender(to_send)
+				if to_send != True: sender(to_send)
 				raise xmpp.NodeProcessed
 	elif iq.getType()=='set':
 		for t in [tmp[2] for tmp in giq_hook if tmp[1] == 'set']:
 			to_send = t(iq,id,room,acclvl,query,towh)
 			if to_send:
-				sender(to_send)
+				if to_send != True: sender(to_send)
 				raise xmpp.NodeProcessed
 
 def iq_async_clean():

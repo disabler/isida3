@@ -22,7 +22,6 @@
 # --------------------------------------------------------------------------- #
 
 def muc_filter_set(iq,id,room,acclvl,query,towh):
-	pprint
 	msg_xmpp = iq.getTag('query', namespace=xmpp.NS_MUC_FILTER)
 	if msg_xmpp:
 		msg,mute,mute_type,mute_room,mute_reason = get_tag(unicode(msg_xmpp),'query'),None,'groupchat',room,L('Warning! Your message are blocked by policy of room!')
@@ -199,7 +198,7 @@ def muc_filter_set(iq,id,room,acclvl,query,towh):
 			gr = getRoom(room)
 			if server_hash_list.has_key('%s/%s' % (gr,getServer(jid))) or server_hash_list.has_key('%s/%s' % (gr,getRoom(jid))):
 				pprint('MUC-Filter drop by previous ban: %s %s' % (room,jid),'brown')
-				raise xmpp.NodeProcessed
+				return True
 
 			tojid = rss_replace(get_tag_item(msg,'presence','to'))
 			if is_owner(jid): pass
