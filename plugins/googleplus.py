@@ -67,7 +67,7 @@ def define_message(room, jid, nick, type, text):
 		what = re.search([u'^(?:(?:что такое)|(?:кто такой)|(?:кто такая)) ([^?]+?)\?$', u'(?:(?:что такое)|(?:кто такой)) ([^?]+?)\?'][s == 'partial'], text, re.I + re.U + re.S)
 		if what:
 			access_mode = get_level(room, nick)[0]
-			text = 'define 0 ' + what.group(1)
+			text = 'define 0 %s' % what.group(1)
 			com_parser(access_mode, nowname, type, room, nick, text, jid)
 			return True
 

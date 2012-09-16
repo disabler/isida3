@@ -21,44 +21,16 @@
 # file: kernel.py
 Unknown error!	Неизвестная ошибка!
 Error!	Ошибка!
-AD-Hoc commands	AD-Hoc команды
-Current bot rooms	Текущие конференции
-Settings unsuccesfully accepted:\n%s	Не приняты настройки:\n%s
-Settings succesfully accepted	Настройки приняты успешно
-Settings	Настройки
-For configure required x:data-compatible client	Для настройки требуется x:data-совместимый клиент
-Unknown configuration request!	Неизвестный запрос конфигурации!
-Warning! Your message are blocked by policy of room!	Внимание! Ваше сообщение блокировано политикой комнаты!
-Warning! This participant don't want to receive private messages!	Внимание! Этот участник не желает получать приватные сообщения!
-Messages count overflow from newbie!	Превышение количества сообщений от новичка!
-Your messages are blocked %ssec. after first join! Please, wait quiet!	Ваши сообщения блокируются в течении %s сек. с первого подключения. Пожалуста, ожидайте тихо!
-Blocked by content!	Блокировка по содержимому!
-AD-Block!	Блокировка рекламы!
-Raw AD-Block!	Блокировка скрытой рекламы!
-Repeat message block!	Сообщения очень похожи!
-Match message block!	Текст сообщения дублируется!
-Blocked by censor!	Блокировано цензором!
-Blocked by raw censor!	Блокировка скрытого мата цензором!
-Large message%s %s	Большое сообщение%s %s
-Large message block!	Большое сообщение!
-Deny by validation!	Недопустимый параметр!
-Server %s was banned in %s	Забанен сервер %s в конференции %s
-Deny by node lock!	Запрещено по ноде!
-Deny by hash lock!	Ограничение по хешу клиента!
-Deny by blacklist!	Ограничение по чёрному списку!
-Deny by whitelist!	Ограничение по белому списку!
-Large status block!	Блокировка длинного статусного сообщения!
-Large nick block!	Блокировка длинного ника!
-To many rejoins! Wait %s sec.	Слишком много попыток входа! Ждите %s сек.
-Status-flood block!	Блокировка статус-флуда!
 Warning! Exceeded the limit of sending the same commands. You to ignore for %s.	Внимание! Превышен лимит отправки одинаковых команд. Вы в игноре %s.
 Room's configuration changed.	Изменена конфигурация конференции.
 Censored!	Фильтруем базар!
 *** Topic: %s	*** Тема: %s
+Fetched xhtml image: %s%s	Получено xhtml изображение: %s%s
 Too many letters!	Слишком многа букаф!
 whitelist	белый список
 lock by hash	блок по хешу
 off	выкл
+Deny by hash lock!	Ограничение по хешу клиента!
 /me detect bad stanza from %s	/me смотрит на %s и думает: "Факин умник детектед!"
 kicked	выгнали
 banned	забанили
@@ -75,6 +47,9 @@ System Shutdown. Trying to restart in %s sec.	Сервер потух. Попы�
 Interface error! Trying to restart in %s sec.	Ошибка взаимодействия! Перезапуск через %s секунд.
 Critical error! Trying to restart in %s sec.	Критическая ошибка! Попытаюсь перезапуститься через %s сек.
 
+# file: plugins/_short_commands.py
+done	выполнено
+
 # file: plugins/acl.py
 Acl:	Действия:
 Acl not found	Действия не найдены
@@ -87,7 +62,6 @@ Removed:	Удалено:
 Updated:	Обновлено:
 Not found:	Не найдено:
 Added:	Добавлено:
-done	выполнено
 You have no rights to do it!	У Вас недостаточно прав для этого!
 ACL cleared. Removed %s action(s).	ACL очищены. Удалено действий: %s
 Actions list.\nacl show - show list\nacl del [/silent] item - remove item from list\nacl [/time] [/silent] msg|prs|role|aff|nick|jid|jidfull|res|age|ver|vcard|all [sub|exp|cexp] pattern command - execute command by condition\nallowed variables in commands: ${NICK}, ${JID}, ${SERVER}, ${EXP} and ${/EXP}\nsub = substring, exp = regular expression, cexp = case sensitive regular expression\ntime format is /number+identificator. s = sec, m = min, d = day, w = week, M = month, y = year. only one identificator allowed!	Список действий.\nacl show - показать список\nacl del [/silent] item - удалить элемент из списка\nacl [/time] [/silent] msg|prs|role|aff|nick|jid|jidfull|res|age|ver|vcard|all [sub|exp|cexp] pattern command - выполнить команду по условию\nдоступны переменные в командах: ${NICK}, ${JID}, ${SERVER}, ${EXP} и ${/EXP}\nsub = подстрока, exp = регулярное выражение, cexp = регистрозависимое регулярное выражение\nформат времени - /число+идентификатор. s = секунды, m = минуты, d = дни, w = недели, M = месяцы, y = годы. допустим только один идентификатор!
@@ -279,6 +253,13 @@ Removed: %s	Удалено: %s
 Execute command by cron. Used unix-type time format.\ncron [once] [anonim|silent] * * * * *\ncommand	Выполнение команды по расписанию. Формат времени аналогичен unix-версии команды. \ncron [once] [anonim|silent] * * * * *\nкоманда
 
 # file: plugins/disco.py
+AD-Hoc commands	AD-Hoc команды
+Current bot rooms	Текущие конференции
+Settings unsuccesfully accepted:\n%s	Не приняты настройки:\n%s
+Settings succesfully accepted	Настройки приняты успешно
+Settings	Настройки
+For configure required x:data-compatible client	Для настройки требуется x:data-совместимый клиент
+Unknown configuration request!	Неизвестный запрос конфигурации!
 - Unknown feature: %s	- Неизвестная фича: %s
 Software: %s | Version: %s\nOS: %s | Version: %s	ПО: %s | Версия: %s\nОС: %s | Версия: %s
 Type: %s	Тип: %s
@@ -1056,6 +1037,8 @@ Jid's per stanza for affiliations in backup is %s	Количество Jid'ов 
 Count of jid's per stanza for affiliations change in backup	Количество Jid'ов в станзе смены аффиляции при восстановлении копии конференции. Рекомендации: ejabberd - 200, prosody - 1
 ACL multiaction is %s	Мультидействия в ACL %s
 Execute more than one action per pass in ACL.	Исполнять более одного действия за один проход в ACL.
+Paste xhtml images %s	Размещать xhtml изображения: %s
+Detect and paste xhtml images in messages	Определение и размещение xhtml изображений в сообщениях
 Muc filter is %s	Muc-фильтр: %s
 Message filter for participants	Фильтр сообщений для участников
 Mute newbie %s	Подавлять сообщения от новичков: %s
@@ -1439,6 +1422,30 @@ Change role to participant.	Изменить роль до участника.
 Revoke voice.	Забрать голос.
 Grant moderator.	Повысить роль до модератора
 Global ban. Available only for confernce owner.\nglobal_ban del - remove conference from banlist,\nglobal_ban add - add conference into banlist,\nglobal_ban <jid> - ban jid in all rooms, where bot is admin.	Глобальный бан. Доступен только владельцам конференций.\nglobal_ban del - удалить конференцию из списка глобального бана,\nglobal_ban add - добавить конференцию в список глобального бана,\nglobal_ban <jid> - забанить jid во всех конференциях, в которых бот админ.
+
+# file: plugins/mucfilter.py
+Warning! Your message are blocked by policy of room!	Внимание! Ваше сообщение блокировано политикой комнаты!
+Warning! This participant don't want to receive private messages!	Внимание! Этот участник не желает получать приватные сообщения!
+Messages count overflow from newbie!	Превышение количества сообщений от новичка!
+Your messages are blocked %ssec. after first join! Please, wait quiet!	Ваши сообщения блокируются в течении %s сек. с первого подключения. Пожалуста, ожидайте тихо!
+Blocked by content!	Блокировка по содержимому!
+AD-Block!	Блокировка рекламы!
+Raw AD-Block!	Блокировка скрытой рекламы!
+Repeat message block!	Сообщения очень похожи!
+Match message block!	Текст сообщения дублируется!
+Blocked by censor!	Блокировано цензором!
+Blocked by raw censor!	Блокировка скрытого мата цензором!
+Large message%s %s	Большое сообщение%s %s
+Large message block!	Большое сообщение!
+Deny by validation!	Недопустимый параметр!
+Server %s was banned in %s	Забанен сервер %s в конференции %s
+Deny by node lock!	Запрещено по ноде!
+Deny by blacklist!	Ограничение по чёрному списку!
+Deny by whitelist!	Ограничение по белому списку!
+Large status block!	Блокировка длинного статусного сообщения!
+Large nick block!	Блокировка длинного ника!
+To many rejoins! Wait %s sec.	Слишком много попыток входа! Ждите %s сек.
+Status-flood block!	Блокировка статус-флуда!
 
 # file: plugins/net.py
 What do you want to find?	Что искать то будем?

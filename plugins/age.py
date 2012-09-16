@@ -27,7 +27,7 @@ AGE_MAX_LIMIT = 100
 def true_age_stat(type, jid, nick, text):
 	text = text.strip()
 	if text and text.isdigit(): llim = int(text)
-	else:	
+	else:
 		try: llim = GT('age_default_limit')
 		except: llim = AGE_DEFAULT_LIMIT
 	if llim not in range(1,AGE_MAX_LIMIT): llim = AGE_DEFAULT_LIMIT

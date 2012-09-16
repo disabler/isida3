@@ -21,36 +21,6 @@
 # file: kernel.py
 Unknown error!	Невідома помилка!
 Error!	Помилка!
-AD-Hoc commands	AD-Hoc команди
-Current bot rooms	Поточні конференції
-Settings unsuccesfully accepted:\n%s	Не прийняті налаштування:\n%s
-Settings succesfully accepted	Налаштування прийняті успішно
-Settings	Налаштування
-For configure required x:data-compatible client	Для налаштування потрібен x:data-сумісний клієнт
-Unknown configuration request!	Невідомий запит конфігурації
-Warning! Your message are blocked by policy of room!	Увага! Ваше повідомлення заблоковане політикою кімнати!
-Warning! This participant don't want to receive private messages!	Увага! Цей учасник не бажає отримувати приватні повідомлення!
-Messages count overflow from newbie!	Перебільшення кількості повідомленнь від новачка!
-Your messages are blocked %ssec. after first join! Please, wait quiet!	Ваші повідомлення блокуються на протязі %s сек. з першого підключення. Будь ласка, чекайте тихо!
-Blocked by content!	Блокування по вмісту!
-AD-Block!	Блокування реклами
-Raw AD-Block!	Блокування прихованої реклами!
-Repeat message block!	Повідомлення дуже схожі
-Match message block!	Текст повідомлення дублюється
-Blocked by censor!	Блоковано цензором
-Blocked by raw censor!	Блокування прихованого мата цензором!
-Large message%s %s	Велике повідомлення%s %s
-Large message block!	Велике повідомлення заблоковано!
-Deny by validation!	Недопустимий параметр!
-Server %s was banned in %s	Сервер %s забанено в конференції %s
-Deny by node lock!	Заборонено по ноді!
-Deny by hash lock!	Обмеження по хешу клієнта!
-Deny by blacklist!	Обмеження по чорному списку!
-Deny by whitelist!	Обмеження по білому списку
-Large status block!	Блокування довгого статусного повідомлення
-Large nick block!	Блокування довгого ніка
-To many rejoins! Wait %s sec.	Занадто багато спроб входу! Чекайте %s с.
-Status-flood block!	Блокування статус-флуду
 Warning! Exceeded the limit of sending the same commands. You to ignore for %s.	Увага! Перевищено ліміт відправлення однакових команд. Ви в ігнорі %s.
 Room's configuration changed.	Змінено конфігурацію конференції.
 Censored!	Фільтруємо балачки!
@@ -59,6 +29,7 @@ Too many letters!	Забагато літер!
 whitelist	білий список
 lock by hash	блок по хешу
 off	вимк
+Deny by hash lock!	Обмеження по хешу клієнта!
 /me detect bad stanza from %s	/me дивиться на %s і гадає: "Факін розумник детектед!"
 kicked	вигнали
 banned	забанили
@@ -75,6 +46,9 @@ System Shutdown. Trying to restart in %s sec.	Сервер погас. Спро�
 Interface error! Trying to restart in %s sec.	Помилка взаємодії! Перезапуск через %s секунд.
 Critical error! Trying to restart in %s sec.	Критична помилка! Спробую перезавантажитися через %s сек.
 
+# file: plugins/_short_commands.py
+done	виконано
+
 # file: plugins/acl.py
 Acl:	Дії:
 Acl not found	Дії не знайдені
@@ -87,7 +61,6 @@ Removed:	Видалено:
 Updated:	Поновлено:
 Not found:	Не знайдено
 Added:	Додано:
-done	виконано
 You have no rights to do it!	У Вас недостатньо прав для цього!
 ACL cleared. Removed %s action(s).	ACL очищені. Видалено дій: %s
 Actions list.\nacl show - show list\nacl del [/silent] item - remove item from list\nacl [/time] [/silent] msg|prs|role|aff|nick|jid|jidfull|res|age|ver|vcard|all [sub|exp|cexp] pattern command - execute command by condition\nallowed variables in commands: ${NICK}, ${JID}, ${SERVER}, ${EXP} and ${/EXP}\nsub = substring, exp = regular expression, cexp = case sensitive regular expression\ntime format is /number+identificator. s = sec, m = min, d = day, w = week, M = month, y = year. only one identificator allowed!	Список дій.\nacl show - показати список\nacl del [/silent] item - видалити елемент із списку\nacl [/time] [/silent] msg|prs|role|aff|nick|jid|jidfull|res|age|ver|vcard|all [sub|exp|cexp] pattern command - виконати команду за умовою\nдоступні змінні в командах: ${NICK}, ${JID}, ${SERVER}, ${EXP} и ${/EXP}\nsub = підрядок, exp = регулярний вираз, cexp = регістрозалежний регулярний вираз\nформат часу - /число+ідентифікатор. s = секунди, m = хвилини, d = дні, w = тижні, M = місяці, y = роки. можливий тільки один ідентифікатор!
@@ -279,6 +252,13 @@ Removed: %s	Видалено: %s
 Execute command by cron. Used unix-type time format.\ncron [once] [anonim|silent] * * * * *\ncommand	Виконання команди по розкладу. Формат часу аналогічний unix-версії команди. \ncron [once] [anonim|silent] * * * * *\nкоманда
 
 # file: plugins/disco.py
+AD-Hoc commands	AD-Hoc команди
+Current bot rooms	Поточні конференції
+Settings unsuccesfully accepted:\n%s	Не прийняті налаштування:\n%s
+Settings succesfully accepted	Налаштування прийняті успішно
+Settings	Налаштування
+For configure required x:data-compatible client	Для налаштування потрібен x:data-сумісний клієнт
+Unknown configuration request!	Невідомий запит конфігурації
 - Unknown feature: %s	- Невідома фіча: %s
 Software: %s | Version: %s\nOS: %s | Version: %s	ПЗ: %s | Версія: %s\nОС: %s | Версія: %s
 Type: %s	Тип: %s
@@ -1437,6 +1417,30 @@ Change role to participant.	Змінити роль до учасника.
 Revoke voice.	Відібрати голос.
 Grant moderator.	Підвищити роль до модератора
 Global ban. Available only for confernce owner.\nglobal_ban del - remove conference from banlist,\nglobal_ban add - add conference into banlist,\nglobal_ban <jid> - ban jid in all rooms, where bot is admin.	Глобальний бан. Доступний лише власникам конференцій.\nglobal_ban del - видалити конференцію зі списку глобального бану,\nglobal_ban add - додати конференцію в список глобального бану,\nglobal_ban <jid> - забанити jid в усіх конференціях, де бот - адмін.
+
+# file: plugins/mucfilter.py
+Warning! Your message are blocked by policy of room!	Увага! Ваше повідомлення заблоковане політикою кімнати!
+Warning! This participant don't want to receive private messages!	Увага! Цей учасник не бажає отримувати приватні повідомлення!
+Messages count overflow from newbie!	Перебільшення кількості повідомленнь від новачка!
+Your messages are blocked %ssec. after first join! Please, wait quiet!	Ваші повідомлення блокуються на протязі %s сек. з першого підключення. Будь ласка, чекайте тихо!
+Blocked by content!	Блокування по вмісту!
+AD-Block!	Блокування реклами
+Raw AD-Block!	Блокування прихованої реклами!
+Repeat message block!	Повідомлення дуже схожі
+Match message block!	Текст повідомлення дублюється
+Blocked by censor!	Блоковано цензором
+Blocked by raw censor!	Блокування прихованого мата цензором!
+Large message%s %s	Велике повідомлення%s %s
+Large message block!	Велике повідомлення заблоковано!
+Deny by validation!	Недопустимий параметр!
+Server %s was banned in %s	Сервер %s забанено в конференції %s
+Deny by node lock!	Заборонено по ноді!
+Deny by blacklist!	Обмеження по чорному списку!
+Deny by whitelist!	Обмеження по білому списку
+Large status block!	Блокування довгого статусного повідомлення
+Large nick block!	Блокування довгого ніка
+To many rejoins! Wait %s sec.	Занадто багато спроб входу! Чекайте %s с.
+Status-flood block!	Блокування статус-флуду
 
 # file: plugins/net.py
 What do you want to find?	Що ж будемо шукати?

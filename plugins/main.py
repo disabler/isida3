@@ -672,7 +672,28 @@ def bot_rejoin(type, jid, nick, text):
 			text += '_'
 			zz = join(text, passwd)
 		time.sleep(1)
-		if zz != None: send_msg(type, jid, nick, L('Error! %s') % zz)
+		if zz != None:
+			try:
+				send_msg(type, jid, nick, zz['CAPTCHA'])
+				answered, Error = None, None
+				while not answered and not game_over:
+					if is_start:
+						cyc = cl.Process(1)
+						if str(cyc) == 'None': cycles_unused += 1
+						elif int(str(cyc)): cycles_used += 1
+						else: cycles_unused += 1
+					time.sleep(1)
+					for tmp in pres_answer:
+						if tmp[0]==zz['ID']:
+							Error = tmp[1]
+							pres_answer.remove(tmp)
+							answered = True
+							break
+				if Error: send_msg(type, jid, nick, L('Error! %s') % Error)
+				else:
+					cur_execute('delete from conference where room ilike %s;', ('%s/%%'%getRoom(text),))
+					cur_execute('insert into conference values (%s,%s)',(text,passwd))
+			except: send_msg(type, jid, nick, L('Error! %s') % zz)
 		else:
 			cur_execute('delete from conference where room ilike %s;', ('%s/%%'%getRoom(text),))
 			cur_execute('insert into conference values (%s,%s)',(text,passwd))
@@ -686,7 +707,7 @@ def remove_by_half(cb,rm):
 	return cb
 
 def bot_join(type, jid, nick, text):
-	global lastserver, lastnick
+	global lastserver, lastnick, pres_answer
 	text = unicode(text)
 	if not text or ' ' in getRoom(text): send_msg(type, jid, nick, L('Wrong arguments!'))
 	else:
@@ -707,7 +728,28 @@ def bot_join(type, jid, nick, text):
 					time.sleep(1)
 					text += '_'
 					zz = join(text, passwd)
-				if zz != None: send_msg(type, jid, nick, L('Error! %s') % zz)
+				if zz != None:
+					try:
+						send_msg(type, jid, nick, zz['CAPTCHA'])
+						answered, Error = None, None
+						while not answered and not game_over:
+							if is_start:
+								cyc = cl.Process(1)
+								if str(cyc) == 'None': cycles_unused += 1
+								elif int(str(cyc)): cycles_used += 1
+								else: cycles_unused += 1
+							time.sleep(1)
+							for tmp in pres_answer:
+								if tmp[0]==zz['ID']:
+									Error = tmp[1]
+									pres_answer.remove(tmp)
+									answered = True
+									break
+						if Error: send_msg(type, jid, nick, L('Error! %s') % Error)
+						else:
+							cur_execute('insert into conference values (%s,%s)',(text,passwd))
+							send_msg(type, jid, nick, L('Joined to %s') % text)
+					except: send_msg(type, jid, nick, L('Error! %s') % zz)
 				else:
 					cur_execute('insert into conference values (%s,%s)',(text,passwd))
 					send_msg(type, jid, nick, L('Joined to %s') % text)
@@ -718,7 +760,29 @@ def bot_join(type, jid, nick, text):
 					time.sleep(0.1)
 					text += '_'
 					zz = join(text, passwd)
-				if zz != None: send_msg(type, jid, nick, L('Error! %s') % zz)
+				if zz != None:
+					try:
+						send_msg(type, jid, nick, zz['CAPTCHA'])
+						answered, Error = None, None
+						while not answered and not game_over:
+							if is_start:
+								cyc = cl.Process(1)
+								if str(cyc) == 'None': cycles_unused += 1
+								elif int(str(cyc)): cycles_used += 1
+								else: cycles_unused += 1
+							time.sleep(1)
+							for tmp in pres_answer:
+								if tmp[0]==zz['ID']:
+									Error = tmp[1]
+									pres_answer.remove(tmp)
+									answered = True
+									break
+						if Error: send_msg(type, jid, nick, L('Error! %s') % Error)
+						else:
+							cur_execute('delete from conference where room ilike %s;', ('%s/%%'%getRoom(text),))
+							cur_execute('insert into conference values (%s,%s)',(text,passwd))
+							send_msg(type, jid, nick, L('Joined to %s') % text)
+					except: send_msg(type, jid, nick, L('Error! %s') % zz)
 				else:
 					cur_execute('delete from conference where room ilike %s;', ('%s/%%'%getRoom(text),))
 					cur_execute('insert into conference values (%s,%s)',(text,passwd))
@@ -1439,6 +1503,7 @@ config_prefs = {'url_title': [L('Url title is %s'), L('Automatic show title of u
 				'autoturn': [L('Autoturn layout of text is %s'), L('Turn text from one layout to another.'), [True,False], False],
 				'make_stanza_jid_count':[L('Jid\'s per stanza for affiliations in backup is %s'),L('Count of jid\'s per stanza for affiliations change in backup'),None,'100'],
 				'acl_multiaction': [L('ACL multiaction is %s'), L('Execute more than one action per pass in ACL.'), [True,False], False],
+				'paste_xhtml_images': [L('Paste xhtml images %s'), L('Detect and paste xhtml images in messages'), [True,False], True],
 
 				# MUC-Filter messages
 
@@ -1552,7 +1617,8 @@ config_prefs = {'url_title': [L('Url title is %s'), L('Automatic show title of u
 				}
 
 config_group_other = [L('Other settings'),'#room-other',
-				['url_title','parse_define','clear_answer','smiles','autoturn','make_stanza_jid_count','content_length','acl_multiaction'],None]
+				['url_title','parse_define','clear_answer','smiles','autoturn','make_stanza_jid_count','content_length','acl_multiaction',
+				'paste_xhtml_images'],None]
 
 config_group_censor = [L('Censor settings'),'#room-censor',
 				['censor','censor_warning','censor_action_member','censor_action_non_member',

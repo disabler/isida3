@@ -560,8 +560,9 @@ def caps_and_send(tmp):
 	sender(tmp)
 
 def join(conference,passwd):
-	global pres_answer,cycles_used,cycles_unused
+	global pres_answer,cycles_used,cycles_unused,current_join
 	id = get_id()
+	current_join[conference] = id
 	if Settings['status'] == 'online': j = xmpp.Node('presence', {'id': id, 'to': conference}, payload = [xmpp.Node('status', {},[Settings['message']]),\
 																										  xmpp.Node('priority', {},[Settings['priority']])])
 	else: j = xmpp.Node('presence', {'id': id, 'to': conference}, payload = [xmpp.Node('show', {},[Settings['status']]),\
@@ -587,6 +588,10 @@ def join(conference,passwd):
 				pres_answer.remove(tmp)
 				answered = True
 				break
+		if current_join.has_key(conference) and current_join[conference] != id: break
+	if current_join.has_key(conference):
+		if current_join[conference] != id: Error = {'CAPTCHA':current_join[conference],'ID':id}
+		current_join.pop(conference)
 	return Error
 
 def leave(conference, sm):
@@ -834,11 +839,25 @@ def com_parser(access_mode, nowname, type, room, nick, text, jid):
 	return no_comm
 
 def messageCB(sess,mess):
-	global lfrom, lto, lastserver, lastnick, comms, message_in, no_comm, last_hash
+	global lfrom, lto, lastserver, lastnick, comms, message_in, no_comm, last_hash, current_join
 	message_in += 1
 	type=unicode(mess.getType())
 	room=unicode(mess.getFrom().getStripped())
 	text=unicode(mess.getBody())
+	if current_join and room in [getRoom(t) for t in current_join.keys()]:
+		try:
+			tt = {}
+			for t in mess.getTag('captcha',attrs={'xmlns':'urn:xmpp:captcha'}).getTag('x',attrs={'xmlns':'jabber:x:data'}).getTags('field'):
+				tt[t.getAttrs()['var']] = t.getTagData('value')
+			if current_join[tt['from']] == tt['sid']:
+				pprint('*** Captcha: %s' % text)
+				current_join[tt['from']] = text
+			else: current_join.pop(tt['from'])
+		except:
+			for t in current_join.keys():
+				if room == getRoom(t):
+					current_join.pop(t)
+					break
 	try:
 		code = mess.getTag('x',namespace=xmpp.NS_MUC_USER).getTagAttr('status','code')
 		if code == '104':
@@ -927,6 +946,22 @@ def msg_afterwork(mess,room,jid,nick,type,back_text,no_comm,access_mode,nowname)
 		topics[room],nick = subj,''
 		text = subj
 		not_alowed_flood, no_comm = True, False
+
+	# Fetch and store xhtml images!
+	if type == 'groupchat' and get_config(room,'paste_xhtml_images'):
+		try:
+			raw_data = mess.getTag('html',attrs={'xmlns':'http://jabber.org/protocol/xhtml-im'}).getTag('body').getTagAttr('img','src')
+			ext = re.findall('^data:image/(.*?);',raw_data[:32])[0]
+			def unproc(t): return chr(int(t.group(0)[1:],16))
+			img = re.sub('%[0-9A-F]{2}', unproc, raw_data.split('base64,',1)[1]).decode('base64')
+			filename = '%s.%s' % (hex(int(time.time()))[2:],ext)
+			fp = file(pastepath + filename, 'wb')
+			fp.write(img)
+			fp.close()
+			send_msg(type, room, '', L('Fetched xhtml image: %s%s') % (pasteurl,filename))
+			pprint('*** Fetched xhtml image from %s/%s [%s], size %s, file %s' % (room,nick,jid,len(img),pastepath + filename),'cyan')
+		except: pass
+
 	for tmp in gmessage: not_alowed_flood = tmp(room,jid,nick,type,text) or not_alowed_flood
 	if no_comm:
 		for tmp in gactmessage: not_alowed_flood = not_alowed_flood or tmp(room,jid,nick,type,text)
@@ -1410,6 +1445,7 @@ newbie_msg = {}
 messages_excl = []
 rss_processed = False
 database_debug = False
+current_join = {}
 base_type = 'pgsql'     # тип базы: pgsql или mysql
 base_name = 'isidabot'  # название базы
 base_user = 'isidabot'  # пользователь базы
