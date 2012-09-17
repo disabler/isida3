@@ -25,6 +25,7 @@ Warning! Exceeded the limit of sending the same commands. You to ignore for %s.	
 Room's configuration changed.	Змінено конфігурацію конференції.
 Censored!	Фільтруємо балачки!
 *** Topic: %s	*** Тема: %s
+Fetched xhtml image: %s%s	Отримано xhtml-зображення: %s%s
 Too many letters!	Забагато літер!
 whitelist	білий список
 lock by hash	блок по хешу
@@ -46,9 +47,6 @@ System Shutdown. Trying to restart in %s sec.	Сервер погас. Спро�
 Interface error! Trying to restart in %s sec.	Помилка взаємодії! Перезапуск через %s секунд.
 Critical error! Trying to restart in %s sec.	Критична помилка! Спробую перезавантажитися через %s сек.
 
-# file: plugins/_short_commands.py
-done	виконано
-
 # file: plugins/acl.py
 Acl:	Дії:
 Acl not found	Дії не знайдені
@@ -61,6 +59,7 @@ Removed:	Видалено:
 Updated:	Поновлено:
 Not found:	Не знайдено
 Added:	Додано:
+done	виконано
 You have no rights to do it!	У Вас недостатньо прав для цього!
 ACL cleared. Removed %s action(s).	ACL очищені. Видалено дій: %s
 Actions list.\nacl show - show list\nacl del [/silent] item - remove item from list\nacl [/time] [/silent] msg|prs|role|aff|nick|jid|jidfull|res|age|ver|vcard|all [sub|exp|cexp] pattern command - execute command by condition\nallowed variables in commands: ${NICK}, ${JID}, ${SERVER}, ${EXP} and ${/EXP}\nsub = substring, exp = regular expression, cexp = case sensitive regular expression\ntime format is /number+identificator. s = sec, m = min, d = day, w = week, M = month, y = year. only one identificator allowed!	Список дій.\nacl show - показати список\nacl del [/silent] item - видалити елемент із списку\nacl [/time] [/silent] msg|prs|role|aff|nick|jid|jidfull|res|age|ver|vcard|all [sub|exp|cexp] pattern command - виконати команду за умовою\nдоступні змінні в командах: ${NICK}, ${JID}, ${SERVER}, ${EXP} и ${/EXP}\nsub = підрядок, exp = регулярний вираз, cexp = регістрозалежний регулярний вираз\nформат часу - /число+ідентифікатор. s = секунди, m = хвилини, d = дні, w = тижні, M = місяці, y = роки. можливий тільки один ідентифікатор!
@@ -603,6 +602,7 @@ ORG.ORGUNIT	Підрозділ
 GEO.LAT	Широта
 GEO.LON	Довгота
 TITLE	Організація
+PHOTO	Фото
 uptime	аптайм
 seconds	секунд
 users/registered	зареєстровано користувачів
@@ -982,6 +982,7 @@ Local time: %s\n	Місцевий час: %s\n
 \nIq in: %s | out: %s	\nIq вх: %s | вих: %s
 \nUnknown out: %s	\nПомилок вих: %s
 \nCycles used: %s | unused: %s	\nРобочих циклів: %s | холостих: %s
+\nUsed virtual ram: %s, Used real ram: %s	\nПам'ять віртуальна: %s, реальна: %s
 What need find?	Що знайти?
 I see you as %s/%s	Я бачу тебе як %s/%s
 What do you need to find?	Що ж будемо шукати?
@@ -1034,6 +1035,8 @@ Jid's per stanza for affiliations in backup is %s	Кількість Jid'ів в
 Count of jid's per stanza for affiliations change in backup	Количество Jid'ов в станзе смены аффиляции при восстановлении копии конференции. Рекомендації: ejabberd - 200, prosody - 1
 ACL multiaction is %s	Мультидії в ACL %s
 Execute more than one action per pass in ACL.	Виконувати більше однієї дії за один прохід в ACL.
+Paste xhtml images %s	Розміщувати xhtml-зображеняя: %s
+Detect and paste xhtml images in messages	Визначення та розміщення xhtml-зображеннь в повідомленнях
 Muc filter is %s	Muc-фільтр: %s
 Message filter for participants	Фільтр повідомлень для учасників
 Mute newbie %s	Блокувати повідомлення від новачків: %s
@@ -1584,6 +1587,7 @@ Passed!	Дві смужки!
 Check bot activity.	Перевірка на "живість" бота.
 
 # file: plugins/th.py
+\nActive: %s\n%s	\nАктивно: %s\n%s
 Executed threads: %s | Error(s): %s	Виконано тредів: %s | Помилок виконання тредів: %s
 Threads statistic	Статистика роботи тредів
 
