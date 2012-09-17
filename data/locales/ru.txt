@@ -1589,6 +1589,7 @@ Passed!	Две полоски!
 Check bot activity.	Проверка на "живость" бота.
 
 # file: plugins/th.py
+\nActive: %s\n%s	\nАктивно: %s\n%s
 Executed threads: %s | Error(s): %s	Выполнено тредов: %s | Ошибок исполнения тредов: %s
 Threads statistic	Статистика работы тредов
 
