@@ -435,12 +435,25 @@ I ban a ip for such jokes!	Ща зобаню по ip за такі жарти!
 Masochist? 8-D	Самотик? 8-D
 You live %s years or %s days or %s hours or %s minutes or %s seconds.\nYou slept %s hours, or %s days.\nYou blink about %s times.\nYour heart pumped %s liters of blood and made %s strikes.\nYou drank %s liters of water and drank it %s hours.\nYou have increased by %s centimeters in my head of hair, dropped %s pieces, all of the hair %s kilometers.\nYou grew up in the hands %s centimeters and in the feet %s centimeters nails.\nYou breathed %s liters of air a total weight of %s kilograms.\nYou have stood out %s liters of sweat, and %s liters of urine, and %s liters of saliva.\nYou lost %s billion nerve cells.\nYou laughed %s times.\nYou've gone %s kilometers	Ти живеш %s років, або %s днів, або %s годин, або %s хвилин, або %s секунд.\nТи спав(ла) %s годин, або %s діб.\nТи моргнув(ла) приблизно %s разів.\nТвоє серце перекачало %s літрів крові та зробило %s ударів.\nТи випив(ла) %s літрів води і пив(ла) її %s годин.\nУ тебе виросло на голові %s сантиметрів волосся, випало %s штук, все волосся %s кілометрів.\nУ тебе виросло на руках %s сантиметрів і на ногах %s сантиметрів нігтів.\nТи вдихнув(ла) %s літрів повітря загальною вагою %s кілограмів.\nУ тебе виділилося %s літрів поту, %s літрів сечі та %s літрів слини.\nТи втратив(ла) %s мільйонів нервових клітин.\nТи сміявся(лась) %s раз.\nТи прошов(ла) %s кілометрів
 Smoke help about command!	Читаємо довідку по команді!
+Turn on extended API on game's settings	Увімкніть розширений API в налаштуваннях гри
+Name: %s\n	Ім'я: %s\n
+Gold: %s\n	Золото: %s\n
+Level: %s\n	Рівень: %s\n
+Alignment: %s\n	Характер: %s\n
+Motto: %s	Девіз: %s
+\nClan: %s (%s)	\nГільдія: %s (%s)
+\nHealth: %s/%s\n	\nЗдоров'я: %s/%s\n
+Bricks: %s\n	Цеглини: %s\n
+Godpower: %s%%	Прана: %s%%
+Inventory: %s	Інвентар: %s
+User not found	Користувач не знайдений
 Just funny poem	Просто смішний вірш
 Prophecy oracle. Example: oracle your_answer?	Пророцтва оракула. Приклад: oracle ваше_запитання?
 Heads or tails	Орел чи решка
 "Poke" command\npoke nick - say a random phrase for nick\nControls command, available only for bot owner:\npoke show - show list of phrases\npoke add phrase - add phrase\npoke del phrase_number - remove phrase.	Команда "тик"\npoke nick - сказати випадкову фразу nick\nКоманди управління, доступні лише власнику бота:\npoke show - показати список фраз\npoke add фраза - додати фразу\npoke del номер_фрази - видалити фразу
 Info about your life. Example: life dd.mm.yy [hour:min:sec]	Інформація про твоє життя. Приклад: life дд.мм.рр [год:хв:сек]
 Zalgo translate	Залго-транслітерація
+Information about hero from Godville.net.\ngodville [last|stat|extstat|inv|quest] username	Інформація про героя на Godville.net.\ngodville [last|stat|extstat|inv|quest] ім'я_користувача
 
 # file: plugins/gis.py
 Night	Ніч

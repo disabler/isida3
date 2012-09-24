@@ -47,9 +47,6 @@ System Shutdown. Trying to restart in %s sec.	Сервер потух. Попы�
 Interface error! Trying to restart in %s sec.	Ошибка взаимодействия! Перезапуск через %s секунд.
 Critical error! Trying to restart in %s sec.	Критическая ошибка! Попытаюсь перезапуститься через %s сек.
 
-# file: plugins/_short_commands.py
-done	выполнено
-
 # file: plugins/acl.py
 Acl:	Действия:
 Acl not found	Действия не найдены
@@ -62,6 +59,7 @@ Removed:	Удалено:
 Updated:	Обновлено:
 Not found:	Не найдено:
 Added:	Добавлено:
+done	выполнено
 You have no rights to do it!	У Вас недостаточно прав для этого!
 ACL cleared. Removed %s action(s).	ACL очищены. Удалено действий: %s
 Actions list.\nacl show - show list\nacl del [/silent] item - remove item from list\nacl [/time] [/silent] msg|prs|role|aff|nick|jid|jidfull|res|age|ver|vcard|all [sub|exp|cexp] pattern command - execute command by condition\nallowed variables in commands: ${NICK}, ${JID}, ${SERVER}, ${EXP} and ${/EXP}\nsub = substring, exp = regular expression, cexp = case sensitive regular expression\ntime format is /number+identificator. s = sec, m = min, d = day, w = week, M = month, y = year. only one identificator allowed!	Список действий.\nacl show - показать список\nacl del [/silent] item - удалить элемент из списка\nacl [/time] [/silent] msg|prs|role|aff|nick|jid|jidfull|res|age|ver|vcard|all [sub|exp|cexp] pattern command - выполнить команду по условию\nдоступны переменные в командах: ${NICK}, ${JID}, ${SERVER}, ${EXP} и ${/EXP}\nsub = подстрока, exp = регулярное выражение, cexp = регистрозависимое регулярное выражение\nформат времени - /число+идентификатор. s = секунды, m = минуты, d = дни, w = недели, M = месяцы, y = годы. допустим только один идентификатор!
@@ -437,12 +435,25 @@ I ban a ip for such jokes!	Ща зобаню по ip за такие шутки!
 Masochist? 8-D	Самотык? 8-D
 You live %s years or %s days or %s hours or %s minutes or %s seconds.\nYou slept %s hours, or %s days.\nYou blink about %s times.\nYour heart pumped %s liters of blood and made %s strikes.\nYou drank %s liters of water and drank it %s hours.\nYou have increased by %s centimeters in my head of hair, dropped %s pieces, all of the hair %s kilometers.\nYou grew up in the hands %s centimeters and in the feet %s centimeters nails.\nYou breathed %s liters of air a total weight of %s kilograms.\nYou have stood out %s liters of sweat, and %s liters of urine, and %s liters of saliva.\nYou lost %s billion nerve cells.\nYou laughed %s times.\nYou've gone %s kilometers	Ты живешь %s лет, или %s дней, или %s часов, или %s минут, или %s секунд.\nТы спал(а) %s часов, или %s суток.\nТы моргнул(а) примерно %s раз.\nТвоё сердце перекачало %s литров крови и сделало %s ударов.\nТы выпил(а) %s литров воды и пил(а) её %s часов.\nУ тебя выросло на голове %s сантиметров волос, выпало %s штук, все волосы %s километров.\nУ тебя выросло на руках %s сантиметров и на ногах %s сантиметров ногтей.\nТы вдохнул(а) %s литров воздуха общим весом %s килограммов.\nУ тебя выделилось %s литров пота, %s литров мочи и %s литров слюны.\nТы потерял(а) %s миллионов нервных клеток.\nТы смеялся(лась) %s раз.\nТы прошёл(ла) %s километров
 Smoke help about command!	Курим помощь по команде!
+Turn on extended API on game's settings	Включите расширенный API в настройках игрі
+Name: %s\n	Имя: %s\n
+Gold: %s\n	Золото: %s\n
+Level: %s\n	Уровень: %s\n
+Alignment: %s\n	Характер: %s\n
+Motto: %s	Девиз: %s
+\nClan: %s (%s)	\nГильдия: %s (%s)
+\nHealth: %s/%s\n	\nЗдоровье: %s/%s\n
+Bricks: %s\n	Кирпичи: %s\n
+Godpower: %s%%	Прана: %s%%
+Inventory: %s	Инвентарь: %s
+User not found	Пользователь не найден
 Just funny poem	Просто смешное стихотворение
 Prophecy oracle. Example: oracle your_answer?	Предсказания оракула. Пример: oracle ваш_вопрос?
 Heads or tails	Орёл или решка
 "Poke" command\npoke nick - say a random phrase for nick\nControls command, available only for bot owner:\npoke show - show list of phrases\npoke add phrase - add phrase\npoke del phrase_number - remove phrase.	Команда "тык"\npoke nick - сказать случайную фразу nick\nКоманды управления, доступные только владельцу бота:\npoke show - показать список фраз\npoke add фраза - добавить фразу\npoke del номер_фразы - удалить фразу
 Info about your life. Example: life dd.mm.yy [hour:min:sec]	Информация о твоей жизни. Пример: life дд.мм.гг [час:мин:сек]
 Zalgo translate	Залго-транслитерация
+Information about hero from Godville.net.\ngodville [last|stat|extstat|inv|quest] username	Информация о герое на Godville.net.\ngodville [last|stat|extstat|inv|quest] имя_пользователя
 
 # file: plugins/gis.py
 Night	Ночь
