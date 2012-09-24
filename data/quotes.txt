@@ -3,10 +3,10 @@
     "random": ["http://ithappens.ru/random", "<p class=&quot;text&quot; id=&quot;story_\\d+?&quot;>((?:.|\\s)+?)</p>"],
     "number": ["http://ithappens.ru/story/%s", "<p class=&quot;text&quot; id=&quot;story_\\d+?&quot;>((?:.|\\s)+?)</p>"]},
 "bash":
-    {"title": "bash.org.ru - Цитатник Рунета",
-    "random": ["http://bash.org.ru/random", "<div class=&quot;text&quot;>((?:.|\\s)+?)</div>"],
-    "number": ["http://bash.org.ru/quote/%s", "<div class=&quot;text&quot;>((?:.|\\s)+?)</div>"],
-    "search": ["http://bash.org.ru/?text=%s", "<div class=&quot;text&quot;>((?:.|\\s)+?)</div>", "cp1251"]},
+    {"title": "bash.im - Цитатник Рунета",
+    "random": ["http://bash.im/random", "<div class=&quot;text&quot;>((?:.|\\s)+?)</div>"],
+    "number": ["http://bash.im/quote/%s", "<div class=&quot;text&quot;>((?:.|\\s)+?)</div>"],
+    "search": ["http://bash.im/?text=%s", "<div class=&quot;text&quot;>((?:.|\\s)+?)</div>", "cp1251"]},
 "ibash":
     {"title": "ibash.org.ru — Новый цитатник Рунета",
     "random": ["http://ibash.org.ru/random.php", "<div class=&quot;quotbody&quot;>((?:.|\\s)+?)</div>"],
@@ -38,7 +38,7 @@
 "det":
     {"title": "Говорят дети",
     "random": ["http://det.org.ru/?page=random", "<div class=&quot;history&quot;>((?:.|\\s)+?)</div>"],
-    "number": ["http://det.org.ru/?quote=%s", "<div class=&quot;history&quot;>((?:.|\\s)+?)</div>"],
+    "number": ["http://det.org.ru/?quote=%s", "<div class=&quot;history&quot;>((?:.|\\s)*?)</div>"],
     "search": ["http://det.org.ru/?page=find&query=%s", "<div class=&quot;history&quot;>((?:.|\\s)+?)</div>", "cp1251"]},
 "afor":
     {"title": "Юмор: афоризмы о юморе и юмористические высказывания",

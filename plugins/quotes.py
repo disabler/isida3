@@ -50,6 +50,8 @@ def quote(type, jid, nick, text):
             body = html_encode(load_page(url))
             message = re.search(unescape(quotes_list[tmp[0]]['number'][1]), body).group(1)
             msg = unhtml(message)
+            if not msg:
+                msg = L('Can\'t searching quote by number!')
         except:
             msg = L('Can\'t searching quote by number!')
     elif len(tmp) > 1 and quotes_list.has_key(tmp[0]) and quotes_list[tmp[0]].has_key('search'):
