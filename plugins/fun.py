@@ -202,6 +202,45 @@ def zalgo(type, jid, nick, text):
 	msg = random.choice(zalgo_chars).join(zalgoized)
 	send_msg(type,jid,nick,msg)
 
+def godville(type, jid, nick, text):
+	text = text.strip()
+	if ' ' in text:
+		mode, name = text.split(' ', 1)
+	else:
+		mode, name = 'last', text
+	if not mode in ['stat', 'extstat', 'last', 'inv', 'quest']:
+		mode, name = 'last', text
+	data = load_page('http://godville.net/gods/api/%s.json' % name.encode('utf-8'))
+	try:
+		data = json.loads(data)
+		if mode == 'last':
+			try:
+				msg = '%s: %s' % (data['name'], data['diary_last'])
+			except:
+				msg = L('Turn on extended API on game\'s settings')
+		elif mode in ['stat', 'extstat']:
+			msg = L('Name: %s\n') % data['name']
+			msg += L('Gold: %s\n') % data['gold_approx']
+			msg += L('Level: %s\n') % data['level']
+			msg += L('Alignment: %s\n') % data['alignment']
+			msg += L('Motto: %s') % data['motto']
+			if data['clan']:
+				msg += L('\nClan: %s (%s)') % (data['clan'], data['clan_position'])
+			if mode == 'extstat' and 'godpower' in data:
+				msg += L('\nHealth: %s/%s\n') % (data['health'], data['max_health'])
+				msg += L('Bricks: %s\n') % data['bricks_cnt']
+				msg += L('Godpower: %s%%') % data['godpower']
+		elif mode == 'inv':
+			if data['inventory']:
+				msg = L('Inventory: %s') % ', '.join(data['inventory'].keys())
+			else:
+				msg = L('Inventory: %s') % L('Not found!')
+		elif mode == 'quest':
+			msg = '%s: %s' % (data['name'], data['quest'])
+	except:
+		msg = L('User not found')
+	send_msg(type,jid,nick,msg)
+	
 global execute
 
 execute = [(3, 'poem', poem, 1, L('Just funny poem')),
@@ -209,4 +248,5 @@ execute = [(3, 'poem', poem, 1, L('Just funny poem')),
 		(3, 'coin', coin, 2, L('Heads or tails')),
 		(3, 'poke', to_poke, 2, L('"Poke" command\npoke nick - say a random phrase for nick\nControls command, available only for bot owner:\npoke show - show list of phrases\npoke add phrase - add phrase\npoke del phrase_number - remove phrase.')),
 		(3, 'life', life, 2, L('Info about your life. Example: life dd.mm.yy [hour:min:sec]')),
-		(3, 'zalgo', zalgo, 2, L('Zalgo translate'))]
+		(3, 'zalgo', zalgo, 2, L('Zalgo translate')),
+		(3, 'godville', godville, 2, L('Information about hero from Godville.net.\ngodville [last|stat|extstat|inv|quest] username'))]
