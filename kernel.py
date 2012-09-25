@@ -193,6 +193,25 @@ def log_execute(proc, params):
 	except SystemExit: pass
 	except: logging.exception(' [%s] %s' % (timeadd(tuple(time.localtime())),unicode(proc)))
 
+def sender(item):
+	global message_out, presence_out, iq_out, unknown_out, last_stanza, messages_log
+	last_stanza = unicode(item)
+	i_name = item.name
+	if i_name == 'message':
+		message_out += 1
+		id = get_id()
+		item.setAttr('id',id)
+		messages_log[id] = item
+	elif i_name == 'presence': presence_out += 1
+	elif i_name == 'iq': iq_out += 1
+	else: unknown_out += 1
+	try: cl.send(item)
+	except Exception,SM:
+		pprint(last_stanza,'red')
+		pprint(SM,'red')
+		if halt_on_exception: raise
+
+'''
 def send_count(item):
 	global message_out, presence_out, iq_out, unknown_out, last_stanza
 	last_stanza = unicode(item)
@@ -206,6 +225,7 @@ def send_count(item):
 		pprint(SM,'red')
 		if halt_on_exception: raise
 
+# Send item when stack is empty or append to stack
 def sender(item):
 	global last_stream
 	if last_stream != []: last_stream.append(item)
@@ -213,19 +233,17 @@ def sender(item):
 		time.sleep(time_nolimit)
 		send_count(item)
 
-'''
 def sender(item):
 	time.sleep(time_nolimit)
 	send_count(item)
-'''
 
-'''def sender(item):
+def sender(item):
 	global last_sender_activity
 	while time.time() - last_sender_activity < time_nolimit: time.sleep(time_nolimit)
 	last_sender_activity = time.time()
 	send_count(item)
-'''
 
+# Send messages from stack
 def sender_stack():
 	global last_stream
 	last_item = {}
@@ -234,17 +252,20 @@ def sender_stack():
 			time_tmp = time.time()
 			tmp = last_stream[0]
 			u_tmp = unicode(tmp)
-			to_tmp = get_tag(u_tmp,'to')
-			type_tmp = get_tag(u_tmp,'type')
-			if type_tmp == 'groupchat':
-				time_diff = time_tmp - last_item[to_tmp]
-				last_item[to_tmp] == time_tmp
-				if time_diff < time_limit: time.sleep(time_limit - time_diff)
-				else: time.sleep(time_limit)
+			if u_tmp[:2] == '<m':
+				to_tmp = get_tag(u_tmp,'to')
+				type_tmp = get_tag(u_tmp,'type')
+				if type_tmp == 'groupchat':
+					time_diff = time_tmp - last_item[to_tmp]
+					last_item[to_tmp] == time_tmp
+					if time_diff < time_limit: time.sleep(time_limit - time_diff)
+					else: time.sleep(time_limit)
+				else: time.sleep(time_nolimit)
 			else: time.sleep(time_nolimit)
 			last_stream = last_stream[1:]
 			send_count(tmp)
 		else: time.sleep(1)
+'''
 
 def readfile(filename):
 	fp = file(filename)
@@ -472,6 +493,7 @@ def send_msg(mtype, mjid, mnick, mmessage):
 	if mmessage:
 		mmessage = message_validate(mmessage)
 		mnick = message_validate(mnick)
+		'''
 		while True:
 			try: lm = between_msg_last[mjid]
 			except: between_msg_last[mjid],lm = 0,0
@@ -479,6 +501,7 @@ def send_msg(mtype, mjid, mnick, mmessage):
 			if lm and tt-lm < time_limit: time.sleep(tt-lm)
 			if between_msg_last[mjid]+time_limit <= time.time(): break
 		between_msg_last[mjid] = time.time()
+		'''
 		# 1st april joke :)
 		if time.localtime()[1:3] == (4,1) and GT('1st_april_joke'): mmessage = get_joke(mmessage)
 		no_send = True
@@ -491,7 +514,7 @@ def send_msg(mtype, mjid, mnick, mmessage):
 				cnt += 1
 				sender(xmpp.Message('%s/%s' % (mjid,mnick), tmsg, 'chat'))
 				mmsg = mmsg[msg_limit:]
-				time.sleep(1)
+				time.sleep(time_limit)
 			tmsg = '[%s/%s] %s' % (cnt+1,maxcnt,mmsg)
 			sender(xmpp.Message('%s/%s' % (mjid,mnick), tmsg, 'chat'))
 			if mtype == 'chat': no_send = None
@@ -844,6 +867,14 @@ def messageCB(sess,mess):
 	type=unicode(mess.getType())
 	room=unicode(mess.getFrom().getStripped())
 	text=unicode(mess.getBody())
+	id = mess.getID()
+	try: was_send = messages_log.pop(id)
+	except: was_send = None
+	if was_send and type == 'error' and mess.getTag('error',attrs={'code':'500','type':'wait'}):
+		time.sleep(time_limit)
+		sender(was_send)
+		return
+
 	if current_join and room in [getRoom(t) for t in current_join.keys()]:
 		try:
 			tt = {}
@@ -1273,7 +1304,7 @@ def now_schedule():
 			time.sleep(1)
 		if not game_over:
 			for tmp in gtimer:
-				if not game_over: thr(tmp,(),'time_thread_%s' % tmp)
+				if not game_over: thr(tmp,(),('time_thread_%s' % tmp).split(' ',2)[1])
 
 def check_rss():
 	global rss_processed
@@ -1403,8 +1434,9 @@ thread_error_count = 0				# счётчик ошибок тредов
 bot_exit_type = None				# причина завершения бота
 last_stream = []					# очередь станз к отправке
 last_command = []					# последняя исполненная ботом команда
+messages_log = {}					# лог отправленных сообщений
 thread_type = True					# тип тредов
-time_limit = 1.1					# максимальная задержка между посылкой станз с одинаковым типом в groupchat
+time_limit = 0.5					# максимальная задержка между посылкой станз с одинаковым типом в groupchat
 time_nolimit = 0.1					# задержка между посылкой станз с разными типами
 message_in,message_out = 0,0		# статистика сообщений
 iq_in,iq_out = 0,0					# статистика iq запросов
@@ -1685,7 +1717,7 @@ else:
 pprint('Wait conference','yellow')
 time.sleep(0.5)
 game_over = None
-thr(sender_stack,(),'sender')
+#thr(sender_stack,(),'sender')
 thr(remove_ignore,(),'ddos_remove')
 cb = []
 is_start = True
