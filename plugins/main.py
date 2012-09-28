@@ -1266,7 +1266,7 @@ def rss(type, jid, nick, text):
 			send_msg(type, jid, nick, L('Mode %s not detected!') % text[3])
 			return
 		link = text[1]
-		if not re.finadll('^http(s?)://',link[:10]): link = 'http://%s' % link
+		if not re.findall('^http(s?)://',link[:10]): link = 'http://%s' % link
 		cur_execute('delete from feed where room=%s and url=%s;',(jid,link))
 		timetype = text[2][-1:].lower()
 		if not timetype in ('h','m'): timetype = 'h'
@@ -1279,7 +1279,7 @@ def rss(type, jid, nick, text):
 		rss(type, jid, nick, 'get %s 1 %s' % (link,text[3]))
 	elif mode == 'del':
 		link = text[1]
-		if not re.finadll('^http(s?)://',link[:10]): link = 'http://%s' % link
+		if not re.findall('^http(s?)://',link[:10]): link = 'http://%s' % link
 		msg = L('Can\'t find in schedule: %s') % link
 		fdb = cur_execute_fetchall('select * from feed where room=%s and url=%s;',(jid,link))
 		if fdb:
@@ -1287,7 +1287,7 @@ def rss(type, jid, nick, text):
 			msg = L('Delete feed from schedule: %s') % link
 	elif mode in ['new','get']:
 		link = text[1]
-		if not re.finadll('^http(s?)://',link[:10]): link = 'http://%s' % link
+		if not re.findall('^http(s?)://',link[:10]): link = 'http://%s' % link
 		try:
 			req = urllib2.Request(link.encode('utf-8'))
 			req.add_header('User-Agent',GT('user_agent'))

@@ -87,7 +87,7 @@ def gdict(type, jid, nick, text):
 
 def goo_gl_raw(text, is_qr):
 	url = text.strip().encode('utf-8')
-	if not re.finadll('^http(s?)://',url[:10]) and not is_qr: url = 'http://' + url
+	if not re.findall('^http(s?)://',url[:10]) and not is_qr: url = 'http://' + url
 	if is_qr: regex = 'http://goo\.gl/[a-zA-Z0-9]+?\.qr\Z'
 	else: regex = 'http://goo\.gl/[a-zA-Z0-9]+?\Z'
 	if not url: msg = L('What?')
