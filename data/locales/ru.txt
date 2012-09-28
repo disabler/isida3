@@ -1169,7 +1169,7 @@ Validate caps version	Проверка версии в капсе
 Count of invalid items %s	Количество некорректных элементов %s
 Count of invalid items for action	Количество некорректных элементов для действия
 Exception for ban servers %s	Исключение серверов для бана %s
-Jid's for servers ban notify %s	Jid'ы для нотификаций о бане серверов
+Jid's for servers ban notify %s	Jid'ы для нотификаций о бане серверов %s
 Bomb. Allow take a bomb %s	Bomb. Разрешить раздачу бомб: %s
 Allow take a bomb in current conference	Разрешить раздачу бомб в текущей конференции
 Bomb. Allow random unexplosive bombs %s	Bomb. Иногда не взрывать бомбы %s
