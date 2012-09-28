@@ -196,14 +196,13 @@ def log_execute(proc, params):
 def sender(item):
 	global message_out, presence_out, iq_out, unknown_out, last_stanza, messages_log
 	last_stanza = unicode(item)
-	i_name = item.name
-	if i_name == 'message':
+	if last_stanza[:2] == '<m':
 		message_out += 1
 		id = get_id()
 		item.setAttr('id',id)
 		messages_log[id] = item
-	elif i_name == 'presence': presence_out += 1
-	elif i_name == 'iq': iq_out += 1
+	elif last_stanza[:2] == '<p': presence_out += 1
+	elif last_stanza[:2] == '<i': iq_out += 1
 	else: unknown_out += 1
 	try: cl.send(item)
 	except Exception,SM:
