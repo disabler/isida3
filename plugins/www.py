@@ -30,7 +30,7 @@ url_watch_ignore = ['pdf','sig','spl','class','ps','torrent','dvi','gz','pac','s
 
 def rss_search(type, jid, nick, text):
 	if text:
-		if '://' not in text[:10]: text = 'http://%s' % text
+		if not re.finadll('^http(s?)://',text[:10]): text = 'http://%s' % text
 		text = enidna(text).decode('utf-8')
 		msg, result = get_opener(text)
 		if result:
@@ -62,7 +62,7 @@ def rss_search(type, jid, nick, text):
 def www_isdown(type, jid, nick, text):
 	text = text.strip().lower()
 	if text:
-		if '://' not in text[:10]: text = 'http://%s' % text
+		if not re.finadll('^http(s?)://',text[:10]) not in text[:10]: text = 'http://%s' % text
 		_,result = get_opener(enidna(text).decode('utf-8'))
 		if result: msg = L('It\'s just you. %s is up.') % text
 		else: msg = L('It\'s not just you! %s looks down from here.') % text
@@ -75,7 +75,7 @@ def netheader(type, jid, nick, text):
 			regex = text.split('\n')[0].replace('*','*?')
 			text = text.split('\n')[1]
 		except: regex = None
-		if '://' not in text[:10]: text = 'http://%s' % text
+		if not re.finadll('^http(s?)://',text[:10]) not in text[:10]: text = 'http://%s' % text
 		text = enidna(text).decode('utf-8')
 		body, result = get_opener(text)
 		if result: body = '%s\n%s' %(text.decode('utf-8'),unicode(body.headers))
@@ -95,7 +95,7 @@ def netwww(type, jid, nick, text):
 			regex = text.split('\n')[0].replace('*','*?')
 			text = text.split('\n')[1]
 		except: regex = None
-		if '://' not in text[:10]: text = 'http://%s' % text
+		if not re.finadll('^http(s?)://',text[:10]): text = 'http://%s' % text
 		text = enidna(text).decode('utf-8')
 		msg, result = get_opener(text)
 		if result:
