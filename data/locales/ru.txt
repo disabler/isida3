@@ -21,6 +21,7 @@
 # file: kernel.py
 Unknown error!	Неизвестная ошибка!
 Error!	Ошибка!
+Got a fake iq answer!	Получен фальшивый ответ на запрос!
 Warning! Exceeded the limit of sending the same commands. You to ignore for %s.	Внимание! Превышен лимит отправки одинаковых команд. Вы в игноре %s.
 Room's configuration changed.	Изменена конфигурация конференции.
 Censored!	Фильтруем базар!

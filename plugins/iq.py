@@ -108,7 +108,7 @@ def iq_vcard(type, jid, nick, text):
 	else: args = ''
 	who,iqid = get_who_iq(text,jid,nick),get_id()
 	i = xmpp.Node('iq', {'id': iqid, 'type': 'get', 'to':who}, payload = [xmpp.Node('vCard', {'xmlns': xmpp.NS_VCARD},[])])
-	iq_request[iqid]=(time.time(),vcard_async,[type, jid, nick, text, args])
+	iq_request[iqid]=(time.time(),vcard_async,[type, jid, nick, text, args],xmpp.NS_VCARD)
 	sender(i)
 
 def get_value_from_array2(a,v):
@@ -170,7 +170,7 @@ def iq_uptime(type, jid, nick, text):
 	global iq_request
 	who,iqid = get_who_iq(text,jid,nick),get_id()
 	i = xmpp.Node('iq', {'id': iqid, 'type': 'get', 'to':who}, payload = [xmpp.Node('query', {'xmlns': xmpp.NS_LAST},[])])
-	iq_request[iqid]=(time.time(),uptime_async,[type, jid, nick, text])
+	iq_request[iqid]=(time.time(),uptime_async,[type, jid, nick, text],xmpp.NS_LAST)
 	sender(i)
 
 def uptime_async(type, jid, nick, text, is_answ):
@@ -186,14 +186,14 @@ def urn_ping(type, jid, nick, text):
 	global iq_request
 	who,iqid = get_who_iq(text,jid,nick),get_id()
 	i = xmpp.Node('iq', {'id': iqid, 'type': 'get', 'to':who}, payload = [xmpp.Node('ping', {'xmlns': xmpp.NS_URN_PING},[])])
-	iq_request[iqid]=(time.time(),ping_async,[type, jid, nick, text])
+	iq_request[iqid]=(time.time(),ping_async,[type, jid, nick, text],xmpp.NS_URN_PING)
 	sender(i)
 
 def ping(type, jid, nick, text):
 	global iq_request
 	who,iqid = get_who_iq(text,jid,nick),get_id()
 	i = xmpp.Node('iq', {'id': iqid, 'type': 'get', 'to':who}, payload = [xmpp.Node('query', {'xmlns': xmpp.NS_VERSION},[])])
-	iq_request[iqid]=(time.time(),ping_async,[type, jid, nick, text])
+	iq_request[iqid]=(time.time(),ping_async,[type, jid, nick, text],xmpp.NS_VERSION)
 	sender(i)
 
 def ping_async(type, jid, nick, text, is_answ):
@@ -220,7 +220,7 @@ def iq_time_get(type, jid, nick, text, mode):
 	global iq_request
 	who,iqid = get_who_iq(text,jid,nick),get_id()
 	i = xmpp.Node('iq', {'id': iqid, 'type': 'get', 'to':who}, payload = [xmpp.Node('query', {'xmlns': xmpp.NS_TIME},[])])
-	iq_request[iqid]=(time.time(),time_async,[type, jid, nick, text, mode])
+	iq_request[iqid]=(time.time(),time_async,[type, jid, nick, text, mode],xmpp.NS_TIME)
 	sender(i)
 
 def time_async(type, jid, nick, text, mode, is_answ):
@@ -241,7 +241,7 @@ def iq_utime_get(type, jid, nick, text, mode):
 	global iq_request
 	who,iqid = get_who_iq(text,jid,nick),get_id()
 	i = xmpp.Node('iq', {'id': iqid, 'type': 'get', 'to':who}, payload = [xmpp.Node('time', {'xmlns': xmpp.NS_URN_TIME},[])])
-	iq_request[iqid]=(time.time(),utime_async,[type, jid, nick, text, mode])
+	iq_request[iqid]=(time.time(),utime_async,[type, jid, nick, text, mode],xmpp.NS_URN_TIME)
 	sender(i)
 
 def utime_async(type, jid, nick, text, mode, is_answ):
@@ -264,13 +264,11 @@ def iq_version_raw(type, jid, nick, text, with_caps):
 	global iq_request
 	who,iqid = get_who_iq(text,jid,nick),get_id()
 	i = xmpp.Node('iq', {'id': iqid, 'type': 'get', 'to':who}, payload = [xmpp.Node('query', {'xmlns': xmpp.NS_VERSION},[])])
-	iq_request[iqid]=(time.time(),version_async,[type, jid, nick, text, with_caps])
+	iq_request[iqid]=(time.time(),version_async,[type, jid, nick, text, with_caps],xmpp.NS_VERSION)
 	sender(i)
 
 def version_async(type, jid, nick, text, with_caps, is_answ):
-	isa = is_answ[1]
-	if len(isa) == 3: msg = '%s %s // %s' % isa
-	else: msg = ' '.join(isa)
+	msg = is_answ[1][0]
 	if with_caps:
 		caps = get_caps(jid,[text,nick][text == ''])
 		if caps: msg += ' || %s' % caps
@@ -283,7 +281,7 @@ def iq_stats(type, jid, nick, text):
 		return
 	iqid = get_id()
 	i = xmpp.Node('iq', {'id': iqid, 'type': 'get', 'to':text}, payload = [xmpp.Node('query', {'xmlns': xmpp.NS_STATS},[])])
-	iq_request[iqid]=(time.time(),stats_async_features,[type, jid, nick, text])
+	iq_request[iqid]=(time.time(),stats_async_features,[type, jid, nick, text],xmpp.NS_STATS)
 	sender(i)
 
 def stats_async_features(type, jid, nick, text, is_answ):
@@ -295,7 +293,7 @@ def stats_async_features(type, jid, nick, text, is_answ):
 		if stats_list:
 			iqid = get_id()
 			i = xmpp.Node('iq', {'id': iqid, 'type': 'get', 'to':text}, payload = [xmpp.Node('query', {'xmlns': xmpp.NS_STATS},[xmpp.Node('stat', {'name':t},[]) for t in stats_list])])
-			iq_request[iqid]=(time.time(),stats_async,[type, jid, nick, text])
+			iq_request[iqid]=(time.time(),stats_async,[type, jid, nick, text],xmpp.NS_STATS)
 			sender(i)
 		else: send_msg(type, jid, nick, L('Unavailable!'))
 

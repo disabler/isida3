@@ -27,7 +27,7 @@ def getMucItems(jid,affil,ns,back_id):
 	iqid = get_id()
 	if ns == xmpp.NS_MUC_ADMIN: i = xmpp.Node('iq', {'id': iqid, 'type': 'get', 'to':getRoom(jid)}, payload = [xmpp.Node('query', {'xmlns': xmpp.NS_MUC_ADMIN},[xmpp.Node('item',{'affiliation':affil})])])
 	else: i = xmpp.Node('iq', {'id': iqid, 'type': 'get', 'to':getRoom(jid)}, payload = [xmpp.Node('query', {'xmlns': ns},[])])
-	iq_request[iqid]=(time.time(),getMucItems_async,[ns,affil,back_id])
+	iq_request[iqid]=(time.time(),getMucItems_async,[ns,affil,back_id],ns)
 	sender(i)
 
 def getMucItems_async(ns,affil,back_id,iq_stanza):

@@ -30,7 +30,7 @@ def inlist_raw(type, jid, nick, text, affil, message):
 	global banbase,iq_request
 	iqid = get_id()
 	i = xmpp.Node('iq', {'id': iqid, 'type': 'get', 'to':getRoom(jid)}, payload = [xmpp.Node('query', {'xmlns': xmpp.NS_MUC_ADMIN},[xmpp.Node('item',{'affiliation':affil})])])
-	iq_request[iqid]=(time.time(),inlist_raw_async,[type, jid, nick, text, message])
+	iq_request[iqid]=(time.time(),inlist_raw_async,[type, jid, nick, text, message],xmpp.NS_MUC_ADMIN)
 	sender(i)
 
 def inlist_raw_async(type, jid, nick, text, message, iq_stanza):

@@ -35,7 +35,7 @@ def connect_watch():
 		watch_reset = True
 		iqid = get_id()
 		i = xmpp.Node('iq', {'id': iqid, 'type': 'get', 'to':selfjid}, payload = [xmpp.Node('ping', {'xmlns': xmpp.NS_URN_PING},[])])
-		iq_request[iqid]=(time.time(),watcher_reset,['chat',god,'',''])
+		iq_request[iqid]=(time.time(),watcher_reset,['chat',god,'',''],xmpp.NS_URN_PING)
 		sender(i)
 		to = GT('timeout') - 10
 		if to <= 10: to = 600

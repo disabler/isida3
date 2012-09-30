@@ -31,7 +31,7 @@ url_watch_ignore = ['pdf','sig','spl','class','ps','torrent','dvi','gz','pac','s
 def rss_search(type, jid, nick, text):
 	if text:
 		if not re.findall('^http(s?)://',text[:10]): text = 'http://%s' % text
-		text = enidna(text).decode('utf-8')
+		text = enidna(text)
 		msg, result = get_opener(text)
 		if result:
 			msg = L('Bad url or rss/atom not found!')
@@ -62,8 +62,8 @@ def rss_search(type, jid, nick, text):
 def www_isdown(type, jid, nick, text):
 	text = text.strip().lower()
 	if text:
-		if not re.findall('^http(s?)://',text[:10]) not in text[:10]: text = 'http://%s' % text
-		_,result = get_opener(enidna(text).decode('utf-8'))
+		if not re.findall('^http(s?)://',text[:10]): text = 'http://%s' % text
+		_,result = get_opener(enidna(text))
 		if result: msg = L('It\'s just you. %s is up.') % text
 		else: msg = L('It\'s not just you! %s looks down from here.') % text
 	else: msg = L('What?')
@@ -75,10 +75,9 @@ def netheader(type, jid, nick, text):
 			regex = text.split('\n')[0].replace('*','*?')
 			text = text.split('\n')[1]
 		except: regex = None
-		if not re.findall('^http(s?)://',text[:10]) not in text[:10]: text = 'http://%s' % text
-		text = enidna(text).decode('utf-8')
-		body, result = get_opener(text)
-		if result: body = '%s\n%s' %(text.decode('utf-8'),unicode(body.headers))
+		if not re.findall('^http(s?)://',text[:10]): text = 'http://%s' % text
+		body, result = get_opener(enidna(text))
+		if result: body = '%s\n%s' % (text,unicode(body.headers))
 		if regex:
 			try:
 				mt = re.findall(regex, body, re.S+re.U+re.I)
@@ -96,7 +95,7 @@ def netwww(type, jid, nick, text):
 			text = text.split('\n')[1]
 		except: regex = None
 		if not re.findall('^http(s?)://',text[:10]): text = 'http://%s' % text
-		text = enidna(text).decode('utf-8')
+		text = enidna(text)
 		msg, result = get_opener(text)
 		if result:
 			page = remove_sub_space(html_encode(load_page(text)))
@@ -142,23 +141,26 @@ def parse_url_in_message(room,jid,nick,type,text):
 					send_msg(type, room, '', L('Title: %s') % rss_del_html(rss_replace(text)))
 		except: pass
 	if not was_shown and get_config(getRoom(room),'content_length'):
+		print 1
 		try:
 			link = re.findall(u'(http[s]?://[-0-9a-zа-я.]+\/[-a-zа-я0-9._?#=@%/]+\.[a-z0-9]{2,7})',text,re.I+re.U+re.S)[0]
 			if link and last_url_watch != link and pasteurl not in link:
+				print 2
 				is_file = False
 				ll = link.lower()
 				for t in url_watch_ignore:
 					if ll.endswith('.%s' % t):
 						is_file = True
 						break
+				print 3
 				if is_file:
-					last_url_watch = link = enidna(link)
-					body, result = get_opener(link)
+					last_url_watch = enidna(link)
+					body, result = get_opener(last_url_watch)
 					pprint('Show content length: %s in %s' % (link,room),'white')
 					if result:
 						body = unicode(body.headers)
 						mt = float(re.findall('Content-Length.*?([0-9]+)', body, re.S+re.U+re.I)[0])
-						if mt: send_msg(type, room, '', L('Length of %s is %s') % (u'…/%s' % urllib2.unquote(link.rsplit('/',1)[-1]).decode('utf-8'),get_size_human(mt)))
+						if mt: send_msg(type, room, '', L('Length of %s is %s') % (u'…/%s' % urllib2.unquote(link.rsplit('/',1)[-1]),get_size_human(mt)))
 		except: pass
 
 global execute

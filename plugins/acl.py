@@ -237,7 +237,7 @@ def acl_selector(a,room,jid,nick,mass,was_joined):
 			except:
 				iqid,who = get_id(), '%s/%s' % (room,nick)
 				i = xmpp.Node('iq', {'id': iqid, 'type': 'get', 'to':who}, payload = [xmpp.Node('query', {'xmlns': xmpp.NS_VERSION},[])])
-				iq_request[iqid]=(time.time(),acl_version_async,[a, nick, jid, room, mass[0], lvl])
+				iq_request[iqid]=(time.time(),acl_version_async,[a, nick, jid, room, mass[0], lvl],xmpp.NS_VERSION)
 				sender(i)
 				pprint('*** ACL version request for [%s] %s/%s' % (tmp[5],room,nick),'purple')
 				break
@@ -246,7 +246,7 @@ def acl_selector(a,room,jid,nick,mass,was_joined):
 			except:
 				iqid,who = get_id(), '%s/%s' % (room,nick)
 				i = xmpp.Node('iq', {'id': iqid, 'type': 'get', 'to':who}, payload = [xmpp.Node('vCard', {'xmlns': xmpp.NS_VCARD},[])])
-				iq_request[iqid]=(time.time(),acl_vcard_async,[a, nick, jid, room, mass[0], lvl])
+				iq_request[iqid]=(time.time(),acl_vcard_async,[a, nick, jid, room, mass[0], lvl],xmpp.NS_VCARD)
 				sender(i)
 				pprint('*** ACL vcard request for [%s] %s/%s' % (tmp[5],room,nick),'purple')
 				break
@@ -289,9 +289,7 @@ def acl_selector(a,room,jid,nick,mass,was_joined):
 
 def acl_version_async(a, nick, jid, room, mass, lvl, is_answ):
 	global acl_ver_tmp
-	isa = is_answ[1]
-	if len(isa) == 3: itm = '%s %s // %s' % isa
-	else: itm = ' '.join(isa)
+	itm = is_answ[1][0]
 	acl_ver_tmp['%s/%s' % (room,nick)] = itm.replace('\r','[LF]').replace('\n','[CR]').replace('\t','[TAB]')
 	for tmp in a:
 		if tmp[0] == 'ver' and (tmp[5] == 9 or lvl == tmp[5]):
