@@ -43,7 +43,7 @@ def muc_filter_set(iq,id,room,acclvl,query,towh):
 					body = get_tag(msg,'body')
 
 					# Mute newbie
-					if get_config(gr,'muc_filter_newbie') and msg and not mute:
+					if not mute and msg and get_config(gr,'muc_filter_newbie'):
 						in_base = cur_execute_fetchall('select sum(sum) from (select sum(age) from age where jid=%s and room=%s union all select %s-time from age where jid=%s and room=%s and status=0) as sum_age;',(getRoom(jid),gr,int(time.time()),getRoom(jid),gr))
 						if not in_base: nmute = True
 						else:
@@ -65,7 +65,7 @@ def muc_filter_set(iq,id,room,acclvl,query,towh):
 							mute,mute_reason = True,L('Your messages are blocked %ssec. after first join! Please, wait quiet!') % newbie_time
 
 					# New Line
-					if get_config(gr,'muc_filter_newline_msg') != 'off' and msg and not mute:
+					if not mute and msg and get_config(gr,'muc_filter_newline_msg') != 'off':
 						act = get_config(gr,'muc_filter_newline_msg')
 						try:
 							nline_count = get_config_int(gr,'muc_filter_newline_msg_count')
@@ -82,14 +82,14 @@ def muc_filter_set(iq,id,room,acclvl,query,towh):
 							else: msg = muc_filter_action(act,jid,room,L('Blocked by content!'))
 
 					# Reduce spaces
-					if get_config(gr,'muc_filter_reduce_spaces_msg') and msg and not mute and '  ' in body:
+					if not mute and msg and get_config(gr,'muc_filter_reduce_spaces_msg') and '  ' in body:
 						pprint('MUC-Filter msg reduce spaces: %s [%s] %s' % (jid,room,nick+'|'+body),'brown')
 						body = reduce_spaces_all(body)
 						msg = msg.replace(get_tag_full(msg,'body'),'<body>%s</body>' % body)
 
 					# AD-Block filter
 					need_raw = True
-					if get_config(gr,'muc_filter_adblock') != 'off' and msg and not mute:
+					if not mute and msg and get_config(gr,'muc_filter_adblock') != 'off':
 						f = []
 						for reg in adblock_regexp:
 							tmp = re.findall(reg,body,re.I+re.S+re.U)
@@ -105,7 +105,7 @@ def muc_filter_set(iq,id,room,acclvl,query,towh):
 							else: msg = muc_filter_action(act,jid,room,L('AD-Block!'))
 
 					# Raw AD-Block filter
-					if need_raw and get_config(gr,'muc_filter_adblock_raw') != 'off' and msg and not mute:
+					if not mute and msg and need_raw and get_config(gr,'muc_filter_adblock_raw') != 'off':
 						rawbody = match_for_raw(body,u'[a-zа-я0-9@.]*',gr)
 						if rawbody:
 							f = []
@@ -119,7 +119,7 @@ def muc_filter_set(iq,id,room,acclvl,query,towh):
 								else: msg = muc_filter_action(act,jid,room,L('Raw AD-Block!'))
 
 					# Repeat message filter
-					if get_config(gr,'muc_filter_repeat') != 'off' and msg and not mute:
+					if not mute and msg and get_config(gr,'muc_filter_repeat') != 'off':
 						grj = getRoom(jid)
 						try: lm = last_msg_base[grj]
 						except: lm = None
@@ -145,7 +145,7 @@ def muc_filter_set(iq,id,room,acclvl,query,towh):
 						last_msg_time_base[grj] = time.time()
 
 					# Match filter
-					if get_config(gr,'muc_filter_match') != 'off' and msg and not mute and len(body) >= GT('muc_filter_match_view'):
+					if not mute and msg and get_config(gr,'muc_filter_match') != 'off' and len(body) >= GT('muc_filter_match_view'):
 						tbody,warn_match,warn_space = body.split(),0,0
 						for tmp in tbody:
 							cnt = 0
@@ -161,7 +161,7 @@ def muc_filter_set(iq,id,room,acclvl,query,towh):
 
 					# Censor filter
 					need_raw = True
-					if get_config(gr,'muc_filter_censor') != 'off' and esc_min2(body) != to_censore(esc_min2(body),gr) and msg and not mute:
+					if not mute and msg and get_config(gr,'muc_filter_censor') != 'off' and esc_min2(body) != to_censore(esc_min2(body),gr):
 						act = get_config(gr,'muc_filter_censor')
 						need_raw = False
 						pprint('MUC-Filter msg censor (%s): %s [%s] %s' % (act,jid,room,body),'brown')
@@ -170,7 +170,7 @@ def muc_filter_set(iq,id,room,acclvl,query,towh):
 						else: msg = muc_filter_action(act,jid,room,L('Blocked by censor!'))
 
 					# Raw censor filter
-					if need_raw and get_config(gr,'muc_filter_censor_raw') != 'off' and msg and not mute:
+					if not mute and msg and need_raw and get_config(gr,'muc_filter_censor_raw') != 'off':
 						rawbody = match_for_raw(body,u'[a-zа-я0-9]*',gr)
 						if rawbody and rawbody != to_censore(rawbody,gr):
 							act = get_config(gr,'muc_filter_censor_raw')
@@ -179,7 +179,7 @@ def muc_filter_set(iq,id,room,acclvl,query,towh):
 							else: msg = muc_filter_action(act,jid,room,L('Blocked by raw censor!'))
 
 					# Large message filter
-					if get_config(gr,'muc_filter_large') != 'off' and len(body) > GT('muc_filter_large_message_size') and msg and not mute:
+					if not mute and msg and get_config(gr,'muc_filter_large') != 'off' and len(body) > GT('muc_filter_large_message_size'):
 						act = get_config(gr,'muc_filter_large')
 						pprint('MUC-Filter msg large message (%s): %s [%s] %s' % (act,jid,room,body),'brown')
 						if act == 'paste' or act == 'truncate':
@@ -213,8 +213,16 @@ def muc_filter_set(iq,id,room,acclvl,query,towh):
 						newjoin = False
 						break
 
+				# Drop presences without history
+				if not mute and newjoin and get_config(gr,'muc_filter_history'):
+					try: v = not sum([int(t) for t in msg_xmpp.getTag('presence').getTag('x',attrs={'xmlns':xmpp.NS_MUC}).getTag('history').getAttrs().values()])
+					except: v = False
+					if v:
+						pprint('MUC-Filter history: %s/%s %s' % (gr,nick,jid),'brown')
+						msg,mute = unicode(xmpp.Node('presence', {'from': tojid, 'type': 'error', 'to':jid}, payload = ['replace_it',xmpp.Node('error', {'type': 'auth','code':'403'}, payload=[xmpp.Node('forbidden',{'xmlns':'urn:ietf:params:xml:ns:xmpp-stanzas'},[]),xmpp.Node('text',{'xmlns':'urn:ietf:params:xml:ns:xmpp-stanzas'},[L('Deny by history request!')])])])).replace('replace_it',get_tag(msg,'presence')),True
+
 				# Validate items
-				if get_config(gr,'muc_filter_validate_action') != 'off' and msg and not mute:
+				if not mute and msg and get_config(gr,'muc_filter_validate_action') != 'off':
 					is_valid = True
 					validate_limit = get_config_int(gr,'muc_filter_validate_count')
 					validate_count = 0
@@ -268,7 +276,7 @@ def muc_filter_set(iq,id,room,acclvl,query,towh):
 
 
 				# Lock by caps
-				if get_config(gr,'muc_filter_caps_list') != 'off' and msg and not mute:
+				if not mute and msg and get_config(gr,'muc_filter_caps_list') != 'off':
 					caps_error = False
 					if get_config(gr,'muc_filter_caps_list') == 'white': caps_list,caps_negate = 'muc_filter_caps_white',True
 					else: caps_list,caps_negate = 'muc_filter_caps_black',False
@@ -292,7 +300,7 @@ def muc_filter_set(iq,id,room,acclvl,query,towh):
 					if caps_error: writefile(slog_folder % 'bad_stanza_%s.txt' % int(time.time()),unicode(msg_xmpp).encode('utf-8'))
 
 				# Hash lock
-				if get_config(gr,'muc_filter_deny_hash') and msg and not mute:
+				if not mute and msg and get_config(gr,'muc_filter_deny_hash'):
 					hashes_list = reduce_spaces_all(get_config(gr,'muc_filter_deny_hash_list').replace(',',' ').replace(';',' ').replace('|',' ')).split()
 					if hashes_list:
 						msg_xmpp_tmp = msg_xmpp.getTag('presence')
@@ -350,7 +358,7 @@ def muc_filter_set(iq,id,room,acclvl,query,towh):
 						else: pprint('User hash: %s %s/%s %s' % (current_hash,gr,nick,jid),'white')
 
 				# Blacklist
-				if get_config(gr,'muc_filter_blacklist') and msg and not mute:
+				if not mute and msg and get_config(gr,'muc_filter_blacklist'):
 						bl_jid = get_config(gr,'muc_filter_blacklist_rules_jid')
 						try: re.compile(bl_jid)
 						except: bl_jid = None
@@ -365,7 +373,7 @@ def muc_filter_set(iq,id,room,acclvl,query,towh):
 							msg,mute = unicode(xmpp.Node('presence', {'from': tojid, 'type': 'error', 'to':jid}, payload = ['replace_it',xmpp.Node('error', {'type': 'auth','code':'403'}, payload=[xmpp.Node('forbidden',{'xmlns':'urn:ietf:params:xml:ns:xmpp-stanzas'},[]),xmpp.Node('text',{'xmlns':'urn:ietf:params:xml:ns:xmpp-stanzas'},[L('Deny by blacklist!')])])])).replace('replace_it',get_tag(msg,'presence')),True
 
 				# Whitelist
-				if get_config(gr,'muc_filter_whitelist') and msg and not mute and newjoin:
+				if not mute and msg and get_config(gr,'muc_filter_whitelist') and newjoin:
 					in_base = cur_execute_fetchone('select jid from age where room=%s and jid=%s',(gr,getRoom(jid)))
 					if not in_base:
 						pprint('MUC-Filter whitelist: %s/%s %s' % (gr,nick,jid),'brown')
@@ -373,7 +381,7 @@ def muc_filter_set(iq,id,room,acclvl,query,towh):
 
 				# AD-Block filter
 				need_raw = True
-				if get_config(gr,'muc_filter_adblock_prs') != 'off' and msg and not mute:
+				if not mute and msg and get_config(gr,'muc_filter_adblock_prs') != 'off':
 					fs,fn = [],[]
 					for reg in adblock_regexp:
 						tmps = [None,re.findall(reg,status,re.I+re.S+re.U)][status != '']
@@ -402,7 +410,7 @@ def muc_filter_set(iq,id,room,acclvl,query,towh):
 						else: msg = muc_filter_action(act,jid,room,L('AD-Block!'))
 
 				# Raw AD-Block filter
-				if need_raw and get_config(gr,'muc_filter_adblock_prs_raw') != 'off' and msg and not mute:
+				if not mute and msg and need_raw and get_config(gr,'muc_filter_adblock_prs_raw') != 'off':
 					rawstatus = match_for_raw(status,u'[a-zа-я0-9@.]*',gr)
 					rawnick = match_for_raw(nick,u'[a-zа-я0-9@.]*',gr)
 					fs,fn = [],[]
@@ -425,7 +433,7 @@ def muc_filter_set(iq,id,room,acclvl,query,towh):
 						else: msg = muc_filter_action(act,jid,room,L('Raw AD-Block!'))
 
 				# New Line
-				if get_config(gr,'muc_filter_newline') != 'off' and msg and not mute:
+				if not mute and msg and get_config(gr,'muc_filter_newline') != 'off':
 					act = get_config(gr,'muc_filter_newline')
 					try:
 						nline_count = get_config_int(gr,'muc_filter_newline_count')
@@ -441,7 +449,7 @@ def muc_filter_set(iq,id,room,acclvl,query,towh):
 						else: msg = muc_filter_action(act,jid,room,L('Blocked by content!'))
 
 				# Reduce spaces
-				if get_config(gr,'muc_filter_reduce_spaces_prs') and msg and not mute and ('  ' in status or '  ' in nick):
+				if not mute and msg and get_config(gr,'muc_filter_reduce_spaces_prs') and ('  ' in status or '  ' in nick):
 					pprint('MUC-Filter prs reduce spaces: %s [%s] %s' % (jid,room,nick+'|'+status),'brown')
 					if len(status):
 						status = reduce_spaces_all(status)
@@ -450,7 +458,7 @@ def muc_filter_set(iq,id,room,acclvl,query,towh):
 
 				# Censor filter
 				need_raw = True
-				if get_config(gr,'muc_filter_censor_prs') != 'off' and '%s|%s' % (esc_min2(status),esc_min2(nick)) != to_censore('%s|%s' % (esc_min2(status),esc_min2(nick)),gr) and msg and not mute:
+				if not mute and msg and get_config(gr,'muc_filter_censor_prs') != 'off' and '%s|%s' % (esc_min2(status),esc_min2(nick)) != to_censore('%s|%s' % (esc_min2(status),esc_min2(nick)),gr):
 					act = get_config(gr,'muc_filter_censor_prs')
 					need_raw = False
 					pprint('MUC-Filter prs censor (%s): %s [%s] %s' % (act,jid,room,'%s|%s' % (status,nick)),'brown')
@@ -464,7 +472,7 @@ def muc_filter_set(iq,id,room,acclvl,query,towh):
 					else: msg = muc_filter_action(act,jid,room,L('Blocked by censor!'))
 
 				# Raw censor filter
-				if need_raw and get_config(gr,'muc_filter_censor_prs_raw') != 'off' and msg and not mute:
+				if not mute and msg and need_raw and get_config(gr,'muc_filter_censor_prs_raw') != 'off':
 					rawstatus = match_for_raw(status,u'[a-zа-я0-9]*',gr)
 					rawnick = match_for_raw(nick,u'[a-zа-я0-9]*',gr)
 					if (rawstatus or rawnick) and '%s|%s' % (rawstatus,rawnick) != to_censore('%s|%s' % (rawstatus,rawnick),gr):
@@ -475,7 +483,7 @@ def muc_filter_set(iq,id,room,acclvl,query,towh):
 						else: msg = muc_filter_action(act,jid,room,L('Blocked by raw censor!'))
 
 				# Large status filter
-				if get_config(gr,'muc_filter_large_status') != 'off' and len(esc_min2(status)) > GT('muc_filter_large_status_size') and msg and not mute:
+				if not mute and msg and get_config(gr,'muc_filter_large_status') != 'off' and len(esc_min2(status)) > GT('muc_filter_large_status_size'):
 					act = get_config(gr,'muc_filter_large_status')
 					pprint('MUC-Filter large status (%s): %s [%s] %s' % (act,jid,room,status),'brown')
 					if act == 'truncate': msg = msg.replace(get_tag_full(msg,'status'),u'<status>%s…</status>' % esc_max2(esc_min2(status)[:GT('muc_filter_large_status_size')]))
@@ -484,7 +492,7 @@ def muc_filter_set(iq,id,room,acclvl,query,towh):
 					else: msg = muc_filter_action(act,jid,room,L('Large status block!'))
 
 				# Large nick filter
-				if get_config(gr,'muc_filter_large_nick') != 'off' and len(esc_min2(nick)) > GT('muc_filter_large_nick_size') and msg and not mute:
+				if not mute and msg and get_config(gr,'muc_filter_large_nick') != 'off' and len(esc_min2(nick)) > GT('muc_filter_large_nick_size'):
 					act = get_config(gr,'muc_filter_large_nick')
 					if act == 'truncate': msg = msg.replace(esc_max2(tojid),u'%s/%s…' % (tojid.split('/',1)[0],esc_max2(esc_min2(nick)[:GT('muc_filter_large_nick_size')])))
 					elif newjoin: msg,mute = unicode(xmpp.Node('presence', {'from': tojid, 'type': 'error', 'to':jid}, payload = ['replace_it',xmpp.Node('error', {'type': 'auth','code':'403'}, payload=[xmpp.Node('forbidden',{'xmlns':'urn:ietf:params:xml:ns:xmpp-stanzas'},[]),xmpp.Node('text',{'xmlns':'urn:ietf:params:xml:ns:xmpp-stanzas'},[L('Large nick block!')])])])).replace('replace_it',get_tag(msg,'presence')),True
@@ -492,7 +500,7 @@ def muc_filter_set(iq,id,room,acclvl,query,towh):
 					else: msg = muc_filter_action(act,jid,room,L('Large nick block!'))
 
 				# Rejoin filter
-				if get_config(gr,'muc_filter_rejoin') and msg and not mute and newjoin:
+				if not mute and msg and get_config(gr,'muc_filter_rejoin') and newjoin:
 					ttojid = '%s|%s' % (getRoom(tojid),getRoom(jid))
 					try: muc_rejoins[ttojid] = [muc_rejoins[ttojid],muc_rejoins[ttojid][1:]][len(muc_rejoins[ttojid])==GT('muc_filter_rejoin_count')] + [int(time.time())]
 					except: muc_rejoins[ttojid] = []
@@ -503,7 +511,7 @@ def muc_filter_set(iq,id,room,acclvl,query,towh):
 							pprint('MUC-Filter rejoin: %s [%s] %s' % (jid,room,nick),'brown')
 
 				# Status filter
-				if get_config(gr,'muc_filter_repeat_prs') != 'off' and msg and not mute and not newjoin:
+				if not mute and msg and get_config(gr,'muc_filter_repeat_prs') != 'off' and not newjoin:
 					ttojid = '%s|%s' % (getRoom(tojid),getRoom(jid))
 					try: muc_statuses[ttojid] = [muc_statuses[ttojid],muc_statuses[ttojid][1:]][len(muc_statuses[ttojid])==GT('muc_filter_status_count')] + [int(time.time())]
 					except: muc_statuses[ttojid] = []

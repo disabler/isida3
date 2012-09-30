@@ -47,6 +47,9 @@ System Shutdown. Trying to restart in %s sec.	Сервер погас. Спро�
 Interface error! Trying to restart in %s sec.	Помилка взаємодії! Перезапуск через %s секунд.
 Critical error! Trying to restart in %s sec.	Критична помилка! Спробую перезавантажитися через %s сек.
 
+# file: plugins/_short_commands.py
+done	виконано
+
 # file: plugins/acl.py
 Acl:	Дії:
 Acl not found	Дії не знайдені
@@ -59,7 +62,6 @@ Removed:	Видалено:
 Updated:	Поновлено:
 Not found:	Не знайдено
 Added:	Додано:
-done	виконано
 You have no rights to do it!	У Вас недостатньо прав для цього!
 ACL cleared. Removed %s action(s).	ACL очищені. Видалено дій: %s
 Actions list.\nacl show - show list\nacl del [/silent] item - remove item from list\nacl [/time] [/silent] msg|prs|role|aff|nick|jid|jidfull|res|age|ver|vcard|all [sub|exp|cexp] pattern command - execute command by condition\nallowed variables in commands: ${NICK}, ${JID}, ${SERVER}, ${EXP} and ${/EXP}\nsub = substring, exp = regular expression, cexp = case sensitive regular expression\ntime format is /number+identificator. s = sec, m = min, d = day, w = week, M = month, y = year. only one identificator allowed!	Список дій.\nacl show - показати список\nacl del [/silent] item - видалити елемент із списку\nacl [/time] [/silent] msg|prs|role|aff|nick|jid|jidfull|res|age|ver|vcard|all [sub|exp|cexp] pattern command - виконати команду за умовою\nдоступні змінні в командах: ${NICK}, ${JID}, ${SERVER}, ${EXP} и ${/EXP}\nsub = підрядок, exp = регулярний вираз, cexp = регістрозалежний регулярний вираз\nформат часу - /число+ідентифікатор. s = секунди, m = хвилини, d = дні, w = тижні, M = місяці, y = роки. можливий тільки один ідентифікатор!
