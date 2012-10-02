@@ -141,18 +141,15 @@ def parse_url_in_message(room,jid,nick,type,text):
 					send_msg(type, room, '', L('Title: %s') % rss_del_html(rss_replace(text)))
 		except: pass
 	if not was_shown and get_config(getRoom(room),'content_length'):
-		print 1
 		try:
 			link = re.findall(u'(http[s]?://[-0-9a-zа-я.]+\/[-a-zа-я0-9._?#=@%/]+\.[a-z0-9]{2,7})',text,re.I+re.U+re.S)[0]
 			if link and last_url_watch != link and pasteurl not in link:
-				print 2
 				is_file = False
 				ll = link.lower()
 				for t in url_watch_ignore:
 					if ll.endswith('.%s' % t):
 						is_file = True
 						break
-				print 3
 				if is_file:
 					last_url_watch = enidna(link)
 					body, result = get_opener(last_url_watch)
@@ -160,7 +157,7 @@ def parse_url_in_message(room,jid,nick,type,text):
 					if result:
 						body = unicode(body.headers)
 						mt = float(re.findall('Content-Length.*?([0-9]+)', body, re.S+re.U+re.I)[0])
-						if mt: send_msg(type, room, '', L('Length of %s is %s') % (u'…/%s' % urllib2.unquote(link.rsplit('/',1)[-1]).decode('utf-8'),get_size_human(mt)))
+						if mt: send_msg(type, room, '', L('Length of %s is %s') % (u'…/%s' % urllib2.unquote(last_url_watch.rsplit('/',1)[-1]).decode('utf-8'),get_size_human(mt)))
 		except: pass
 
 global execute
