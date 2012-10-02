@@ -160,7 +160,7 @@ def parse_url_in_message(room,jid,nick,type,text):
 					if result:
 						body = unicode(body.headers)
 						mt = float(re.findall('Content-Length.*?([0-9]+)', body, re.S+re.U+re.I)[0])
-						if mt: send_msg(type, room, '', L('Length of %s is %s') % (u'…/%s' % urllib2.unquote(link.rsplit('/',1)[-1]),get_size_human(mt)))
+						if mt: send_msg(type, room, '', L('Length of %s is %s') % (u'…/%s' % urllib2.unquote(link.rsplit('/',1)[-1]).decode('utf-8'),get_size_human(mt)))
 		except: pass
 
 global execute
