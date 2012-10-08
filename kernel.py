@@ -1238,15 +1238,18 @@ def presenceCB(sess,mess):
 	else: jid2, jid = jid, getRoom(jid.lower())
 	for tmp in gpresence: thr(tmp,(room,jid2,nick,type,(text, role, affiliation, exit_type, exit_message, show, priority, not_found, chg_nick)),'presence_afterwork')
 	al = get_level(getRoom(room),nick)[0]
-	if al == 9:
-		if type == 'subscribe':
+	if type == 'subscribe':
+		if al == 9:
 			caps_and_send(xmpp.Presence(room, 'subscribed'))
 			caps_and_send(xmpp.Presence(room, 'subscribe'))
-			pprint('Subscribe %s' % room,'light_gray')
-		elif type == 'unsubscribed':
+			pprint('Subscribtion accepted %s' % room,'light_gray')
+		else: pprint('Subscribtion rejected %s' % room,'red')
+	elif type == 'unsubscribed':
+		if al == 9:
 			caps_and_send(xmpp.Presence(room, 'unsubscribe'))
 			caps_and_send(xmpp.Presence(room, 'unsubscribed'))
-			pprint('Unsubscribe %s' % room,'light_gray')
+			pprint('Unsubscribtion accepted %s' % room,'light_gray')
+		else: pprint('Unsubscribtion rejected %s' % room,'red')
 	if nick != '' and nick != 'None' and nick != nowname and len(text)>1 and text != 'None' and al >= 0 and get_config(getRoom(room),'censor'):
 		nt = '%s %s' % (nick,text)
 		if nt != to_censore(nt,room):

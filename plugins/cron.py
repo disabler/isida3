@@ -109,7 +109,7 @@ def time_cron_del(jid,nick,ar):
 
 def cron_action():
 	itt = int(time.time())
-	c = cur_execute_fetchall('select * from cron where %s >= time',(itt,))
+	c = cur_execute_fetchall('select distinct * from cron where %s >= time',(itt,))
 	if c:
 		cur_execute('delete from cron where %s >= time',(itt,))
 		for t in c:
