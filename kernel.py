@@ -1461,6 +1461,7 @@ muc_statuses = {}
 muc_repeat = {}
 last_stanza = ''					# последняя станза, посланная ботом
 ENABLE_TLS = True					# принудительное отключение TLS
+ENABLE_SASL = True					# включение SASL
 base_timeout = 20					# таймаут на доступ ко всем базам
 between_msg_last = {}				# время последнего сообщения
 last_sender_activity = time.time()	# время последней отправки
@@ -1700,7 +1701,7 @@ except:
 	pprint('No connection. Restart in %s sec.' % GT('reboot_time'),'red')
 	time.sleep(GT('reboot_time'))
 	sys.exit('restart')
-auth_type = cl.auth(jid.getNode(), Settings['password'], jid.getResource())
+auth_type = cl.auth(jid.getNode(), Settings['password'], jid.getResource(),sasl=ENABLE_SASL)
 if auth_type: pprint('Autheticated via %s' % auth_type.upper(),'yellow')
 else:
 	pprint('Authetication error!','red')
