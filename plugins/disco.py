@@ -736,8 +736,7 @@ def features(type, jid, nick, text):
 	text = text.strip()
 	if text == '': where,what = '%s/%s' % (getRoom(jid),nick),''
 	else:
-		if '\n' in text: text = text.split('\n')
-		else: text = text.split(' ')
+		text = text.split('\n')
 		where = text[0]
 		try: what = text[1]
 		except: what = ''
