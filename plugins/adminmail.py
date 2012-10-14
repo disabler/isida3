@@ -38,7 +38,7 @@ def adminmail(type, jid, nick, text):
 			else: cur_execute('delete from saytoowner where jid=%s;',(fjid,))
 		cur_execute('insert into saytoowner values (%s,%s)',(fjid,int(time.time())+tmp_lim))
 		msg = L('User %s (%s) from %s at %s send massage to you: %s') % (nick,fjid,jid,time.strftime("%H:%M %d.%m.%y", time.localtime (time.time())),text)
-		own = cur_execute_fetchone('select * from bot_owner;')
+		own = cur_execute_fetchall('select * from bot_owner;')
 		if own:
 			for ajid in own: send_msg('chat', ajid[0], '', msg)
 			send_msg(type, jid, nick, L('Sent'))
