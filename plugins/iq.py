@@ -206,8 +206,8 @@ def ping_async(type, jid, nick, text, is_answ):
 		if fixed_ping <= 0: fixed_ping = round(iq_ping_minimal,p_digits)
 		if iq_ping_minimal <= 0 or iq_ping_minimal > fixed_ping: iq_ping_minimal = fixed_ping
 		f = '%'+'.0%sf' % p_digits
-		if text == '': msg = L('Ping from you %s sec.') % f % tpi
-		else: msg = L('Ping from %s %s sec.') % (text, f % tpi)
+		if text == '': msg = L('Ping from you %s sec.') % f % fixed_ping
+		else: msg = L('Ping from %s %s sec.') % (text, f % fixed_ping)
 	send_msg(type, jid, nick, msg)
 
 def iq_time(type, jid, nick, text):
