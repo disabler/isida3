@@ -150,19 +150,16 @@ def bomb_random():
 		bt -= 1
 	while not game_over:
 		ntime = time.time()
-		cb = [t[0] for t in cur_execute_fetchone('select room from conference;')]
+		cb = [t[0] for t in cur_execute_fetchall("select split_part(room,'/',1) from conference;")]
 		for tmp in cb:
-			tconf = getRoom(tmp)
-			try: bla = get_config(tconf,'bomb_random_active') and (ntime - bomb_last_activity[tconf]) < get_config_int(tconf,'bomb_random_active_timer')
+			try: bla = get_config(tmp,'bomb_random_active') and (ntime - bomb_last_activity[tmp]) < get_config_int(tmp,'bomb_random_active_timer')
 			except: bla = True
-			if get_config(tconf,'bomb') and get_config(tconf,'bomb_random') and bla:
-				try: bsets = bomb_random_list[tconf]
-				except:
-					bsets = ntime
-					bomb_random_list[tconf] = bsets
+			if get_config(tmp,'bomb') and get_config(tmp,'bomb_random') and bla:
+				try: bsets = bomb_random_list[tmp]
+				except: bomb_random_list[tmp],bsets = ntime,ntime
 				if bsets < ntime:
-					bomb_joke('groupchat', tconf, '', '')
-					bomb_random_list[tconf] = get_next_random(tconf)
+					bomb_joke('groupchat', tmp, '', '')
+					bomb_random_list[tmp] = get_next_random(tmp)
 		bt = bomb_random_timer_check_period
 		while not game_over and bt > 0:
 			time.sleep(1)
