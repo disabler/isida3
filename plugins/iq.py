@@ -200,11 +200,11 @@ def ping_async(type, jid, nick, text, is_answ):
 	global iq_ping_minimal
 	if '%s %s!' % (L('Error!'),L('Remote server not found')) == is_answ[1][0]: msg = is_answ[1][0]
 	else:
-		tpi_old = float(is_answ[0])-time_nolimit
 		p_digits = GT('ping_digits')
-		tpi = round(tpi_old - iq_ping_minimal,p_digits)
-		if tpi <= 0: tpi = round(iq_ping_minimal,p_digits)
-		if iq_ping_minimal == 0 or iq_ping_minimal > tpi_old: iq_ping_minimal = tpi_old
+		original_ping = float(is_answ[0])
+		fixed_ping = round(original_ping - iq_ping_minimal,p_digits)
+		if fixed_ping <= 0: fixed_ping = round(iq_ping_minimal,p_digits)
+		if iq_ping_minimal <= 0 or iq_ping_minimal > fixed_ping: iq_ping_minimal = fixed_ping
 		f = '%'+'.0%sf' % p_digits
 		if text == '': msg = L('Ping from you %s sec.') % f % tpi
 		else: msg = L('Ping from %s %s sec.') % (text, f % tpi)
