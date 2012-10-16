@@ -204,6 +204,7 @@ def sender(item):
 	elif last_stanza[:2] == '<p': presence_out += 1
 	elif last_stanza[:2] == '<i': iq_out += 1
 	else: unknown_out += 1
+	if time_nolimit: time.sleep(time_nolimit)
 	try: cl.send(item)
 	except Exception,SM:
 		pprint(last_stanza,'red')
