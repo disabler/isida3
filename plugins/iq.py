@@ -25,7 +25,7 @@
 
 VCARD_LIMIT_LONG = 256
 VCARD_LIMIT_SHORT = 128
-iq_ping_minimal = 0
+iq_ping_minimal = GT('timeout')
 
 def iq_iq_get(iq,id,room,acclvl,query,towh):
 	if iq.getTag(name='query', namespace=xmpp.NS_VERSION) and GT('iq_version_enable'):
@@ -202,9 +202,9 @@ def ping_async(type, jid, nick, text, is_answ):
 	else:
 		p_digits = GT('ping_digits')
 		original_ping = float(is_answ[0])
+		if iq_ping_minimal > original_ping: iq_ping_minimal = original_ping		
 		fixed_ping = round(original_ping - iq_ping_minimal,p_digits)
-		if fixed_ping <= 0: fixed_ping = round(iq_ping_minimal,p_digits)
-		if iq_ping_minimal <= 0 or iq_ping_minimal > fixed_ping: iq_ping_minimal = fixed_ping
+		if fixed_ping <= 0: fixed_ping = 10**-p_digits
 		f = '%'+'.0%sf' % p_digits
 		if text == '': msg = L('Ping from you %s sec.') % f % fixed_ping
 		else: msg = L('Ping from %s %s sec.') % (text, f % fixed_ping)
