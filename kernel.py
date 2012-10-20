@@ -1485,6 +1485,7 @@ messages_excl = []
 rss_processed = False
 database_debug = False
 current_join = {}
+default_censor_set = 1				# номер набора правил для цензора
 base_type = 'pgsql'     # тип базы: pgsql или mysql
 base_name = 'isidabot'  # название базы
 base_user = 'isidabot'  # пользователь базы
@@ -1653,7 +1654,7 @@ except:
 censor = []
 
 if os.path.isfile(cens):
-	cf = readfile(cens).decode('UTF').replace('\r','').split('\n')
+	cf = readfile(cens).decode('UTF').replace('\r','').split('# censor ')[default_censor_set].split('\n')
 	for c in cf:
 		if '#' not in c and len(c): censor.append(c)
 
