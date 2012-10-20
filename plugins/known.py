@@ -22,16 +22,12 @@
 # --------------------------------------------------------------------------- #
 
 def known(type, jid, nick, text):
-	text = text.strip()
-	if text == '': text = nick
-	real_jid = cur_execute_fetchone('select jid from age where room=%s and (nick=%s or jid=%s)',(jid,text,text.lower()))
+	if not text.strip(): text = nick
+	real_jid = cur_execute_fetchone('select jid from age where room=%s and (nick=%s or jid=%s) order by status,-time',(jid,text,text.lower()))
 	if real_jid:
-		nicks = cur_execute_fetchall('select nick from age where room=%s and jid=%s',(jid,real_jid[0]))
-		if text == nick: msg = L('I know you as:') + ' '
-		else: msg = L('I know %s as:') % text + ' '
-		for tmp in nicks:
-			msg += tmp[0] + ', '
-		msg = msg[:-2]
+		nicks = ', '.join([t[0] for t in cur_execute_fetchall('select nick from age where room=%s and jid=%s',(jid,real_jid[0]))])
+		if text == nick: msg = '%s %s' % (L('I know you as:'),nicks)
+		else: msg = '%s %s' % (L('I know %s as:') % text,nicks)
 	else: msg = L('Not found!')
 	send_msg(type, jid, nick, msg)
 
