@@ -264,6 +264,35 @@ def show_syslogs(type, jid, nick, text):
 	msg = '\n'.join([tmp for tmp in last_logs_store if txt in tmp][1:lsz][::-1])
 	send_msg(type, jid, nick, L('Last syslogs: %s') % '\n%s' % msg)
 
+def show_syslogs_search(type, jid, nick, text):
+	if '\n' in text: text,value = text.lower().split('\n',1)
+	else: text,value = text.lower(),''
+	if not text.strip():
+		send_msg(type, jid, nick, L('What?'))
+		return
+	if value:
+		try: _ = re.compile(value)
+		except:
+			send_msg(type, jid, nick, L('Error in RegExp!'))
+			return
+	try: _ = re.compile(text)
+	except:
+		send_msg(type, jid, nick, L('Error in RegExp!'))
+		return
+	files = [t for t in os.listdir(slog_folder % '') if re.findall('^[0-9]{8}\.txt$',t)]
+	files.sort()
+	if not value: files = files[-1:]
+	matches = []
+	for t in files:
+		if not value or (value and re.findall(value,t.split('.')[0])):
+			m = [f for f in readfile(slog_folder % t).decode('utf-8').split('\n') if re.findall(text,f,re.S+re.I+re.U)]
+			if m:
+				if value: matches.append('*** %s%s%s%s-%s%s-%s%s ***' % tuple(t.split('.')[0]))
+				matches += m
+	if matches: msg = L('Last syslogs: %s') % '\n%s' % '\n'.join(matches)
+	else: msg = L('Not found!')
+	send_msg(type, jid, nick, msg)
+
 def set_locale(type, jid, nick, text):
 	global locales
 	if len(text) >= 2:
@@ -1868,6 +1897,7 @@ comms = [
 	 (9, 'bot_owner', owner, 2, L('Bot owners list.\nbot_owner show\nbot_owner add|del jid')),
 	 (9, 'bot_ignore', ignore, 2, L('Black list.\nbot_ignore show\nbot_ignore add|del jid')),
 	 (9, 'syslogs', show_syslogs, 2, L('Show bot\'s syslogs.\nsyslogs [number of records] [text]')),
+	 (9, 'syslogs_search', show_syslogs_search, 2, L('Search in bot\'s syslogs.\nsyslogs_search <regexp>\n[date regexp]')),
 	 (6, 'where', info_where, 1, L('Show conferences.')),
 	 (6, 'where+', info_where_plus, 1, L('Show conferences.')),
 	 (0, 'inbase', info_base, 1, L('Your identification in global base.')),

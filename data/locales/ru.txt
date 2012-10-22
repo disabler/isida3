@@ -1377,6 +1377,7 @@ Rejoin conference.\nrejoin room[@conference.server.ru[/nick]]\n[password]	Пер
 Bot owners list.\nbot_owner show\nbot_owner add|del jid	Работа со списком владельцев бота:\nbot_owner show - показать список владельцев.\nbot_owner add jid - добавить jid в список.\nbot_owner del jid - удалить jid из списка.
 Black list.\nbot_ignore show\nbot_ignore add|del jid	Работа с "Чёрным списком":\nbot_ignore show - показать список.\nbot_ignore add jid - добавить jid в список.\nbot_ignore del jid - удалить jid из списка.
 Show bot's syslogs.\nsyslogs [number of records] [text]	Показ системных логов бота.\nsyslogs [количество записей] [текст]
+Search in bot's syslogs.\nsyslogs_search <regexp>\n[date regexp]	Поиск по системным логам бота.\nsyslogs_search <regexp>\n[regexp даты]
 Show conferences.	Показ конференций, в которых находится бот. Так же показывается ник бота в конференции и количество участников.
 Your identification in global base.	Идентификация Вас в глобальной базе.
 Search user in conferences where the bot is.	Поиск участника по конференциям, где находится бот.

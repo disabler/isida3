@@ -411,7 +411,7 @@ def pprint(*text):
 			except: print parser(zz)
 	if CommandsLog:
 		fname = slog_folder % '%02d%02d%02d.txt' % (lt[0],lt[1],lt[2])
-		fbody = '%s|%s\n' % (onlytimeadd(lt),text)
+		fbody = '%s|%s\n' % (onlytimeadd(lt),text.replace('\n','\r'))
 		fl = open(fname, 'a')
 		fl.write(fbody.encode('utf-8'))
 		fl.close()
@@ -1704,9 +1704,9 @@ except:
 	time.sleep(GT('reboot_time'))
 	sys.exit('restart')
 auth_type = cl.auth(jid.getNode(), Settings['password'], jid.getResource(),sasl=ENABLE_SASL)
-if auth_type: pprint('Autheticated via %s' % auth_type.upper(),'yellow')
+if auth_type: pprint('Authenticated via %s' % auth_type.upper(),'yellow')
 else:
-	pprint('Authetication error!','red')
+	pprint('Authentication error!','red')
 	sys.exit('exit')
 pprint('Registration Handlers','yellow')
 cl.RegisterHandler('message',messageCB)
