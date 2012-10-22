@@ -291,6 +291,7 @@ def show_syslogs_search(type, jid, nick, text):
 				matches += m
 	if matches: msg = L('Last syslogs: %s') % '\n%s' % '\n'.join(matches)
 	else: msg = L('Not found!')
+	if len(msg) > msg_limit*5-4: msg = u'[…]%s' % msg[-msg_limit*5+4:]
 	send_msg(type, jid, nick, msg)
 
 def set_locale(type, jid, nick, text):

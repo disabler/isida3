@@ -509,7 +509,7 @@ def send_msg(mtype, mjid, mnick, mmessage):
 			cnt = 0
 			maxcnt = int(len(mmessage)/msg_limit) + 1
 			mmsg = mmessage
-			while len(mmsg) > msg_limit:
+			while len(mmsg) > msg_limit and not game_over:
 				tmsg = u'[%s/%s] %s[…]' % (cnt+1,maxcnt,mmsg[:msg_limit])
 				cnt += 1
 				sender(xmpp.Message('%s/%s' % (mjid,mnick), tmsg, 'chat'))
