@@ -37,7 +37,7 @@ def phonecode(type, jid, nick, text):
 						result = cur_execute_fetchall('select * from def_ru_mobile where def=%s and defbegin<=%s and defend>=%s', (dc,pn,pn))
 						if result:
 							di = []
-							for res in result: di += ['%s, %s (%s) %s..%s, %s ' % res]
+							for res in result: di += ['%s, %s (%s) %07d..%07d, %s ' % res]
 							def_info = '\n'.join(di)
 					else: def_info = L('Too many results!')
 				else:
