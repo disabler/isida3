@@ -21,6 +21,10 @@
 #                                                                             #
 # --------------------------------------------------------------------------- #
 
+phone_short_format = '%s%s%s-%s%s-%s%s'
+phone_ru_format = '+%s (%s%s%s) ' + phone_short_format
+phone_ua_format = '+%s%s (%s%s%s) ' + phone_short_format
+
 def phonecode(type, jid, nick, text):
 	if len(text):
 		def_info,country = L('Not found!'),L('Unknown')
@@ -30,15 +34,13 @@ def phonecode(type, jid, nick, text):
 				if len(text) > 1 and text[1] == '9':
 					country = L('Russia, Mobile')
 					if len(text) >= 5:
-						dc = text[1:4]
-						pn = text[4:]
+						dc, pn = text[1:4], text[4:]
 						if len(pn) < 7: pn = pn.ljust(7, '0')
-						elif len(pn) > 11: pn = pn[:7]
+						elif len(pn) > 7: pn = pn[:7]
 						result = cur_execute_fetchall('select * from def_ru_mobile where def=%s and defbegin<=%s and defend>=%s', (dc,pn,pn))
 						if result:
-							di = []
-							for res in result: di += ['%s, %s (%s) %07d..%07d, %s ' % res]
-							def_info = '\n'.join(di)
+							def pfs(t): return phone_short_format % tuple('%07d' % t)
+							def_info = '\n'.join(['%s, %s (%s) %s..%s, %s ' % (res[0],res[1],res[2],pfs(res[3]),pfs(res[4]),res[5]) for res in result])
 					else: def_info = L('Too many results!')
 				else:
 					country = L('Russia')
@@ -53,7 +55,7 @@ def phonecode(type, jid, nick, text):
 							for res in result:
 								res = list(res)
 								while '' in res: res.remove('')
-								res[0] = '+%s (%s%s%s) %s%s%s-%s%s-%s%s' % tuple(res[0])
+								res[0] = phone_ru_format % tuple(res[0])
 								def_info += [', '.join(res)]
 							def_info = '\n'.join(def_info)
 							break
@@ -75,7 +77,7 @@ def phonecode(type, jid, nick, text):
 						for res in result:
 							res = list(res)
 							while '' in res: res.remove('')
-							res[0] = '+%s%s (%s%s%s) %s%s%s-%s%s-%s%s' % tuple(res[0])
+							res[0] = phone_ua_format % tuple(res[0])
 							def_info += [', '.join(res)]
 						def_info = '\n'.join(def_info)
 						break
@@ -96,7 +98,7 @@ def phonecode(type, jid, nick, text):
 				for res in result:
 					res = list(res)
 					while '' in res: res.remove('')
-					res[0] = '+%s (%s%s%s) %s%s%s-%s%s-%s%s' % tuple(res[0])
+					res[0] = phone_ru_format % tuple(res[0])
 					di += [', '.join(res)]
 				di = '\n'.join(di)
 				def_info += [L('Country: %s\n%s') % (L('Russia'),di)]
@@ -106,7 +108,7 @@ def phonecode(type, jid, nick, text):
 				for res in result:
 					res = list(res)
 					while '' in res: res.remove('')
-					res[0] = '+%s%s (%s%s%s) %s%s%s-%s%s-%s%s' % tuple(res[0])
+					res[0] = phone_ua_format % tuple(res[0])
 					di += [', '.join(res)]
 				di = '\n'.join(di)
 				def_info += [L('Country: %s\n%s') % (L('Ukraine'),di)]
