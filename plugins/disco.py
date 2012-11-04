@@ -343,7 +343,7 @@ def disco_iq_get(iq,id,room,acclvl,query,towh,al):
 				i.setAttr(key='id', val=id)
 				i.setTag('query',namespace=xmpp.NS_DISCO_ITEMS,attrs={'node':node})
 				if al == 9: cnf = cur_execute_fetchall("select room from conference;")
-				cnf = cur_execute_fetchall("select room from conference where split_part(room,'/',1) not in (select room from hiden_rooms as hrr);")
+				else: cnf = cur_execute_fetchall("select room from conference where split_part(room,'/',1) not in (select room from hiden_rooms as hrr);")
 				trooms = [t[0] for t in cnf]
 				trooms.sort()
 				trooms = [xmpp.Node('item',attrs={'jid':t}) for t in trooms]
@@ -385,7 +385,7 @@ def disco_iq_set(iq,id,room,acclvl,query,towh,al):
 				raise xmpp.NodeProcessed
 			elif node == xmpp.NS_MUC_ROOMS and GT('iq_show_rooms_disco'):
 				if al == 9: cnf = cur_execute_fetchall("select room from conference;")
-				cnf = cur_execute_fetchall("select room from conference where split_part(room,'/',1) not in (select room from hiden_rooms as hrr);")
+				else: cnf = cur_execute_fetchall("select room from conference where split_part(room,'/',1) not in (select room from hiden_rooms as hrr);")
 				trooms = [t[0] for t in cnf]
 				trooms.sort()
 				trooms = [xmpp.Node('item',attrs={'jid':t}) for t in trooms]
