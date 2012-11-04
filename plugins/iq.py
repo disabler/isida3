@@ -27,7 +27,7 @@ VCARD_LIMIT_LONG = 256
 VCARD_LIMIT_SHORT = 128
 iq_ping_minimal = GT('timeout')
 
-def iq_iq_get(iq,id,room,acclvl,query,towh):
+def iq_iq_get(iq,id,room,acclvl,query,towh,al):
 	if iq.getTag(name='query', namespace=xmpp.NS_VERSION) and GT('iq_version_enable'):
 		pprint('*** iq:version from %s' % unicode(room),'magenta')
 		i=xmpp.Iq(to=room, typ='result')

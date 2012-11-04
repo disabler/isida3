@@ -303,7 +303,7 @@ def disco_ext_info_add(i):
 		i.getTag('query').getTag('x',namespace=xmpp.NS_DATA).getTag('field',attrs={'var':t}).setTagData('value',bot_softwareinfo[t])
 	return i
 
-def disco_iq_get(iq,id,room,acclvl,query,towh):
+def disco_iq_get(iq,id,room,acclvl,query,towh,al):
 	if iq.getTag(name='query', namespace=xmpp.NS_DISCO_INFO):
 		node=get_tag_item(unicode(query),'query','node')
 		if node.split('#')[0] in ['', disco_config_node, xmpp.NS_COMMANDS] or node in [xmpp.NS_MUC_ROOMS, '%s#%s' % (capsNode,capsHash)]:
@@ -370,7 +370,7 @@ def disco_iq_get(iq,id,room,acclvl,query,towh):
 			return i
 	return None
 
-def disco_iq_set(iq,id,room,acclvl,query,towh):
+def disco_iq_set(iq,id,room,acclvl,query,towh,al):
 	if iq.getTag(name='command', namespace=xmpp.NS_COMMANDS) and acclvl:
 		node=get_tag_item(unicode(iq),'command','node')
 		if get_tag_item(unicode(iq),'command','action') == 'execute' and (node.split('#')[0] in ['', disco_config_node, xmpp.NS_COMMANDS] or node == xmpp.NS_MUC_ROOMS):

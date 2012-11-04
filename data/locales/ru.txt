@@ -102,7 +102,7 @@ Show random anecdote | Author: ferym	Показывает случайный а�
 Export to file: %s | Total records: %s | Unique records: %s	Экспорт в файл: %s | Всего записей: %s | После удаления дубликатов: %s
 Import from file: %s | Total records: %s	Импорт из файла: %s | Всего записей: %s
 File %s not found!	Файл %s не доступен!
-Import/Export answers base.\nanswers import [filename] - import from file\nanswers export [filename] - export to file	Импорт/Экспорт базы ответов в текстовый файл.\nanswers import [название файла] - импорт ответов из текстового файла в базу\nanswers export [название файла] - экспорт ответов из базы в текстовый файл'
+Import/Export answers base.\nanswers import [filename] - import from file\nanswers export [filename] - export to file	Импорт/Экспорт базы ответов в текстовый файл.\nanswers import [название файла] - импорт ответов из текстового файла в базу\nanswers export [название файла] - экспорт ответов из базы в текстовый файл
 
 # file: plugins/antitroll.py
 You troll!	Ты тролль!

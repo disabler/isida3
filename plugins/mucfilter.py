@@ -21,7 +21,7 @@
 #                                                                             #
 # --------------------------------------------------------------------------- #
 
-def muc_filter_set(iq,id,room,acclvl,query,towh):
+def muc_filter_set(iq,id,room,acclvl,query,towh,al):
 	msg_xmpp = iq.getTag('query', namespace=xmpp.NS_MUC_FILTER)
 	if msg_xmpp:
 		msg,mute,mute_type,mute_room,mute_reason = get_tag(unicode(msg_xmpp),'query'),None,'groupchat',room,L('Warning! Your message are blocked by policy of room!')
