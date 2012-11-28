@@ -138,7 +138,7 @@ def parse_url_in_message(room,jid,nick,type,text):
 					if cnt >= len(text)/3: text = remove_sub_space(html_encode(get_tag(original_page,tag)).replace('\n',' ').replace('\r',' ').replace('\t',' '))
 				if text:
 					was_shown = True
-					send_msg(type, room, '', L('Title: %s') % rss_del_html(rss_replace(text)))
+					send_msg(type, room, '', L('Title: %s') % to_censore(rss_del_html(rss_replace(text)),room))
 		except: pass
 	if not was_shown and get_config(getRoom(room),'content_length'):
 		try:
@@ -157,7 +157,7 @@ def parse_url_in_message(room,jid,nick,type,text):
 					if result:
 						body = unicode(body.headers)
 						mt = float(re.findall('Content-Length.*?([0-9]+)', body, re.S+re.U+re.I)[0])
-						if mt: send_msg(type, room, '', L('Length of %s is %s') % (u'…/%s' % urllib2.unquote(last_url_watch.rsplit('/',1)[-1]).decode('utf-8'),get_size_human(mt)))
+						if mt: send_msg(type, room, '', L('Length of %s is %s') % (u'…/%s' % to_censore(urllib2.unquote(last_url_watch.rsplit('/',1)[-1]).decode('utf-8'),room),get_size_human(mt)))
 		except: pass
 
 global execute
