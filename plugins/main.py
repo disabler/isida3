@@ -472,7 +472,7 @@ def alias(type, jid, nick, text):
 	try: cbody = text.split(' ',1)[1].split('=',1)[1].strip(' ')
 	except: cbody = ''
 	msg = L('Mode %s not detected!') % mode
-	if mode=='add':
+	if mode in ['add','add_global']:
 		am,amm = get_level(jid,nick)[0],-1
 		tcmd = cbody.split(' ',1)[0].lower()
 		for tmp in comms:
@@ -480,18 +480,21 @@ def alias(type, jid, nick, text):
 				amm = tmp[0]
 				break
 		if amm < 0: msg = L('Command not found: %s') % tcmd
-		elif amm > am: msg = L('Not allowed create alias for: %s') % tcmd
+		elif mode == 'add' and amm > am: msg = L('Not allowed create alias for: %s') % tcmd
+		elif mode == 'add_global' and am != 9: msg = L('Not allowed create global alias for: %s') % tcmd
 		else:
-			fl = cur_execute_fetchone('select match from alias where room=%s and match=%s',(jid,cmd))
+			gjid = jid if mode == 'add' else '*'
+			fl = cur_execute_fetchone('select match from alias where room=%s and match=%s',(gjid,cmd))
 			if fl:
-				cur_execute('delete from alias where room=%s and match=%s',(jid,cmd))
+				cur_execute('delete from alias where room=%s and match=%s',(gjid,cmd))
 				msg = L('Updated:')
 			else: msg = L('Added:')
-			cur_execute('insert into alias values (%s,%s,%s)',(jid,cmd,cbody))
+			cur_execute('insert into alias values (%s,%s,%s)',(gjid,cmd,cbody))
 			msg = '%s %s=%s' % (msg,cmd,cbody)
-	if mode=='del':
+	if mode in ['del','del_global']:
+		gjid = jid if mode == 'del' else '*'
 		msg = L('Unable to remove %s') % cmd
-		fl = cur_execute_fetchone('select cmd from alias where room=%s and match=%s',(jid,cmd))
+		fl = cur_execute_fetchone('select cmd from alias where room=%s and match=%s',(gjid,cmd))
 		if fl:
 			am,amm = get_level(jid,nick)[0],-1
 			tcmd = fl[0].split(' ',1)[0].lower()
@@ -499,18 +502,31 @@ def alias(type, jid, nick, text):
 				if tmp[1] == tcmd:
 					amm = tmp[0]
 					break
-			if amm > am: msg = L('Not allowed remove alias for: %s') % tcmd
+			if mode == 'del' and amm > am: msg = L('Not allowed remove alias for: %s') % tcmd
+			elif mode == 'del_global' and am != 9: msg = L('Not allowed remove global alias for: %s') % tcmd
 			else:
-				cur_execute('delete from alias where room=%s and match=%s',(jid,cmd))
+				cur_execute('delete from alias where room=%s and match=%s',(gjid,cmd))
 				msg = L('Removed: %s') % cmd
 	if mode=='show':
 		if cmd == '':
-			fl = cur_execute_fetchall('select match from alias where room=%s',(jid,))
-			if fl: msg = L('Aliases: %s') % ', '.join([t[0] for t in fl])
+			fl = cur_execute_fetchall('select match,room from alias where room=%s or room=%s',(jid,'*'))
+			if fl: 
+				aln = ', '.join([t[0] for t in fl if t[1] != '*'])
+				alg = ', '.join([t[0] for t in fl if t[1] == '*'])
+				if aln: msg = L('Aliases: %s') % aln
+				if alg:
+					if aln: msg += '\n%s' % L('Global aliases: %s') % alg
+					else: msg = L('Global aliases: %s') % alg
 			else: msg = L('Aliases not found!')
 		else:
-			fl = cur_execute_fetchall('select match,cmd from alias where room=%s and match ilike %s',(jid,'%%%s%%'%cmd))
-			if fl: msg = L('Aliases: %s') % '\n%s' % '\n'.join(['%s = %s' % t for t in fl])
+			fl = cur_execute_fetchall('select match,cmd,room from alias where (room=%s or room=%s) and match ilike %s',(jid,'*','%%%s%%'%cmd))
+			if fl:
+				aln = '\n'.join(['%s = %s' % (t[0],t[1]) for t in fl if t[2] != '*'])
+				alg = '\n'.join(['%s = %s' % (t[0],t[1]) for t in fl if t[2] == '*'])
+				if aln: msg = L('Aliases: %s') % '\n%s' % aln
+				if alg:
+					if aln: msg += '\n%s' % L('Global aliases: %s') % '\n%s' % alg
+					else: msg = L('Global aliases: %s') % '\n%s' % alg
 			else: msg = L('Aliases not found!')
 	send_msg(type, jid, nick, msg)
 
@@ -1905,7 +1921,7 @@ comms = [
 	 (9, 'look', real_search, 2, L('Search user in conferences where the bot is.')),
 	 (9, 'glook', real_search_owner, 2, L('Search user in conferences where the bot is. Also show jid\'s')),
 	 (7, 'rss', rss, 2, L('News:\nrss show - show current.\nrss add url time mode - add news.\nrss del url - remove news.\nrss get url feeds mode - get current news.\nrss new url feeds mode - get unread news only.\nrss clear - clear all news in current conference.\nrss all - show all news in all conferences.\n\nurl - url of rss/atom chanel. can set without http://\ntime - update time. number + time identificator. h - hour, m - minute. allowed only one identificator.\nfeeds - number of messages to receive. 10 max.\nmode - receive mode. full - full news, head - only headers, body - only bodies.\nwith -url to be show url of news.')),
-	 (7, 'alias', alias, 2, L('Aliases.\nalias add new=old\nalias del|show text')),
+	 (7, 'alias', alias, 2, L('Aliases.\nalias add|add_global new=old\nalias del|del_global|show text')),
 	 (0, 'commands', info_comm, 1, L('Show commands list.')),
 	 (8, 'comm', comm_on_off, 2, L('Enable/Disable commands.\ncomm - show disable commands\ncomm on command - enable command\ncomm off command1[ command2 command3 ...] - disable one or more command')),
 	 (0, 'bot_uptime', uptime, 1, L('Show bot uptime.')),
