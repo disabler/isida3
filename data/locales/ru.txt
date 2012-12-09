@@ -374,7 +374,7 @@ last	последний
 Last	последняя
 lAst	последнее
 Read file error.	Ошибка чтения файла.
-Holiday: %s not found.	Повод: %s не найден.
+Holiday: %s not found.	Повод: %s не найден. Опять нет повода не выпить.
 I know holidays: %s	Я знаю поводы выпить: %s
 Database doesn't exist.	К сожалению база отсутствует.
 Find holiday\ndrink [name_holiday/date]	Поиск повода выпить ;)\ndrink [повод/дата]
