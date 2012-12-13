@@ -21,6 +21,7 @@
 # file: kernel.py
 Unknown error!	Невідома помилка!
 Error!	Помилка!
+Got a fake iq answer!	Отримано підроблену відповідь на запит!
 Warning! Exceeded the limit of sending the same commands. You to ignore for %s.	Увага! Перевищено ліміт відправлення однакових команд. Ви в ігнорі %s.
 Room's configuration changed.	Змінено конфігурацію конференції.
 Censored!	Фільтруємо балачки!
@@ -47,9 +48,6 @@ System Shutdown. Trying to restart in %s sec.	Сервер погас. Спро�
 Interface error! Trying to restart in %s sec.	Помилка взаємодії! Перезапуск через %s секунд.
 Critical error! Trying to restart in %s sec.	Критична помилка! Спробую перезавантажитися через %s сек.
 
-# file: plugins/_short_commands.py
-done	виконано
-
 # file: plugins/acl.py
 Acl:	Дії:
 Acl not found	Дії не знайдені
@@ -62,6 +60,7 @@ Removed:	Видалено:
 Updated:	Поновлено:
 Not found:	Не знайдено
 Added:	Додано:
+done	виконано
 You have no rights to do it!	У Вас недостатньо прав для цього!
 ACL cleared. Removed %s action(s).	ACL очищені. Видалено дій: %s
 Actions list.\nacl show - show list\nacl del [/silent] item - remove item from list\nacl [/time] [/silent] msg|prs|role|aff|nick|jid|jidfull|res|age|ver|vcard|all [sub|exp|cexp] pattern command - execute command by condition\nallowed variables in commands: ${NICK}, ${JID}, ${SERVER}, ${EXP} and ${/EXP}\nsub = substring, exp = regular expression, cexp = case sensitive regular expression\ntime format is /number+identificator. s = sec, m = min, d = day, w = week, M = month, y = year. only one identificator allowed!	Список дій.\nacl show - показати список\nacl del [/silent] item - видалити елемент із списку\nacl [/time] [/silent] msg|prs|role|aff|nick|jid|jidfull|res|age|ver|vcard|all [sub|exp|cexp] pattern command - виконати команду за умовою\nдоступні змінні в командах: ${NICK}, ${JID}, ${SERVER}, ${EXP} и ${/EXP}\nsub = підрядок, exp = регулярний вираз, cexp = регістрозалежний регулярний вираз\nформат часу - /число+ідентифікатор. s = секунди, m = хвилини, d = дні, w = тижні, M = місяці, y = роки. можливий тільки один ідентифікатор!
@@ -922,9 +921,12 @@ I can't see %s here...	Я можу помилятися, але %s тут нем
 Last update:\n%s	Останнє поновлення:\n%s
 Mode %s not detected!	Режим %s не розпізнано!
 Not allowed create alias for: %s	Заборонено створювати скорочення для %s
+Not allowed create global alias for: %s	Заборонено створювати глобальне скорочення для %s
 Unable to remove %s	Неможливо видалити %s
 Not allowed remove alias for: %s	Заборонено видаляти скорочення для %s
+Not allowed remove global alias for: %s	Заборонено вилучати глобальне скорочення для %s
 Aliases: %s	Скорочення: %s
+Global aliases: %s	Глобальні скорочення: %s
 Aliases not found!	Скорочення не знайдені!
 %s days %s	%s днів %s
 %s Days %s	%s дня %s
@@ -1080,6 +1082,8 @@ Persent of short words for raw actions is %s	Процент коротких с�
 Persent of short words for raw actions	Процент коротких слів для увімкнення перевірки прихованих дій
 Reduce spaces in message %s	Блокувати численні проміжки в повідомленнях: %s
 Reduce duplicates of spaces in message	Блокувати численні проміжки в повідомленнях
+Block joins without history %s	Блокувати входи без історії %s
+Block joins without history	Блокувати входи без історії
 Adblock muc filter for presence is %s	Блокування реклами в презенсах: %s
 Adblock filter for presence	Фільтр блокування реклами в презенсах
 Repeat join muc filter is %s	Багаторазові входи: %s
@@ -1374,6 +1378,7 @@ Rejoin conference.\nrejoin room[@conference.server.ru[/nick]]\n[password]	Пер
 Bot owners list.\nbot_owner show\nbot_owner add|del jid	Робота зі списком власників бота:\nbot_owner show - показати список власників.\nbot_owner add jid - додати jid до списку.\nbot_owner del jid - видалити jid зі списку.
 Black list.\nbot_ignore show\nbot_ignore add|del jid	Робота з "Чорним списком":\nbot_ignore show - показати список.\nbot_ignore add jid - додати jid до списку.\nbot_ignore del jid - видалити jid зі списку.
 Show bot's syslogs.\nsyslogs [number of records] [text]	Показ системних логів бота.\nsyslogs [кількість записів] [текст]
+Search in bot's syslogs.\nsyslogs_search <regexp>\n[date regexp]	Пошук по системному журналу бота.\nsyslogs_search <regexp>\n[regexp дати]
 Show conferences.	Показ конференцій, в яких знаходиться бот. Також показується нік бота в конференції і кількість учасників.
 Your identification in global base.	Ідентифікація вас у глобальній базі.
 Search user in conferences where the bot is.	Пошук учасника по конференціях, де знаходиться бот.
@@ -1450,6 +1455,7 @@ Blocked by censor!	Блоковано цензором
 Blocked by raw censor!	Блокування прихованого мата цензором!
 Large message%s %s	Велике повідомлення%s %s
 Large message block!	Велике повідомлення заблоковано!
+Deny by history request!	Блоковано через статус історії!
 Deny by validation!	Недопустимий параметр!
 Server %s was banned in %s	Сервер %s забанено в конференції %s
 Deny by node lock!	Заборонено по ноді!
