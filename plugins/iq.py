@@ -136,34 +136,36 @@ def vcard_async(type, jid, nick, text, args, is_answ):
 					if r.getData(): cm.append(('%s.%s' % (t.getName(),r.getName()),unicode(r.getData())))
 				data += cm
 			elif t.getData(): data.append((t.getName(),t.getData()))
-		try:
-			photo_size = sys.getsizeof(get_value_from_array2(data,'PHOTO.BINVAL').decode('base64'))
-			photo_type = get_value_from_array2(data,'PHOTO.TYPE')
-			data_photo = L('type %s, %s') % (photo_type,get_size_human(photo_size))
-			data = [t for t in list(data) if t[0] not in ['PHOTO.BINVAL','PHOTO.TYPE']]
-			data.append(('PHOTO',data_photo))
-		except: pass
-		args = args.lower()
-		if not args:
-			dd = get_array_from_array2(data,['NICKNAME','FN','BDAY','URL','PHOTO','DESC'])
-			if dd: msg = '%s\n%s' % (L('vCard:'),'\n'.join(['%s: %s' % ([L(t[0]),t[0].capitalize()][L(t[0])==t[0]],[u'%s…' % t[1][:VCARD_LIMIT_LONG].strip(),t[1].strip()][len(t[1])<VCARD_LIMIT_LONG]) for t in dd]))
-			else: msg = '%s %s' % (L('vCard:'),L('Not found!'))
-		elif args == 'all': msg = '%s\n%s' % (L('vCard:'),'\n'.join(['%s: %s' % ([L(t[0]),t[0].capitalize()][L(t[0])==t[0]],[u'%s…' % t[1][:VCARD_LIMIT_SHORT].strip(),t[1].strip()][len(t[1])<VCARD_LIMIT_SHORT]) for t in data]))
-		elif args == 'show':
-			dd = []
-			for t in data:
-				if t[0] not in dd: dd.append(t[0])
-			msg = '%s %s' % (L('vCard:'),', '.join([[t.capitalize(),'%s (%s)' % (t.capitalize(),L(t))][L(t)!=t] for t in dd]))
-		else:
-			args,dd = args.split('|'),[]
-			for t in args:
-				if ':' in t: val,loc = t.split(':',1)
-				else: val,loc = t,t
-				val = val.upper()
-				dv = get_array_from_array2(data,(val))
-				if dv: dd += dv
-			if dd: msg = '%s\n%s' % (L('vCard:'),'\n'.join(['%s: %s' % ([L(t[0]),t[0].capitalize()][L(t[0])==t[0]],[u'%s…' % t[1][:VCARD_LIMIT_LONG],t[1]][len(t[1])<VCARD_LIMIT_LONG]) for t in dd]))
-			else: msg = '%s %s' % (L('vCard:'),L('Not found!'))
+		if data:
+			try:
+				photo_size = sys.getsizeof(get_value_from_array2(data,'PHOTO.BINVAL').decode('base64'))
+				photo_type = get_value_from_array2(data,'PHOTO.TYPE')
+				data_photo = L('type %s, %s') % (photo_type,get_size_human(photo_size))
+				data = [t for t in list(data) if t[0] not in ['PHOTO.BINVAL','PHOTO.TYPE']]
+				data.append(('PHOTO',data_photo))
+			except: pass
+			args = args.lower()
+			if not args:
+				dd = get_array_from_array2(data,['NICKNAME','FN','BDAY','URL','PHOTO','DESC'])
+				if dd: msg = '%s\n%s' % (L('vCard:'),'\n'.join(['%s: %s' % ([L(t[0]),t[0].capitalize()][L(t[0])==t[0]],[u'%s…' % t[1][:VCARD_LIMIT_LONG].strip(),t[1].strip()][len(t[1])<VCARD_LIMIT_LONG]) for t in dd]))
+				else: msg = '%s %s' % (L('vCard:'),L('Not found!'))
+			elif args == 'all': msg = '%s\n%s' % (L('vCard:'),'\n'.join(['%s: %s' % ([L(t[0]),t[0].capitalize()][L(t[0])==t[0]],[u'%s…' % t[1][:VCARD_LIMIT_SHORT].strip(),t[1].strip()][len(t[1])<VCARD_LIMIT_SHORT]) for t in data]))
+			elif args == 'show':
+				dd = []
+				for t in data:
+					if t[0] not in dd: dd.append(t[0])
+				msg = '%s %s' % (L('vCard:'),', '.join([[t.capitalize(),'%s (%s)' % (t.capitalize(),L(t))][L(t)!=t] for t in dd]))
+			else:
+				args,dd = args.split('|'),[]
+				for t in args:
+					if ':' in t: val,loc = t.split(':',1)
+					else: val,loc = t,t
+					val = val.upper()
+					dv = get_array_from_array2(data,(val))
+					if dv: dd += dv
+				if dd: msg = '%s\n%s' % (L('vCard:'),'\n'.join(['%s: %s' % ([L(t[0]),t[0].capitalize()][L(t[0])==t[0]],[u'%s…' % t[1][:VCARD_LIMIT_LONG],t[1]][len(t[1])<VCARD_LIMIT_LONG]) for t in dd]))
+				else: msg = '%s %s' % (L('vCard:'),L('Not found!'))
+		else: msg = '%s %s' % (L('vCard:'),L('Empty!'))
 	send_msg(type, jid, nick, msg)
 
 def iq_uptime(type, jid, nick, text):

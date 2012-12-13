@@ -323,15 +323,17 @@ def acl_vcard_async(a, nick, jid, room, mass, lvl, is_answ):
 					if r.getData(): cm.append(('%s.%s' % (t.getName(),r.getName()),unicode(r.getData())))
 				data += cm
 			elif t.getData(): data.append((t.getName(),t.getData()))
-		try:
-			photo_size = sys.getsizeof(get_value_from_array2(data,'PHOTO.BINVAL').decode('base64'))
-			photo_type = get_value_from_array2(data,'PHOTO.TYPE')
-			data_photo = '%s, %s' % (photo_type,get_size_human(photo_size))
-			data = [t for t in list(data) if t[0] not in ['PHOTO.BINVAL','PHOTO.TYPE']]
-			data.append(('PHOTO',data_photo))
-		except: pass
-		data.sort()
-		itm = '\n'.join(['%s:%s' % (t[0],t[1].replace('\r','[LF]').replace('\n','[CR]').replace('\t','[TAB]')) for t in data])
+		if data:
+			try:
+				photo_size = sys.getsizeof(get_value_from_array2(data,'PHOTO.BINVAL').decode('base64'))
+				photo_type = get_value_from_array2(data,'PHOTO.TYPE')
+				data_photo = '%s, %s' % (photo_type,get_size_human(photo_size))
+				data = [t for t in list(data) if t[0] not in ['PHOTO.BINVAL','PHOTO.TYPE']]
+				data.append(('PHOTO',data_photo))
+			except: pass
+			data.sort()
+			itm = '\n'.join(['%s:%s' % (t[0],t[1].replace('\r','[LF]').replace('\n','[CR]').replace('\t','[TAB]')) for t in data])
+		else: itm = 'empty'
 
 	acl_vcard_tmp['%s/%s' % (room,nick)] = itm
 	for tmp in a:
