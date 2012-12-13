@@ -28,8 +28,9 @@ def gcalc(type, jid, nick, text):
 	else:
 		try:
 			data = load_page('http://www.google.ru/search?', {'q': text.encode('utf-8'), 'hl': GT('youtube_default_lang')})
-			result = re.search('<h2 class="r" dir="ltr" style="font-size:138%;display:inline">(.+?)</h2>', data).group(1)
-			msg = result.replace("<font size=-2> </font>", ",").replace(" &#215; 10<sup>", "E").replace("</sup>", "").replace('<sup>', '^').decode('utf-8', 'ignore')
+			msg = re.search('<h2 class=["]?r["]?.+?>(.+?)</h2>', data).group(1)
+			for t in [['</b>',''],['<b>',''],['<font size=-2> </font>',','],['</sup>', ''],['<sup>', '^'],[' &#215; 10<sup>','E']]: msg = msg.replace(*t)
+			msg = msg.decode('utf-8', 'ignore')
 		except: msg = L('Google Calculator results not found')
 	send_msg(type, jid, nick, msg)
 
