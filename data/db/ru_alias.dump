@@ -1,0 +1,152 @@
+--
+-- PostgreSQL database dump
+--
+
+SET statement_timeout = 0;
+SET client_encoding = 'UTF8';
+SET standard_conforming_strings = off;
+SET check_function_bodies = false;
+SET client_min_messages = warning;
+SET escape_string_warning = off;
+
+SET search_path = public, pg_catalog;
+
+SET default_tablespace = '';
+
+SET default_with_oids = false;
+
+--
+-- Data for Name: alias; Type: TABLE DATA; Schema: public; Owner: isidabot
+--
+
+COPY alias (room, match, cmd) FROM stdin;
+*	whois	ктоэто
+*	wtf	чёза
+*	top	топ
+*	afor	афор
+*	age	возраст
+*	age_split	возраст раздельно
+*	agestat	возрасты
+*	anek	анекдот
+*	bash	баш
+*	bizinfo	бизинфо
+*	bt	бинг
+*	bugmenot	багминот
+*	calc	калк
+*	calend	календ
+*	calendar	календарь
+*	caps	капс
+*	city	город
+*	coin	монетка
+*	convert	конвертор
+*	define	определение
+*	dfn	определить
+*	disco	диско
+*	bot_uptime	ботап
+*	commands	команды
+*	film	фильм
+*	help	помощь
+*	idle	жив
+*	inbase	вбазе
+*	spell	спелл
+*	status	статус
+*	test	тест
+*	whoami	ктоя
+*	dist	растояние
+*	dns	днс
+*	domain_info	домен
+*	drink	повод
+*	dumpz	дапмз
+*	flibusta	флибуста
+*	gcalc	гкалк
+*	gdfn	определить глобально
+*	gdict	гсловарь
+*	gis	гис
+*	gis+	гис+
+*	godville	гудвиль
+*	google	гугл
+*	header	заголовок
+*	here	кто здесь
+*	horo	гороскоп
+*	ibash	ибаш
+*	isdown	даун
+*	issue	задача
+*	ithap	итхап
+*	juick	жуйк
+*	karma	карма
+*	known	кто
+*	last	ласты
+*	life	жизнь
+*	memo	заметка
+*	new	обнова
+*	oracle	оракул
+*	phone	телефон
+*	ping	пинг
+*	ping_old	пинг старый
+*	poem	поэма
+*	poke	тык
+*	prefix	префикс
+*	private	приват
+*	psto	псто
+*	public	паблик
+*	quote	цитата
+*	sayto	передать
+*	seen	где
+*	seen_split	где раздельно
+*	sokr	сокращение
+*	stats	статистика
+*	svn	свн
+*	talkers	болтуны
+*	time	время
+*	time_old	время старое
+*	tld	страна
+*	to_date	до даты
+*	todate	додаты
+*	tr	перевод
+*	train	поезд
+*	true	правда
+*	turn	переверни
+*	uptime	аптайм
+*	valid	валидность
+*	vcard_raw	вкард
+*	ver	версия
+*	ver+	версия+
+*	whowas	ктобыл
+*	wiki	вики
+*	www	веб
+*	wz	погода
+*	xep	ксеп
+*	youtube	ютуб
+*	zalgo	залго
+*	bomb	бомба
+*	clients	клиенты
+*	features	фичи
+*	gtalkers	болтуны глобально
+*	invite	пригласить
+*	paste	паста
+*	port	порт
+*	info	инфо
+*	say	сказать
+*	where	где бот
+*	ban	бан
+*	ban_past	бан+
+*	banjid	банжид
+*	clear	чисти
+*	inadmin	в админах
+*	inban	в бане
+*	inmember	в мемберах
+*	inowner	в овнерах
+*	kick	кик
+*	member	мембер
+*	member_past	мембер+
+*	memberjid	мембержид
+*	moderator	модер
+*	none	никто
+*	none_past	никто+
+*	nonejid	никтожид
+*	participant	участник
+*	rss	новости
+*	topic	тема
+*	visitor	гость
+*	setnick	сетник
+\.
