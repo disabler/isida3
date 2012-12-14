@@ -816,9 +816,12 @@ def iq_async(*answ):
 	except: er_code = None
 	if er_code == 'error': is_answ = (answ[1]-req[0],(answ[2],))
 	elif req[3] == xmpp.NS_URN_PING or req[3] == answ[1]: is_answ = (answ[2]-req[0],answ[3:])
+	elif req[3] == xmpp.NS_VCARD and answ[1] == 'None':
+		answ[4].setTag('vCard',namespace=xmpp.NS_VCARD)
+		is_answ = (answ[2]-req[0],answ[3:])
 	else:
 		pprint('!!! Got a fake iq answer. Request: %s. Answer: %s. Raw: %s' % (req[3],answ[1],answ[3]),'red')
-		is_answ = (answ[2]-req[0],('%s %s!' % (L('Error!'),L('Got a fake iq answer!')),))
+		is_answ = (answ[2]-req[0],('%s %s' % (L('Error!'),L('Got a fake iq answer!')),))
 	req[2].append(is_answ)
 	thr(req[1],(tuple(req[2])),'iq_async_%s' % answ[0])
 
