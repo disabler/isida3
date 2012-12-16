@@ -285,7 +285,7 @@ def show_syslogs_search(type, jid, nick, text):
 	matches = []
 	for t in files:
 		if not value or (value and re.findall(value,t.split('.')[0])):
-			m = [f for f in readfile(slog_folder % t).decode('utf-8').split('\n') if re.findall(text,f,re.S+re.I+re.U)]
+			m = [f for f in readfile(slog_folder % t).decode('utf-8').split('\n') if ' [9] syslogs_search' not in f and re.findall(text,f,re.S+re.I+re.U)]
 			if m:
 				if value: matches.append('*** %s%s%s%s-%s%s-%s%s ***' % tuple(t.split('.')[0]))
 				matches += m
