@@ -543,7 +543,7 @@ def un_unix(val):
 	ret = '%02d:%02d:%02d' % tuple(tt[3:6])
 	if sum(tt[:3]):
 		day_h,day_l = tt[2]/10%10,tt[2] % 10
-		if day_h == 1: ret = L('%s days %s') % (tt[2],ret)
+		if day_h == 1: ret = L('%s days, %s') % (tt[2],ret)
 		else:
 			if day_l in [5,6,7,8,9]: ret = L('%s days, %s') % (tt[2],ret)
 			elif day_l in [2,3,4]: ret = L('%s Days, %s').lower() % (tt[2],ret)
