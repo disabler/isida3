@@ -111,17 +111,6 @@ def iq_vcard(type, jid, nick, text):
 	iq_request[iqid]=(time.time(),vcard_async,[type, jid, nick, text, args],xmpp.NS_VCARD)
 	sender(i)
 
-def get_value_from_array2(a,v):
-	for t in a:
-		if t[0] == v: return t[1]
-	return None
-
-def get_array_from_array2(a1,a2):
-	a_res = []
-	for t in a1:
-		if t[0] in a2: a_res.append(t)
-	return a_res
-
 def vcard_async(type, jid, nick, text, args, is_answ):
 	try: vc,err = is_answ[1][1].getTag('vCard',namespace=xmpp.NS_VCARD),False
 	except: vc,err = is_answ[1][0],True

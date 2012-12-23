@@ -579,6 +579,8 @@ def os_version():
 	return isidaOs
 
 def caps_and_send(tmp):
+	tmp.setTag('x', namespace=xmpp.NS_VCARD_UPDATE)
+	tmp.getTag('x', namespace=xmpp.NS_VCARD_UPDATE).setTagData('photo',photo_hash)
 	tmp.setTag('c', namespace=xmpp.NS_CAPS, attrs={'node':capsNode,'ver':capsHash,'hash':'md5'})
 	sender(tmp)
 
@@ -1423,6 +1425,45 @@ def get_repo():
 	elif '.git' in dirs: return 'git'
 	else: return 'unknown'
 
+def get_value_from_array2(a,v):
+	for t in a:
+		if t[0] == v: return t[1]
+	return None
+
+def get_array_from_array2(a1,a2):
+	a_res = []
+	for t in a1:
+		if t[0] in a2: a_res.append(t)
+	return a_res
+
+def self_vcard():
+	global iq_request
+	iqid = get_id()
+	i = xmpp.Node('iq', {'id': iqid, 'type': 'get', 'to':getRoom(selfjid)}, payload = [xmpp.Node('vCard', {'xmlns': xmpp.NS_VCARD},[])])
+	iq_request[iqid]=(time.time(),self_vcard_async,[],xmpp.NS_VCARD)
+	sender(i)
+
+def self_vcard_async(is_answ):
+	global photo_hash
+	try: vc = is_answ[1][1].getTag('vCard',namespace=xmpp.NS_VCARD)
+	except: return
+	if not vc or unicode(vc) == '<vCard xmlns="vcard-temp" />': return
+	else:
+		data = []
+		for t in vc.getChildren():
+			if t.getChildren():
+				cm = []
+				for r in t.getChildren():
+					if r.getData(): cm.append(('%s.%s' % (t.getName(),r.getName()),unicode(r.getData())))
+				data += cm
+			elif t.getData(): data.append((t.getName(),t.getData()))
+		if data:
+			try:
+				photo_data = get_value_from_array2(data,'PHOTO.BINVAL').decode('base64')
+				photo_hash = hashlib.sha1(photo_data).hexdigest()
+				PT('photo_hash',photo_hash)
+			except: pass
+
 # --------------------- Иницилизация переменных ----------------------
 
 nmbrs = ['0','1','2','3','4','5','6','7','8','9','.']
@@ -1682,6 +1723,8 @@ selfjid = jid
 pprint('JID: %s' % unicode(jid),'light_gray')
 
 message_exclude_update()
+photo_hash = GT('photo_hash')
+if not photo_hash: photo_hash = ''
 
 try:
 	try:
@@ -1725,6 +1768,9 @@ else:
 	else: caps_and_send(xmpp.Presence(show=Settings['status'], status=Settings['message'], priority=Settings['priority']))
 #cl.sendInitPresence()
 
+pprint('Update self vcard','yellow')
+self_vcard()
+time.sleep(1)
 pprint('Wait conference','yellow')
 time.sleep(0.5)
 game_over = None
@@ -1791,6 +1837,7 @@ while 1:
 				pprint('*** Reload localization','white')
 				locales,CURRENT_LOCALE = update_locale()
 				pprint('*** Reinit caps hash','white')
+				self_vcard()
 				id_category,id_type,id_lang,id_name,capsHash = init_hash()
 				pprint('*** Reload main plugin','white')
 				execfile(pl_folder % 'main.py')
