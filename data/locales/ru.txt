@@ -930,15 +930,15 @@ Not allowed remove global alias for: %s	Запрещено удалять гло
 Aliases: %s	Сокращения: %s
 Global aliases: %s	Глобальные сокращения: %s
 Aliases not found!	Сокращения не найдены!
-%s days %s	%s дней %s
-%s Days %s	%s дня %s
-%s day %s	%s день %s
-%s months %s	%s месяцев %s
-%s Months %s	%s месяца %s
-%s month %s	%s месяц %s
-%s years %s	%s лет %s
-%s Years %s	%s года %s
-%s year %s	%s год %s
+%s days, %s	%s дней, %s
+%s Days, %s	%s дня, %s
+%s day, %s	%s день, %s
+%s months, %s	%s месяцев, %s
+%s Months, %s	%s месяца, %s
+%s month, %s	%s месяц, %s
+%s years, %s	%s лет, %s
+%s Years, %s	%s года, %s
+%s year, %s	%s год, %s
 absent	отсутствует
 Command prefix: %s	Префикс команд: %s
 Uptime: %s, Last session: %s	Время работы: %s, Последняя сессия: %s

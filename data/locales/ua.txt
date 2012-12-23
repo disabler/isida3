@@ -930,15 +930,15 @@ Not allowed remove global alias for: %s	Заборонено вилучати г
 Aliases: %s	Скорочення: %s
 Global aliases: %s	Глобальні скорочення: %s
 Aliases not found!	Скорочення не знайдені!
-%s days %s	%s днів %s
-%s Days %s	%s дня %s
-%s day %s	%s день %s
-%s months %s	%s місяців %s
-%s Months %s	%s місяця %s
-%s month %s	%s місяць %s
-%s years %s	%s років %s
-%s Years %s	%s року %s
-%s year %s	%s рік %s
+%s days, %s	%s днів, %s
+%s Days, %s	%s дня, %s
+%s day, %s	%s день, %s
+%s months, %s	%s місяців, %s
+%s Months, %s	%s місяця, %s
+%s month, %s	%s місяць, %s
+%s years, %s	%s років, %s
+%s Years, %s	%s року, %s
+%s year, %s	%s рік, %s
 absent	відсутній
 Command prefix: %s	Префікс команд: %s
 Uptime: %s, Last session: %s	Час роботи: %s, Остання сесія: %s
