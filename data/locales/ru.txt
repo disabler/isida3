@@ -1480,6 +1480,7 @@ Search domain zones TLD.	Поиск доменных зон TLD.
 
 # file: plugins/oboobs.py
 Show random picture from oboobs.ru	Показ случайной картинки с oboobs.ru
+Show random picture from obutts.ru	Показ случайной картинки с obutts.ru
 
 # file: plugins/paste.py
 %s pasted by %s	%s запостил(а) %s

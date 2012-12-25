@@ -23,6 +23,9 @@
 
 def oboobs(type, jid, nick): send_msg(type, jid, nick, 'http://media.oboobs.ru/%s' % json.loads(load_page('http://api.oboobs.ru/noise/1/'))[0]['preview'])
 
+def obutts(type, jid, nick): send_msg(type, jid, nick, 'http://media.obutts.ru/%s' % json.loads(load_page('http://api.obutts.ru/noise/1/'))[0]['preview'])
+
 global execute
 
-execute = [(3, 'oboobs', oboobs, 1, L('Show random picture from oboobs.ru'))]
+execute = [(3, 'oboobs', oboobs, 1, L('Show random picture from oboobs.ru')),
+		   (3, 'obutts', obutts, 1, L('Show random picture from obutts.ru'))]

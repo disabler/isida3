@@ -64,6 +64,7 @@ def flood_actions(type, room, nick, answ, msg):
 		elif len(tmp) == 1: text = 'ping %s' % tmp[0]
 		else: send_msg(type, room, nick, L('What?'))
 	elif answ == '@oboobs': text = 'oboobs'
+	elif answ == '@obutts': text = 'obutts'
 	elif answ == '@anek': text = 'anek'
 	elif answ == '@calend':
 		if u'ЗАВТРА' in msg: text = time.strftime('calend %d.%m', time.localtime(time.time()+86400))
