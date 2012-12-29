@@ -1398,7 +1398,7 @@ Plugin system.\nplugin show|local\nplugin add|del name	Управление си
 Show error(s).\nerror [number|clear]	Показывает последнюю логированную ошибку или последние, если задан параметр.\nerror [number|clear]
 Your identification.	Ваша идентификация перед ботом.
 Identification.	Идентификация перед ботом.
-Show language.	Показ языка.
+Show language for user.	Показ языка, на котором бот будет общаться с пользователем.
 Show status.	Показ статуса.
 Set command prefix. Use 'none' for disable prefix	Указание префикса команд. Без параметра показывает текущий префикс. Если параметром будет none - префикс будет отключен.
 Conference configure.\nconfig [show[ status]|help][ item]	Настройка конференции.\nconfig [show[ status]|help][ item]

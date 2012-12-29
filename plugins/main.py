@@ -1930,7 +1930,7 @@ comms = [
 	 (9, 'error', show_error, 2, L('Show error(s).\nerror [number|clear]')),
 	 (0, 'whoami', info_access, 1, L('Your identification.')),
 	 (0, 'whois', info_whois, 2, L('Identification.')),
-	 (0, 'lang', info_lang, 2, L('Show language.')),
+	 (0, 'lang', info_lang, 2, L('Show language for user.')),
 	 (0, 'status', status, 2, L('Show status.')),
 	 (3, 'prefix', set_prefix, 2, L('Set command prefix. Use \'none\' for disable prefix')),
 	 (9, 'set_locale', set_locale, 2, 'Change bot localization.\nset_locale en|%s' % '|'.join([tmp[:-4] for tmp in os.listdir(loc_folder[:-6]) if tmp[-4:]=='.txt'])),
