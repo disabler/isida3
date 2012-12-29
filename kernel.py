@@ -732,7 +732,7 @@ def iqCB(sess,iq):
 				break
 
 	c_lang = iq.getAttr('xml:lang')
-	if c_lang: users_locale[room] = c_lang
+	if c_lang: users_locale[room] = c_lang[:2]
 
 	if getServer(Settings['jid']) == room: nnj = True
 
@@ -1237,7 +1237,7 @@ def presenceCB(sess,mess):
 						for tmp in ntf_list: send_msg('chat', tmp, '', ntf_msg)
 	else:
 		c_lang = mess.getAttr('xml:lang')
-		if c_lang and nick: users_locale['%s/%s' % (room,nick)] = c_lang
+		if c_lang and nick: users_locale['%s/%s' % (room,nick)] = c_lang[:2]
 		if nick != '':
 			for mmb in megabase:
 				if mmb[0]==room and mmb[1]==nick:
