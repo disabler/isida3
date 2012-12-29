@@ -26,30 +26,31 @@ ANSW_PREV = {}
 FLOOD_STATS = {}
 
 autophrases_time = {}
+list_of_answers, list_of_empty, list_of_phrases_with_highlight, list_of_phrases_no_highlight, dict_of_mind = {}, {}, {}, {}, {}
 
-if os.path.isfile(loc_folder % CURRENT_LOCALE):
-	chat_folder = data_folder % 'chat/%s/' % CURRENT_LOCALE
-else:
-	chat_folder = data_folder % 'chat/en/'
+llist = ['en'] + [tmp[:-4] for tmp in os.listdir(loc_folder[:-6]) if tmp[-4:]=='.txt']
+for t in llist:
+	if os.path.isfile(loc_folder % t): cl = t
+	else: cl = 'en'
+	chat_folder = data_folder % 'chat/%s/' % cl
+	MIND_FILE = chat_folder + 'mind.txt'
+	EMPTY_FILE = chat_folder + 'empty.txt'
+	ANSWER_FILE = chat_folder + 'answer.txt'
+	PHRASES_FILE = chat_folder + 'phrases.txt'
 
-MIND_FILE = chat_folder + 'mind.txt'
-EMPTY_FILE = chat_folder + 'empty.txt'
-ANSWER_FILE = chat_folder + 'answer.txt'
-PHRASES_FILE = chat_folder + 'phrases.txt'
+	list_of_answers[cl] = readfile(ANSWER_FILE).decode('utf-8').split('\n')
+	list_of_empty[cl] = readfile(EMPTY_FILE).decode('utf-8').split('\n')
+	list_of_phrases_with_highlight[cl] = []
+	list_of_phrases_no_highlight[cl] = []
+	for phrase in readfile(PHRASES_FILE).split('\n'):
+		if 'NICK' in phrase: list_of_phrases_with_highlight[cl].append(phrase.decode('utf-8'))
+		else: list_of_phrases_no_highlight[cl].append(phrase.decode('utf-8'))
 
-list_of_answers = readfile(ANSWER_FILE).decode('utf-8').split('\n')
-list_of_empty = readfile(EMPTY_FILE).decode('utf-8').split('\n')
-list_of_phrases_with_highlight = []
-list_of_phrases_no_highlight = []
-for phrase in readfile(PHRASES_FILE).split('\n'):
-	if 'NICK' in phrase: list_of_phrases_with_highlight.append(phrase.decode('utf-8'))
-	else: list_of_phrases_no_highlight.append(phrase.decode('utf-8'))
-
-dict_of_mind = {}
-for p in readfile(MIND_FILE).decode('utf-8').split('\n'):
-	if '||' in p:
-		tmp1, tmp2 = p.strip().split('||')
-		dict_of_mind[tmp1] = tmp2.split('|')
+	dict_of_mind[cl] = {}
+	for p in readfile(MIND_FILE).decode('utf-8').split('\n'):
+		if '||' in p:
+			tmp1, tmp2 = p.strip().split('||')
+			dict_of_mind[cl][tmp1] = tmp2.split('|')
 
 def flood_actions(type, room, nick, answ, msg):
 	text = ''
@@ -85,14 +86,19 @@ def getRandomAnswer(tx,room):
 	return answ
 
 def getSmartAnswer(type, room, nick, text):
-	if '?' in text: answ = random.choice(list_of_answers).strip()
-	else: answ = random.choice(list_of_empty).strip()
+	rn = '%s/%s' % (room,nick)
+	try: loc = users_locale[rn] if rn else CURRENT_LOCALE
+	except: loc = CURRENT_LOCALE
+	if not locales.has_key(loc): loc = CURRENT_LOCALE
+
+	if '?' in text: answ = random.choice(list_of_answers[loc]).strip()
+	else: answ = random.choice(list_of_empty[loc]).strip()
 	score,sc, var = 1.0,0,[answ]
 	text = ' %s ' % text.upper()
-	for answer in dict_of_mind:
+	for answer in dict_of_mind[loc]:
 		sc = rating(answer, text, room)
-		if sc > score: score,var = sc,dict_of_mind[answer]
-		elif sc == score: var += dict_of_mind[answer]
+		if sc > score: score,var = sc,dict_of_mind[loc][answer]
+		elif sc == score: var += dict_of_mind[loc][answer]
 		
 	answ = random.choice(var)
 	if answ[0] != '@': return answ
@@ -152,10 +158,15 @@ def phrases_timer():
 				if get_config(room,'autophrases') == 'all':
 					rand_nicks = [d[1] for d in megabase if d[0]==room if not cur_execute_fetchone('select pattern from bot_ignore where %s ilike pattern',(getRoom(d[4]),)) and d[1] not in [get_xnick(room), '']]
 					if rand_nicks:
-						msg = random.choice(list_of_phrases_with_highlight + list_of_phrases_no_highlight)
-						msg = msg.replace('NICK', random.choice(rand_nicks))
+						nick = random.choice(rand_nicks)
+						rn = '%s/%s' % (room,nick)
+						try: loc = users_locale[rn] if rn else CURRENT_LOCALE
+						except: loc = CURRENT_LOCALE
+						if not locales.has_key(loc): loc = CURRENT_LOCALE
+						msg = random.choice(list_of_phrases_with_highlight[loc] + list_of_phrases_no_highlight[loc])
+						msg = msg.replace('NICK', nick)
 				if get_config(room,'autophrases') == 'without highlight' or not rand_nicks:
-					msg = random.choice(list_of_phrases_no_highlight)
+					msg = random.choice(list_of_phrases_no_highlight[CURRENT_LOCALE])
 				pprint('Send autophrase: %s >>> %s' % (room, msg), 'dark_gray')
 				send_msg('groupchat', room, '', msg)
 
