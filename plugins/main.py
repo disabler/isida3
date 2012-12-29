@@ -627,6 +627,15 @@ def get_nick_by_jid_res(room, jid):
 		if tmp[0] == room and tmp[4] == jid: return tmp[1]
 	return None
 
+def info_lang(type, jid, nick, text):
+	if not text: text = nick
+	if users_locale.has_key('%s/%s'%(jid,text)):
+		cur_lang = users_locale['%s/%s'%(jid,text)]
+		if locales.has_key(cur_lang): msg = L('For %s i\'ll use locale: %s','%s/%s'%(jid,nick)) % (text,cur_lang.upper())
+		else: msg = L('For %s detected unknown locale: %s. Used default locale: %s','%s/%s'%(jid,nick)) % (text,cur_lang.upper(),CURRENT_LOCALE.upper())
+	else: msg = L('Locale for %s not found! Used default locale: %s','%s/%s'%(jid,nick)) % (text,CURRENT_LOCALE.upper())
+	send_msg(type, jid, nick, msg)
+
 def info_whois(type, jid, nick, text):
 	if text != '': msg = raw_who(jid,nick,text)
 	else: msg = L('What?','%s/%s'%(jid,nick))
@@ -1921,6 +1930,7 @@ comms = [
 	 (9, 'error', show_error, 2, L('Show error(s).\nerror [number|clear]')),
 	 (0, 'whoami', info_access, 1, L('Your identification.')),
 	 (0, 'whois', info_whois, 2, L('Identification.')),
+	 (0, 'lang', info_lang, 2, L('Show language.')),
 	 (0, 'status', status, 2, L('Show status.')),
 	 (3, 'prefix', set_prefix, 2, L('Set command prefix. Use \'none\' for disable prefix')),
 	 (9, 'set_locale', set_locale, 2, 'Change bot localization.\nset_locale en|%s' % '|'.join([tmp[:-4] for tmp in os.listdir(loc_folder[:-6]) if tmp[-4:]=='.txt'])),

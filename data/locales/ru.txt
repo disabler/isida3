@@ -942,6 +942,9 @@ Command prefix: %s	Префикс команд: %s
 Uptime: %s, Last session: %s	Время работы: %s, Последняя сессия: %s
 Total Error(s): %s\n	Ошибки: %s\n
 No Errors	Нет ошибок
+For %s i'll use locale: %s	Для %s я использую локализацию: %s
+For %s detected unknown locale: %s. Used default locale: %s	У %s определена неизвестная локализация: %s. Используется локализация по умолчанию: %s
+Locale for %s not found! Used default locale: %s	Локализация %s не определена. Используется локализация по умолчанию: %s
 Who do you need?	А был ли мальчег?
 Access level: %s	Доступ: %s
 Ignored	Игнорируемый
@@ -1395,6 +1398,7 @@ Plugin system.\nplugin show|local\nplugin add|del name	Управление си
 Show error(s).\nerror [number|clear]	Показывает последнюю логированную ошибку или последние, если задан параметр.\nerror [number|clear]
 Your identification.	Ваша идентификация перед ботом.
 Identification.	Идентификация перед ботом.
+Show language.	Показ языка.
 Show status.	Показ статуса.
 Set command prefix. Use 'none' for disable prefix	Указание префикса команд. Без параметра показывает текущий префикс. Если параметром будет none - префикс будет отключен.
 Conference configure.\nconfig [show[ status]|help][ item]	Настройка конференции.\nconfig [show[ status]|help][ item]
