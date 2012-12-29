@@ -628,19 +628,19 @@ def get_nick_by_jid_res(room, jid):
 	return None
 
 def info_whois(type, jid, nick, text):
-	if text != '': msg = raw_who(jid, text)
+	if text != '': msg = raw_who(jid,nick,text)
 	else: msg = L('What?','%s/%s'%(jid,nick))
 	send_msg(type, jid, nick, msg)
 
 def info_access(type, jid, nick):
-	msg = raw_who(jid, nick)
+	msg = raw_who(jid,nick,nick)
 	send_msg(type, jid, nick, msg)
 
-def raw_who(room,nick):
-	access_mode = get_level(room,nick)[0]
+def raw_who(room,nick,text):
+	access_mode = get_level(room,text)[0]
 	if access_mode == -2: msg = L('Who do you need?','%s/%s'%(room,nick))
 	else:
-		realjid = get_level(room,nick)[1]
+		realjid = get_level(room,text)[1]
 		msg = L('Access level: %s','%s/%s'%(room,nick)) % access_mode
 		msg += ', ' + [L('Ignored','%s/%s'%(room,nick)),L('Minimal','%s/%s'%(room,nick)),L('Visitor','%s/%s'%(room,nick)),L('Visitor and Member','%s/%s'%(room,nick)),L('Participant','%s/%s'%(room,nick)),L('Member','%s/%s'%(room,nick)), L('Moderator','%s/%s'%(room,nick)),L('Moderator and member','%s/%s'%(room,nick)),L('Admin','%s/%s'%(room,nick)),L('Owner','%s/%s'%(room,nick)),L('Bot\'s owner','%s/%s'%(room,nick))][access_mode+1]
 		if realjid != 'None':
