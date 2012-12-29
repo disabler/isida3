@@ -560,7 +560,7 @@ def os_version():
 	isidaPyVer = '%s [%s]' % (sys.version.split(' (')[0],sys.version.split(')')[0].split(', ')[1])
 	if iOs == 'posix':
 		osInfo = os.uname()
-		isidaOs = '%s (%s-%s) / Python %s' % (osInfo[0],osInfo[2],osInfo[4],isidaPyVer)
+		isidaOs = '%s %s-%s / Python %s' % (osInfo[0],osInfo[2],osInfo[4],isidaPyVer)
 	elif iSys == 'win32':
 		def get_registry_value(key, subkey, value):
 			import _winreg

@@ -532,21 +532,21 @@ def un_unix(val):
 	ret = '%02d:%02d:%02d' % tuple(tt[3:6])
 	if sum(tt[:3]):
 		day_h,day_l = tt[2]/10%10,tt[2] % 10
-		if day_h == 1: ret = L('%s days, %s','%s/%s'%(jid,nick)) % (tt[2],ret)
+		if day_h == 1: ret = L('%s days, %s') % (tt[2],ret)
 		else:
-			if day_l in [5,6,7,8,9]: ret = L('%s days, %s','%s/%s'%(jid,nick)) % (tt[2],ret)
-			elif day_l in [2,3,4]: ret = L('%s Days, %s','%s/%s'%(jid,nick)).lower() % (tt[2],ret)
-			elif day_l == 1: ret = L('%s day, %s','%s/%s'%(jid,nick)) % (tt[2],ret)
+			if day_l in [5,6,7,8,9]: ret = L('%s days, %s') % (tt[2],ret)
+			elif day_l in [2,3,4]: ret = L('%s Days, %s').lower() % (tt[2],ret)
+			elif day_l == 1: ret = L('%s day, %s') % (tt[2],ret)
 	if sum(tt[:2]):
-		if tt[1] in [5,6,7,8,9,10,11,12]: ret = L('%s months, %s','%s/%s'%(jid,nick)) % (tt[1],ret)
-		elif tt[1] in [2,3,4]: ret = L('%s Months, %s','%s/%s'%(jid,nick)).lower() % (tt[1],ret)
-		elif tt[1] == 1: ret = L('%s month, %s','%s/%s'%(jid,nick)) % (tt[1],ret)
+		if tt[1] in [5,6,7,8,9,10,11,12]: ret = L('%s months, %s') % (tt[1],ret)
+		elif tt[1] in [2,3,4]: ret = L('%s Months, %s').lower() % (tt[1],ret)
+		elif tt[1] == 1: ret = L('%s month, %s') % (tt[1],ret)
 	if tt[0]:
 		ty = tt[0] % 100
 		if ty >= 20: ty = ty % 10
-		if ty in [0]+range(5,21): ret = L('%s years, %s','%s/%s'%(jid,nick)) % (tt[0],ret)
-		elif ty in [2,3,4]: ret = L('%s Years, %s','%s/%s'%(jid,nick)).lower() % (tt[0],ret)
-		else: ret = L('%s year, %s','%s/%s'%(jid,nick)) % (tt[0],ret)
+		if ty in [0]+range(5,21): ret = L('%s years, %s') % (tt[0],ret)
+		elif ty in [2,3,4]: ret = L('%s Years, %s').lower() % (tt[0],ret)
+		else: ret = L('%s year, %s') % (tt[0],ret)
 	return ret
 
 def close_age_null():
