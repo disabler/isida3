@@ -30,27 +30,27 @@ list_of_answers, list_of_empty, list_of_phrases_with_highlight, list_of_phrases_
 
 llist = ['en'] + [tmp[:-4] for tmp in os.listdir(loc_folder[:-6]) if tmp[-4:]=='.txt']
 for t in llist:
-	if os.path.isfile(loc_folder % t): cl = t
-	else: cl = 'en'
-	chat_folder = data_folder % 'chat/%s/' % cl
+	if os.path.isfile(loc_folder % t): cur_lang = t
+	else: cur_lang = 'en'
+	chat_folder = data_folder % 'chat/%s/' % cur_lang
 	MIND_FILE = chat_folder + 'mind.txt'
 	EMPTY_FILE = chat_folder + 'empty.txt'
 	ANSWER_FILE = chat_folder + 'answer.txt'
 	PHRASES_FILE = chat_folder + 'phrases.txt'
 
-	list_of_answers[cl] = readfile(ANSWER_FILE).decode('utf-8').split('\n')
-	list_of_empty[cl] = readfile(EMPTY_FILE).decode('utf-8').split('\n')
-	list_of_phrases_with_highlight[cl] = []
-	list_of_phrases_no_highlight[cl] = []
+	list_of_answers[cur_lang] = readfile(ANSWER_FILE).decode('utf-8').split('\n')
+	list_of_empty[cur_lang] = readfile(EMPTY_FILE).decode('utf-8').split('\n')
+	list_of_phrases_with_highlight[cur_lang] = []
+	list_of_phrases_no_highlight[cur_lang] = []
 	for phrase in readfile(PHRASES_FILE).split('\n'):
-		if 'NICK' in phrase: list_of_phrases_with_highlight[cl].append(phrase.decode('utf-8'))
-		else: list_of_phrases_no_highlight[cl].append(phrase.decode('utf-8'))
+		if 'NICK' in phrase: list_of_phrases_with_highlight[cur_lang].append(phrase.decode('utf-8'))
+		else: list_of_phrases_no_highlight[cur_lang].append(phrase.decode('utf-8'))
 
-	dict_of_mind[cl] = {}
+	dict_of_mind[cur_lang] = {}
 	for p in readfile(MIND_FILE).decode('utf-8').split('\n'):
 		if '||' in p:
 			tmp1, tmp2 = p.strip().split('||')
-			dict_of_mind[cl][tmp1] = tmp2.split('|')
+			dict_of_mind[cur_lang][tmp1] = tmp2.split('|')
 
 def flood_actions(type, room, nick, answ, msg):
 	text = ''
