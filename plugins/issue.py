@@ -53,16 +53,16 @@ def issue_new(s,acclvl,room,jid,nick,text):
 			text = text.replace(t,'',1)
 		else: break
 	s = s[len(tags):]
-	if not s: return L('No issue\'s body!')
+	if not s: return L('No issue\'s body!','%s/%s'%(room,nick))
 	tags = ' '.join(tags)
 	body = text.strip()
 	try: id = cur_execute_fetchone('select count(*) from issues where room=%s',(room,))[0] + 1
 	except: id = 1
 	tbody = cur_execute_fetchall('select id from issues where room=%s and body ilike %s',(room,'%%%s%%' % body))
-	if tbody: return L('I know same issue(s): %s') % ', '.join(issue_number_format % t for t in zip(*tbody)[0])
+	if tbody: return L('I know same issue(s): %s','%s/%s'%(room,nick)) % ', '.join(issue_number_format % t for t in zip(*tbody)[0])
 	err = cur_execute('insert into issues values (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)', (id, room, getRoom(jid), nick, acclvl, tags, body, issue_new_id, int(time.time()),'','',0))
 	if err: return err
-	else: return L('Added issue %s') % issue_number_format % id
+	else: return L('Added issue %s','%s/%s'%(room,nick)) % issue_number_format % id
 
 def issue_show(s,room,type,nick):
 	if len(s) > 1: s = s[1]
@@ -76,46 +76,46 @@ def issue_show(s,room,type,nick):
 	if iss:
 		tm = []
 		if len(iss) > 1 and type == 'groupchat':
-			send_msg(type, room, nick, L('Sent in private message'))
+			send_msg(type, room, nick, L('Sent in private message','%s/%s'%(room,nick)))
 			type = 'chat'
 		for t in iss:
-			if t[2]: tmp = '%s (%s) *%s | %s\n%s' % (issue_number_format % t[0],issue_status[t[4]],' *'.join(t[2].split()),L('Created by %s') % t[1],t[3])
-			else: tmp = '%s (%s) %s\n%s' % (issue_number_format % t[0],issue_status[t[4]],L('Created by %s') % t[1],t[3])
+			if t[2]: tmp = '%s (%s) *%s | %s\n%s' % (issue_number_format % t[0],issue_status[t[4]],' *'.join(t[2].split()),L('Created by %s','%s/%s'%(room,nick)) % t[1],t[3])
+			else: tmp = '%s (%s) %s\n%s' % (issue_number_format % t[0],issue_status[t[4]],L('Created by %s','%s/%s'%(room,nick)) % t[1],t[3])
 			if t[4]:
 				tmp = '%s\n%s %s [%s]' % (tmp,issue_status_show[t[4]],t[6],disp_time(t[7]))
-				if t[5]: tmp += L(', by reason: %s') % t[5]
+				if t[5]: tmp += L(', by reason: %s','%s/%s'%(room,nick)) % t[5]
 			tm.append(tmp)
-		return L('Issue(s) list:\n%s') % '\n\n'.join(tm), type
-	elif s_original == '%': return L('Issues not found!'), type
-	else: return L('Issues with match \'%s\' not found!') % s_original, type
+		return L('Issue(s) list:\n%s','%s/%s'%(room,nick)) % '\n\n'.join(tm), type
+	elif s_original == '%': return L('Issues not found!','%s/%s'%(room,nick)), type
+	else: return L('Issues with match \'%s\' not found!','%s/%s'%(room,nick)) % s_original, type
 
 def issue_remove(s,acclvl,room,jid,nick):
 	if len(s) > 1: id = s[1]
-	else: return L('Which issue need remove?')
+	else: return L('Which issue need remove?','%s/%s'%(room,nick))
 	if id.isdigit() or id[0] == '#':
 		try: id = int(id.replace('#',''))
-		except: return L('You must use numeric issue id.')
+		except: return L('You must use numeric issue id.','%s/%s'%(room,nick))
 		iss = cur_execute_fetchall('select jid,level,status from issues where room=%s and id=%s;',(room,id))
-	else: return L('You must use numeric issue id.')
+	else: return L('You must use numeric issue id.','%s/%s'%(room,nick))
 	if iss:
 		if iss[0][2] != issue_remove_id:
 			if acclvl >= 7 or iss[0][0] == jid:
 				if len(s) > 2: cmt = ' '.join(s[2:])
 				else: cmt = ''
 				cur_execute('update issues set status=%s,accept_by=%s,accept_date=%s,comment=%s where room=%s and id=%s', (issue_remove_id,nick,int(time.time()),cmt,room,id))
-				return L('Issue %s removed!') % issue_number_format % id
-			else: return L('There is not Your issue or You have no rights to remove it.')
-		else: return L('Issue %s was removed earlier!') % issue_number_format % id
-	else: return L('Issue %s not found!') % issue_number_format % id
+				return L('Issue %s removed!','%s/%s'%(room,nick)) % issue_number_format % id
+			else: return L('There is not Your issue or You have no rights to remove it.','%s/%s'%(room,nick))
+		else: return L('Issue %s was removed earlier!','%s/%s'%(room,nick)) % issue_number_format % id
+	else: return L('Issue %s not found!','%s/%s'%(room,nick)) % issue_number_format % id
 
 def issue_accept(s,acclvl,room,jid,nick):
 	if len(s) > 1: id = s[1]
-	else: return L('Which issue need accept?')
+	else: return L('Which issue need accept?','%s/%s'%(room,nick))
 	if id.isdigit() or id[0] == '#':
 		try: id = int(id.replace('#',''))
-		except: return L('You must use numeric issue id.')
+		except: return L('You must use numeric issue id.','%s/%s'%(room,nick))
 		iss = cur_execute_fetchall('select jid,level,status,tags from issues where room=%s and id=%s;',(room,id))
-	else: return L('You must use numeric issue id.')
+	else: return L('You must use numeric issue id.','%s/%s'%(room,nick))
 	if iss:
 		if acclvl >= 7 or iss[0][0] == jid or iss[0][1] <= acclvl:
 			if len(s) > 2:
@@ -132,67 +132,67 @@ def issue_accept(s,acclvl,room,jid,nick):
 				cmt = ' '.join(s)
 			else: cmt,tags = '',iss[0][3]
 			cur_execute('update issues set status=%s,accept_by=%s,accept_date=%s,comment=%s,tags=%s where room=%s and id=%s', (issue_accept_id,nick,int(time.time()),cmt,tags,room,id))
-			if iss[0][2] != issue_accept_id: return L('Issue %s accepted!') % issue_number_format % id
-			else: return L('Issue %s was accepted earlier!') % issue_number_format % id
-		else: return L('There is not Your issue or You have no rights to accept it.')
-	else: return L('Issue %s not found!') % issue_number_format % id
+			if iss[0][2] != issue_accept_id: return L('Issue %s accepted!','%s/%s'%(room,nick)) % issue_number_format % id
+			else: return L('Issue %s was accepted earlier!','%s/%s'%(room,nick)) % issue_number_format % id
+		else: return L('There is not Your issue or You have no rights to accept it.','%s/%s'%(room,nick))
+	else: return L('Issue %s not found!','%s/%s'%(room,nick)) % issue_number_format % id
 
 def issue_reject(s,acclvl,room,jid,nick):
 	if len(s) > 1: id = s[1]
-	else: return L('Which issue need reject?')
+	else: return L('Which issue need reject?','%s/%s'%(room,nick))
 	if id.isdigit() or id[0] == '#':
 		try: id = int(id.replace('#',''))
-		except: return L('You must use numeric issue id.')
+		except: return L('You must use numeric issue id.','%s/%s'%(room,nick))
 		iss = cur_execute_fetchall('select jid,level,status from issues where room=%s and id=%s;',(room,id))
-	else: return L('You must use numeric issue id.')
+	else: return L('You must use numeric issue id.','%s/%s'%(room,nick))
 	if iss:
 		if iss[0][2] != issue_reject_id:
 			if acclvl >= 7 or iss[0][0] == jid or iss[0][1] <= acclvl:
 				if len(s) > 2: cmt = ' '.join(s[2:])
 				else: cmt = ''
 				cur_execute('update issues set status=%s,accept_by=%s,accept_date=%s,comment=%s where room=%s and id=%s', (issue_reject_id,nick,int(time.time()),cmt,room,id))
-				return L('Issue %s rejected!') % issue_number_format % id
-			else: return L('There is not Your issue or You have no rights to reject it.')
-		else: return L('Issue %s was rejected earlier!') % issue_number_format % id
-	else: return L('Issue %s not found!') % issue_number_format % id
+				return L('Issue %s rejected!','%s/%s'%(room,nick)) % issue_number_format % id
+			else: return L('There is not Your issue or You have no rights to reject it.','%s/%s'%(room,nick))
+		else: return L('Issue %s was rejected earlier!','%s/%s'%(room,nick)) % issue_number_format % id
+	else: return L('Issue %s not found!','%s/%s'%(room,nick)) % issue_number_format % id
 
 def issue_pending(s,acclvl,room,jid,nick):
 	if len(s) > 1: id = s[1]
-	else: return L('Which issue is pending?')
+	else: return L('Which issue is pending?','%s/%s'%(room,nick))
 	if id.isdigit() or id[0] == '#':
 		try: id = int(id.replace('#',''))
-		except: return L('You must use numeric issue id.')
+		except: return L('You must use numeric issue id.','%s/%s'%(room,nick))
 		iss = cur_execute_fetchall('select jid,level,status from issues where room=%s and id=%s;',(room,id))
-	else: return L('You must use numeric issue id.')
+	else: return L('You must use numeric issue id.','%s/%s'%(room,nick))
 	if iss:
 		if iss[0][2] != issue_reject_id:
 			if acclvl >= 7 or iss[0][0] == jid or iss[0][1] <= acclvl:
 				if len(s) > 2: cmt = ' '.join(s[2:])
 				else: cmt = ''
 				cur_execute('update issues set status=%s,accept_by=%s,accept_date=%s,comment=%s where room=%s and id=%s', (issue_pending_id,nick,int(time.time()),cmt,room,id))
-				return L('Issue %s is mark as pending!') % issue_number_format % id
-			else: return L('There is not Your issue or You have no rights to mark as pending.')
-		else: return L('Issue %s was marked as pending earlier!') % issue_number_format % id
-	else: return L('Issue %s not found!') % issue_number_format % id
+				return L('Issue %s is mark as pending!','%s/%s'%(room,nick)) % issue_number_format % id
+			else: return L('There is not Your issue or You have no rights to mark as pending.','%s/%s'%(room,nick))
+		else: return L('Issue %s was marked as pending earlier!','%s/%s'%(room,nick)) % issue_number_format % id
+	else: return L('Issue %s not found!','%s/%s'%(room,nick)) % issue_number_format % id
 
 def issue_done(s,acclvl,room,jid,nick):
 	if len(s) > 1: id = s[1]
-	else: return L('Which issue is done?')
+	else: return L('Which issue is done?','%s/%s'%(room,nick))
 	if id.isdigit() or id[0] == '#':
 		try: id = int(id.replace('#',''))
-		except: return L('You must use numeric issue id.')
+		except: return L('You must use numeric issue id.','%s/%s'%(room,nick))
 		iss = cur_execute_fetchall('select jid,level,status from issues where room=%s and id=%s;',(room,id))
-	else: return L('You must use numeric issue id.')
+	else: return L('You must use numeric issue id.','%s/%s'%(room,nick))
 	if iss:
 		if iss[0][2] != issue_reject_id:
 			if acclvl >= 7 or iss[0][0] == jid or iss[0][1] <= acclvl:
 				if len(s) > 2: cmt = ' '.join(s[2:])
 				else: cmt = ''
 				cur_execute('update issues set status=%s,accept_by=%s,accept_date=%s,comment=%s where room=%s and id=%s', (issue_done_id,nick,int(time.time()),cmt,room,id))
-				return L('Issue %s marked as done!') % issue_number_format % id
-			else: return L('There is not Your issue or You have no rights to mark as done.')
-		else: return L('Issue %s was marked as done earlier!') % issue_number_format % id
-	else: return L('Issue %s not found!') % issue_number_format % id
+				return L('Issue %s marked as done!','%s/%s'%(room,nick)) % issue_number_format % id
+			else: return L('There is not Your issue or You have no rights to mark as done.','%s/%s'%(room,nick))
+		else: return L('Issue %s was marked as done earlier!','%s/%s'%(room,nick)) % issue_number_format % id
+	else: return L('Issue %s not found!','%s/%s'%(room,nick)) % issue_number_format % id
 
 global execute
 

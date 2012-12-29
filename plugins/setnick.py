@@ -28,7 +28,7 @@ def set_nickname(type, jid, nick, text):
 		text = '%s/%s' % (jid, text or nickname)
 		bot_join(type, jid, nick, text)
 	else:
-		msg = L('You can\'t do it!')
+		msg = L('You can\'t do it!','%s/%s'%(jid,nick))
 		send_msg(type, jid, nick, msg)
 
 global execute

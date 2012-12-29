@@ -29,8 +29,8 @@ def whowas(type, jid, nick, text):
 										  and status=1\
 										  and (nick ilike %s or jid ilike %s)\
 										  group by jid,nick order by nick;',(jid,period,text,text))
-	if was_here: msg = L('For a last day i see: %s') % ', '.join([t[0] for t in was_here])
-	else:msg = L('All who i see for a last day now is here.')
+	if was_here: msg = L('For a last day i see: %s','%s/%s'%(jid,nick)) % ', '.join([t[0] for t in was_here])
+	else:msg = L('All who i see for a last day now is here.','%s/%s'%(jid,nick))
 	send_msg(type, jid, nick, msg)
 
 global execute

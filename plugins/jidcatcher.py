@@ -24,7 +24,7 @@
 JIDCATCHER_DEFAULT_LIMIT = 10
 
 def info_search(type, jid, nick, text):
-	msg = L('What I must find?')
+	msg = L('What I must find?','%s/%s'%(jid,nick))
 	if text:
 		if '\n' in text:
 			text,lim = text.split('\n',1)
@@ -34,8 +34,8 @@ def info_search(type, jid, nick, text):
 		cur_execute('delete from jid where server ilike %s',('<temporary>%',))
 		ttext = '%%%s%%' % text
 		tma = cur_execute_fetchmany('select * from jid where login ilike %s or server ilike %s or resourse ilike %s order by login',(ttext,ttext,ttext),lim)
-		if tma: msg = '%s\n%s' % (L('Found:'),'\n'.join(['%s. %s@%s/%s' % tuple([tma.index(tt)+1]+list(tt)) for tt in tma]))
-		else: msg = L('\'%s\' not found!') % text
+		if tma: msg = '%s\n%s' % (L('Found:','%s/%s'%(jid,nick)),'\n'.join(['%s. %s@%s/%s' % tuple([tma.index(tt)+1]+list(tt)) for tt in tma]))
+		else: msg = L('\'%s\' not found!','%s/%s'%(jid,nick)) % text
 	send_msg(type, jid, nick, msg)
 
 def info_res(type, jid, nick, text):
@@ -47,10 +47,10 @@ def info_res(type, jid, nick, text):
 		text1 = '%%%s%%' % text
 		tlen = cur_execute_fetchall('select count(*) from (select resourse,count(*) from jid where resourse ilike %s group by resourse) tmp;',(text1,))[0][0]
 		jidbase = cur_execute_fetchmany('select resourse,count(*) from jid where resourse ilike %s group by resourse order by -count(*),resourse',(text1,),JIDCATCHER_DEFAULT_LIMIT)
-	if not tlen: msg = L('\'%s\' not found!') % text
+	if not tlen: msg = L('\'%s\' not found!','%s/%s'%(jid,nick)) % text
 	else:
-		if text: msg = L('Found resources: %s') % tlen
-		else: msg = L('Total resources: %s') % tlen
+		if text: msg = L('Found resources: %s','%s/%s'%(jid,nick)) % tlen
+		else: msg = L('Total resources: %s','%s/%s'%(jid,nick)) % tlen
 		if jidbase: msg += '\n%s' % '\n'.join(['%s. %s\t%s' % tuple([jidbase.index(jj)+1]+list(jj)) for jj in jidbase])
 	send_msg(type, jid, nick, msg)
 
@@ -63,10 +63,10 @@ def info_serv(type, jid, nick, text):
 		text1 = '%%%s%%' % text
 		tlen = cur_execute_fetchall('select count(*) from (select server,count(*) from jid where server ilike %s group by server) tmp;',(text1,))[0][0]
 		jidbase = cur_execute_fetchall('select server,count(*) from jid where server ilike %s group by server order by -count(*),server',(text1,))
-	if not tlen: msg = L('\'%s\' not found!') % text
+	if not tlen: msg = L('\'%s\' not found!','%s/%s'%(jid,nick)) % text
 	else:
-		if text: msg = L('Found servers: %s') % tlen
-		else: msg = L('Total servers: %s') % tlen
+		if text: msg = L('Found servers: %s','%s/%s'%(jid,nick)) % tlen
+		else: msg = L('Total servers: %s','%s/%s'%(jid,nick)) % tlen
 		if jidbase: msg = '%s\n%s' %(msg,' | '.join(['%s:%s' % jj for jj in jidbase]))
 	send_msg(type, jid, nick, msg)
 
@@ -76,8 +76,8 @@ def info_top(type, jid, nick, text):
 	if text: room = text
 	else: room = getRoom(jid)
 	cnf = cur_execute_fetchone('select count,time from top where room=%s',(room,))
-	if cnf: msg = L('Max count of members: %s %s') % (cnf[0], '(%s)' % disp_time(cnf[1]))
-	else: msg = L('Statistic not found!')
+	if cnf: msg = L('Max count of members: %s %s','%s/%s'%(jid,nick)) % (cnf[0], '(%s)' % disp_time(cnf[1]))
+	else: msg = L('Statistic not found!','%s/%s'%(jid,nick))
 	send_msg(type, jid, nick, msg)
 
 def jidcatcher_presence(room,jid,nick,type,text):

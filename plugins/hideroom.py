@@ -22,27 +22,27 @@
 # --------------------------------------------------------------------------- #
 
 def hide_room(type, jid, nick, text):
-	if type == 'groupchat': msg = L('This command available only in private!')
+	if type == 'groupchat': msg = L('This command available only in private!','%s/%s'%(jid,nick))
 	else:
 		hmode = text.split(' ')[0]
 		try: hroom = text.split(' ')[1]
 		except: hroom = jid
 		if hmode == 'show':
 			hr = cur_execute_fetchall('select * from hiden_rooms;')
-			if len(hr): msg = '%s\n%s' % (L('Hidden conferences:'),'\n'.join([t[0] for t in hr]))
-			else: msg = L('No hidden conferences.')
+			if len(hr): msg = '%s\n%s' % (L('Hidden conferences:','%s/%s'%(jid,nick)),'\n'.join([t[0] for t in hr]))
+			else: msg = L('No hidden conferences.','%s/%s'%(jid,nick))
 		elif hmode == 'add':
-			if not cur_execute_fetchone('select * from conference where room ilike %s;', ('%s/%%'%getRoom(hroom),)): msg = L('I am not in the %s') % hroom
-			elif cur_execute_fetchone('select * from hiden_rooms where room=%s',(hroom,)): msg = L('I\'m already hide a %s') % hroom
+			if not cur_execute_fetchone('select * from conference where room ilike %s;', ('%s/%%'%getRoom(hroom),)): msg = L('I am not in the %s','%s/%s'%(jid,nick)) % hroom
+			elif cur_execute_fetchone('select * from hiden_rooms where room=%s',(hroom,)): msg = L('I\'m already hide a %s','%s/%s'%(jid,nick)) % hroom
 			else:
 				cur_execute('insert into hiden_rooms values (%s)',(hroom,))
-				msg = L('%s has been hidden') % hroom
+				msg = L('%s has been hidden','%s/%s'%(jid,nick)) % hroom
 		elif hmode == 'del':
 			if hroom in hr:
 				cur_execute('delete from hiden_rooms where room=%s',(hroom,))
-				msg = L('%s will be shown') % hroom
-			else: msg = L('I\'m not hide room %s') % hroom
-		else: msg = L('What?')
+				msg = L('%s will be shown','%s/%s'%(jid,nick)) % hroom
+			else: msg = L('I\'m not hide room %s','%s/%s'%(jid,nick)) % hroom
+		else: msg = L('What?','%s/%s'%(jid,nick))
 	send_msg(type, jid, nick, msg)
 
 global execute

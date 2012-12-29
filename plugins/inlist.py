@@ -21,10 +21,10 @@
 #                                                                             #
 # --------------------------------------------------------------------------- #
 
-def inban(type, jid, nick, text): inlist_raw(type, jid, nick, text, 'outcast', L('Total banned: %s'))
-def inowner(type, jid, nick, text): inlist_raw(type, jid, nick, text, 'owner', L('Total owners: %s'))
-def inadmin(type, jid, nick, text): inlist_raw(type, jid, nick, text, 'admin', L('Total admins: %s'))
-def inmember(type, jid, nick, text): inlist_raw(type, jid, nick, text, 'member', L('Total members: %s'))
+def inban(type, jid, nick, text): inlist_raw(type, jid, nick, text, 'outcast', L('Total banned: %s','%s/%s'%(jid,nick)))
+def inowner(type, jid, nick, text): inlist_raw(type, jid, nick, text, 'owner', L('Total owners: %s','%s/%s'%(jid,nick)))
+def inadmin(type, jid, nick, text): inlist_raw(type, jid, nick, text, 'admin', L('Total admins: %s','%s/%s'%(jid,nick)))
+def inmember(type, jid, nick, text): inlist_raw(type, jid, nick, text, 'member', L('Total members: %s','%s/%s'%(jid,nick)))
 
 def inlist_raw(type, jid, nick, text, affil, message):
 	global banbase,iq_request
@@ -35,7 +35,7 @@ def inlist_raw(type, jid, nick, text, affil, message):
 
 def inlist_raw_async(type, jid, nick, text, message, iq_stanza):
 	is_answ = unicode(iq_stanza[1][0])
-	if is_answ.startswith(L('Error!')): msg = is_answ
+	if is_answ.startswith(L('Error!','%s/%s'%(jid,nick))): msg = is_answ
 	else:
 		bb = [[tmp.getAttr('jid'),['',tmp.getTagData('reason')][tmp.getTagData('reason') != None]] for tmp in iq_stanza[1][0].getTag('query',namespace=xmpp.NS_MUC_ADMIN).getTags('item')]
 		bb.sort()
@@ -53,8 +53,8 @@ def inlist_raw_async(type, jid, nick, text, message, iq_stanza):
 					mmsg += '\n%s. %s' % (cnt,i[0])
 					if len(i[1]): mmsg += ' - %s' % i[1]
 					cnt += 1
-			if len(mmsg): msg += L('Found:') + ' %s%s' % (mmsg.count('\n'),mmsg)
-			else: msg += L('no matches!')
+			if len(mmsg): msg += L('Found:','%s/%s'%(jid,nick)) + ' %s%s' % (mmsg.count('\n'),mmsg)
+			else: msg += L('no matches!','%s/%s'%(jid,nick))
 	send_msg(type, jid, nick, msg)
 
 global execute

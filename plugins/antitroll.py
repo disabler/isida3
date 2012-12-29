@@ -30,13 +30,13 @@ def troll(type, jid, nick, text):
 	otake = xmpp.JID(node=getName(jid), domain=getServer(jid), resource=r)
 	otake = unicode(otake)
 	if len(text)>1: message = text[1]
-	else: message = L('You troll!')
+	else: message = L('You troll!','%s/%s'%(jid,nick))
 	tst = GT('troll_sleep_time')
 	while count != 0:
 		sender(xmpp.Message(otake, message, "chat"))
 		time.sleep(tst)
 		count -= 1
-	send_msg(type, jid, nick, L('Done'))
+	send_msg(type, jid, nick, L('Done','%s/%s'%(jid,nick)))
 
 global execute, timer
 

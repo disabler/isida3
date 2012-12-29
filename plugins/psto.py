@@ -29,15 +29,15 @@ psto_id = {}
 def psto(type, jid, nick, text):
 	global psto_id
 	if not len(text) or len(text) == text.count(' '):
-		send_msg(type, jid, nick, L('What message do you want to find?'))
+		send_msg(type, jid, nick, L('What message do you want to find?','%s/%s'%(jid,nick)))
 		return
 	try:
 		psto_idn,psto_comm = re.findall('#?([a-z]{5,})\/?([0-9]*\-*[0-9]*)?',text)[0]
 		if psto_idn:
 			psto_id[psto_idn] = '%s\n%s\n%s\n%s' % (type,jid,nick,psto_comm)
 			send_msg('chat', PSTO_JID, '', '#%s+' % psto_idn)
-		else: send_msg(type, jid, nick, L('Smoke help about command!'))
-	except: send_msg(type, jid, nick, L('Smoke help about command!'))
+		else: send_msg(type, jid, nick, L('Smoke help about command!','%s/%s'%(jid,nick)))
+	except: send_msg(type, jid, nick, L('Smoke help about command!','%s/%s'%(jid,nick)))
 
 def psto_catch(room,jid,nick,type,text):
 	global psto_id
@@ -76,7 +76,7 @@ def psto_catch(room,jid,nick,type,text):
 def psto_post(type, jid, nick, text):
 	send_msg('chat', PSTO_JID, '', text)
 	time.sleep(1.2)
-	send_msg(type, jid, nick, L('Message posted to Psto.'))
+	send_msg(type, jid, nick, L('Message posted to Psto.','%s/%s'%(jid,nick)))
 
 global execute,message_control
 

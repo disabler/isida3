@@ -34,17 +34,17 @@ def kinopoisk(type, jid, nick, text):
 		else:
 			temp_urls = re.findall('<a href="http://m.kinopoisk.ru/movie/(\d+?)/">(.+?)</a>', data)
 			if temp_urls:
-				msg = L('Found:')
+				msg = L('Found:','%s/%s'%(jid,nick))
 				for t_u in temp_urls:
 					msg += '\n%s - %s' % (t_u[0], t_u[1])
-			else: msg = L('Not found!')
+			else: msg = L('Not found!','%s/%s'%(jid,nick))
 	elif re.search('^\d+$', text[-1]):
 		data = html_encode(load_page('http://m.kinopoisk.ru/movie/'+text[-1]))
 		if kinopoisk_error_string in data: msg = unhtml_hard(re.findall(kinopoisk_error_regexp,data,re.I+re.U+re.S)[0])
 		else:
 			tmp = unhtml_hard(re.search('<p class="title">((?:.|\s)+?)</div>', data).group(1)).split('\n')
 			msg = '\n'.join([i[0].upper()+i[1:] for i in tmp])
-	else: msg = L('What?')
+	else: msg = L('What?','%s/%s'%(jid,nick))
 	send_msg(type,jid,nick,msg)
 
 global execute

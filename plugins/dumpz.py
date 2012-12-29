@@ -37,9 +37,9 @@ def dumpz(type, jid, nick, text):
 		req = urllib2.Request('http://dumpz.org/' ,data,{'Content-type':'application/x-www-form-urlencoded'})
 		res = urllib2.urlopen(req)
 		link = res.url
-		msg = L('Posting by URL: %s') % link
+		msg = L('Posting by URL: %s','%s/%s'%(jid,nick)) % link
 	except:
-		msg = L('Unexpected error')
+		msg = L('Unexpected error','%s/%s'%(jid,nick))
 	send_msg(type, jid, nick, msg)
 
 global execute

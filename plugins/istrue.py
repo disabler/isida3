@@ -32,25 +32,25 @@ def is_valid(type, jid, nick, text):
 	if ru_lit<en_lit: idx, hl = float(ru_lit)/en_lit, 1
 	elif ru_lit>en_lit: idx, hl = float(en_lit)/ru_lit, 2
 	else: idx, hl = 0.5, None
-	if (ru_lit == lt or en_lit == lt) and float(caps_lit)/lt <= 0.5: msg = L('100% True-nick!')
-	elif ru_lit+en_lit == 0: msg = L('Nicks without letters isn\'t true!')
-	elif ru_lit+en_lit+text.count(' ')+text.count('.') == lt: msg = L('Valid of nick is - %s%s') % (100-int(idx*100), '%!')
-	elif not ru_lit or not en_lit: msg = L('Normal nick, but left symbols in fireplace.')
-	else: msg = L('Valid of nick is - %s%s') % (int(float(ru_lit+en_lit)/lt*100-int(idx*100)), '%!')
-	if float(caps_lit)/lt > 0.5: msg += ' ' + L('Many caps - %s%s') % (int(float(caps_lit)/lt*100), '%!')
+	if (ru_lit == lt or en_lit == lt) and float(caps_lit)/lt <= 0.5: msg = L('100% True-nick!','%s/%s'%(jid,nick))
+	elif ru_lit+en_lit == 0: msg = L('Nicks without letters isn\'t true!','%s/%s'%(jid,nick))
+	elif ru_lit+en_lit+text.count(' ')+text.count('.') == lt: msg = L('Valid of nick is - %s%s','%s/%s'%(jid,nick)) % (100-int(idx*100), '%!')
+	elif not ru_lit or not en_lit: msg = L('Normal nick, but left symbols in fireplace.','%s/%s'%(jid,nick))
+	else: msg = L('Valid of nick is - %s%s','%s/%s'%(jid,nick)) % (int(float(ru_lit+en_lit)/lt*100-int(idx*100)), '%!')
+	if float(caps_lit)/lt > 0.5: msg += ' ' + L('Many caps - %s%s','%s/%s'%(jid,nick)) % (int(float(caps_lit)/lt*100), '%!')
 	if ru_lit+en_lit:
-		msg += ' ' + L('Dominate letters:') + ' '
-		if hl == 1: msg += L('Latin')
-		elif hl == 2: msg += L('Cyrillic')
-		else: msg += L('Equally')
+		msg += ' ' + L('Dominate letters:','%s/%s'%(jid,nick)) + ' '
+		if hl == 1: msg += L('Latin','%s/%s'%(jid,nick))
+		elif hl == 2: msg += L('Cyrillic','%s/%s'%(jid,nick))
+		else: msg += L('Equally','%s/%s'%(jid,nick))
 	send_msg(type, jid, nick, msg)
 
 def is_true(type, jid, nick, text):
-	if text == '': msg = L('And?')
+	if text == '': msg = L('And?','%s/%s'%(jid,nick))
 	else:
 		idx = 0
 		for tmp in text: idx += ord(tmp)
-		msg = L('Expression is true for %s%s') % (idx % 100, '%')
+		msg = L('Expression is true for %s%s','%s/%s'%(jid,nick)) % (idx % 100, '%')
 	send_msg(type, jid, nick, msg)
 
 global execute

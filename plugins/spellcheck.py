@@ -36,7 +36,7 @@ def spell(type, jid, nick, text):
 				msg = msg[:err['pos']+deltapos] + err['s'][0] + msg[err['len']+err['pos']+deltapos:]
 				deltapos += len(err['s'][0]) - err['len']
 			except: pass
-	else: msg = L('What?')
+	else: msg = L('What?','%s/%s'%(jid,nick))
 	send_msg(type,jid,nick,msg)
 
 global execute

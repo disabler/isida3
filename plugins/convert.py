@@ -27,9 +27,9 @@ currency_conv_list = ['ATS','AUD','BEF','BYR','CAD','CHF','CNY','DEM','DKK','EEK
 					  'SGD','TRL','TRY','UAH','USD','XDR','YUN','RUB']
 
 def currency_converter(type, jid, nick, text):
-	msg = L('Error in parameters. Read the help about command.')
+	msg = L('Error in parameters. Read the help about command.','%s/%s'%(jid,nick))
 	text = text.strip().upper()
-	if text == 'LIST': msg = L('Available values:\n%s') % ', '.join(currency_conv_list).replace('RUB','RUR')
+	if text == 'LIST': msg = L('Available values:\n%s','%s/%s'%(jid,nick)) % ', '.join(currency_conv_list).replace('RUB','RUR')
 	else:
 		repl_curr = ((u'RUR','RUB'),(u'€','EUR'),('$','USD'),(u'¥','JPY'),(u'£','GBP'),(',','.'))
 		for tmp in repl_curr: text = text.replace(tmp[0],' %s ' % tmp[1])

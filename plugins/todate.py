@@ -56,8 +56,8 @@ def parse_date_string(string_date, spl='.'):
 	return output
 
 def to_date(type, jid, nick, text):
-	dmass = (L('days'), L('day'), L('Days').lower(), L('Days').lower(),
-		L('Days').lower(), L('days'), L('days'), L('days'), L('days'), L('days'))
+	dmass = (L('days','%s/%s'%(jid,nick)), L('day','%s/%s'%(jid,nick)), L('Days','%s/%s'%(jid,nick)).lower(), L('Days','%s/%s'%(jid,nick)).lower(),
+		L('Days','%s/%s'%(jid,nick)).lower(), L('days','%s/%s'%(jid,nick)), L('days','%s/%s'%(jid,nick)), L('days','%s/%s'%(jid,nick)), L('days','%s/%s'%(jid,nick)), L('days','%s/%s'%(jid,nick)))
 	splitters = ('.', '-', ':', '/', ',', '\\')
 	if len(text):
 		try:
@@ -72,22 +72,22 @@ def to_date(type, jid, nick, text):
 			if len(hday) > 0: text = hday
 			days_remain = (datetime.date(year, month, day) - datetime.date.today()).days
 			if len(str(abs(days_remain))) > 1 and str(days_remain)[-2] == '1':
-				dmass = (L('days'),L('days'),L('days'),L('days'),
-					L('days'),L('days'),L('days'),L('days'),
-					L('days'),L('days'))
-			if days_remain < 0: msg += L('was %s %s ago') % \
+				dmass = (L('days','%s/%s'%(jid,nick)),L('days','%s/%s'%(jid,nick)),L('days','%s/%s'%(jid,nick)),L('days','%s/%s'%(jid,nick)),
+					L('days','%s/%s'%(jid,nick)),L('days','%s/%s'%(jid,nick)),L('days','%s/%s'%(jid,nick)),L('days','%s/%s'%(jid,nick)),
+					L('days','%s/%s'%(jid,nick)),L('days','%s/%s'%(jid,nick)))
+			if days_remain < 0: msg += L('was %s %s ago','%s/%s'%(jid,nick)) % \
 				(str(abs(days_remain)), dmass[int(str(days_remain)[-1])])
-			elif  days_remain == 0: msg += L('today')
-			else: msg += L('will be in %s %s') % \
+			elif  days_remain == 0: msg += L('today','%s/%s'%(jid,nick))
+			else: msg += L('will be in %s %s','%s/%s'%(jid,nick)) % \
 				(str(abs(days_remain)), dmass[int(str(days_remain)[-1])])
 			msg = text + ' ' + msg
-		except: msg = L('Error in parameters. Read the help about command.')
-	else: msg = L('Error in parameters. Read the help about command.')
+		except: msg = L('Error in parameters. Read the help about command.','%s/%s'%(jid,nick))
+	else: msg = L('Error in parameters. Read the help about command.','%s/%s'%(jid,nick))
 	send_msg(type, jid, nick, msg)
 
 def todate(type, jid, nick, text):
-	dmass = (L('days'), L('day'), L('Days').lower(), L('Days').lower(),
-		L('Days').lower(), L('days'), L('days'), L('days'), L('days'), L('days'))
+	dmass = (L('days','%s/%s'%(jid,nick)), L('day','%s/%s'%(jid,nick)), L('Days','%s/%s'%(jid,nick)).lower(), L('Days','%s/%s'%(jid,nick)).lower(),
+		L('Days','%s/%s'%(jid,nick)).lower(), L('days','%s/%s'%(jid,nick)), L('days','%s/%s'%(jid,nick)), L('days','%s/%s'%(jid,nick)), L('days','%s/%s'%(jid,nick)), L('days','%s/%s'%(jid,nick)))
 	splitters = ('.', '-', ':', '/', ',', '\\')
 	msg = ''
 	if len(text):
@@ -95,20 +95,20 @@ def todate(type, jid, nick, text):
 			if ' ' in text: ddate, msg = text.split(' ', 1)[0], text.split(' ', 1)[1]
 			else: ddate = text
 			spl = [spl for spl in splitters if spl in ddate][0]
-			if len(msg) == 0: msg = L('before the %s remained') % ddate.replace(spl, '.')
+			if len(msg) == 0: msg = L('before the %s remained','%s/%s'%(jid,nick)) % ddate.replace(spl, '.')
 			sdate = parse_date_string(ddate, spl)
 			if sdate[0] == 1900: sdate[0] = list(time.localtime())[0]
 			year = sdate.pop(0)
 			month, day = sdate
 			days_remain = (datetime.date(year, month, day) - datetime.date.today()).days
 			if len(str(abs(days_remain))) > 1 and str(days_remain)[-2] == '1':
-				dmass = (L('days'),L('days'),L('days'),L('days'),
-					L('days'),L('days'),L('days'),L('days'),
-					L('days'),L('days'))
-			if days_remain < 0: msg = L('Date has already in past!')
+				dmass = (L('days','%s/%s'%(jid,nick)),L('days','%s/%s'%(jid,nick)),L('days','%s/%s'%(jid,nick)),L('days','%s/%s'%(jid,nick)),
+					L('days','%s/%s'%(jid,nick)),L('days','%s/%s'%(jid,nick)),L('days','%s/%s'%(jid,nick)),L('days','%s/%s'%(jid,nick)),
+					L('days','%s/%s'%(jid,nick)),L('days','%s/%s'%(jid,nick)))
+			if days_remain < 0: msg = L('Date has already in past!','%s/%s'%(jid,nick))
 			else: msg += ' %s %s' % (days_remain,dmass[int(str(days_remain)[-1])])
-		except: msg = L('Error in parameters. Read the help about command.')
-	else: msg = L('Error in parameters. Read the help about command.')
+		except: msg = L('Error in parameters. Read the help about command.','%s/%s'%(jid,nick))
+	else: msg = L('Error in parameters. Read the help about command.','%s/%s'%(jid,nick))
 	send_msg(type, jid, nick, msg)
 
 global execute

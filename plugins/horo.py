@@ -27,23 +27,23 @@ horodb=['aries','taurus','gemini','cancer','leo','virgo','libra','scorpio','sagi
 
 def handler_horoscope(type, jid, nick, text):
 	param = text.strip().lower()
-	msg = L('What?')
+	msg = L('What?','%s/%s'%(jid,nick))
 	if param:
 		if param == 'list': msg = ', '.join(['%s (%s)' % (L(t).capitalize(),t.capitalize()) for t in horodb])
 		if param == 'date':
 			horo_dates = ['21.03-19.04','20.04-20.05','21.05-20.06','21.06-22.07','23.07-22.08','23.08-22.09','23.09-22.10','23.10-21.11','22.11-21.12','22.12-19.01','20.01-18.02','19.02-20.03']
-			msg = L('List of dates:\n%s') % '\n'.join([u'%s … %s' % (horo_dates[i],L(t).capitalize()) for i,t in enumerate(horodb)])
+			msg = L('List of dates:\n%s','%s/%s'%(jid,nick)) % '\n'.join([u'%s … %s' % (horo_dates[i],L(t).capitalize()) for i,t in enumerate(horodb)])
 			if type=='groupchat':
 				send_msg('chat', jid, nick, msg)
-				msg = L('Send for you in private')
+				msg = L('Send for you in private','%s/%s'%(jid,nick))
 		if param in [L(t) for t in horodb] or param in horodb:
 			if param not in horodb: param = dict([[L(t),t] for t in horodb])[param]
 			body = html_encode(load_page('http://horo.mail.ru/prediction/%s/today' % param))
 			try: msg = unhtml_hard(re.findall('<div id="tm_today">(.+?)<div class="mb2">',body,re.S+re.I+re.U)[0].strip())
-			except: msg = L('Unknown error!')
+			except: msg = L('Unknown error!','%s/%s'%(jid,nick))
 			if type=='groupchat':
 				send_msg('chat', jid, nick, msg)
-				msg = L('Send for you in private')
+				msg = L('Send for you in private','%s/%s'%(jid,nick))
 	send_msg(type,jid,nick,msg)
 
 global execute

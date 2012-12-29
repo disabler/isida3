@@ -31,9 +31,9 @@ def month_cal(type, jid, nick, text):
 	try: smbl = text[2]
 	except: smbl = GT('calendar_default_splitter')
 	try:
-		msg = L('\nMon Tue Wed Thu Fri Sat Sun\n') + '\n'.join([' '.join([['%2d' % r,'  '][r==0] for r in t]) for t in calendar.monthcalendar(year,month)])
-		msg = L('Now: %s%s') % (timeadd(tuple(time.localtime())), msg.replace(' ',smbl))
-	except: msg = L('Error!')
+		msg = L('\nMon Tue Wed Thu Fri Sat Sun\n','%s/%s'%(jid,nick)) + '\n'.join([' '.join([['%2d' % r,'  '][r==0] for r in t]) for t in calendar.monthcalendar(year,month)])
+		msg = L('Now: %s%s','%s/%s'%(jid,nick)) % (timeadd(tuple(time.localtime())), msg.replace(' ',smbl))
+	except: msg = L('Error!','%s/%s'%(jid,nick))
 	send_msg(type, jid, nick, msg)
 
 global execute

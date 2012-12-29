@@ -34,7 +34,7 @@ def rss_search(type, jid, nick, text):
 		text = enidna(text)
 		msg, result = get_opener(text)
 		if result:
-			msg = L('Bad url or rss/atom not found!')
+			msg = L('Bad url or rss/atom not found!','%s/%s'%(jid,nick))
 			page = remove_sub_space(html_encode(load_page(text)))
 			page = get_tag(page,'head')
 			l = []
@@ -55,8 +55,8 @@ def rss_search(type, jid, nick, text):
 						m.append('[%s] %s - %s' % (rss_type,rss_href,rss_title))
 				if m:
 					m = '\n'.join(m)
-					msg = L('Found feed(s):%s%s') % ([' ','\n']['\n' in m],unescape(m))
-	else: msg = L('What?')
+					msg = L('Found feed(s):%s%s','%s/%s'%(jid,nick)) % ([' ','\n']['\n' in m],unescape(m))
+	else: msg = L('What?','%s/%s'%(jid,nick))
 	send_msg(type, jid, nick, msg)
 
 def www_isdown(type, jid, nick, text):
@@ -64,9 +64,9 @@ def www_isdown(type, jid, nick, text):
 	if text:
 		if not re.findall('^http(s?)://',text[:10]): text = 'http://%s' % text
 		_,result = get_opener(enidna(text))
-		if result: msg = L('It\'s just you. %s is up.') % text
-		else: msg = L('It\'s not just you! %s looks down from here.') % text
-	else: msg = L('What?')
+		if result: msg = L('It\'s just you. %s is up.','%s/%s'%(jid,nick)) % text
+		else: msg = L('It\'s not just you! %s looks down from here.','%s/%s'%(jid,nick)) % text
+	else: msg = L('What?','%s/%s'%(jid,nick))
 	send_msg(type, jid, nick, msg)
 
 def netheader(type, jid, nick, text):
@@ -82,10 +82,10 @@ def netheader(type, jid, nick, text):
 			try:
 				mt = re.findall(regex, body, re.S+re.U+re.I)
 				if mt != []: body = ''.join(mt[0])
-				else: body = L('RegExp not found!')
-			except: body = L('Error in RegExp!')
+				else: body = L('RegExp not found!','%s/%s'%(jid,nick))
+			except: body = L('Error in RegExp!','%s/%s'%(jid,nick))
 		body = deidna(body)
-	else: body = L('What?')
+	else: body = L('What?','%s/%s'%(jid,nick))
 	send_msg(type, jid, nick, body)
 
 def netwww(type, jid, nick, text):
@@ -103,12 +103,12 @@ def netwww(type, jid, nick, text):
 				try:
 					mt = re.findall(regex, page, re.S+re.U+re.I)
 					if mt != []: msg = unhtml_hard(''.join(mt[0]))
-					else: msg = L('RegExp not found!')
-				except: msg = L('Error in RegExp!')
+					else: msg = L('RegExp not found!','%s/%s'%(jid,nick))
+				except: msg = L('Error in RegExp!','%s/%s'%(jid,nick))
 			else:
 				msg = urllib.unquote(unhtml_hard(page).encode('utf8')).decode('utf8', 'ignore')
 				if '<title' in page: msg = '%s\n%s' % (rss_replace(get_tag(page,'title')), msg)
-	else: msg = L('What?')
+	else: msg = L('What?','%s/%s'%(jid,nick))
 	send_msg(type, jid, nick, msg[:msg_limit])
 
 def parse_url_in_message(room,jid,nick,type,text):
@@ -138,7 +138,7 @@ def parse_url_in_message(room,jid,nick,type,text):
 					if cnt >= len(text)/3: text = remove_sub_space(html_encode(get_tag(original_page,tag)).replace('\n',' ').replace('\r',' ').replace('\t',' '))
 				if text:
 					was_shown = True
-					send_msg(type, room, '', L('Title: %s') % to_censore(rss_del_html(rss_replace(text)),room))
+					send_msg(type, room, '', L('Title: %s','%s/%s'%(jid,nick)) % to_censore(rss_del_html(rss_replace(text)),room))
 		except: pass
 	if not was_shown and get_config(getRoom(room),'content_length'):
 		try:
@@ -157,7 +157,7 @@ def parse_url_in_message(room,jid,nick,type,text):
 					if result:
 						body = unicode(body.headers)
 						mt = float(re.findall('Content-Length.*?([0-9]+)', body, re.S+re.U+re.I)[0])
-						if mt: send_msg(type, room, '', L('Length of %s is %s') % (u'…/%s' % to_censore(urllib2.unquote(last_url_watch.rsplit('/',1)[-1]).decode('utf-8'),room),get_size_human(mt)))
+						if mt: send_msg(type, room, '', L('Length of %s is %s','%s/%s'%(jid,nick)) % (u'…/%s' % to_censore(urllib2.unquote(last_url_watch.rsplit('/',1)[-1]).decode('utf-8'),room),get_size_human(mt)))
 		except: pass
 
 global execute

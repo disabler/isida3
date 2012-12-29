@@ -44,7 +44,7 @@ def karma_top(jid, nick, text, order):
 	elif lim > GT('karma_show_max_limit'): lim = GT('karma_show_max_limit')
 	if order: stat = cur_execute_fetchall('select jid,karma from karma where room=%s order by karma',(jid,))
 	else: stat = cur_execute_fetchall('select jid,karma from karma where room=%s order by -karma',(jid,))
-	if stat == None: return L('In this room karma is not changed!')
+	if stat == None: return L('In this room karma is not changed!','%s/%s'%(jid,nick))
 	msg, cnt = '', 1
 	for tmp in stat:
 		tmp2 = get_nick_by_jid(jid, tmp[0])
@@ -52,8 +52,8 @@ def karma_top(jid, nick, text, order):
 			msg += '\n%s. %s\t%s' % (cnt,tmp2,karma_val(int(tmp[1])))
 			cnt += 1
 		if cnt > lim: break
-	if len(msg): return L('Top karma: %s') % msg
-	else: return L('Karma for members is present not changed!')
+	if len(msg): return L('Top karma: %s','%s/%s'%(jid,nick)) % msg
+	else: return L('Karma for members is present not changed!','%s/%s'%(jid,nick))
 
 def karma_size_wrong(room):
 	k_size = int(config_prefs['karma_limit_size'][3])
@@ -80,18 +80,18 @@ def karma_get_limit(room,nick):
 	return k_val, k_limit, k_log[0]
 
 def karma_show(jid, nick, text):
-	if text == None or text == '' or text == nick: text, atext = nick, L('Your')
+	if text == None or text == '' or text == nick: text, atext = nick, L('Your','%s/%s'%(jid,nick))
 	else: atext = text
 	karmajid = getRoom(get_level(jid,text)[1])
-	if karmajid == 'None': return L('I\'m not sure, but %s not is here.') % atext
+	if karmajid == 'None': return L('I\'m not sure, but %s not is here.','%s/%s'%(jid,nick)) % atext
 	else:
 		lim_text = ''
 		if get_config(getRoom(jid),'karma_limit'):
 			k_val = karma_get_limit(jid,text)[0]
-			if k_val >= 0: lim_text = '. ' + L('Karma limit is %s') % k_val
+			if k_val >= 0: lim_text = '. ' + L('Karma limit is %s','%s/%s'%(jid,nick)) % k_val
 		stat = cur_execute_fetchone('select karma from karma where room=%s and jid=%s',(jid,karmajid))
-		if stat == None: return L('%s have a clear karma') % atext + lim_text
-		else: return L('%s karma is %s') % (atext, karma_val(int(stat[0]))) + lim_text
+		if stat == None: return L('%s have a clear karma','%s/%s'%(jid,nick)) % atext + lim_text
+		else: return L('%s karma is %s','%s/%s'%(jid,nick)) % (atext, karma_val(int(stat[0]))) + lim_text
 
 def karma_set(jid, nick, text):
 	if cur_execute_fetchone('select * from commonoff where room=%s and cmd=%s',(jid,'karma')): return
@@ -103,14 +103,14 @@ def karma_set(jid, nick, text):
 			val = int(val)
 			jid, karmajid = getRoom(jid), getRoom(get_level(jid,text)[1])
 			if karmajid == getRoom(selfjid): return
-			elif karmajid == 'None': return L('You can\'t change karma in outdoor conference!')
+			elif karmajid == 'None': return L('You can\'t change karma in outdoor conference!','%s/%s'%(jid,nick))
 			else:
 				cur_execute('delete from karma where room=%s and jid=%s',(jid,karmajid))
 				cur_execute('insert into karma values (%s,%s,%s)',(jid,karmajid,val))
 				val = karma_val(val)
-				return L('You changes %s\'s karma to %s') % (text,val)
-		else: return L('You can\'t change karma!')
-	except: return L('incorrect digital parameter').capitalize()
+				return L('You changes %s\'s karma to %s','%s/%s'%(jid,nick)) % (text,val)
+		else: return L('You can\'t change karma!','%s/%s'%(jid,nick))
+	except: return L('incorrect digital parameter','%s/%s'%(jid,nick)).capitalize()
 
 def karma_clear(jid, nick, text):
 	if cur_execute_fetchone('select * from commonoff where room=%s and cmd=%s',(jid,'karma')): return
@@ -120,14 +120,14 @@ def karma_clear(jid, nick, text):
 		else: param = ''
 		jid, karmajid = getRoom(jid), getRoom(get_level(jid,text)[1])
 		if karmajid == getRoom(selfjid): return
-		elif karmajid == 'None': return L('You can\'t change karma in outdoor conference!')
+		elif karmajid == 'None': return L('You can\'t change karma in outdoor conference!','%s/%s'%(jid,nick))
 		else:
 			if param in ['','all','karma','limits']:
 				if param in ['','all','karma']: cur_execute('delete from karma where room=%s and jid=%s',(jid,karmajid))
 				if param in ['all','limits']: cur_execute('delete from karma_limits where room=%s and jid=%s',(jid,karmajid))
-				return L('You clear karma for %s') % text
-			else: return L('Wrong arguments!')
-	else: return L('You can\'t change karma!')
+				return L('You clear karma for %s','%s/%s'%(jid,nick)) % text
+			else: return L('Wrong arguments!','%s/%s'%(jid,nick))
+	else: return L('You can\'t change karma!','%s/%s'%(jid,nick))
 
 def karma_get_access(room,jid):
 	stat = cur_execute_fetchone('select karma from karma where room=%s and jid=%s',(room,jid))
@@ -174,7 +174,7 @@ def karma_action_do(room,text,action):
 	act[action]('chat',room,nick,'%s\n%s' % (text,get_config(room,'karma_action_reason')),action.replace('kick','none'),0)
 
 def karma_change(room,jid,nick,type,text,value):
-	if type == 'chat': msg = L('You can\'t change karma in private!')
+	if type == 'chat': msg = L('You can\'t change karma in private!','%s/%s'%(room,nick))
 	else:
 		if cur_execute_fetchone('select * from commonoff where room=%s and cmd=%s',(room,'karma')): return
 		if ': ' in text: (text,other) = text.split(': ',1)
@@ -186,9 +186,9 @@ def karma_change(room,jid,nick,type,text,value):
 		if k_acc >= 4 or karma_get_access(room,getRoom(jid)):
 			jid, karmajid = getRoom(jid), getRoom(get_level(room,text)[1])
 			if karmajid == getRoom(selfjid): return
-			elif karmajid == 'None': msg = L('You can\'t change karma in outdoor conference!')
-			elif karmajid == jid: msg = L('You can\'t change own karma!')
-			elif get_config(getRoom(jid),'karma_limit') and karma_get_limit(room,nick)[0] == 0: msg = L('Karma limit is %s') % L('over') + '. ' + L('Please wait: %s') % un_unix(int(86400-(time.time() - karma_get_limit(room,nick)[2])))
+			elif karmajid == 'None': msg = L('You can\'t change karma in outdoor conference!','%s/%s'%(room,nick))
+			elif karmajid == jid: msg = L('You can\'t change own karma!','%s/%s'%(room,nick))
+			elif get_config(getRoom(jid),'karma_limit') and karma_get_limit(room,nick)[0] == 0: msg = L('Karma limit is %s','%s/%s'%(room,nick)) % L('over','%s/%s'%(room,nick)) + '. ' + L('Please wait: %s','%s/%s'%(room,nick)) % un_unix(int(86400-(time.time() - karma_get_limit(room,nick)[2])))
 			else:
 				stat = cur_execute_fetchone('select last from karma_commiters where room=%s and jid=%s and karmajid=%s',(room,jid,karmajid))
 				karma_valid, karma_time = None, int(time.time())
@@ -218,7 +218,7 @@ def karma_change(room,jid,nick,type,text,value):
 						cur_execute('delete from karma where room=%s and jid=%s',(room,karmajid))
 					else: stat = value
 					cur_execute('insert into karma values (%s,%s,%s)',(room,karmajid,stat))
-					msg = L('You changes %s\'s karma to %s. Next time to change across: %s') % (text,karma_val(stat),un_unix(GT('karma_timeout')[k_acc]))
+					msg = L('You changes %s\'s karma to %s. Next time to change across: %s','%s/%s'%(room,nick)) % (text,karma_val(stat),un_unix(GT('karma_timeout')[k_acc]))
 					pprint('karma change in %s for %s to %s' % (room,text,stat),'green')
 					am = None
 					if get_config(room,'karma_action'):
@@ -231,11 +231,11 @@ def karma_change(room,jid,nick,type,text,value):
 						if am:
 							karma_action_do(*am)
 							pprint('karma action in %s for %s is %s' % am,'bright_green')
-				else: msg = L('Time from last change %s\'s karma is very small. Please wait %s') % (text,un_unix(int(stat[0])+GT('karma_timeout')[k_acc]-karma_time))
+				else: msg = L('Time from last change %s\'s karma is very small. Please wait %s','%s/%s'%(room,nick)) % (text,un_unix(int(stat[0])+GT('karma_timeout')[k_acc]-karma_time))
 				if get_config(room,'karma_limit'):
 					k_val = karma_get_limit(room,nick)[0]
-					if k_val >= 0: msg += '. ' + L('Karma limit is %s') % [L('over'), k_val][k_val > 0]
-		else: msg = L('You can\'t change karma!')
+					if k_val >= 0: msg += '. ' + L('Karma limit is %s','%s/%s'%(room,nick)) % [L('over','%s/%s'%(room,nick)), k_val][k_val > 0]
+		else: msg = L('You can\'t change karma!','%s/%s'%(room,nick))
 	send_msg(type, room, nick, msg)
 
 def karma_check(room,jid,nick,type,text):

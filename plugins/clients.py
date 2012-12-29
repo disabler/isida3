@@ -40,7 +40,7 @@ def clients_stats_old(type, jid, nick, text):
 	st = cur_execute_fetchall(req,par)
 	if st:
 		ns = {}
-		et = L('Error! %s')%''
+		et = L('Error! %s','%s/%s'%(jid,nick))%''
 		for t in st:
 			if is_os:
 				k = t[0].split('\r',1)[1].split(' // ',1)
@@ -55,8 +55,8 @@ def clients_stats_old(type, jid, nick, text):
 				else: ns[k] = 1
 		ns = [(ns[t],t) for t in ns.keys()]
 		ns.sort(reverse=True)
-		msg = L('Client statistic:%s') % '\n%s' % '\n'.join(['%s. %s\t- %s' % (ns.index(t)+1,t[1],t[0]) for t in ns[:10]])
-	else: msg = L('Clients statistic not available.')
+		msg = L('Client statistic:%s','%s/%s'%(jid,nick)) % '\n%s' % '\n'.join(['%s. %s\t- %s' % (ns.index(t)+1,t[1],t[0]) for t in ns[:10]])
+	else: msg = L('Clients statistic not available.','%s/%s'%(jid,nick))
 	send_msg(type, jid, nick, msg)
 
 def clients_stats(type, jid, nick, text):
@@ -85,7 +85,7 @@ def clients_stats(type, jid, nick, text):
 			else: cnick = nick
 			cjid = getRoom(get_level(jid,cnick)[1])
 			if cjid == 'None':
-				send_msg(type, jid, nick, L('I could be wrong, but %s not is here...') % cnick)
+				send_msg(type, jid, nick, L('I could be wrong, but %s not is here...','%s/%s'%(jid,nick)) % cnick)
 				return
 		elif text: match = '%%%s%%' % reduce_spaces_all(' '.join(text))
 	else: is_short = is_global = is_os = is_user = False
@@ -116,10 +116,10 @@ def clients_stats(type, jid, nick, text):
 		ns = [(ns[t],t) for t in ns.keys()]
 		ns.sort(reverse=True)
 		if is_user:
-			if is_short: msg = L('Client statistic:%s') % ' %s' % ', '.join(['%s (%s)' % (t[1],t[0]) for t in ns])
-			else: msg = L('Client statistic:%s') % '\n%s' % '\n'.join([t[1] for t in ns])
-		else: msg = L('Client statistic:%s') % '\n%s' % '\n'.join(['%s. %s\t- %s' % (ns.index(t)+1,t[1],t[0]) for t in ns[:10]])
-	else: msg = L('Clients statistic not available.')
+			if is_short: msg = L('Client statistic:%s','%s/%s'%(jid,nick)) % ' %s' % ', '.join(['%s (%s)' % (t[1],t[0]) for t in ns])
+			else: msg = L('Client statistic:%s','%s/%s'%(jid,nick)) % '\n%s' % '\n'.join([t[1] for t in ns])
+		else: msg = L('Client statistic:%s','%s/%s'%(jid,nick)) % '\n%s' % '\n'.join(['%s. %s\t- %s' % (ns.index(t)+1,t[1],t[0]) for t in ns[:10]])
+	else: msg = L('Clients statistic not available.','%s/%s'%(jid,nick))
 	send_msg(type, jid, nick, msg)
 
 global execute

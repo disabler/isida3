@@ -33,11 +33,11 @@ def anek(type, jid, nick):
 		if type=='groupchat':
 			if len(message) < GT('anek_private_limit'): send_msg(type, jid, nick, message)
 			else:
-				send_msg(type, jid, nick, L('Send for you in private'))
+				send_msg(type, jid, nick, L('Send for you in private','%s/%s'%(jid,nick)))
 				send_msg('chat', jid, nick, message)
 				return
 		else: send_msg(type, jid, nick, message)
-	except: send_msg(type, jid, nick, L('Something broken.'))
+	except: send_msg(type, jid, nick, L('Something broken.','%s/%s'%(jid,nick)))
 
 global execute
 

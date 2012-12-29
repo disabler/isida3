@@ -24,7 +24,7 @@
 def sokr(type, jid, nick, text):
 	target = ''
 	text = text.strip()
-	if not text: msg = L('What?')
+	if not text: msg = L('What?','%s/%s'%(jid,nick))
 	else:
 		if re.search('\A\d+?(-\d+?)? ', text): target, text = text.split(' ', 1)
 		if re.match('[a-zA-Z]+\Z', text):
@@ -35,7 +35,7 @@ def sokr(type, jid, nick, text):
 			data = load_page("http://www.sokr.ru/search/?", {'abbr': text.encode('utf-8'), 'abbr_exact': '1'})
 			results = re.findall('em class="got_clear">.+?</em></a>.+?<p class="value">(.+?)</p>' , data, re.S)
 		cr = len(results)
-		if not results: msg = L('I don\'t know!')
+		if not results: msg = L('I don\'t know!','%s/%s'%(jid,nick))
 		else:
 			if not target:
 				if cr == 1: target = '1'
@@ -44,10 +44,10 @@ def sokr(type, jid, nick, text):
 			try: n1 = n2 = int(target)
 			except: n1, n2 = map(int, target.split('-'))
 			if 0 < n1 <= n2 <= cr:
-				msg = L('Total found %s matches. Result(s) %s:\n') % (cr, target)
+				msg = L('Total found %s matches. Result(s) %s:\n','%s/%s'%(jid,nick)) % (cr, target)
 				msg += '\n'.join(['%s. %s' % (i[0]+n1, i[1].replace('\n',' ')) for i in enumerate(results[n1-1: n2])]).decode('utf8')
 				msg = msg.replace('<br>', '').replace('\r','')
-			else: msg = L('I don\'t know!')
+			else: msg = L('I don\'t know!','%s/%s'%(jid,nick))
 	send_msg(type, jid, nick, msg)
 
 global execute

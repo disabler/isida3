@@ -28,7 +28,7 @@ def psay(type, jid, nick, text):
 		if '\n' in text: nnick,ntext = text.split('\n',1)
 		else: nnick,ntext = text.split(' ',1)
 		send_msg('chat', jid, nnick, to_censore(ntext,jid))
-	except: send_msg(type, jid, nick, L('Error in parameters. Read the help about command.'))
+	except: send_msg(type, jid, nick, L('Error in parameters. Read the help about command.','%s/%s'%(jid,nick)))
 
 def gsay(type, jid, nick, text):
 	for jjid in [t[0] for t in cur_execute_fetchall('select room from conference;')]: send_msg('groupchat', getRoom(jjid), '', text)

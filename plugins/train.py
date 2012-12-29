@@ -29,9 +29,9 @@ def train(type, jid, nick, text):
 		res = re.findall('<a class="b-link" href="/thread/.+?><strong>(.+?)</strong> <span class="g-nowrap">(.+?)</span>.+?<span class="g-nowrap">(.+?)</span></a>.+?<strong>(.+?)</strong>.+?<strong>(.+?)</strong>.+?<div class="b-timetable__pathtime">\s+(.+?)<span class="b-timetable__mark">(.+?)</span>', data, re.I+re.S+re.U)
 		if res.count(res[0]) > 1: res = res[:res.index(res[0], 1)]
 		msg = '\n%s' % '\n'.join([u'%s\t%s-%s\t\t%s-%s\t(%s%s в пути)' % _ for _ in res])
-		if not msg.strip() or 'b-pseudo-link js-transfers-trigger' in data: msg = L('What?')
+		if not msg.strip() or 'b-pseudo-link js-transfers-trigger' in data: msg = L('What?','%s/%s'%(jid,nick))
 	except:
-		msg = L('Command execution error.')
+		msg = L('Command execution error.','%s/%s'%(jid,nick))
 	send_msg(type,jid,nick,msg)
 
 global execute

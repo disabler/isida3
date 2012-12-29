@@ -37,9 +37,9 @@ def price(type, jid, nick, parameters):
 			except: pos = None
 			if pos:
 				if pos >= 2: message = message[pos:]+' '+message[:pos]
-			send_msg(type, jid, nick, L('Estimated value %s is %s') % (parameters.strip(), message))
-		else: send_msg(type, jid, nick, L('What site be evaluated?'))
-	except: send_msg(type, jid, nick, L('I can\'t process your request.'))
+			send_msg(type, jid, nick, L('Estimated value %s is %s','%s/%s'%(jid,nick)) % (parameters.strip(), message))
+		else: send_msg(type, jid, nick, L('What site be evaluated?','%s/%s'%(jid,nick)))
+	except: send_msg(type, jid, nick, L('I can\'t process your request.','%s/%s'%(jid,nick)))
 
 def bizinfo(type, jid, nick, text):
 	text = text.replace('http://', '').strip()
@@ -47,12 +47,12 @@ def bizinfo(type, jid, nick, text):
 		if text:
 			text = '.'.join(text.split('.')[-2:])
 			body = html_encode(load_page('http://bizinformation.org/us/www.%s' % text))
-			if 'Error:' in body: msg = L('site input format is domain.tld')
+			if 'Error:' in body: msg = L('site input format is domain.tld','%s/%s'%(jid,nick))
 			else:
 				domain_price = re.findall('<div class="heading_div"><h1>.*?<span>(.*?)</span>',body,re.S+re.U+re.I)[0]
-				msg = L('Estimated value %s is %s') % (text, domain_price)
-		else: msg = L('What site be evaluated?')
-	except: msg = L('I can\'t process your request.')
+				msg = L('Estimated value %s is %s','%s/%s'%(jid,nick)) % (text, domain_price)
+		else: msg = L('What site be evaluated?','%s/%s'%(jid,nick))
+	except: msg = L('I can\'t process your request.','%s/%s'%(jid,nick))
 	send_msg(type, jid, nick, msg)
 
 global execute

@@ -751,12 +751,12 @@ def features(type, jid, nick, text):
 
 def features_async(type, jid, nick, what, where, is_answ):
 	isa = is_answ[1]
-	if isa[0].startswith(L('Error! %s')%''): msg = isa[0]
+	if isa[0].startswith(L('Error! %s','%s/%s'%(jid,nick))%''): msg = isa[0]
 	else:
 		isa, ftr = isa[1], []
 		for f in [t.getAttr('var') for t in isa.getTag('query',namespace=xmpp.NS_DISCO_INFO).getTags('feature')]:
 			if disco_features_list.has_key(f): ft = '- %s' % disco_features_list[f]
-			else: ft = L('- Unknown feature: %s') % f
+			else: ft = L('- Unknown feature: %s','%s/%s'%(jid,nick)) % f
 			if (what and (what.lower() in ft.lower() or what.lower() in f.lower())) or not what: ftr.append(ft)
 
 		ftrs,erc,q_features = {},0,['os_version','os','software_version','software']
@@ -768,11 +768,11 @@ def features_async(type, jid, nick, what, where, is_answ):
 			ftrs[t] = res
 
 		if erc != len(q_features):
-			f = L('Software: %s | Version: %s\nOS: %s | Version: %s') % (ftrs['software'],ftrs['software_version'],ftrs['os'],ftrs['os_version'])
+			f = L('Software: %s | Version: %s\nOS: %s | Version: %s','%s/%s'%(jid,nick)) % (ftrs['software'],ftrs['software_version'],ftrs['os'],ftrs['os_version'])
 			if (what and what.lower() in f.lower()) or not what: ftr.append(f)
 		try:
 			ids_t = isa.getTag('query').getTags('identity')
-			idk = {'type':L('Type: %s'), 'name':L('Name: %s'), 'category':L('Category: %s'), 'xml:lang':L('Language: %s')}
+			idk = {'type':L('Type: %s','%s/%s'%(jid,nick)), 'name':L('Name: %s','%s/%s'%(jid,nick)), 'category':L('Category: %s','%s/%s'%(jid,nick)), 'xml:lang':L('Language: %s','%s/%s'%(jid,nick))}
 			for tg in ids_t:
 				ids = tg.getAttrs()
 				idf = []
@@ -788,8 +788,8 @@ def features_async(type, jid, nick, what, where, is_answ):
 			for tmp in ftr:
 				if tmp not in f: f.append(tmp)
 			f.sort()
-			msg = L('Features list:\n%s') % '\n'.join(f)
-		else: msg = L('Unable to get features list')
+			msg = L('Features list:\n%s','%s/%s'%(jid,nick)) % '\n'.join(f)
+		else: msg = L('Unable to get features list','%s/%s'%(jid,nick))
 	send_msg(type, jid, nick, msg)
 
 def disco(type, jid, nick, text): disco_r(type, jid, nick, text, True)
@@ -799,7 +799,7 @@ def disco_r(type, jid, nick, text, raw_type):
 	global iq_answer,iq_request
 	text = text.strip()
 	if text == '':
-		send_msg(type, jid, nick, L('What?'))
+		send_msg(type, jid, nick, L('What?','%s/%s'%(jid,nick)))
 		return
 	where = text.lower().split('\n',1)[0].split(' ',1)[0]
 	try: what = text.lower().split('\n',1)[0].split(' ',1)[1]
@@ -813,7 +813,7 @@ def disco_r(type, jid, nick, text, raw_type):
 
 def disco_features_async(type, jid, nick, what, where, hm, raw_type, is_answ):
 	isa = is_answ[1]
-	if isa[0].startswith(L('Error! %s')%''):
+	if isa[0].startswith(L('Error! %s','%s/%s'%(jid,nick))%''):
 		send_msg(type, jid, nick, isa[0])
 		return
 	else:
@@ -824,7 +824,7 @@ def disco_features_async(type, jid, nick, what, where, hm, raw_type, is_answ):
 		sender(i)
 
 def disco_async(type, jid, nick, what, where, hm, disco_type, raw_type, isa_prev, is_answ):
-	if is_answ[1][0].startswith(L('Error! %s')%''): msg = is_answ[1][0]
+	if is_answ[1][0].startswith(L('Error! %s','%s/%s'%(jid,nick))%''): msg = is_answ[1][0]
 	else:
 		if disco_type and '@' not in where:
 			cm = []
@@ -842,15 +842,15 @@ def disco_async(type, jid, nick, what, where, hm, disco_type, raw_type, isa_prev
 					elif not raw_type: cm.append(('%04d' % dsize, dname, djid))
 			if len(cm):
 				cm.sort(reverse=True)
-				msg,cnt = L('Total: %s') % len(cm),1
+				msg,cnt = L('Total: %s','%s/%s'%(jid,nick)) % len(cm),1
 				for i in cm[:hm]:
 					vl = [int(i[0]),'n/a'][int(i[0]) == -1]
 					if len(i[2]): msg += '\n%s. %s [%s] . %s' % (cnt,i[1],i[2],vl)
 					else: msg += '\n%s. %s . %s' % (cnt,i[1],vl)
 					cnt += 1
 				while '  ' in msg: msg = msg.replace('  ',' ')
-			elif len(what): msg = L('\"%s\" not found') % what
-			else: msg = L('Not found.')
+			elif len(what): msg = L('\"%s\" not found','%s/%s'%(jid,nick)) % what
+			else: msg = L('Not found.','%s/%s'%(jid,nick))
 		elif disco_type and '@' in where:
 			cm = []
 			for ii in [t.getAttr('name') for t in is_answ[1][1].getTag('query',namespace=xmpp.NS_DISCO_ITEMS).getTags('item')]:
@@ -860,16 +860,16 @@ def disco_async(type, jid, nick, what, where, hm, disco_type, raw_type, isa_prev
 				d_name = reduce_spaces_all(isa_prev.getTag('query',namespace=xmpp.NS_DISCO_INFO).getTagAttr('identity','name'))
 				d_deskr = reduce_spaces_all(isa_prev.getTag('query',namespace=xmpp.NS_DISCO_INFO).getTag('x',namespace=xmpp.NS_DATA).getTag('field',attrs={'var':'muc#roominfo_description'}).getTagData('value'))
 				d_occup = isa_prev.getTag('query',namespace=xmpp.NS_DISCO_INFO).getTag('x',namespace=xmpp.NS_DATA).getTag('field',attrs={'var':'muc#roominfo_occupants'}).getTagData('value')
-				if d_name == d_deskr or not d_deskr: msg = '%s\n%s' % (d_name,L('Total: %s%s') % (d_occup,' - %s' % ', '.join(cm)))
-				else: msg = '%s [%s]\n%s' % (d_name,d_deskr,L('Total: %s%s') % (d_occup,' - %s' % ', '.join(cm)))
-			elif len(what): msg = L('\"%s\" not found') % what
-			else: msg = L('Not found.')
+				if d_name == d_deskr or not d_deskr: msg = '%s\n%s' % (d_name,L('Total: %s%s','%s/%s'%(jid,nick)) % (d_occup,' - %s' % ', '.join(cm)))
+				else: msg = '%s [%s]\n%s' % (d_name,d_deskr,L('Total: %s%s','%s/%s'%(jid,nick)) % (d_occup,' - %s' % ', '.join(cm)))
+			elif len(what): msg = L('\"%s\" not found','%s/%s'%(jid,nick)) % what
+			else: msg = L('Not found.','%s/%s'%(jid,nick))
 		else:
 			cm = [t.getAttrs() for t in is_answ[1][1].getTag('query',namespace=xmpp.NS_DISCO_ITEMS).getTags('item')]
 			if len(cm):
 				cm.sort()
 				cnt = 1
-				msg = L('Total: %s') % len(cm)
+				msg = L('Total: %s','%s/%s'%(jid,nick)) % len(cm)
 				for i in cm[:hm]:
 					msg += '\n%s. ' % cnt
 					if i.has_key('name'):
@@ -877,13 +877,13 @@ def disco_async(type, jid, nick, what, where, hm, disco_type, raw_type, isa_prev
 						if i.has_key('node'): msg += '[%s] ' % i['node']
 					msg += '%s' % i['jid']
 					cnt += 1
-			else: msg = L('Not found.')
+			else: msg = L('Not found.','%s/%s'%(jid,nick))
 	msg = rss_replace(msg)
 	send_msg(type, jid, nick, msg)
 
 def whereis(type, jid, nick, text):
 	global iq_request,whereis_lock
-	if whereis_lock: send_msg(type, jid, nick, L('This command in use somewhere else. Please try later.'))
+	if whereis_lock: send_msg(type, jid, nick, L('This command in use somewhere else. Please try later.','%s/%s'%(jid,nick)))
 	else:
 		if len(text):
 			text = text.split('\n')
@@ -906,7 +906,7 @@ def whereis_async(type, jid, nick, who, where, is_answ):
 	for ii in isa[1:]:
 		dname = get_subtag(ii,'name').split('(')[-1][:-1]
 		if dname.isdigit() and dname != '0': djids.append(get_subtag(ii,'jid'))
-	send_msg(type, jid, nick, L('Please wait. Result you will be receive in private message approximately %s %s') % (int(len(djids)*(time_nolimit+0.05)), L('sec.')))
+	send_msg(type, jid, nick, L('Please wait. Result you will be receive in private message approximately %s %s','%s/%s'%(jid,nick)) % (int(len(djids)*(time_nolimit+0.05)), L('sec.','%s/%s'%(jid,nick))))
 	curr_id = 'whereis_%s' % get_id()
 	whereis_lock = True
 	wtd = GT('whereis_time_dec')
@@ -926,10 +926,10 @@ def whereis_async(type, jid, nick, who, where, is_answ):
 	whereis_answers.pop(whereis_id)
 	result.sort()
 	if result:
-		msgg = L('matches with nick \"%s\": %s') % (who, len(result))
+		msgg = L('matches with nick \"%s\": %s','%s/%s'%(jid,nick)) % (who, len(result))
 		for i in result: msgg += '\n%s\t%s' % (esc_min(i[0]),esc_min(i[1]))
-	else: msgg = L('nick \"%s\" not found.') % who
-	msg = L('Total conferences: %s, available: %s') % (len(isa)-1, '%s, %s' % (len(djids),msgg))
+	else: msgg = L('nick \"%s\" not found.','%s/%s'%(jid,nick)) % who
+	msg = L('Total conferences: %s, available: %s','%s/%s'%(jid,nick)) % (len(isa)-1, '%s, %s' % (len(djids),msgg))
 	send_msg('chat', jid, nick, msg)
 	whereis_lock = None
 

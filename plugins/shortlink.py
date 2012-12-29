@@ -28,7 +28,7 @@ SHORT_QR = 'http://chart.apis.google.com/chart?cht=qr&chs=350x350&chld=M|2&chl=%
 def shorter_raw(type, jid, nick, text, url):
 	text = text.strip()
 	if text: msg = load_page(url % enidna(text).decode('utf-8'))
-	else: msg = L('What?')
+	else: msg = L('What?','%s/%s'%(jid,nick))
 	send_msg(type, jid, nick, msg)
 
 def short_clck(type, jid, nick, text): shorter_raw(type, jid, nick, text, SHORT_CLCK)

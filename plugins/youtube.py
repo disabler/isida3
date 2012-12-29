@@ -33,7 +33,7 @@ def youtube(type, jid, nick, text):
 	url = 'http://gdata.youtube.com/feeds/api/videos?q=%s&alt=json-in-script&callback=yt&max-results=%s&format=5'
 	res = json.loads(load_page(url % (req,lim)).split('yt(',1)[1][:-2])['feed']
 	if res.has_key('entry'):
-		msg = L('Found:')
+		msg = L('Found:','%s/%s'%(jid,nick))
 		for t in res['entry']:
 			y_title = t['title']['$t']
 			try: y_views = t['yt$statistics']['viewCount']
@@ -41,7 +41,7 @@ def youtube(type, jid, nick, text):
 			y_link  = t['media$group'][u'media$player'][0]['url'].split('?v=',1)[1].split('&')[0]
 			y_time  = t['media$group'][u'media$thumbnail'][0]['time'].split('.',1)[0]
 			msg += unescape('\nhttp://youtu.be/%s - %s [%s] %s' % (y_link,y_title,y_time,y_views))
-	else: msg = L('Not found!')
+	else: msg = L('Not found!','%s/%s'%(jid,nick))
 	send_msg(type, jid, nick, msg)
 
 global execute

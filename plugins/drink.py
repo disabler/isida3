@@ -22,22 +22,29 @@
 # --------------------------------------------------------------------------- #
 
 def to_drink(type, jid, nick, text):
-	dmas = [L('first'),L('second'),L('third'),L('fourth'),L('fifth'),L('sixth'),L('seventh'),L('eighth'),L('nineth'),L('tenth'),
-		L('eleventh'),L('twelveth'),L('thirteenth'),L('fourteenth'),L('fivteenth'),L('sixteenth'),
-		L('seventeenth'),L('eighteenth'),L('nineteenth'),('twentieth'),L('twenty-first'),L('twenty-second'),
-		L('twenty-third'),L('twenty-fourth'),L('twenty-fifth'),L('twenty-sixth'),L('twenty-seventh'),
-		L('twenty-eighth'),L('twenty-nineth'),L('thirtieth'),L('thirty-first')]
-	mmas1 = [L('january'),L('february'),L('march'),L('april'),L('may'),L('june'),L('july'),L('august'),
-		L('september'),L('october'),L('november'),L('december')]
-	mmas2 = [L('January'),L('February'),L('March'),L('April'),L('May'),L('June'),L('July'),L('August'),
-		L('September'),L('October'),L('November'),L('December')]
-	wday = [L('monday'),L('tuesday'),L('wendesday'),L('thirsday'),L('friday'),L('saturday'),L('sunday')]
-	lday = [L('last'),L('last'),L('Last'),L('last'),L('Last'),L('Last'),L('lAst')]
+	dmas = [L('first','%s/%s'%(jid,nick)),L('second','%s/%s'%(jid,nick)),L('third','%s/%s'%(jid,nick)),L('fourth','%s/%s'%(jid,nick)),
+			L('fifth','%s/%s'%(jid,nick)),L('sixth','%s/%s'%(jid,nick)),L('seventh','%s/%s'%(jid,nick)),L('eighth','%s/%s'%(jid,nick)),
+			L('nineth','%s/%s'%(jid,nick)),L('tenth','%s/%s'%(jid,nick)),L('eleventh','%s/%s'%(jid,nick)),L('twelveth','%s/%s'%(jid,nick)),
+			L('thirteenth','%s/%s'%(jid,nick)),L('fourteenth','%s/%s'%(jid,nick)),L('fivteenth','%s/%s'%(jid,nick)),L('sixteenth','%s/%s'%(jid,nick)),
+			L('seventeenth','%s/%s'%(jid,nick)),L('eighteenth','%s/%s'%(jid,nick)),L('nineteenth','%s/%s'%(jid,nick)),('twentieth'),
+			L('twenty-first','%s/%s'%(jid,nick)),L('twenty-second','%s/%s'%(jid,nick)),L('twenty-third','%s/%s'%(jid,nick)),
+			L('twenty-fourth','%s/%s'%(jid,nick)),L('twenty-fifth','%s/%s'%(jid,nick)),L('twenty-sixth','%s/%s'%(jid,nick)),L('twenty-seventh','%s/%s'%(jid,nick)),
+			L('twenty-eighth','%s/%s'%(jid,nick)),L('twenty-nineth','%s/%s'%(jid,nick)),L('thirtieth','%s/%s'%(jid,nick)),L('thirty-first','%s/%s'%(jid,nick))]
+	mmas1 = [L('january','%s/%s'%(jid,nick)),L('february','%s/%s'%(jid,nick)),L('march','%s/%s'%(jid,nick)),L('april','%s/%s'%(jid,nick)),
+			 L('may','%s/%s'%(jid,nick)),L('june','%s/%s'%(jid,nick)),L('july','%s/%s'%(jid,nick)),L('august','%s/%s'%(jid,nick)),
+			 L('september','%s/%s'%(jid,nick)),L('october','%s/%s'%(jid,nick)),L('november','%s/%s'%(jid,nick)),L('december','%s/%s'%(jid,nick))]
+	mmas2 = [L('January','%s/%s'%(jid,nick)),L('February','%s/%s'%(jid,nick)),L('March','%s/%s'%(jid,nick)),L('April','%s/%s'%(jid,nick)),
+			 L('May','%s/%s'%(jid,nick)),L('June','%s/%s'%(jid,nick)),L('July','%s/%s'%(jid,nick)),L('August','%s/%s'%(jid,nick)),
+			 L('September','%s/%s'%(jid,nick)),L('October','%s/%s'%(jid,nick)),L('November','%s/%s'%(jid,nick)),L('December','%s/%s'%(jid,nick))]
+	wday = [L('monday','%s/%s'%(jid,nick)),L('tuesday','%s/%s'%(jid,nick)),L('wendesday','%s/%s'%(jid,nick)),L('thirsday','%s/%s'%(jid,nick)),
+			L('friday','%s/%s'%(jid,nick)),L('saturday','%s/%s'%(jid,nick)),L('sunday','%s/%s'%(jid,nick))]
+	lday = [L('last','%s/%s'%(jid,nick)),L('last','%s/%s'%(jid,nick)),L('Last','%s/%s'%(jid,nick)),L('last','%s/%s'%(jid,nick)),
+			L('Last','%s/%s'%(jid,nick)),L('Last','%s/%s'%(jid,nick)),L('lAst','%s/%s'%(jid,nick))]
 	if os.path.isfile(date_file):
 		ddate = readfile(date_file).decode('UTF')
 		week1 = ''
 		week2 = ''
-		if not ddate: msg = L('Read file error.')
+		if not ddate: msg = L('Read file error.','%s/%s'%(jid,nick))
 		else:
 			if len(text) <= 2:
 				ltim = tuple(time.localtime())
@@ -68,9 +75,9 @@ def to_drink(type, jid, nick, text):
 						t = tmonth.index(text[1])
 						msg += '\n'+tmp
 					except: pass
-			if msg == '': msg = L('Holiday: %s not found.') % or_text
-			else: msg = L('I know holidays: %s') % msg
-	else: msg = L('Database doesn\'t exist.')
+			if msg == '': msg = L('Holiday: %s not found.','%s/%s'%(jid,nick)) % or_text
+			else: msg = L('I know holidays: %s','%s/%s'%(jid,nick)) % msg
+	else: msg = L('Database doesn\'t exist.','%s/%s'%(jid,nick))
 	send_msg(type, jid, nick, msg)
 
 def calend(type, jid, nick, text):
@@ -93,8 +100,8 @@ def calend(type, jid, nick, text):
 			d = get_tag(data,'h1')
 			hl = re.findall('<a  href="/holidays(?:/\d*?)+?" title=".+?">(.+?)</a>', data)
 			if hl: msg = '%s:\n%s' % (d, '\n'.join(hl))
-	else: msg = L('What?')
-	if not msg: msg = L('Holiday: %s not found.') % text
+	else: msg = L('What?','%s/%s'%(jid,nick))
+	if not msg: msg = L('Holiday: %s not found.','%s/%s'%(jid,nick)) % text
 	send_msg(type, jid, nick, msg)
 
 global execute

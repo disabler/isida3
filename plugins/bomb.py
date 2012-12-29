@@ -47,9 +47,9 @@ def boom_bomb(room,type,nick,bc,mode):
 		bfp = get_config_int(getRoom(room),'bomb_fault_persent')
 		if bfp < 0 or bfp > 100: bfp = int(config_prefs['bomb_fault_persent'][3])
 		b_fault = random.randint(0,100) < bfp
-	if b_fault: send_msg(type, room, nick, L('It\'s a lucky day for you! Bomb is fault! Right wide is %s') % bc)
+	if b_fault: send_msg(type, room, nick, L('It\'s a lucky day for you! Bomb is fault! Right wide is %s','%s/%s'%(room,nick)) % bc)
 	else:
-		if mode: send_msg(type, room, nick, L('You were wrong! Right wire is %s') % bc)
+		if mode: send_msg(type, room, nick, L('You were wrong! Right wire is %s','%s/%s'%(room,nick)) % bc)
 		try:
 			if get_config(getRoom(room),'bomb_action') == 'kick' and bomb_access_level.pop(room+nick) >= get_config_int(getRoom(room),'bomb_action_level'): muc_role(type, room, nick, '%s\n%s' % (nick,get_config(getRoom(room),'bomb_reason')), 'none',0)
 		except: pass
@@ -68,7 +68,7 @@ def get_next_random(room):
 def bomb_joke(type, jid, nick, text):
 	global bomb_current,bomb_random_list,bomb_access_level
 	if type == 'chat':
-		send_msg(type, jid, nick, L('Not allowed in private!'))
+		send_msg(type, jid, nick, L('Not allowed in private!','%s/%s'%(jid,nick)))
 		return
 	if len(text) == 0 or len(text) == text.count(' ')+text.count('\n'):
 		rlist,tconf = [],getRoom(jid)
@@ -76,12 +76,12 @@ def bomb_joke(type, jid, nick, text):
 			if tm[0] == tconf and not bomb_idle(jid,text) and not (get_level(tconf,tm[1])[0] in bomb_deny_access) and not (getRoom(get_level(tconf,tm[1])[1]) in ['None',getRoom(selfjid)]): rlist.append(tm[1])
 		if len(rlist): text = rlist[random.randrange(len(rlist))]
 		else:
-			if not (nick == text == ''): send_msg(type, jid, nick, L('Here is no candidate to take a bomb!'))
+			if not (nick == text == ''): send_msg(type, jid, nick, L('Here is no candidate to take a bomb!','%s/%s'%(jid,nick)))
 			return
 	bmb = False
-	if not get_config(getRoom(jid),'bomb'): msg = L('In this room not allowed take a bomb!')
-	elif jid in bomb_current.keys(): msg = L('This room alredy boombed!')
-	elif bomb_idle(jid,text) or get_level(jid,text)[0] in bomb_deny_access or getRoom(get_level(jid,text)[1]) in ['None',getRoom(selfjid)]: msg = L('I can\'t take a bomb to %s') % text
+	if not get_config(getRoom(jid),'bomb'): msg = L('In this room not allowed take a bomb!','%s/%s'%(jid,nick))
+	elif jid in bomb_current.keys(): msg = L('This room alredy boombed!','%s/%s'%(jid,nick))
+	elif bomb_idle(jid,text) or get_level(jid,text)[0] in bomb_deny_access or getRoom(get_level(jid,text)[1]) in ['None',getRoom(selfjid)]: msg = L('I can\'t take a bomb to %s','%s/%s'%(jid,nick)) % text
 	else:
 		bomb_access_level[jid+text] = get_level(jid,nick)[0]
 		b_timer = get_config_int(getRoom(jid),'bomb_timer')
@@ -93,7 +93,7 @@ def bomb_joke(type, jid, nick, text):
 			bc = bomb_colors[random.randrange(len(bomb_colors))]
 			if bc not in b_clrs: b_clrs.append(bc)
 		bomb_current[getRoom(jid)] = [text,b_clrs,b_clrs[random.randrange(len(b_clrs))]]
-		msg,bmb = L('/me take a bomb to %s with wires %s. Time to deactivate is %s sec.') % (text,', '.join(b_clrs),b_timer),True
+		msg,bmb = L('/me take a bomb to %s with wires %s. Time to deactivate is %s sec.','%s/%s'%(jid,nick)) % (text,', '.join(b_clrs),b_timer),True
 	send_msg(type, jid, '', msg)
 	if bmb:
 		while b_timer > 0 and not game_over:
@@ -102,15 +102,15 @@ def bomb_joke(type, jid, nick, text):
 			if jid not in bomb_current.keys(): break
 		if b_timer <= 0 and not game_over:
 			if bomb_current.has_key(getRoom(jid)): bc = bomb_current.pop(getRoom(jid))
-			else: bc = L('unknown')
+			else: bc = L('unknown','%s/%s'%(jid,nick))
 			b_fault = None
 			if get_config(getRoom(jid),'bomb_fault'):
 				bfp = get_config_int(getRoom(jid),'bomb_fault_persent')
 				if bfp < 0 or bfp > 100: bfp = int(config_prefs['bomb_fault_persent'][3])
 				b_fault = random.randint(0,100) < bfp
-			if b_fault: send_msg(type, jid, text, L('It\'s a lucky day for you! Bomb is fault! Right wide is %s') % bc[2])
+			if b_fault: send_msg(type, jid, text, L('It\'s a lucky day for you! Bomb is fault! Right wide is %s','%s/%s'%(jid,nick)) % bc[2])
 			else:
-				send_msg(type, jid, '', L('/me explode %s') % text)
+				send_msg(type, jid, '', L('/me explode %s','%s/%s'%(jid,nick)) % text)
 				if get_config(getRoom(jid),'bomb_action') == 'kick' and bomb_access_level.pop(jid+text) >= get_config_int(getRoom(jid),'bomb_action_level'): muc_role(type, jid, nick, '%s\n%s' % (text,get_config(getRoom(jid),'bomb_reason')), 'none',0)
 			bomb_random_list[getRoom(jid)] = get_next_random(getRoom(jid))
 
@@ -122,7 +122,7 @@ def bomb_presence(room,jid,nick,type,mass):
 	if nick != bc[0]: return
 	if type == 'unavailable':
 		if bomb_current.has_key(getRoom(room)): bc = bomb_current.pop(getRoom(room))
-		else: bc = L('unknown')
+		else: bc = L('unknown','%s/%s'%(room,nick))
 		if mass[8]:
 			time.sleep(1)
 			boom_bomb(room,'groupchat',mass[8],bc[2],None)
@@ -138,7 +138,7 @@ def bomb_message(room,jid,nick,type,text):
 	if text.lower() not in bc[1]: return
 	if bomb_current.has_key(gr): bomb_current.pop(gr)
 	type = 'groupchat'
-	if text.lower() == bc[2]: send_msg(type, room, nick, L('Bomb is deactivated! Congratulations!'))
+	if text.lower() == bc[2]: send_msg(type, room, nick, L('Bomb is deactivated! Congratulations!','%s/%s'%(room,nick)))
 	else: boom_bomb(room,type,nick,bc[2],True)
 	bomb_random_list[gr] = get_next_random(gr)
 

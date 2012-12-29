@@ -23,32 +23,38 @@
 
 def bing_translate(type, jid, nick, text):
 	text = text.strip()
-	trlang = {'id':L('Indonesian'), 'it':L('Italian'), 'ar':L('Arabic'), 'ja':L('Japanese'), 'bg':L('Bulgarian'),
-			'ko':L('Korean'), 'ca':L('Catalan'), 'lv':L('Latvian'), 'zh-chs':L('Chinese Simplified'), 'lt':L('Lithuanian'),
-			'zh-cht':L('Chinese Traditional'), 'no':L('Norwegian'), 'cs':L('Czech'), 'pl':L('Polish'), 'da':L('Danish'),
-			'pt':L('Portuguese'), 'nl':L('Dutch'), 'ro':L('Romanian'), 'en':L('English'), 'ru':L('Russian'), 'et':L('Estonian'),
-			'sk':L('Slovak'), 'fi':L('Finnish'), 'sl':L('Slovenian'), 'fr':L('French'), 'es':L('Spanish'), 'de':L('German'),
-			'sv':L('Swedish'), 'el':L('Greek'), 'th':L('Thai'), 'ht':L('Haitian Creole'), 'tr':L('Turkish'), 'he':L('Hebrew'),
-			'uk':L('Ukrainian'), 'hi':L('Hindi'), 'vi':L('Vietnamese'), 'hu':L('Hungarian')}
-	if text.lower() == 'list': msg = L('Available languages for translate:') + ' ' + ', '.join(sorted(trlang.keys()))
+	trlang = {'id':L('Indonesian','%s/%s'%(jid,nick)), 'it':L('Italian','%s/%s'%(jid,nick)), 'ar':L('Arabic','%s/%s'%(jid,nick)),
+			'ja':L('Japanese','%s/%s'%(jid,nick)), 'bg':L('Bulgarian','%s/%s'%(jid,nick)), 'ko':L('Korean','%s/%s'%(jid,nick)),
+			'ca':L('Catalan','%s/%s'%(jid,nick)), 'lv':L('Latvian','%s/%s'%(jid,nick)), 'zh-chs':L('Chinese Simplified','%s/%s'%(jid,nick)),
+			'lt':L('Lithuanian','%s/%s'%(jid,nick)), 'zh-cht':L('Chinese Traditional','%s/%s'%(jid,nick)), 'no':L('Norwegian','%s/%s'%(jid,nick)),
+			'cs':L('Czech','%s/%s'%(jid,nick)), 'pl':L('Polish','%s/%s'%(jid,nick)), 'da':L('Danish','%s/%s'%(jid,nick)),
+			'pt':L('Portuguese','%s/%s'%(jid,nick)), 'nl':L('Dutch','%s/%s'%(jid,nick)), 'ro':L('Romanian','%s/%s'%(jid,nick)),
+			'en':L('English','%s/%s'%(jid,nick)), 'ru':L('Russian','%s/%s'%(jid,nick)), 'et':L('Estonian','%s/%s'%(jid,nick)),
+			'sk':L('Slovak','%s/%s'%(jid,nick)), 'fi':L('Finnish','%s/%s'%(jid,nick)), 'sl':L('Slovenian','%s/%s'%(jid,nick)),
+			'fr':L('French','%s/%s'%(jid,nick)), 'es':L('Spanish','%s/%s'%(jid,nick)), 'de':L('German','%s/%s'%(jid,nick)),
+			'sv':L('Swedish','%s/%s'%(jid,nick)), 'el':L('Greek','%s/%s'%(jid,nick)), 'th':L('Thai','%s/%s'%(jid,nick)),
+			'ht':L('Haitian Creole','%s/%s'%(jid,nick)), 'tr':L('Turkish','%s/%s'%(jid,nick)), 'he':L('Hebrew','%s/%s'%(jid,nick)),
+			'uk':L('Ukrainian','%s/%s'%(jid,nick)), 'hi':L('Hindi','%s/%s'%(jid,nick)), 'vi':L('Vietnamese','%s/%s'%(jid,nick)),
+			'hu':L('Hungarian','%s/%s'%(jid,nick))}
+	if text.lower() == 'list': msg = L('Available languages for translate:','%s/%s'%(jid,nick)) + ' ' + ', '.join(sorted(trlang.keys()))
 	elif text[:5].lower() == 'info ':
 		text = text.lower().split(' ')
 		msg = ''
 		for tmp in text:
 			if tmp in trlang: msg += '%s - %s, ' % (tmp,trlang[tmp])
-		if len(msg): msg = L('Available languages: %s') % msg[:-2]
-		else: msg = L('I don\'t know this language')
+		if len(msg): msg = L('Available languages: %s','%s/%s'%(jid,nick)) % msg[:-2]
+		else: msg = L('I don\'t know this language','%s/%s'%(jid,nick))
 	elif text[:5].lower() == 'lang ' and text.count(' ')==1:
 		text = text.lower().split(' ')[1]
 		msg = ', '.join(['%s - %s' % (k,trlang[k]) for k in trlang.keys() if text in trlang[k].lower()])
-		if len(msg): msg = L('Available languages: %s') % msg
-		else: msg = L('I don\'t know this language')
+		if len(msg): msg = L('Available languages: %s','%s/%s'%(jid,nick)) % msg
+		else: msg = L('I don\'t know this language','%s/%s'%(jid,nick))
 	else:
 		if ' ' in text:
 			text = text.split(' ',2)
 			url = 'http://api.microsofttranslator.com/V2/Ajax.svc/Translate?'
 			bing_api = GT('bing_api_key')
-			if bing_api == 'no api': msg = L('Not found Api-key for Bing translator')
+			if bing_api == 'no api': msg = L('Not found Api-key for Bing translator','%s/%s'%(jid,nick))
 			elif len(text)>1 and trlang.has_key(text[0].lower()):
 				if len(text)>2 and trlang.has_key(text[1].lower()): lfrom,lto,tr_text = text[0].lower(),text[1].lower(),text[2]
 				else: lfrom,lto,tr_text = '',text[0].lower(),' '.join(text[1:])
@@ -58,9 +64,9 @@ def bing_translate(type, jid, nick, text):
 																'from':lfrom,\
 																'to':lto}))
 				try: msg = re.findall('responseData\(\"(.*?)\"\)\;$',unicode(translate_results),re.S+re.I+re.U)[0]
-				except: msg = L('I can\'t translate it!')
-			else: msg = L('Incorrect language settings for translate. tr list - available languages.')
-		else: msg = L('Command\'s format: tr [from] to text')
+				except: msg = L('I can\'t translate it!','%s/%s'%(jid,nick))
+			else: msg = L('Incorrect language settings for translate. tr list - available languages.','%s/%s'%(jid,nick))
+		else: msg = L('Command\'s format: tr [from] to text','%s/%s'%(jid,nick))
 	send_msg(type, jid, nick, msg)
 
 global execute

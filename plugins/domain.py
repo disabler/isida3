@@ -32,22 +32,22 @@ def domaininfo_raw(type, jid, nick, text):
 		try:
 			body = re.findall(regex, body, re.S)
 			if body: msg = unhtml_hard(''.join(body[0]))
-			else: msg = L('No data!')
-		except: msg = L('Unexpected error')
-	else: msg = L('Error!')
+			else: msg = L('No data!','%s/%s'%(jid,nick))
+		except: msg = L('Unexpected error','%s/%s'%(jid,nick))
+	else: msg = L('Error!','%s/%s'%(jid,nick))
 	send_msg(type, jid, nick, msg)
 
 def domaininfo(type, jid, nick, text):
 	text = text.strip().lower()
 	while ' \n' in text: text = text.replace(' \n','\n')
 	if ''.join(re.findall(u'[-0-9a-zа-я. ]+',text,re.U+re.I)) == text and text.count('.') >= 1 and len(text) > 4:
-		if 'sites' in text: t, text, regex, msg = 2, text.split(' ')[1], '<font color="black" size="2">(.*?)</font>', L('Sites at Domain/IP address: %s') % text.split(' ')[1]
-		else: t, regex, msg = 1, '<blockquote><font.*?>(.*?)</font></blockquote>', L('Domain/IP address info:')
+		if 'sites' in text: t, text, regex, msg = 2, text.split(' ')[1], '<font color="black" size="2">(.*?)</font>', L('Sites at Domain/IP address: %s','%s/%s'%(jid,nick)) % text.split(' ')[1]
+		else: t, regex, msg = 1, '<blockquote><font.*?>(.*?)</font></blockquote>', L('Domain/IP address info:','%s/%s'%(jid,nick))
 		url = 'http://1whois.ru/index.php?url=%s&t=%s' % (text.encode('idna'),t)
 		body = deidna(html_encode(load_page(url).replace('&nbsp;', ' ')))
 		try:
 			body = re.findall(regex, body, re.S)[0]
-			if u'Нет данных!' in body: msg += ' '+ L('No data!')
+			if u'Нет данных!' in body: msg += ' '+ L('No data!','%s/%s'%(jid,nick))
 			else:
 				tmp_body = {}
 				body = replacer(body).split('\n')
@@ -62,8 +62,8 @@ def domaininfo(type, jid, nick, text):
 							tmp_body[tmp] = tmp
 							newbody.append(tmp)
 				msg += '\n'+'\n'.join(newbody)
-		except: msg = L('Unexpected error')
-	else: msg = L('Error!')
+		except: msg = L('Unexpected error','%s/%s'%(jid,nick))
+	else: msg = L('Error!','%s/%s'%(jid,nick))
 	send_msg(type, jid, nick, msg)
 
 global execute

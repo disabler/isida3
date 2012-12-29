@@ -23,23 +23,23 @@
 
 def md5body(type, jid, nick, text):
 	if len(text): msg = hashlib.md5(text.encode('utf-8')).hexdigest()
-	else: msg = L('What?')
+	else: msg = L('What?','%s/%s'%(jid,nick))
 	send_msg(type, jid, nick, msg)
 
 def hashbody(type, jid, nick, text):
 	text = reduce_spaces_all(text)
 	if not len(text): text = nick
 	try: msg = hashes['%s/%s' % (jid,text)]
-	except: msg = L('Nick %s not found!') % text
+	except: msg = L('Nick %s not found!','%s/%s'%(jid,nick)) % text
 	send_msg(type, jid, nick, msg)
 
 def findhash(type, jid, nick, text):
 	text = reduce_spaces_all(text)
 	if text:
 		h = [t for t in hashes if hashes[t]==text]
-		if h: msg = L('Found: %s') % '\n%s' % '\n'.join(h)
-		else: msg = L('Not found: %s') % text
-	else: msg = L('What?')
+		if h: msg = L('Found: %s','%s/%s'%(jid,nick)) % '\n%s' % '\n'.join(h)
+		else: msg = L('Not found: %s','%s/%s'%(jid,nick)) % text
+	else: msg = L('What?','%s/%s'%(jid,nick))
 	send_msg(type, jid, nick, msg)
 
 global execute

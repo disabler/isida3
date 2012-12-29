@@ -36,18 +36,18 @@ def call_body(type, jid, nick, text):
 				if tmp[0] == jid and getRoom(tmp[4]) == whojid:
 					is_found = 1
 					break
-			if is_found: msg = L('%s ishere!') % text
+			if is_found: msg = L('%s ishere!','%s/%s'%(jid,nick)) % text
 			else:
-				msg = L('Invited')
+				msg = L('Invited','%s/%s'%(jid,nick))
 				skip = 0
-		elif len(fnd) > 1: msg = L('I seen some peoples with this nick. Get more info!')
-		else: msg = L('I don\'n know %s') % text
-	else: msg = L('What?')
+		elif len(fnd) > 1: msg = L('I seen some peoples with this nick. Get more info!','%s/%s'%(jid,nick))
+		else: msg = L('I don\'n know %s','%s/%s'%(jid,nick)) % text
+	else: msg = L('What?','%s/%s'%(jid,nick))
 
 	if skip: send_msg(type, jid, nick, msg)
 	else:
-		inv_msg = L('%s invite you to %s') % (nick, jid)
-		if reason: inv_msg += ' ' + L('because: %s') % reason
+		inv_msg = L('%s invite you to %s','%s/%s'%(jid,nick)) % (nick, jid)
+		if reason: inv_msg += ' ' + L('because: %s','%s/%s'%(jid,nick)) % reason
 		send_msg('chat',whojid, '',inv_msg)
 
 		inv = xmpp.Message(jid)

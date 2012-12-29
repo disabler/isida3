@@ -26,8 +26,8 @@ turn_base = []
 
 def turner_raw(text,jid,nick):
 	global turn_base
-	rtab = L('qwertyuiop[]asdfghjkl;\'zxcvbnm,.`QWERTYUIOP{}ASDFGHJKL:"ZXCVBNM<>~')
-	ltab = L('QWERTYUIOP{}ASDFGHJKL:"ZXCVBNM<>~qwertyuiop[]asdfghjkl;\'zxcvbnm,.`')
+	rtab = L('qwertyuiop[]asdfghjkl;\'zxcvbnm,.`QWERTYUIOP{}ASDFGHJKL:"ZXCVBNM<>~','%s/%s'%(jid,nick))
+	ltab = L('QWERTYUIOP{}ASDFGHJKL:"ZXCVBNM<>~qwertyuiop[]asdfghjkl;\'zxcvbnm,.`','%s/%s'%(jid,nick))
 	to_turn = text
 	if not text:
 		for tmp in turn_base:
@@ -49,11 +49,11 @@ def turner_raw(text,jid,nick):
 
 def turner(type, jid, nick, text):
 	if not text and type != 'groupchat':
-		send_msg(type, jid, nick, L('Not allowed in private!'))
+		send_msg(type, jid, nick, L('Not allowed in private!','%s/%s'%(jid,nick)))
 		return
 	to_turn = turner_raw(text,jid,nick)
 	if to_turn: send_msg(type, jid, [nick,''][type=='groupchat'], to_turn)
-	else: send_msg(type, jid, nick, L('What?'))
+	else: send_msg(type, jid, nick, L('What?','%s/%s'%(jid,nick)))
 
 def append_to_turner(room,jid,nick,type,text):
 	global turn_base

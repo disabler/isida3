@@ -712,7 +712,7 @@ def caps_matcher(c_caps,c_list):
 
 def iqCB(sess,iq):
 	global timeofset, iq_in, iq_request, last_msg_base, last_msg_time_base, ddos_ignore, ddos_iq, user_hash, server_hash, server_hash_list
-	global disco_excl, message_excl
+	global disco_excl, message_excl, users_locale
 	iq_in += 1
 	id = iq.getID()
 	if id == None: return None
@@ -731,19 +731,22 @@ def iqCB(sess,iq):
 				nnj = True
 				break
 
+	c_lang = iq.getAttr('xml:lang')
+	if c_lang: users_locale[room] = c_lang
+
 	if getServer(Settings['jid']) == room: nnj = True
 
 	if iq.getType()=='error' and was_request:
-		iq_err,er_name = get_tag(unicode(iq),'error').replace('\n',''),L('Unknown error!')
+		iq_err,er_name = get_tag(unicode(iq),'error').replace('\n',''),L('Unknown error!',room)
 		detect_error = False
 		for tmp in iq_error.keys():
 			if tmp in iq_err:
-				er_name = '%s %s!' % (L('Error!'),iq_error[tmp])
+				er_name = '%s %s!' % (L('Error!',room),iq_error[tmp])
 				detect_error = True
 				break
 		if not detect_error:
-			if iq_err: er_name = '%s %s!' % (L('Error!'),iq_err)
-			else: er_name = '%s %s!' % (L('Error!'),er_name)
+			if iq_err: er_name = '%s %s!' % (L('Error!',room),iq_err)
+			else: er_name = '%s %s!' % (L('Error!',room),er_name)
 		iq_async(id,time.time(),er_name,'error')
 
 	elif iq.getType()=='result' and was_request:
@@ -847,7 +850,7 @@ def com_parser(access_mode, nowname, type, room, nick, text, jid):
 	if last_command[1:7] == [nowname, type, room, nick, text, jid] and time.time() < last_command[7]+GT('ddos_diff')[access_mode]:
 		ddos_ignore[jjid] = [room,nick,time.time()+GT('ddos_limit')[access_mode]]
 		pprint('!!! DDOS Detect: %s %s/%s %s %s' % (access_mode, room, nick, jid, text),'bright_red')
-		send_msg(type, room, nick, L('Warning! Exceeded the limit of sending the same commands. You to ignore for %s.') % un_unix(GT('ddos_limit')[access_mode]))
+		send_msg(type, room, nick, L('Warning! Exceeded the limit of sending the same commands. You to ignore for %s.','%s/%s'%(room,nick)) % un_unix(GT('ddos_limit')[access_mode]))
 		return None
 	no_comm = True
 	cof = cur_execute_fetchall('select * from commonoff;')#!!!
@@ -916,7 +919,7 @@ def messageCB(sess,mess):
 	if '@' not in jid and (jid == 'None' or jid.startswith('j2j.')) and is_owner(room): access_mode = 9
 	if type == 'groupchat' and nick != '' and access_mode >= 0 and jid not in ['None',Settings['jid']]: talk_count(room,jid,nick,text)
 	if nick != '' and nick != None and nick != nowname and len(text)>1 and text != 'None' and text != to_censore(text,room) and access_mode >= 0 and get_config(getRoom(room),'censor'):
-		cens_text = L('Censored!')
+		cens_text = L('Censored!',rn)
 		lvl = get_level(room,nick)[0]
 		if lvl >= 5 and get_config(getRoom(room),'censor_warning'): send_msg(type,room,nick,cens_text)
 		elif lvl == 4 and get_config(getRoom(room),'censor_action_member') != 'off':
@@ -980,7 +983,7 @@ def msg_afterwork(mess,room,jid,nick,type,back_text,no_comm,access_mode,nowname)
 	text = back_text
 	if subj != 'None':
 		if '\n' in subj: subj = '\n%s'  % subj
-		subj = L('*** Topic: %s') % subj
+		subj = L('*** Topic: %s','%s/%s'%(room,nick)) % subj
 		if len(text) and text != 'None': subj = text.replace(': ',':\n',1) if '\n' in text else text
 		topics[room],nick = subj,''
 		text = subj
@@ -997,7 +1000,7 @@ def msg_afterwork(mess,room,jid,nick,type,back_text,no_comm,access_mode,nowname)
 			fp = file(pastepath + filename, 'wb')
 			fp.write(img)
 			fp.close()
-			send_msg(type, room, '', L('Fetched xhtml image: %s%s') % (pasteurl,filename))
+			send_msg(type, room, '', L('Fetched xhtml image: %s%s','%s/%s'%(room,nick)) % (pasteurl,filename))
 			pprint('*** Fetched xhtml image from %s/%s [%s], size %s, file %s' % (room,nick,jid,len(img),pastepath + filename),'cyan')
 		except: pass
 
@@ -1009,7 +1012,7 @@ def msg_afterwork(mess,room,jid,nick,type,back_text,no_comm,access_mode,nowname)
 		else: is_flood = None
 		if selfjid != jid and access_mode >= 0 and (back_text[:len(nowname)+2] == nowname+': ' or back_text[:len(nowname)+2] == nowname+', ' or type == 'chat') and is_flood:
 			pprint('Send msg human: %s/%s [%s] <<< %s' % (room,nick,type,text),'dark_gray')
-			if len(back_text) > 128: send_msg_human(type, room, nick, L('Too many letters!'), 'msg_human')
+			if len(back_text) > 128: send_msg_human(type, room, nick, L('Too many letters!','%s/%s'%(room,nick)), 'msg_human')
 			else:
 				if back_text[:len(nowname)] == nowname: back_text = back_text[len(nowname)+2:]
 				try:
@@ -1067,7 +1070,7 @@ def check_hash_actions():
 				pprint('Removed hash action %s in %s' % (hal[0],tmp),'cyan')
 
 def presenceCB(sess,mess):
-	global megabase, pres_answer, cu_age, presence_in, hashes, last_hash
+	global megabase, pres_answer, cu_age, presence_in, hashes, last_hash, users_locale
 	presence_in += 1
 	room=unicode(mess.getFrom().getStripped())
 	nick=unicode(mess.getFrom().getResource())
@@ -1207,6 +1210,8 @@ def presenceCB(sess,mess):
 	nowname = get_xnick(room.lower())
 	not_found,exit_type,exit_message = 0,'',''
 	if type=='unavailable':
+		try: users_locale.pop('%s/%s' % (room,nick))
+		except: pass
 		if status=='307': exit_type,exit_message = L('kicked'),reason
 		elif status=='301': exit_type,exit_message = L('banned'),reason
 		elif status=='303': exit_type,exit_message = L('change nick to %s') % chg_nick,''
@@ -1231,6 +1236,8 @@ def presenceCB(sess,mess):
 						ntf_msg = L('Bot was %s %s with reason: %s') % (ntf_msg,room,exit_message)
 						for tmp in ntf_list: send_msg('chat', tmp, '', ntf_msg)
 	else:
+		c_lang = mess.getAttr('xml:lang')
+		if c_lang and nick: users_locale['%s/%s' % (room,nick)] = c_lang
 		if nick != '':
 			for mmb in megabase:
 				if mmb[0]==room and mmb[1]==nick:
@@ -1259,7 +1266,7 @@ def presenceCB(sess,mess):
 	if nick != '' and nick != 'None' and nick != nowname and len(text)>1 and text != 'None' and al >= 0 and get_config(getRoom(room),'censor'):
 		nt = '%s %s' % (nick,text)
 		if nt != to_censore(nt,room):
-			cens_text = L('Censored!')
+			cens_text = L('Censored!','%s/%s'%(room,nick))
 			if al >= 5 and get_config(getRoom(room),'censor_warning'): send_msg('groupchat',room,nick,cens_text)
 			elif al == 4 and get_config(getRoom(room),'censor_action_member') != 'off':
 				act = get_config(getRoom(room),'censor_action_member')
@@ -1367,9 +1374,14 @@ def disconnecter():
 	game_over, bot_exit_type = True, 'restart'
 	time.sleep(2)
 
-def L(text):
+def L(*par):
+	if len(par) == 2: text,jid = par
+	else: text,jid = par[0],''
 	if not len(text): return text
-	try: return locales[text]
+	try: loc = users_locale[jid] if jid else CURRENT_LOCALE
+	except: loc = CURRENT_LOCALE
+	if not locales.has_key(loc): loc = CURRENT_LOCALE
+	try: return locales[loc][text]
 	except: return text
 
 def get_id():
@@ -1394,14 +1406,16 @@ def get_bot_version():
 def update_locale():
 	global CURRENT_LOCALE
 	locales = {}
+	llist = ['en'] + [tmp[:-4] for tmp in os.listdir(loc_folder[:-6]) if tmp[-4:]=='.txt']
 	CL = cur_execute_fetchone('select value from config_owner where option=%s', ('bot_locale',))
-	if CL:
-		CURRENT_LOCALE = CL[0]
-		lf = loc_folder % CURRENT_LOCALE
+	if CL: CURRENT_LOCALE = CL[0]
+	for t in llist:
+		locales[t] = {}
+		lf = loc_folder % t
 		if os.path.isfile(lf):
 			lf = readfile(lf).decode('UTF').replace('\r','').split('\n')
 			for c in lf:
-				if ('#' not in c[:3]) and len(c) and '\t' in c: locales[c.split('\t',1)[0].replace('\\n','\n').replace('\\t','\t')] = c.split('\t',1)[1].replace('\\n','\n').replace('\\t','\t')
+				if ('#' not in c[:3]) and len(c) and '\t' in c: locales[t][c.split('\t',1)[0].replace('\\n','\n').replace('\\t','\t')] = c.split('\t',1)[1].replace('\\n','\n').replace('\\t','\t')
 	return locales,CURRENT_LOCALE
 
 def init_hash():
@@ -1530,6 +1544,7 @@ rss_processed = False
 database_debug = False
 current_join = {}
 default_censor_set = 1				# номер набора правил для цензора
+users_locale = {}
 base_type = 'pgsql'     # тип базы: pgsql или mysql
 base_name = 'isidabot'  # название базы
 base_user = 'isidabot'  # пользователь базы

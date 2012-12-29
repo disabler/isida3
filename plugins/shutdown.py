@@ -23,23 +23,23 @@
 
 def bot_shutdown(type, jid, nick, text, reason, xtype):
 	global game_over,bot_exit_type
-	StatusMessage = L('%s by command from %s') % (reason, nick)
-	if text != '': StatusMessage += ', ' + L('reason: %s') % text
+	StatusMessage = L('%s by command from %s','%s/%s'%(jid,nick)) % (reason, nick)
+	if text != '': StatusMessage += ', ' + L('reason: %s','%s/%s'%(jid,nick)) % text
 	send_presence_all(StatusMessage)
 	bot_exit_type, game_over = xtype, True
 
 def bot_exit(type, jid, nick, text):
-	bot_shutdown(type, jid, nick, text, L('Shutdown'), 'exit')
+	bot_shutdown(type, jid, nick, text, L('Shutdown','%s/%s'%(jid,nick)), 'exit')
 
 def bot_restart(type, jid, nick, text):
-	bot_shutdown(type, jid, nick, text, L('Restart'), 'restart')
+	bot_shutdown(type, jid, nick, text, L('Restart','%s/%s'%(jid,nick)), 'restart')
 
 def bot_update(type, jid, nick, text):
-	bot_shutdown(type, jid, nick, text, L('Update'), 'update')
+	bot_shutdown(type, jid, nick, text, L('Update','%s/%s'%(jid,nick)), 'update')
 
 def bot_soft_update(type, jid, nick, text):
 	global plugins_reload
-	caps_and_send(xmpp.Presence(show='dnd', status=L('Soft update activated!'), priority=Settings['priority']))
+	caps_and_send(xmpp.Presence(show='dnd', status=L('Soft update activated!','%s/%s'%(jid,nick)), priority=Settings['priority']))
 	plugins_reload = True
 	while not game_over and plugins_reload: time.sleep(1)
 	if GT('soft_update_resend_hash'):
@@ -51,7 +51,7 @@ def bot_soft_update(type, jid, nick, text):
 			zz = join(tocon)
 	if Settings['status'] == 'online': caps_and_send(xmpp.Presence(status=Settings['message'], priority=Settings['priority']))
 	else: caps_and_send(xmpp.Presence(show=Settings['status'], status=Settings['message'], priority=Settings['priority']))
-	send_msg(type, jid, nick, L('Soft update finished! Plugins loaded: %s. Commands: %s') % (len(plugins)+1,len(comms)))
+	send_msg(type, jid, nick, L('Soft update finished! Plugins loaded: %s. Commands: %s','%s/%s'%(jid,nick)) % (len(plugins)+1,len(comms)))
 
 global execute
 

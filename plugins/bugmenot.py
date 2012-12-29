@@ -71,21 +71,21 @@ def bugmenot(type, jid, nick,text):
 			logins = [i[0] for i in l]
 			passwords = [i[1] for i in l]
 			other = [i[2] for i in l]
-			stats = [L('%s%% (%s votes)') % (i[3],i[4]) for i in l]
+			stats = [L('%s%% (%s votes)','%s/%s'%(jid,nick)) % (i[3],i[4]) for i in l]
 			data = zip(logins, passwords, other, stats)
 			if data:
 				first = data[0]
 				if bmn_last_res.has_key(jid): bmn_last_res[jid].update({nick: data[1:]})
 				else: bmn_last_res[jid] = {nick: data[1:]}
-			else: result = L('What?')
-		elif blocked: result = L('Site Blocked')
-		else: result = L('What?')
+			else: result = L('What?','%s/%s'%(jid,nick))
+		elif blocked: result = L('Site Blocked','%s/%s'%(jid,nick))
+		else: result = L('What?','%s/%s'%(jid,nick))
 	else:
 		if bmn_last_res.has_key(jid) and bmn_last_res[jid].has_key(nick) and bmn_last_res[jid][nick]:
 			first = bmn_last_res[jid][nick][0]
 			bmn_last_res[jid][nick] = bmn_last_res[jid][nick][1:]
-		else: result = L('No results!')
-	if not result: result = rss_replace(L('Login: %s, Pass: %s - %s %s') % first)
+		else: result = L('No results!','%s/%s'%(jid,nick))
+	if not result: result = rss_replace(L('Login: %s, Pass: %s - %s %s','%s/%s'%(jid,nick)) % first)
 	send_msg(type, jid, nick, result)
 
 def bmn_clear(room,jid,nick,type,arr):

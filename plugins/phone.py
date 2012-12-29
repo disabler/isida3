@@ -27,12 +27,12 @@ phone_ua_format = '+%s%s (%s%s%s) ' + phone_short_format
 
 def phonecode(type, jid, nick, text):
 	if len(text):
-		def_info,country = L('Not found!'),L('Unknown')
+		def_info,country = L('Not found!','%s/%s'%(jid,nick)),L('Unknown','%s/%s'%(jid,nick))
 		if text[0] == '+': text = text[1:]
 		if text.isdigit():
 			if text[0] == '7':
 				if len(text) > 1 and text[1] == '9':
-					country = L('Russia, Mobile')
+					country = L('Russia, Mobile','%s/%s'%(jid,nick))
 					if len(text) >= 5:
 						dc, pn = text[1:4], text[4:]
 						if len(pn) < 7: pn = pn.ljust(7, '0')
@@ -41,9 +41,9 @@ def phonecode(type, jid, nick, text):
 						if result:
 							def pfs(t): return phone_short_format % tuple('%07d' % t)
 							def_info = '\n'.join(['%s, %s (%s) %s..%s, %s ' % (res[0],res[1],res[2],pfs(res[3]),pfs(res[4]),res[5]) for res in result])
-					else: def_info = L('Too many results!')
+					else: def_info = L('Too many results!','%s/%s'%(jid,nick))
 				else:
-					country = L('Russia')
+					country = L('Russia','%s/%s'%(jid,nick))
 					if len(text) < 11: text = text.ljust(12, '2')
 					elif len(text) > 11: text = text[:11]
 					text = text[:7] + 'x'*4
@@ -65,7 +65,7 @@ def phonecode(type, jid, nick, text):
 							text = ''.join(text)
 							pos -= 1
 			elif text[:3] == '380':
-				country = L('Ukraine')
+				country = L('Ukraine','%s/%s'%(jid,nick))
 				if len(text) < 12: text = text.ljust(12, '2')
 				elif len(text) > 12: text = text[:12]
 				text = text[:8]+'x'*4
@@ -86,9 +86,9 @@ def phonecode(type, jid, nick, text):
 						text[pos] = 'x'
 						text = ''.join(text)
 						pos -= 1
-			if country == L('Unknown'): result = def_info
-			elif def_info == L('Not found!'): result = L('Country: %s, Phone number not found') % (country,)
-			else: result = L('Country: %s\n%s') % (country,def_info)
+			if country == L('Unknown','%s/%s'%(jid,nick)): result = def_info
+			elif def_info == L('Not found!','%s/%s'%(jid,nick)): result = L('Country: %s, Phone number not found','%s/%s'%(jid,nick)) % (country,)
+			else: result = L('Country: %s\n%s','%s/%s'%(jid,nick)) % (country,def_info)
 		else:
 			text = '%s%%'%text.lower().capitalize()
 			def_info = []
@@ -101,7 +101,7 @@ def phonecode(type, jid, nick, text):
 					res[0] = phone_ru_format % tuple(res[0])
 					di += [', '.join(res)]
 				di = '\n'.join(di)
-				def_info += [L('Country: %s\n%s') % (L('Russia'),di)]
+				def_info += [L('Country: %s\n%s','%s/%s'%(jid,nick)) % (L('Russia','%s/%s'%(jid,nick)),di)]
 			result = cur_execute_fetchall('select * from def_ua_stat where city ilike %s', (text,))
 			if result:
 				di = []
@@ -111,17 +111,17 @@ def phonecode(type, jid, nick, text):
 					res[0] = phone_ua_format % tuple(res[0])
 					di += [', '.join(res)]
 				di = '\n'.join(di)
-				def_info += [L('Country: %s\n%s') % (L('Ukraine'),di)]
+				def_info += [L('Country: %s\n%s','%s/%s'%(jid,nick)) % (L('Ukraine','%s/%s'%(jid,nick)),di)]
 			#result = cur_execute_fetchall('select * from def_ru_mobile where provider ilike %s or region ilike %s', (text,text))
 			#if result:
 			#	di = []
 			#	for res in result: di += ['%s, %s (%s) %s..%s, %s ' % res]
 			#	di = '\n'.join(di)
-			#	def_info += [L('Country: %s\n%s') % (L('Russia, Mobile'),di)]
+			#	def_info += [L('Country: %s\n%s','%s/%s'%(jid,nick)) % (L('Russia, Mobile','%s/%s'%(jid,nick)),di)]
 			if def_info: result = '\n\n'.join(def_info)
-			else: result = L('Not found!')
+			else: result = L('Not found!','%s/%s'%(jid,nick))
 		msg = result
-	else: msg = L('What?')
+	else: msg = L('What?','%s/%s'%(jid,nick))
    	send_msg(type, jid, nick, msg)
 
 global execute

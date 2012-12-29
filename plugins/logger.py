@@ -184,31 +184,31 @@ message_control = [append_message_to_log]
 presence_control = [append_presence_to_log]
 
 def log_room(type, jid, nick, text):
-	if type == 'groupchat': msg = L('This command available only in private!')
+	if type == 'groupchat': msg = L('This command available only in private!','%s/%s'%(jid,nick))
 	else:
 		text = text.strip().lower().split(' ',1)
 		hmode = text[0]
 		try: hroom = text[1]
 		except: hroom = jid
 		if not hmode:
-			if cur_execute_fetchone('select * from log_rooms where room=%s;',(hroom,)): msg = L('Logs for %s enabled.') % hroom
-			else: msg = L('Logs for %s disabled.') % hroom
+			if cur_execute_fetchone('select * from log_rooms where room=%s;',(hroom,)): msg = L('Logs for %s enabled.','%s/%s'%(jid,nick)) % hroom
+			else: msg = L('Logs for %s disabled.','%s/%s'%(jid,nick)) % hroom
 		elif hmode == 'show':
 			lr = cur_execute_fetchall('select * from log_rooms;')
-			if lr: msg = '%s\n%s' % (L('Logged conferences:'),'\n'.join([t[0] for t in lr]))
-			else: msg = L('Logs are turned off in all conferences.')
+			if lr: msg = '%s\n%s' % (L('Logged conferences:','%s/%s'%(jid,nick)),'\n'.join([t[0] for t in lr]))
+			else: msg = L('Logs are turned off in all conferences.','%s/%s'%(jid,nick))
 		elif hmode == 'add':
-			if not cur_execute_fetchall('select * from conference where room ilike %s;', ('%s/%%'%getRoom(hroom),)): msg = L('I am not in the %s') % hroom
-			elif cur_execute_fetchone('select * from log_rooms where room=%s;',(hroom,)): msg = L('Logs for %s already enabled.') % hroom
+			if not cur_execute_fetchall('select * from conference where room ilike %s;', ('%s/%%'%getRoom(hroom),)): msg = L('I am not in the %s','%s/%s'%(jid,nick)) % hroom
+			elif cur_execute_fetchone('select * from log_rooms where room=%s;',(hroom,)): msg = L('Logs for %s already enabled.','%s/%s'%(jid,nick)) % hroom
 			else:
 				cur_execute('insert into log_rooms values (%s);',(hroom,))
-				msg = L('Logs for %s enabled.') % hroom
+				msg = L('Logs for %s enabled.','%s/%s'%(jid,nick)) % hroom
 		elif hmode == 'del':
 			if cur_execute_fetchone('select * from log_rooms where room=%s;',(hroom,)):
 				cur_execute('delete from log_rooms where room=%s;',(hroom,))
-				msg = L('Logs for %s disabled.') % hroom
-			else: msg = L('Logs for %s not enabled.') % hroom
-		else: msg = L('What?')
+				msg = L('Logs for %s disabled.','%s/%s'%(jid,nick)) % hroom
+			else: msg = L('Logs for %s not enabled.','%s/%s'%(jid,nick)) % hroom
+		else: msg = L('What?','%s/%s'%(jid,nick))
 	send_msg(type, jid, nick, msg)
 
 execute = [(9, 'log', log_room, 2, L('Logging history conference.\nlog [add|del|show][ room@conference.server.tld]'))]

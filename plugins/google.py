@@ -26,7 +26,7 @@ google_last_res = {}
 def replace_bold(t,b,e): return t.replace('<b>',b).replace('</b>',e)
 
 def wiki_search(type, jid, nick, text):
-	if text not in ['next','']: text = L('%s site:en.wikipedia.org') % text
+	if text not in ['next','']: text = L('%s site:en.wikipedia.org','%s/%s'%(jid,nick)) % text
 	google(type, jid, nick, text)
 
 def xep_show(type, jid, nick,text):
@@ -41,7 +41,7 @@ def xep_show(type, jid, nick,text):
 		noh_title = replace_bold(title,'','')
 		content = replace_bold(content,'','')
 		msg = '\n'.join((replacer(noh_title),replacer(content),results[0]['unescapedUrl']))
-	except: msg = L('xep \"%s\" not found!') % text
+	except: msg = L('xep \"%s\" not found!','%s/%s'%(jid,nick)) % text
 	send_msg(type, jid, nick, msg)
 
 def google(type, jid, nick, text):
@@ -52,7 +52,7 @@ def google(type, jid, nick, text):
 		if google_last_res.has_key(jid) and google_last_res[jid].has_key(nick) and google_last_res[jid][nick]:
 			first = google_last_res[jid][nick][0]
 			google_last_res[jid][nick] = google_last_res[jid][nick][1:]
-		else: results = L('No results!')
+		else: results = L('No results!','%s/%s'%(jid,nick))
 	else:
 		try:
 			url = 'http://ajax.googleapis.com/ajax/services/search/web?'
@@ -62,7 +62,7 @@ def google(type, jid, nick, text):
 			first = data[0]
 			if google_last_res.has_key(jid): google_last_res[jid].update({nick: data[1:]})
 			else: google_last_res[jid] = {nick: data[1:]}
-		except: results = L('Expression \"%s\" not found!') % text
+		except: results = L('Expression \"%s\" not found!','%s/%s'%(jid,nick)) % text
 	if not results:
 		title = first['title']
 		content = first['content']
@@ -77,29 +77,33 @@ def google_clear(room,jid,nick,type,arr):
 
 def translate(type, jid, nick, text):
 	text = text.strip()
-	trlang = {'sq':L('Albanian'),'en':L('English'),'ar':L('Arabic'),'af':L('Afrikaans'),
-			'be':L('Belarusian'),'bg':L('Bulgarian'),'cy':L('Welsh'),'hu':L('Hungarian'),'vi':L('Vietnamese'),
-			'gl':L('Galician'),'nl':L('Dutch'),'el':L('Greek'),'da':L('Danish'),'iw':L('Hebrew'),'yi':L('Yiddish'),
-			'id':L('Indonesian'),'ga':L('Irish'),'is':L('Icelandic'),'es':L('Spanish'),'it':L('Italian'),
-			'ca':L('Catalan'),'zh':L('Chinese'),'ko':L('Korean'),'lv':L('Latvian'),'lt':L('Lithuanian'),
-			'mk':L('Macedonian'),'ms':L('Malay'),'mt':L('Maltese'),'de':L('German'),'no':L('Norwegian'),
-			'fa':L('Persian'),'pl':L('Polish'),'pt':L('Portuguese'),'ro':L('Romanian'),'ru':L('Russian'),
-			'sr':L('Serbian'),'sk':L('Slovak'),'sl':L('Slovenian'),'sw':L('Swahili'),'tl':L('Tagalog'),
-			'th':L('Thai'),'tr':L('Turkish'),'uk':L('Ukrainian'),'fi':L('Finnish'),'fr':L('French'),'hi':L('Hindi'),
-			'hr':L('Croatian'),'cs':L('Czech'),'sv':L('Swedish'),'et':L('Estonian'),'ja':L('Japanese'),'ht':L('Creole')}
-	if text.lower() == 'list': msg = L('Available languages for translate:') + ' ' + ', '.join(sorted(trlang.keys()))
+	trlang = {'sq':L('Albanian','%s/%s'%(jid,nick)),'en':L('English','%s/%s'%(jid,nick)),'ar':L('Arabic','%s/%s'%(jid,nick)),'af':L('Afrikaans','%s/%s'%(jid,nick)),
+			  'be':L('Belarusian','%s/%s'%(jid,nick)),'bg':L('Bulgarian','%s/%s'%(jid,nick)),'cy':L('Welsh','%s/%s'%(jid,nick)),
+			  'hu':L('Hungarian','%s/%s'%(jid,nick)),'vi':L('Vietnamese','%s/%s'%(jid,nick)),'gl':L('Galician','%s/%s'%(jid,nick)),
+			  'nl':L('Dutch','%s/%s'%(jid,nick)),'el':L('Greek','%s/%s'%(jid,nick)),'da':L('Danish','%s/%s'%(jid,nick)),'iw':L('Hebrew','%s/%s'%(jid,nick)),
+			  'yi':L('Yiddish','%s/%s'%(jid,nick)),'id':L('Indonesian','%s/%s'%(jid,nick)),'ga':L('Irish','%s/%s'%(jid,nick)),'is':L('Icelandic','%s/%s'%(jid,nick)),
+			  'es':L('Spanish','%s/%s'%(jid,nick)),'it':L('Italian','%s/%s'%(jid,nick)),'ca':L('Catalan','%s/%s'%(jid,nick)),'zh':L('Chinese','%s/%s'%(jid,nick)),
+			  'ko':L('Korean','%s/%s'%(jid,nick)),'lv':L('Latvian','%s/%s'%(jid,nick)),'lt':L('Lithuanian','%s/%s'%(jid,nick)),
+			  'mk':L('Macedonian','%s/%s'%(jid,nick)),'ms':L('Malay','%s/%s'%(jid,nick)),'mt':L('Maltese','%s/%s'%(jid,nick)),'de':L('German','%s/%s'%(jid,nick)),
+			  'no':L('Norwegian','%s/%s'%(jid,nick)),'fa':L('Persian','%s/%s'%(jid,nick)),'pl':L('Polish','%s/%s'%(jid,nick)),'pt':L('Portuguese','%s/%s'%(jid,nick)),
+			  'ro':L('Romanian','%s/%s'%(jid,nick)),'ru':L('Russian','%s/%s'%(jid,nick)),'sr':L('Serbian','%s/%s'%(jid,nick)),'sk':L('Slovak','%s/%s'%(jid,nick)),
+			  'sl':L('Slovenian','%s/%s'%(jid,nick)),'sw':L('Swahili','%s/%s'%(jid,nick)),'tl':L('Tagalog','%s/%s'%(jid,nick)),'th':L('Thai','%s/%s'%(jid,nick)),
+			  'tr':L('Turkish','%s/%s'%(jid,nick)),'uk':L('Ukrainian','%s/%s'%(jid,nick)),'fi':L('Finnish','%s/%s'%(jid,nick)),'fr':L('French','%s/%s'%(jid,nick)),
+			  'hi':L('Hindi','%s/%s'%(jid,nick)),'hr':L('Croatian','%s/%s'%(jid,nick)),'cs':L('Czech','%s/%s'%(jid,nick)),'sv':L('Swedish','%s/%s'%(jid,nick)),
+			  'et':L('Estonian','%s/%s'%(jid,nick)),'ja':L('Japanese','%s/%s'%(jid,nick)),'ht':L('Creole','%s/%s'%(jid,nick))}
+	if text.lower() == 'list': msg = L('Available languages for translate:','%s/%s'%(jid,nick)) + ' ' + ', '.join(sorted(trlang.keys()))
 	elif text[:5].lower() == 'info ':
 		text = text.lower().split(' ')
 		msg = ''
 		for tmp in text:
 			if tmp in trlang: msg += '%s - %s, ' % (tmp,trlang[tmp])
-		if len(msg): msg = L('Available languages: %s') % msg[:-2]
-		else: msg = L('I don\'t know this language')
+		if len(msg): msg = L('Available languages: %s','%s/%s'%(jid,nick)) % msg[:-2]
+		else: msg = L('I don\'t know this language','%s/%s'%(jid,nick))
 	elif text[:5].lower() == 'lang ' and text.count(' ')==1:
 		text = text.lower().split(' ')[1]
 		msg = ', '.join(['%s - %s' % (k,trlang[k]) for k in trlang.keys() if text in trlang[k].lower()])
-		if len(msg): msg = L('Available languages: %s') % msg
-		else: msg = L('I don\'t know this language')
+		if len(msg): msg = L('Available languages: %s','%s/%s'%(jid,nick)) % msg
+		else: msg = L('I don\'t know this language','%s/%s'%(jid,nick))
 	else:
 		if ' ' in text:
 			text = text.split(' ',2)
@@ -115,9 +119,9 @@ def translate(type, jid, nick, text):
 				try: jsonl = json.loads(search_results)['sentences']
 				except ValueError: jsonl = None
 				if jsonl: msg = rss_replace(''.join(f['trans'] for f in jsonl))
-				else: msg = L('I can\'t translate it!')
-			else: msg = L('Incorrect language settings for translate. tr list - available languages.')
-		else: msg = L('Command\'s format: tr [from] to text')
+				else: msg = L('I can\'t translate it!','%s/%s'%(jid,nick))
+			else: msg = L('Incorrect language settings for translate. tr list - available languages.','%s/%s'%(jid,nick))
+		else: msg = L('Command\'s format: tr [from] to text','%s/%s'%(jid,nick))
 	send_msg(type, jid, nick, msg)
 
 global execute, presence_control

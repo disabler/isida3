@@ -295,26 +295,15 @@ def show_syslogs_search(type, jid, nick, text):
 	send_msg(type, jid, nick, msg)
 
 def set_locale(type, jid, nick, text):
-	global locales
 	if len(text) >= 2:
 		text = text.lower()
-		if text != 'en':
-			lf = loc_folder % text
-			if os.path.isfile(lf):
-				locales = {}
-				lf = readfile(lf).decode('UTF').replace('\r','').split('\n')
-				for c in lf:
-					if '#' not in c[:3] and len(c) and '\t' in c: locales[c.split('\t',1)[0].replace('\\n','\n').replace('\\t','\t')] = c.split('\t',1)[1].replace('\\n','\n').replace('\\t','\t')
-				PT('bot_locale',text)
-				msg = L('Locale set to: %s') % text
-				CURRENT_LOCALE = text
-			else: msg = L('Locale not found!')
-		else:
-			locales = {}
-			CURRENT_LOCALE = 'en'
-			msg = L('Locale set to: %s') % CURRENT_LOCALE
-			PT('bot_locale',CURRENT_LOCALE)
-	else: msg = L('Current locale: %s') % GT('bot_locale')
+		lf = loc_folder % text
+		if os.path.isfile(lf) or text == 'en':
+			PT('bot_locale',text)
+			msg = L('Locale set to: %s','%s/%s'%(jid,nick)) % text
+			CURRENT_LOCALE = text
+		else: msg = L('Locale not found!','%s/%s'%(jid,nick))
+	else: msg = L('Current locale: %s','%s/%s'%(jid,nick)) % GT('bot_locale')
 	send_msg(type, jid, nick, msg)
 
 def shell_execute(cmd):
@@ -355,7 +344,7 @@ def comm_on_off(type, jid, nick, text):
 		cmd = text[0]
 		cmds = text[1:]
 		if cmd == 'on':
-			if not cmds: msg = L('What disable?')
+			if not cmds: msg = L('What disable?','%s/%s'%(jid,nick))
 			else:
 				not_found,enabled,already = [],[],[]
 				for t in cmds:
@@ -365,12 +354,12 @@ def comm_on_off(type, jid, nick, text):
 						enabled.append(t)
 					else: already.append(t)
 				msg = []
-				if enabled: msg.append(L('Enabled commands: %s') % ', '.join(enabled))
-				if already: msg.append(L('Not disabled commands: %s') % ', '.join(already))
-				if not_found: msg.append(L('Commands not found: %s') % ', '.join(not_found))
+				if enabled: msg.append(L('Enabled commands: %s','%s/%s'%(jid,nick)) % ', '.join(enabled))
+				if already: msg.append(L('Not disabled commands: %s','%s/%s'%(jid,nick)) % ', '.join(already))
+				if not_found: msg.append(L('Commands not found: %s','%s/%s'%(jid,nick)) % ', '.join(not_found))
 				msg = '\n'.join(msg)
 		elif cmd == 'off':
-			if not cmds: msg = L('What enable?')
+			if not cmds: msg = L('What enable?','%s/%s'%(jid,nick))
 			else:
 				not_found,disabled,already = [],[],[]
 				for t in cmds:
@@ -380,15 +369,15 @@ def comm_on_off(type, jid, nick, text):
 						cur_execute('insert into commonoff values (%s,%s);',(jid,t))
 						disabled.append(t)
 				msg = []
-				if disabled: msg.append(L('Disabled commands: %s') % ', '.join(disabled))
-				if already: msg.append(L('Commands disabled before: %s') % ', '.join(already))
-				if not_found: msg.append(L('Commands not found: %s') % ', '.join(not_found))
+				if disabled: msg.append(L('Disabled commands: %s','%s/%s'%(jid,nick)) % ', '.join(disabled))
+				if already: msg.append(L('Commands disabled before: %s','%s/%s'%(jid,nick)) % ', '.join(already))
+				if not_found: msg.append(L('Commands not found: %s','%s/%s'%(jid,nick)) % ', '.join(not_found))
 				msg = '\n'.join(msg)
-		else: msg = L('Unknown item!')
+		else: msg = L('Unknown item!','%s/%s'%(jid,nick))
 	else:
 		cmd = cur_execute_fetchall('select cmd from commonoff where room=%s;',(jid,))
-		if cmd: msg = L('Disabled commands: %s') % ', '.join([t[0] for t in cmd])
-		else: msg = L('Disabled commands not found!')
+		if cmd: msg = L('Disabled commands: %s','%s/%s'%(jid,nick)) % ', '.join([t[0] for t in cmd])
+		else: msg = L('Disabled commands not found!','%s/%s'%(jid,nick))
 	send_msg(type, jid, nick, msg)
 
 def reduce_spaces_all(text):
@@ -409,7 +398,7 @@ def status(type, jid, nick, text):
 		realjid = getRoom(get_level(jid,text)[1])
 		stat = cur_execute_fetchone('select message,status from age where jid=%s and room=%s and nick=%s',(realjid,jid,text))
 		if stat:
-			if stat[1]: msg = L('leave this room.')
+			if stat[1]: msg = L('leave this room.','%s/%s'%(jid,nick))
 			else:
 				stat = stat[0].split('\n',4)
 				if stat[3] != 'None': msg = stat[3]
@@ -419,8 +408,8 @@ def status(type, jid, nick, text):
 				else: msg += ' [0] '
 				if stat[0] != 'None' and stat[1] != 'None': msg += stat[0]+'/'+stat[1]
 			if text != nick: msg = text + ' - '+msg
-		else: msg = L('Not found!')
-	else: msg = L('I can\'t see %s here...') % text
+		else: msg = L('Not found!','%s/%s'%(jid,nick))
+	else: msg = L('I can\'t see %s here...','%s/%s'%(jid,nick)) % text
 	send_msg(type, jid, nick, msg)
 
 def replacer(msg):
@@ -435,9 +424,9 @@ def replacer(msg):
 
 def vcs_info(type, jid, nick):
 	if os.path.isfile(ul):
-		try: msg = L('Last update:\n%s') % readfile(ul).decode('utf-8').replace('\n\n','\n')
-		except: msg = L('Error!')
-	else: msg = L('File %s not found!') % ul
+		try: msg = L('Last update:\n%s','%s/%s'%(jid,nick)) % readfile(ul).decode('utf-8').replace('\n\n','\n')
+		except: msg = L('Error!','%s/%s'%(jid,nick))
+	else: msg = L('File %s not found!','%s/%s'%(jid,nick)) % ul
 	while msg[-1] in ['\n',' ']: msg = msg[:-1]
 	if msg.count('\n') == 1: msg = msg.replace('\n',' ')
 	send_msg(type, jid, nick, msg[:msg_limit])
@@ -471,7 +460,7 @@ def alias(type, jid, nick, text):
 	except: cmd = ''
 	try: cbody = text.split(' ',1)[1].split('=',1)[1].strip(' ')
 	except: cbody = ''
-	msg = L('Mode %s not detected!') % mode
+	msg = L('Mode %s not detected!','%s/%s'%(jid,nick)) % mode
 	if mode in ['add','add_global']:
 		am,amm = get_level(jid,nick)[0],-1
 		tcmd = cbody.split(' ',1)[0].lower()
@@ -479,21 +468,21 @@ def alias(type, jid, nick, text):
 			if tmp[1] == tcmd:
 				amm = tmp[0]
 				break
-		if amm < 0: msg = L('Command not found: %s') % tcmd
-		elif mode == 'add' and amm > am: msg = L('Not allowed create alias for: %s') % tcmd
-		elif mode == 'add_global' and am != 9: msg = L('Not allowed create global alias for: %s') % tcmd
+		if amm < 0: msg = L('Command not found: %s','%s/%s'%(jid,nick)) % tcmd
+		elif mode == 'add' and amm > am: msg = L('Not allowed create alias for: %s','%s/%s'%(jid,nick)) % tcmd
+		elif mode == 'add_global' and am != 9: msg = L('Not allowed create global alias for: %s','%s/%s'%(jid,nick)) % tcmd
 		else:
 			gjid = jid if mode == 'add' else '*'
 			fl = cur_execute_fetchone('select match from alias where room=%s and match=%s',(gjid,cmd))
 			if fl:
 				cur_execute('delete from alias where room=%s and match=%s',(gjid,cmd))
-				msg = L('Updated:')
-			else: msg = L('Added:')
+				msg = L('Updated:','%s/%s'%(jid,nick))
+			else: msg = L('Added:','%s/%s'%(jid,nick))
 			cur_execute('insert into alias values (%s,%s,%s)',(gjid,cmd,cbody))
 			msg = '%s %s=%s' % (msg,cmd,cbody)
 	if mode in ['del','del_global']:
 		gjid = jid if mode == 'del' else '*'
-		msg = L('Unable to remove %s') % cmd
+		msg = L('Unable to remove %s','%s/%s'%(jid,nick)) % cmd
 		fl = cur_execute_fetchone('select cmd from alias where room=%s and match=%s',(gjid,cmd))
 		if fl:
 			am,amm = get_level(jid,nick)[0],-1
@@ -502,32 +491,32 @@ def alias(type, jid, nick, text):
 				if tmp[1] == tcmd:
 					amm = tmp[0]
 					break
-			if mode == 'del' and amm > am: msg = L('Not allowed remove alias for: %s') % tcmd
-			elif mode == 'del_global' and am != 9: msg = L('Not allowed remove global alias for: %s') % tcmd
+			if mode == 'del' and amm > am: msg = L('Not allowed remove alias for: %s','%s/%s'%(jid,nick)) % tcmd
+			elif mode == 'del_global' and am != 9: msg = L('Not allowed remove global alias for: %s','%s/%s'%(jid,nick)) % tcmd
 			else:
 				cur_execute('delete from alias where room=%s and match=%s',(gjid,cmd))
-				msg = L('Removed: %s') % cmd
+				msg = L('Removed: %s','%s/%s'%(jid,nick)) % cmd
 	if mode=='show':
 		if cmd == '':
 			fl = cur_execute_fetchall('select match,room from alias where room=%s or room=%s',(jid,'*'))
 			if fl: 
 				aln = ', '.join([t[0] for t in fl if t[1] != '*'])
 				alg = ', '.join([t[0] for t in fl if t[1] == '*'])
-				if aln: msg = L('Aliases: %s') % aln
+				if aln: msg = L('Aliases: %s','%s/%s'%(jid,nick)) % aln
 				if alg:
-					if aln: msg += '\n%s' % L('Global aliases: %s') % alg
-					else: msg = L('Global aliases: %s') % alg
-			else: msg = L('Aliases not found!')
+					if aln: msg += '\n%s' % L('Global aliases: %s','%s/%s'%(jid,nick)) % alg
+					else: msg = L('Global aliases: %s','%s/%s'%(jid,nick)) % alg
+			else: msg = L('Aliases not found!','%s/%s'%(jid,nick))
 		else:
 			fl = cur_execute_fetchall('select match,cmd,room from alias where (room=%s or room=%s) and match ilike %s',(jid,'*','%%%s%%'%cmd))
 			if fl:
 				aln = '\n'.join(['%s = %s' % (t[0],t[1]) for t in fl if t[2] != '*'])
 				alg = '\n'.join(['%s = %s' % (t[0],t[1]) for t in fl if t[2] == '*'])
-				if aln: msg = L('Aliases: %s') % '\n%s' % aln
+				if aln: msg = L('Aliases: %s','%s/%s'%(jid,nick)) % '\n%s' % aln
 				if alg:
-					if aln: msg += '\n%s' % L('Global aliases: %s') % '\n%s' % alg
-					else: msg = L('Global aliases: %s') % '\n%s' % alg
-			else: msg = L('Aliases not found!')
+					if aln: msg += '\n%s' % L('Global aliases: %s','%s/%s'%(jid,nick)) % '\n%s' % alg
+					else: msg = L('Global aliases: %s','%s/%s'%(jid,nick)) % '\n%s' % alg
+			else: msg = L('Aliases not found!','%s/%s'%(jid,nick))
 	send_msg(type, jid, nick, msg)
 
 def fspace(mass):
@@ -543,21 +532,21 @@ def un_unix(val):
 	ret = '%02d:%02d:%02d' % tuple(tt[3:6])
 	if sum(tt[:3]):
 		day_h,day_l = tt[2]/10%10,tt[2] % 10
-		if day_h == 1: ret = L('%s days, %s') % (tt[2],ret)
+		if day_h == 1: ret = L('%s days, %s','%s/%s'%(jid,nick)) % (tt[2],ret)
 		else:
-			if day_l in [5,6,7,8,9]: ret = L('%s days, %s') % (tt[2],ret)
-			elif day_l in [2,3,4]: ret = L('%s Days, %s').lower() % (tt[2],ret)
-			elif day_l == 1: ret = L('%s day, %s') % (tt[2],ret)
+			if day_l in [5,6,7,8,9]: ret = L('%s days, %s','%s/%s'%(jid,nick)) % (tt[2],ret)
+			elif day_l in [2,3,4]: ret = L('%s Days, %s','%s/%s'%(jid,nick)).lower() % (tt[2],ret)
+			elif day_l == 1: ret = L('%s day, %s','%s/%s'%(jid,nick)) % (tt[2],ret)
 	if sum(tt[:2]):
-		if tt[1] in [5,6,7,8,9,10,11,12]: ret = L('%s months, %s') % (tt[1],ret)
-		elif tt[1] in [2,3,4]: ret = L('%s Months, %s').lower() % (tt[1],ret)
-		elif tt[1] == 1: ret = L('%s month, %s') % (tt[1],ret)
+		if tt[1] in [5,6,7,8,9,10,11,12]: ret = L('%s months, %s','%s/%s'%(jid,nick)) % (tt[1],ret)
+		elif tt[1] in [2,3,4]: ret = L('%s Months, %s','%s/%s'%(jid,nick)).lower() % (tt[1],ret)
+		elif tt[1] == 1: ret = L('%s month, %s','%s/%s'%(jid,nick)) % (tt[1],ret)
 	if tt[0]:
 		ty = tt[0] % 100
 		if ty >= 20: ty = ty % 10
-		if ty in [0]+range(5,21): ret = L('%s years, %s') % (tt[0],ret)
-		elif ty in [2,3,4]: ret = L('%s Years, %s').lower() % (tt[0],ret)
-		else: ret = L('%s year, %s') % (tt[0],ret)
+		if ty in [0]+range(5,21): ret = L('%s years, %s','%s/%s'%(jid,nick)) % (tt[0],ret)
+		elif ty in [2,3,4]: ret = L('%s Years, %s','%s/%s'%(jid,nick)).lower() % (tt[0],ret)
+		else: ret = L('%s year, %s','%s/%s'%(jid,nick)) % (tt[0],ret)
 	return ret
 
 def close_age_null():
@@ -607,9 +596,9 @@ def set_prefix(type, jid, nick, text):
 		put_config(getRoom(jid),'prefix',lprefix)
 		prf = get_prefix(lprefix)
 	else: prf = get_prefix(get_local_prefix(jid))
-	send_msg(type, jid, nick, L('Command prefix: %s') % prf)
+	send_msg(type, jid, nick, L('Command prefix: %s','%s/%s'%(jid,nick)) % prf)
 
-def uptime(type, jid, nick): send_msg(type, jid, nick, L('Uptime: %s, Last session: %s') % (get_uptime_str(), un_unix(int(time.time())-sesstime)))
+def uptime(type, jid, nick): send_msg(type, jid, nick, L('Uptime: %s, Last session: %s','%s/%s'%(jid,nick)) % (get_uptime_str(), un_unix(int(time.time())-sesstime)))
 
 def show_error(type, jid, nick, text):
 	if text.lower() == 'clear': writefile(LOG_FILENAME,'')
@@ -620,12 +609,12 @@ def show_error(type, jid, nick, text):
 		log = log.split('ERROR:')
 		lll = len(log)
 		if cmd > lll: cmd = lll
-		msg = L('Total Error(s): %s\n') % (lll-1)
+		msg = L('Total Error(s): %s\n','%s/%s'%(jid,nick)) % (lll-1)
 		if text != '':
 			for aa in range(lll-cmd,lll): msg += log[aa]+'\n'
 		else: msg += ' '
 		msg = msg[:-2]
-	else: msg = L('No Errors')
+	else: msg = L('No Errors','%s/%s'%(jid,nick))
 	send_msg(type, jid, nick, msg)
 
 def get_nick_by_jid(room, jid):
@@ -640,7 +629,7 @@ def get_nick_by_jid_res(room, jid):
 
 def info_whois(type, jid, nick, text):
 	if text != '': msg = raw_who(jid, text)
-	else: msg = L('What?')
+	else: msg = L('What?','%s/%s'%(jid,nick))
 	send_msg(type, jid, nick, msg)
 
 def info_access(type, jid, nick):
@@ -649,14 +638,14 @@ def info_access(type, jid, nick):
 
 def raw_who(room,nick):
 	access_mode = get_level(room,nick)[0]
-	if access_mode == -2: msg = L('Who do you need?')
+	if access_mode == -2: msg = L('Who do you need?','%s/%s'%(room,nick))
 	else:
 		realjid = get_level(room,nick)[1]
-		msg = L('Access level: %s') % access_mode
-		msg += ', ' + [L('Ignored'),L('Minimal'),L('Visitor'),L('Visitor and Member'),L('Participant'),L('Member'), L('Moderator'),L('Moderator and member'),L('Admin'),L('Owner'),L('Bot\'s owner')][access_mode+1]
+		msg = L('Access level: %s','%s/%s'%(room,nick)) % access_mode
+		msg += ', ' + [L('Ignored','%s/%s'%(room,nick)),L('Minimal','%s/%s'%(room,nick)),L('Visitor','%s/%s'%(room,nick)),L('Visitor and Member','%s/%s'%(room,nick)),L('Participant','%s/%s'%(room,nick)),L('Member','%s/%s'%(room,nick)), L('Moderator','%s/%s'%(room,nick)),L('Moderator and member','%s/%s'%(room,nick)),L('Admin','%s/%s'%(room,nick)),L('Owner','%s/%s'%(room,nick)),L('Bot\'s owner','%s/%s'%(room,nick))][access_mode+1]
 		if realjid != 'None':
-			msg = L('%s, jid detected') % msg
-			if ddos_ignore.has_key(getRoom(realjid)): msg = '%s, %s' % (msg,L('temporary ignored (%s)') % un_unix(ddos_ignore[getRoom(realjid)][2]-time.time()))
+			msg = L('%s, jid detected','%s/%s'%(room,nick)) % msg
+			if ddos_ignore.has_key(getRoom(realjid)): msg = '%s, %s' % (msg,L('temporary ignored (%s)','%s/%s'%(room,nick)) % un_unix(ddos_ignore[getRoom(realjid)][2]-time.time()))
 	return msg
 
 def info_comm(type, jid, nick):
@@ -668,14 +657,14 @@ def info_comm(type, jid, nick):
 	for j in range(0,access_mode+1):
 		cm = [t[1] for t in tmp if t[0] == j]
 		if cm: msg += u'\n• %s … %s' % (j,', '.join(cm))
-	msg = L('Total commands: %s | Prefix: %s | Your access level: %s | Available commands: %s%s') % (len(comms), get_prefix(get_local_prefix(jid)), access_mode, len(tmp), msg)
+	msg = L('Total commands: %s | Prefix: %s | Your access level: %s | Available commands: %s%s','%s/%s'%(jid,nick)) % (len(comms), get_prefix(get_local_prefix(jid)), access_mode, len(tmp), msg)
 	send_msg(type, jid, nick, msg)
 
 def helpme(type, jid, nick, text):
 	text = text.strip().lower()
 	if text == 'about': msg = u'Isida Jabber Bot | © 2oo9-%s Disabler Production Lab. | http://isida-bot.com' % str(time.localtime()[0]).replace('0','o')
-	elif text in ['donation','donations']: msg = L('Send donation to: %sBest regards, %s') % ('\nYandexMoney: 41001384336826\nWMZ: Z392970180590\nWMR: R378494692310\nWME: E164241657651\n','Disabler')
-	elif text in [L('access'),'access']: msg = L('Bot has next access levels:\n-1 - ignored\n0 - minimal access\n1 - at least visitor and none\n2 - at least visitor and member\n3 - at least participant and none\n4 - at least participant and member\n5 - at least moderator and none\n6 - at least moderator and member\n7 - at least moderator and admin\n8 - at least moderator and owner\n9 - bot owner')
+	elif text in ['donation','donations']: msg = L('Send donation to: %sBest regards, %s','%s/%s'%(jid,nick)) % ('\nYandexMoney: 41001384336826\nWMZ: Z392970180590\nWMR: R378494692310\nWME: E164241657651\n','Disabler')
+	elif text in [L('access','%s/%s'%(jid,nick)),'access']: msg = L('Bot has next access levels:\n-1 - ignored\n0 - minimal access\n1 - at least visitor and none\n2 - at least visitor and member\n3 - at least participant and none\n4 - at least participant and member\n5 - at least moderator and none\n6 - at least moderator and member\n7 - at least moderator and admin\n8 - at least moderator and owner\n9 - bot owner','%s/%s'%(jid,nick))
 	elif len(text) > 1:
 		tm,cm = [],[]
 		for tmp in comms:
@@ -683,18 +672,18 @@ def helpme(type, jid, nick, text):
 				cm = (tmp[1],tmp[0],tmp[4])
 				break
 			elif text in tmp[1].lower() or text in tmp[4].lower(): tm.append((tmp[0], tmp[1], tmp[4]))
-		if cm: msg = '%s. ' % cm[0].capitalize() + L('Access level: %s. %s') % (cm[1],cm[2])
-		elif len(tm) == 1: msg = '%s. ' % tm[0][1].capitalize() + L('Access level: %s. %s') % (tm[0][0],tm[0][2])
-		elif not len(tm+cm): msg = L('"%s" not found') % text
+		if cm: msg = '%s. ' % cm[0].capitalize() + L('Access level: %s. %s','%s/%s'%(jid,nick)) % (cm[1],cm[2])
+		elif len(tm) == 1: msg = '%s. ' % tm[0][1].capitalize() + L('Access level: %s. %s','%s/%s'%(jid,nick)) % (tm[0][0],tm[0][2])
+		elif not len(tm+cm): msg = L('"%s" not found','%s/%s'%(jid,nick)) % text
 		else:
 			tm.sort()
-			msg = L('Prefix: %s, Available help for commands:\n') % get_prefix(get_local_prefix(jid))
+			msg = L('Prefix: %s, Available help for commands:\n','%s/%s'%(jid,nick)) % get_prefix(get_local_prefix(jid))
 			for i in range(0,10):
 				tmsg = []
 				for tmp in tm:
 					if tmp[0] == i and tmp[2] != '': tmsg.append(unicode(tmp[1]))
 				if len(tmsg): msg += u'[%s]…%s\n' % (i,', '.join(tmsg))
-	else: msg = L('%s Help for command: help command | Commands list: commands') % (u'Isida Jabber Bot | http://isida-bot.com | © 2oo9-'+str(time.localtime()[0]).replace('0','o')+' Disabler Production Lab. | ')
+	else: msg = L('%s Help for command: help command | Commands list: commands','%s/%s'%(jid,nick)) % (u'Isida Jabber Bot | http://isida-bot.com | © 2oo9-'+str(time.localtime()[0]).replace('0','o')+' Disabler Production Lab. | ')
 	send_msg(type, jid, nick, msg)
 
 def bot_rejoin(type, jid, nick, text):
@@ -709,7 +698,7 @@ def bot_rejoin(type, jid, nick, text):
 	lastserver = getServer(text.lower())
 	lastnick = getResourse(text)
 	if cur_execute_fetchall('select * from conference where room ilike %s;', ('%s/%%'%getRoom(text),)):
-		sm = L('Rejoin by %s') % nick
+		sm = L('Rejoin by %s','%s/%s'%(jid,nick)) % nick
 		leave(text, sm)
 		time.sleep(1)
 		zz = join(text, passwd)
@@ -735,15 +724,15 @@ def bot_rejoin(type, jid, nick, text):
 							pres_answer.remove(tmp)
 							answered = True
 							break
-				if Error: send_msg(type, jid, nick, L('Error! %s') % Error)
+				if Error: send_msg(type, jid, nick, L('Error! %s','%s/%s'%(jid,nick)) % Error)
 				else:
 					cur_execute('delete from conference where room ilike %s;', ('%s/%%'%getRoom(text),))
 					cur_execute('insert into conference values (%s,%s)',(text,passwd))
-			except: send_msg(type, jid, nick, L('Error! %s') % zz)
+			except: send_msg(type, jid, nick, L('Error! %s','%s/%s'%(jid,nick)) % zz)
 		else:
 			cur_execute('delete from conference where room ilike %s;', ('%s/%%'%getRoom(text),))
 			cur_execute('insert into conference values (%s,%s)',(text,passwd))
-	else: send_msg(type, jid, nick, L('I have never been in %s') % getRoom(text))
+	else: send_msg(type, jid, nick, L('I have never been in %s','%s/%s'%(jid,nick)) % getRoom(text))
 
 def remove_by_half(cb,rm):
 	for tmp in cb:
@@ -755,14 +744,14 @@ def remove_by_half(cb,rm):
 def bot_join(type, jid, nick, text):
 	global lastserver, lastnick, pres_answer
 	text = unicode(text)
-	if not text or ' ' in getRoom(text): send_msg(type, jid, nick, L('Wrong arguments!'))
+	if not text or ' ' in getRoom(text): send_msg(type, jid, nick, L('Wrong arguments!','%s/%s'%(jid,nick)))
 	else:
 		if '\n' in text: text, passwd = text.split('\n', 1)
 		else: passwd = ''
 		if '@' not in text: text = '%s@%s' % (text,lastserver)
 		if '/' not in text: text = '%s/%s' % (text,lastnick)
 		old_text = '%s\n%s' % (text, passwd) if passwd else text
-		if cur_execute_fetchone('select * from blacklist where room=%s', (getRoom(text),)): send_msg(type, jid, nick, L('Denied!'))
+		if cur_execute_fetchone('select * from blacklist where room=%s', (getRoom(text),)): send_msg(type, jid, nick, L('Denied!','%s/%s'%(jid,nick)))
 		else:
 			lastserver = getServer(text.lower())
 			lastnick = getResourse(text)
@@ -791,15 +780,15 @@ def bot_join(type, jid, nick, text):
 									pres_answer.remove(tmp)
 									answered = True
 									break
-						if Error: send_msg(type, jid, nick, L('Error! %s') % Error)
+						if Error: send_msg(type, jid, nick, L('Error! %s','%s/%s'%(jid,nick)) % Error)
 						else:
 							cur_execute('insert into conference values (%s,%s)',(text,passwd))
-							send_msg(type, jid, nick, L('Joined to %s') % text)
-					except: send_msg(type, jid, nick, L('Error! %s') % zz)
+							send_msg(type, jid, nick, L('Joined to %s','%s/%s'%(jid,nick)) % text)
+					except: send_msg(type, jid, nick, L('Error! %s','%s/%s'%(jid,nick)) % zz)
 				else:
 					cur_execute('insert into conference values (%s,%s)',(text,passwd))
-					send_msg(type, jid, nick, L('Joined to %s') % text)
-			elif cur_execute_fetchone('select * from conference where room=%s;', (text,)): send_msg(type, jid, nick, L('I\'m already in %s with nick %s') % (lroom, lastnick))
+					send_msg(type, jid, nick, L('Joined to %s','%s/%s'%(jid,nick)) % text)
+			elif cur_execute_fetchone('select * from conference where room=%s;', (text,)): send_msg(type, jid, nick, L('I\'m already in %s with nick %s','%s/%s'%(jid,nick)) % (lroom, lastnick))
 			else:
 				zz = join(text, passwd)
 				while unicode(zz)[:3] == '409':
@@ -823,23 +812,23 @@ def bot_join(type, jid, nick, text):
 									pres_answer.remove(tmp)
 									answered = True
 									break
-						if Error: send_msg(type, jid, nick, L('Error! %s') % Error)
+						if Error: send_msg(type, jid, nick, L('Error! %s','%s/%s'%(jid,nick)) % Error)
 						else:
 							cur_execute('delete from conference where room ilike %s;', ('%s/%%'%getRoom(text),))
 							cur_execute('insert into conference values (%s,%s)',(text,passwd))
-							send_msg(type, jid, nick, L('Joined to %s') % text)
-					except: send_msg(type, jid, nick, L('Error! %s') % zz)
+							send_msg(type, jid, nick, L('Joined to %s','%s/%s'%(jid,nick)) % text)
+					except: send_msg(type, jid, nick, L('Error! %s','%s/%s'%(jid,nick)) % zz)
 				else:
 					cur_execute('delete from conference where room ilike %s;', ('%s/%%'%getRoom(text),))
 					cur_execute('insert into conference values (%s,%s)',(text,passwd))
 					#time.sleep(1)
-					#send_msg(type, jid, nick, L('Changed nick in %s to %s') % (lroom,getResourse(text)))
+					#send_msg(type, jid, nick, L('Changed nick in %s to %s','%s/%s'%(jid,nick)) % (lroom,getResourse(text)))
 
 def bot_leave(type, jid, nick, text):
 	global lastserver, lastnick
 	domain = getServer(Settings['jid'])
 	cnf = cur_execute_fetchall('select * from conference;')
-	if len(cnf) == 1: send_msg(type, jid, nick, L('I can\'t leave last room!'))
+	if len(cnf) == 1: send_msg(type, jid, nick, L('I can\'t leave last room!','%s/%s'%(jid,nick)))
 	else:
 		if text == '': text = jid
 		if '@' not in text: text = '%s@%s' % (text,lastserver)
@@ -852,18 +841,18 @@ def bot_leave(type, jid, nick, text):
 		cnf = cur_execute_fetchall('select * from conference where room ilike %s;', ('%s/%%'%getRoom(text),))
 		if cnf:
 			cur_execute('delete from conference where room ilike %s;', ('%s/%%'%getRoom(text),))
-			send_msg(type, jid, nick, L('Leave room %s') % text)
-			sm = L('Leave room by %s') % nick
+			send_msg(type, jid, nick, L('Leave room %s','%s/%s'%(jid,nick)) % text)
+			sm = L('Leave room by %s','%s/%s'%(jid,nick)) % nick
 			leave(getRoom(text), sm)
 			cur_execute('delete from hiden_rooms where room=%s',(getRoom(text),))
-		else: send_msg(type, jid, nick, L('I have never been in %s') % lroom)
+		else: send_msg(type, jid, nick, L('I have never been in %s','%s/%s'%(jid,nick)) % lroom)
 
 def conf_limit(type, jid, nick, text):
 	global msg_limit
 	if text!='':
 		try: msg_limit = int(text)
 		except: msg_limit = default_msg_limit
-	send_msg(type, jid, nick, L('Temporary message size limit %s') % str(msg_limit))
+	send_msg(type, jid, nick, L('Temporary message size limit %s','%s/%s'%(jid,nick)) % str(msg_limit))
 
 def bot_plugin(type, jid, nick, text):
 	global plname, plugins, execute, gtimer, gpresence, gmassage, giq_hook
@@ -871,7 +860,7 @@ def bot_plugin(type, jid, nick, text):
 	opt = text[0]
 	try: name = '%s.py' % text[1]
 	except: name = ''
-	msg = L('Wrong arguments!')
+	msg = L('Wrong arguments!','%s/%s'%(jid,nick))
 	pl_ignore = getFile(pliname,[])
 
 	if opt == 'add' and os.path.isfile(pl_folder % name):
@@ -884,9 +873,9 @@ def bot_plugin(type, jid, nick, text):
 		tmsg = ''
 		for cm in execute:
 			tmsg += '%s[%s], ' % (cm[1],cm[0])
-			comms.append((cm[0],cm[1],cm[2],cm[3],L('Plugin %s. %s') % (name[:-3],cm[4])))
-		msg = L('Loaded plugin: %s') % name[:-3]
-		if tmsg: msg += L('\nAdd commands: %s') % tmsg[:-2]
+			comms.append((cm[0],cm[1],cm[2],cm[3],L('Plugin %s. %s','%s/%s'%(jid,nick)) % (name[:-3],cm[4])))
+		msg = L('Loaded plugin: %s','%s/%s'%(jid,nick)) % name[:-3]
+		if tmsg: msg += L('\nAdd commands: %s','%s/%s'%(jid,nick)) % tmsg[:-2]
 		for tmr in timer: gtimer.append(tmr)
 		for tmp in presence_control: gpresence.append(tmp)
 		for tmp in message_control: gmessage.append(tmp)
@@ -906,8 +895,8 @@ def bot_plugin(type, jid, nick, text):
 			tmsg += '%s[%s], ' % (cm[1],cm[0])
 			for i in comms:
 				if i[1] == cm[1]: comms.remove(i)
-		msg = L('Unloaded plugin: %s') % name[:-3]
-		if tmsg: msg += L('\nDel commands: %s') % tmsg[:-2]
+		msg = L('Unloaded plugin: %s','%s/%s'%(jid,nick)) % name[:-3]
+		if tmsg: msg += L('\nDel commands: %s','%s/%s'%(jid,nick)) % tmsg[:-2]
 		for tmr in timer: gtimer.remove(tmr)
 		for tmp in presence_control: gpresence.remove(tmp)
 		for tmp in message_control: gmessage.remove(tmp)
@@ -921,20 +910,20 @@ def bot_plugin(type, jid, nick, text):
 		for c in a:
 			if c[-3:] == '.py' and c[0] != '.' and c != 'main.py': b.append(c[:-3].decode('utf-8'))
 		b.sort()
-		msg = L('Available plugins: %s') % ', '.join(b)
+		msg = L('Available plugins: %s','%s/%s'%(jid,nick)) % ', '.join(b)
 		if len(pl_ignore):
 			b = []
 			for tmp in pl_ignore: b.append(tmp[:-3])
-			msg += L('\nIgnored plugins: %s') % ', '.join(b)
+			msg += L('\nIgnored plugins: %s','%s/%s'%(jid,nick)) % ', '.join(b)
 
 	elif opt == 'show':
 
-		msg = L('Active plugins: %s') % ', '.join([t[:-3] for t in plugins])
+		msg = L('Active plugins: %s','%s/%s'%(jid,nick)) % ', '.join([t[:-3] for t in plugins])
 		msg[:-2]
 		if len(pl_ignore):
 			b = []
 			for tmp in pl_ignore: b.append(tmp[:-3])
-			msg += L('\nIgnored plugins: %s') % ', '.join(b)
+			msg += L('\nIgnored plugins: %s','%s/%s'%(jid,nick)) % ', '.join(b)
 
 	plugins.sort()
 	send_msg(type, jid, nick, msg)
@@ -946,7 +935,7 @@ def owner(type, jid, nick, text):
 	try: nnick = text.split(' ',1)[1].lower()
 	except:
 		if do != 'show':
-			send_msg(type, jid, nick, L('Wrong arguments!'))
+			send_msg(type, jid, nick, L('Wrong arguments!','%s/%s'%(jid,nick)))
 			return
 	if do == 'add':
 		own = cur_execute_fetchone('select * from bot_owner where jid=%s',(nnick,))
@@ -958,10 +947,10 @@ def owner(type, jid, nick, text):
 				j = xmpp.Presence(nnick, 'subscribe')
 				j.setTag('c', namespace=xmpp.NS_CAPS, attrs={'node':capsNode,'ver':capsHash,'hash':'sha-1'})
 				sender(j)
-				msg = L('Append: %s') % nnick
+				msg = L('Append: %s','%s/%s'%(jid,nick)) % nnick
 				cur_execute('insert into bot_owner values (%s)',(nnick,))
-			else: msg = L('Wrong jid!')
-		else: msg = L('%s is alredy in list!') % nnick
+			else: msg = L('Wrong jid!','%s/%s'%(jid,nick))
+		else: msg = L('%s is alredy in list!','%s/%s'%(jid,nick)) % nnick
 	elif do == 'del':
 		own = cur_execute_fetchone('select * from bot_owner where jid=%s',(nnick,))
 		if own and nnick != god:
@@ -972,12 +961,12 @@ def owner(type, jid, nick, text):
 			j = xmpp.Presence(nnick, 'unsubscribed')
 			j.setTag('c', namespace=xmpp.NS_CAPS, attrs={'node':capsNode,'ver':capsHash,'hash':'sha-1'})
 			sender(j)
-			msg = L('Removed: %s') % nnick
-		else: msg = L('Not found!')
+			msg = L('Removed: %s','%s/%s'%(jid,nick)) % nnick
+		else: msg = L('Not found!','%s/%s'%(jid,nick))
 	elif do == 'show':
 		own = cur_execute_fetchall('select * from bot_owner order by jid')
-		msg = L('Bot owner(s): %s') % ', '.join([t[0] for t in own])
-	else: msg = L('Wrong arguments!')
+		msg = L('Bot owner(s): %s','%s/%s'%(jid,nick)) % ', '.join([t[0] for t in own])
+	else: msg = L('Wrong arguments!','%s/%s'%(jid,nick))
 	send_msg(type, jid, nick, msg)
 
 def ignore(type, jid, nick, text):
@@ -987,33 +976,33 @@ def ignore(type, jid, nick, text):
 	try: nnick = text.split(' ',1)[1].lower()
 	except:
 		if do != 'show':
-			send_msg(type, jid, nick, L('Wrong arguments!'))
+			send_msg(type, jid, nick, L('Wrong arguments!','%s/%s'%(jid,nick)))
 			return
 	if do == 'add':
 		ign = cur_execute_fetchone('select * from bot_ignore where pattern=%s;',(nnick,))
 		if not ign:
 			cur_execute('insert into bot_ignore values (%s)',(nnick,))
-			msg = L('Append: %s') % nnick
-		else: msg = L('%s alredy in list!') % nnick
+			msg = L('Append: %s','%s/%s'%(jid,nick)) % nnick
+		else: msg = L('%s alredy in list!','%s/%s'%(jid,nick)) % nnick
 	elif do == 'del':
 		ign = cur_execute_fetchone('select * from bot_ignore where pattern=%s and pattern!=%s;',(nnick,god))
 		if ign:
 			cur_execute('delete from bot_ignore where pattern=%s',(nnick,))
-			msg = L('Removed: %s') % nnick
-		else: msg = L('Not found!')
+			msg = L('Removed: %s','%s/%s'%(jid,nick)) % nnick
+		else: msg = L('Not found!','%s/%s'%(jid,nick))
 	elif do == 'show':
 		ign = cur_execute_fetchall('select * from bot_ignore order by pattern;')
 		if ign: msg = ', '.join([t[0] for t in ign])
-		else: msg = L('Empty!')
-		msg = L('Ignore list: %s') % msg
-	else: msg = L('Wrong arguments!')
+		else: msg = L('Empty!','%s/%s'%(jid,nick))
+		msg = L('Ignore list: %s','%s/%s'%(jid,nick)) % msg
+	else: msg = L('Wrong arguments!','%s/%s'%(jid,nick))
 	send_msg(type, jid, nick, msg)
 
 def info_where(type, jid, nick):
 	cnf = cur_execute_fetchall("select room from conference where split_part(room,'/',1) not in (select room from hiden_rooms as hrr);")
 	len_cnf = cur_execute_fetchone('select count(*) from conference;')[0]
 	hr_count = cur_execute_fetchone('select count(*) from hiden_rooms;')[0]
-	msg = L('Active conference(s): %s') % len_cnf
+	msg = L('Active conference(s): %s','%s/%s'%(jid,nick)) % len_cnf
 	wbase = []
 	for jjid in cnf:
 		cnt,rjid = 0,getRoom(jjid[0])
@@ -1022,17 +1011,17 @@ def info_where(type, jid, nick):
 		wbase.append((cnt, jjid[0]))
 	wbase.sort(reverse=True)
 	msg = '%s\n%s' % (msg,'\n'.join(['%s. %s [%s]' % (i[0]+1,i[1][1].split('\n')[0],i[1][0]) for i in enumerate(wbase)]))
-	if hr_count: msg += L('\nHidden conference(s): %s') % hr_count
+	if hr_count: msg += L('\nHidden conference(s): %s','%s/%s'%(jid,nick)) % hr_count
 	send_msg(type, jid, nick, msg)
 
 def info_where_plus(type, jid, nick):
 	cnf = cur_execute_fetchall("select room from conference where split_part(room,'/',1) not in (select room from hiden_rooms as hrr);")
 	len_cnf = cur_execute_fetchone('select count(*) from conference;')[0]
 	hr_count = cur_execute_fetchone('select count(*) from hiden_rooms;')[0]
-	msg = L('Active conference(s): %s') % len_cnf
+	msg = L('Active conference(s): %s','%s/%s'%(jid,nick)) % len_cnf
 	wbase = []
 	for jjid in cnf:
-		cnt,rjid,ra = 0,getRoom(jjid[0]),L('unknown')
+		cnt,rjid,ra = 0,getRoom(jjid[0]),L('unknown','%s/%s'%(jid,nick))
 		for mega in megabase:
 			if mega[0] == rjid:
 				cnt += 1
@@ -1040,30 +1029,30 @@ def info_where_plus(type, jid, nick):
 		wbase.append((cnt, jjid[0], ra))
 	wbase.sort(reverse=True)
 	msg = '%s\n%s' % (msg,'\n'.join(['%s. %s (%s) [%s]' % (i[0]+1,i[1][1].split('\n')[0],i[1][2],i[1][0]) for i in enumerate(wbase)]))
-	if hr_count: msg += L('\nHidden conference(s): %s') % hr_count
+	if hr_count: msg += L('\nHidden conference(s): %s','%s/%s'%(jid,nick)) % hr_count
 	send_msg(type, jid, nick, msg)
 
 def get_uptime_str(): return un_unix(int(time.time()-starttime))
 
 def info(type, jid, nick):
-	msg = L('Conference(s): %s (for more info use \'where\' command)\n') % cur_execute_fetchone('select count(*) from conference;')[0]
-	msg += L('Server: %s | Nick: %s\n') % (lastserver,lastnick)
-	msg += L('Message size limit: %s\n') % msg_limit
-	msg += L('Local time: %s\n') % timeadd(tuple(time.localtime()))
-	msg += L('Uptime: %s, Last session: %s') % (get_uptime_str(), un_unix(int(time.time())-sesstime))
+	msg = L('Conference(s): %s (for more info use \'where\' command)\n','%s/%s'%(jid,nick)) % cur_execute_fetchone('select count(*) from conference;')[0]
+	msg += L('Server: %s | Nick: %s\n','%s/%s'%(jid,nick)) % (lastserver,lastnick)
+	msg += L('Message size limit: %s\n','%s/%s'%(jid,nick)) % msg_limit
+	msg += L('Local time: %s\n','%s/%s'%(jid,nick)) % timeadd(tuple(time.localtime()))
+	msg += L('Uptime: %s, Last session: %s','%s/%s'%(jid,nick)) % (get_uptime_str(), un_unix(int(time.time())-sesstime))
 	floods = get_config(getRoom(jid),'flood')
 	censors = get_config(getRoom(jid),'censor')
-	msg += L('\nFlood: %s | Censor: %s | Prefix: %s') % (onoff(floods),onoff(censors),get_prefix(get_local_prefix(jid)))
-	msg += L('\nExecuted threads: %s | Error(s): %s') % (th_cnt,thread_error_count)
-	msg += L('\nMessage in: %s | out: %s') % (message_in,message_out)
-	msg += L('\nPresence in: %s | out: %s') % (presence_in,presence_out)
-	msg += L('\nIq in: %s | out: %s') % (iq_in,iq_out)
-	msg += L('\nUnknown out: %s') % unknown_out
-	msg += L('\nCycles used: %s | unused: %s') % (cycles_used,cycles_unused)
+	msg += L('\nFlood: %s | Censor: %s | Prefix: %s','%s/%s'%(jid,nick)) % (onoff(floods),onoff(censors),get_prefix(get_local_prefix(jid)))
+	msg += L('\nExecuted threads: %s | Error(s): %s','%s/%s'%(jid,nick)) % (th_cnt,thread_error_count)
+	msg += L('\nMessage in: %s | out: %s','%s/%s'%(jid,nick)) % (message_in,message_out)
+	msg += L('\nPresence in: %s | out: %s','%s/%s'%(jid,nick)) % (presence_in,presence_out)
+	msg += L('\nIq in: %s | out: %s','%s/%s'%(jid,nick)) % (iq_in,iq_out)
+	msg += L('\nUnknown out: %s','%s/%s'%(jid,nick)) % unknown_out
+	msg += L('\nCycles used: %s | unused: %s','%s/%s'%(jid,nick)) % (cycles_used,cycles_unused)
 	if not GT('paranoia_mode'):
 		try: memstat = tuple([get_size_human(int(t)*1024.0) for t in shell_execute('ps -o vsz,rss -p %s' % os.getpid()).split()[2:]])
-		except: memstat = (L('Unknown'),L('Unknown'))
-		msg += L('\nUsed virtual ram: %s, Used real ram: %s') % memstat
+		except: memstat = (L('Unknown','%s/%s'%(jid,nick)),L('Unknown','%s/%s'%(jid,nick)))
+		msg += L('\nUsed virtual ram: %s, Used real ram: %s','%s/%s'%(jid,nick)) % memstat
 	send_msg(type, jid, nick, msg)
 
 # 0 - конфа
@@ -1073,19 +1062,19 @@ def info(type, jid, nick):
 # 4 - jid
 
 def info_base(type, jid, nick):
-	msg = L('What need find?')
+	msg = L('What need find?','%s/%s'%(jid,nick))
 	if nick != '':
 		msg = ''
 		fl = 1
 		for base in megabase:
 			if base[1] == (nick) and base[0].lower() == jid:
-				msg = L('I see you as %s/%s') % (base[2],base[3])
+				msg = L('I see you as %s/%s','%s/%s'%(jid,nick)) % (base[2],base[3])
 				break
 	send_msg(type, jid, nick, msg)
 
 def real_search_owner(type, jid, nick, text):
 	if text:
-		msg = L('Found:')
+		msg = L('Found:','%s/%s'%(jid,nick))
 		fl = 1
 		for mega1 in megabase:
 			if mega1[2] != 'None' and mega1[3] != 'None':
@@ -1096,13 +1085,13 @@ def real_search_owner(type, jid, nick, text):
 						msg += ' %s' % mega1[0]
 						fl = 0
 						break
-		if fl: msg = L('\'%s\' not found!') % text
-	else: msg = L('What need find?')
+		if fl: msg = L('\'%s\' not found!','%s/%s'%(jid,nick)) % text
+	else: msg = L('What need find?','%s/%s'%(jid,nick))
 	send_msg(type, jid, nick, msg)
 
 def real_search(type, jid, nick, text):
 	if text:
-		msg = L('Found:')
+		msg = L('Found:','%s/%s'%(jid,nick))
 		fl = 1
 		for mega1 in megabase:
 			if mega1[2] != 'None' and mega1[3] != 'None':
@@ -1111,8 +1100,8 @@ def real_search(type, jid, nick, text):
 						msg += u'\n%s - %s/%s %s' % (mega1[1],mega1[2],mega1[3],mega1[0])
 						fl = 0
 						break
-		if fl: msg = L('\'%s\' not found!') % text
-	else: msg = L('What do you need to find?')
+		if fl: msg = L('\'%s\' not found!','%s/%s'%(jid,nick)) % text
+	else: msg = L('What do you need to find?','%s/%s'%(jid,nick))
 	send_msg(type, jid, nick, msg)
 
 def isNumber(text):
@@ -1284,32 +1273,32 @@ def rss(type, jid, nick, text):
 	if mode == 'clear':
 		if get_level(jid,nick)[0] == 9 and tl > 1: tjid = text[1]
 		else: tjid = jid
-		msg = L('All RSS was cleared!')
+		msg = L('All RSS was cleared!','%s/%s'%(jid,nick))
 		cur_execute('delete from feed where room=%s',(tjid,))
 	elif mode == 'all':
 		feedbase = cur_execute_fetchall('select * from feed;')
-		msg = L('No RSS found!')
+		msg = L('No RSS found!','%s/%s'%(jid,nick))
 		if feedbase:
-			msg = L('All schedule feeds:')
+			msg = L('All schedule feeds:','%s/%s'%(jid,nick))
 			for rs in feedbase:
 				msg += '\n%s\t%s (%s) %s' % (getName(rs[4]),rs[0],rs[1],rs[2])
 				try: msg += ' - %s' % disp_time(rs[3])
 				except: msg += ' - Unknown'
 	elif mode == 'show':
 		feedbase = cur_execute_fetchall('select * from feed where room=%s;',(jid,))
-		msg = L('No RSS found!')
+		msg = L('No RSS found!','%s/%s'%(jid,nick))
 		if feedbase:
 			msg = ''
 			for rs in feedbase:
 				msg += '\n%s (%s) %s' % tuple(rs[0:3])
 				try: msg += ' - %s' % disp_time(rs[3])
 				except: msg += ' - Unknown'
-			if len(msg): msg = L('Schedule feeds for %s:%s') % (jid,msg)
-			else: msg = L('Schedule feeds for %s not found!') % jid
+			if len(msg): msg = L('Schedule feeds for %s:%s','%s/%s'%(jid,nick)) % (jid,msg)
+			else: msg = L('Schedule feeds for %s not found!','%s/%s'%(jid,nick)) % jid
 	elif mode == 'add':
 		mdd = ['full','body','head']
 		if text[3].split('-')[0] not in mdd:
-			send_msg(type, jid, nick, L('Mode %s not detected!') % text[3])
+			send_msg(type, jid, nick, L('Mode %s not detected!','%s/%s'%(jid,nick)) % text[3])
 			return
 		link = text[1]
 		if not re.findall('^http(s?)://',link[:10]): link = 'http://%s' % link
@@ -1321,16 +1310,16 @@ def rss(type, jid, nick, text):
 		if timetype == 'm' and ofset < GT('rss_min_time_limit'): timetype = '%sm' % GT('rss_min_time_limit')
 		else: timetype = str(ofset)+timetype
 		cur_execute('insert into feed values (%s,%s,%s,%s,%s,%s);',(link, timetype, text[3], int(time.time()), getRoom(jid),[]))
-		msg = L('Add feed to schedule: %s (%s) %s') % (link,timetype,text[3])
+		msg = L('Add feed to schedule: %s (%s) %s','%s/%s'%(jid,nick)) % (link,timetype,text[3])
 		rss(type, jid, nick, 'get %s 1 %s' % (link,text[3]))
 	elif mode == 'del':
 		link = text[1]
 		if not re.findall('^http(s?)://',link[:10]): link = 'http://%s' % link
-		msg = L('Can\'t find in schedule: %s') % link
+		msg = L('Can\'t find in schedule: %s','%s/%s'%(jid,nick)) % link
 		fdb = cur_execute_fetchall('select * from feed where room=%s and url=%s;',(jid,link))
 		if fdb:
 			cur_execute('delete from feed where room=%s and url=%s;',(jid,link))
-			msg = L('Delete feed from schedule: %s') % link
+			msg = L('Delete feed from schedule: %s','%s/%s'%(jid,nick)) % link
 	elif mode in ['new','get']:
 		link = text[1]
 		if not re.findall('^http(s?)://',link[:10]): link = 'http://%s' % link
@@ -1338,7 +1327,7 @@ def rss(type, jid, nick, text):
 			req = urllib2.Request(link.encode('utf-8'))
 			req.add_header('User-Agent',GT('user_agent'))
 			feed = urllib2.urlopen(url=req,timeout=GT('rss_get_timeout')).read(GT('size_overflow'))
-		except: feed = L('Unable to access server!')
+		except: feed = L('Unable to access server!','%s/%s'%(jid,nick))
 		is_rss_aton,fc = 0,feed[:256]
 		if '<?xml version=' in fc:
 			if '<feed' in fc:
@@ -1354,7 +1343,7 @@ def rss(type, jid, nick, text):
 			feed = re.sub('(<span.*?>.*?</span>)','',feed)
 			feed = re.sub('(<div.*?>)','',feed)
 			feed = re.sub('(</div>)','',feed)
-		if is_rss_aton and feed != L('Encoding error!') and feed != L('Unable to access server!'):
+		if is_rss_aton and feed != L('Encoding error!','%s/%s'%(jid,nick)) and feed != L('Unable to access server!','%s/%s'%(jid,nick)):
 			if is_rss_aton == 1:
 				if '<item>' in feed: fd = feed.split('<item>')
 				else: fd = feed.split('<item ')
@@ -1372,7 +1361,7 @@ def rss(type, jid, nick, text):
 			elif len < 1: lng = 1
 			if len(text) > 3: submode = text[3]
 			else: submode = 'full'
-			msg = L('Feeds for')+' '
+			msg = L('Feeds for','%s/%s'%(jid,nick))+' '
 			if 'url' in submode.split('-'): submode,urlmode = submode.split('-')[0],True
 			else:
 				urlmode = None
@@ -1395,7 +1384,7 @@ def rss(type, jid, nick, text):
 								tu1 = mmsg.find('href=\"',mmsg.index('<link'))+6
 								tu2 = mmsg.find('\"',tu1)
 								turl = mmsg[tu1:tu2].replace('&lt;br&gt;','\n')
-							except: turl = 'URL %s' % L('Not found!')
+							except: turl = 'URL %s' % L('Not found!','%s/%s'%(jid,nick))
 						tsubj,tmsg,tlink = '','',''
 						if submode == 'full': tsubj,tmsg = replacer(ttitle),replacer(tbody.replace('<li>',u'\n♦ ').replace('</li>',''))
 						elif submode == 'body': tmsg = replacer(tbody.replace('<li>',u'\n♦ ').replace('</li>',''))
@@ -1429,18 +1418,18 @@ def rss(type, jid, nick, text):
 					msg = unhtml(msg+tmp)
 				elif mode == 'new':
 					if text[4] == 'silent': nosend = True
-					else: msg = L('New feeds not found!')
+					else: msg = L('New feeds not found!','%s/%s'%(jid,nick))
 			except Exception,SM:
 				rss_flush(jid,link,None)
 				if text[4] == 'silent': nosend = True
-				else: msg = L('Error! %s') % SM
+				else: msg = L('Error! %s','%s/%s'%(jid,nick)) % SM
 		else:
 			rss_flush(jid,link,None)
 			if text[4] == 'silent': nosend = True
 			else:
-				if feed in [L('Encoding error!'),L('Unable to access server!')]: title = feed
+				if feed in [L('Encoding error!','%s/%s'%(jid,nick)),L('Unable to access server!','%s/%s'%(jid,nick))]: title = feed
 				else: title = html_encode(get_tag(feed,'title'))
-				msg = L('Bad url or rss/atom not found at %s - %s') % (link,title)
+				msg = L('Bad url or rss/atom not found at %s - %s','%s/%s'%(jid,nick)) % (link,title)
 	if not nosend: send_msg(type, jid, nick, msg)
 
 def configure(type, jid, nick, text):
@@ -1455,48 +1444,48 @@ def configure(type, jid, nick, text):
 			tmp.sort()
 			msg = ''
 			for t in tmp: msg += '\n[%s] - ' % t + config_prefs[t][0] % onoff(get_config(getRoom(jid),t))
-			msg = L('Current status: %s') % msg
+			msg = L('Current status: %s','%s/%s'%(jid,nick)) % msg
 		elif param in config_prefs: msg = config_prefs[param][0] % onoff(get_config(getRoom(jid),param))
 		else:
 			tmp = config_prefs.keys()
 			tmp.sort()
-			msg = L('Available items: %s') % ', '.join(tmp)
+			msg = L('Available items: %s','%s/%s'%(jid,nick)) % ', '.join(tmp)
 	elif to_conf == 'help' or not to_conf:
 		if param in config_prefs: msg = config_prefs[param][1]
 		elif not param:
 			tmp = config_prefs.keys()
 			tmp.sort()
-			msg = L('Available items: %s') % ', '.join(tmp)
+			msg = L('Available items: %s','%s/%s'%(jid,nick)) % ', '.join(tmp)
 		else:
 			cps = config_prefs.keys()
 			cps.sort()
 			tmp = [cp for cp in cps if param in cp]
 			if tmp:
-				msg = L('Available items: %s') % ', '.join(tmp)
+				msg = L('Available items: %s','%s/%s'%(jid,nick)) % ', '.join(tmp)
 			else:
-				msg = L('Help for %s not found!') % param
+				msg = L('Help for %s not found!','%s/%s'%(jid,nick)) % param
 	elif to_conf in config_prefs:
 		if param.lower() in ['show','item','items','it','sh']:
 			msg = ''
 			if config_prefs[to_conf][2]:
 				for tmp in config_prefs[to_conf][2]: msg += ['%s (%s), ' % (onoff_no_tr(tmp),onoff(tmp)),'%s, ' % onoff_no_tr(tmp)][onoff_no_tr(tmp) == onoff(tmp)]
-			else: msg += L('text field') + '  '
-			msg = L('Available items: %s') % msg[:-2]
+			else: msg += L('text field','%s/%s'%(jid,nick)) + '  '
+			msg = L('Available items: %s','%s/%s'%(jid,nick)) % msg[:-2]
 		elif param == '': msg = config_prefs[to_conf][0] % onoff(get_config(getRoom(jid),to_conf))
 		else:
 			if not config_prefs[to_conf][2]: ssta = param
 			else:
 				ssta = get_config(getRoom(jid),to_conf)
-				if (param.lower() in [L('on'),'on','true']) and not param in config_prefs[to_conf][2]: param = True
-				elif (param.lower() in [L('off'),'off','false','none']) and not param in config_prefs[to_conf][2]: param = False
+				if (param.lower() in [L('on','%s/%s'%(jid,nick)),'on','true']) and not param in config_prefs[to_conf][2]: param = True
+				elif (param.lower() in [L('off','%s/%s'%(jid,nick)),'off','false','none']) and not param in config_prefs[to_conf][2]: param = False
 				else: param = param.lower()
 				if param in config_prefs[to_conf][2]: ssta = param
 				else: ssta = ''
 			if len(str(ssta)):
 				put_config(getRoom(jid),to_conf,ssta)
 				msg = config_prefs[to_conf][0] % onoff(ssta)
-			else: msg = L('Unknown item!')
-	else: msg = L('Unknown item!')
+			else: msg = L('Unknown item!','%s/%s'%(jid,nick))
+	else: msg = L('Unknown item!','%s/%s'%(jid,nick))
 	send_msg(type, jid, nick, msg)
 
 def muc_filter_lock(type, jid, nick, text):
@@ -1506,11 +1495,11 @@ def muc_filter_lock(type, jid, nick, text):
 		if tmp: cur_execute('delete from muc_lock where room=%s and jid=%s', (jid,realjid))
 		if text == 'on':
 			cur_execute('insert into muc_lock values (%s,%s)', (jid, realjid))
-			st = L('on')
-		else: st = L('off')
-	elif tmp: st = L('on')
-	else: st = L('off')
-	msg = L('Ignore messages from unaffiliated participants in private - %s') % st
+			st = L('on','%s/%s'%(jid,nick))
+		else: st = L('off','%s/%s'%(jid,nick))
+	elif tmp: st = L('on','%s/%s'%(jid,nick))
+	else: st = L('off','%s/%s'%(jid,nick))
+	msg = L('Ignore messages from unaffiliated participants in private - %s','%s/%s'%(jid,nick)) % st
 	send_msg(type, jid, nick, msg)
 
 def get_opener(page_name, parameters=None):
@@ -1526,7 +1515,7 @@ def get_opener(page_name, parameters=None):
 	except Exception, SM:
 		try: SM = str(SM)
 		except: SM = unicode(SM)
-		data, result = L('Error! %s') % SM.replace('>','').replace('<','').capitalize(), False
+		data, result = L('Error! %s','%s/%s'%(jid,nick)) % SM.replace('>','').replace('<','').capitalize(), False
 	return data, result
 
 def load_page(page_name, parameters=None):

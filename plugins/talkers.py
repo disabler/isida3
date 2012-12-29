@@ -27,9 +27,9 @@ def gtalkers(type, jid, nick, text):
 		tma = cur_execute_fetchmany('select * from talkers where (jid ilike %s or nick ilike %s or room ilike %s) order by -words',(ttext,ttext,ttext),10)
 	else: tma = cur_execute_fetchmany('select * from talkers order by -words',10)
 	if tma:
-		msg = '%s\n' % L('Talkers:\nNick\t\tWords\tPhrases\tEffect\tConf.')
+		msg = '%s\n' % L('Talkers:\nNick\t\tWords\tPhrases\tEffect\tConf.','%s/%s'%(jid,nick))
 		msg += '\n'.join(['%s. %s\t\t%s\t%s\t%s\t%s' % (cnd + 1, tt[2], tt[3], tt[4], round(tt[3]/float(tt[4]), 2),'%s@%s.%s' % (getName(tt[0]),'.'.join([tmp[0] for tmp in tt[0].split('@')[1].split('.')[:-1]]),tt[0].split('.')[-1])) for cnd, tt in enumerate(tma)])
-	else: msg = '%s %s' % (text, L('Not found!'))
+	else: msg = '%s %s' % (text, L('Not found!','%s/%s'%(jid,nick)))
 	send_msg(type, jid, nick, msg)
 
 def talkers(type, jid, nick, text):
@@ -38,9 +38,9 @@ def talkers(type, jid, nick, text):
 		tma = cur_execute_fetchmany('select * from talkers where room=%s and (jid ilike %s or nick ilike %s) order by -words',(jid,ttext,ttext),10)
 	else: tma = cur_execute_fetchmany('select * from talkers where room=%s order by -words',(jid,),10)
 	if tma:
-		msg = '%s\n' % L('Talkers:\nNick\t\tWords\tPhrases\tEffect')
+		msg = '%s\n' % L('Talkers:\nNick\t\tWords\tPhrases\tEffect','%s/%s'%(jid,nick))
 		msg += '\n'.join(['%s. %s\t\t%s\t%s\t%s' % (cnd + 1, tt[2], tt[3], tt[4], round(tt[3]/float(tt[4]), 2)) for cnd, tt in enumerate(tma)])
-	else: msg = '%s %s' % (text, L('Not found!'))
+	else: msg = '%s %s' % (text, L('Not found!','%s/%s'%(jid,nick)))
 	send_msg(type, jid, nick, msg)
 
 global execute

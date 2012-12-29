@@ -30,10 +30,10 @@ acl_vcard_tmp = {}
 
 acl_actions.sort()
 
-def acl_show(jid,text):
+def acl_show(jid,nick,text):
 	a = cur_execute_fetchall('select * from acl where jid=%s and action ilike %s order by level,action',(jid,text))
 	if len(a):
-		msg = L('Acl:')
+		msg = L('Acl:','%s/%s'%(jid,nick))
 		for tmp in a:
 			if text == '%': t4 = tmp[4].replace('\n',' // ')
 			else: t4 = tmp[4].replace('\n','\n    ')
@@ -44,10 +44,10 @@ def acl_show(jid,text):
 				if tmp[5]: st,tp = '\n%s | [%s] %s %s %s -> %s', (unlevl[tmp[6]],disp_time(tmp[5]),) + tmp[1:4] + (t4,)
 				else: st,tp = '\n%s | %s %s %s -> %s', (unlevl[tmp[6]],) + tmp[1:4] + (t4,)
 			msg += st % tp
-	else: msg = L('Acl not found')
+	else: msg = L('Acl not found','%s/%s'%(jid,nick))
 	return msg
 
-def acl_add_del(jid,text,flag):
+def acl_add_del(jid,nick,text,flag):
 	global conn
 	time_mass,atime = {'s':1,'m':60,'h':3600,'d':86400,'w':604800,'M':2592000,'y':31536000},0
 	silent,level = False,9
@@ -56,48 +56,48 @@ def acl_add_del(jid,text,flag):
 			if text[0] == '/silent': silent = True
 			else:
 				try: atime = int(time.time()) + int(text[0][1:-1]) * time_mass[text[0][-1:]]
-				except: return L('Time format error!')
+				except: return L('Time format error!','%s/%s'%(jid,nick))
 			text = text[1:]
-	except: return L('Error in parameters. Read the help about command.')
+	except: return L('Error in parameters. Read the help about command.','%s/%s'%(jid,nick))
 	if text[0].isdigit():
 		level = int(text[0])
 		if level <= 0: level = 9
 		elif level > 9: level = 9
 		text = text[1:]
 	ttext = ' '.join(text)
-	if operator.xor(ttext.count('${EXP}') <= 1,ttext.count('${/EXP}') <= 1) and flag: return L('Error in parameters. Read the help about command.')
-	elif ttext.find('${EXP}',ttext.find('${/EXP}')) > 0 and flag: return L('Error in parameters. Read the help about command.')
+	if operator.xor(ttext.count('${EXP}') <= 1,ttext.count('${/EXP}') <= 1) and flag: return L('Error in parameters. Read the help about command.','%s/%s'%(jid,nick))
+	elif ttext.find('${EXP}',ttext.find('${/EXP}')) > 0 and flag: return L('Error in parameters. Read the help about command.','%s/%s'%(jid,nick))
 	elif '${EXP}' in ttext and '${/EXP}' in ttext:
 		try: re.compile(ttext.split('${EXP}',1)[1].split('${/EXP}',1)[0].replace('%20','\ ').replace('*','*?'))
-		except: return L('Error in RegExp!')
+		except: return L('Error in RegExp!','%s/%s'%(jid,nick))
 	try:
 		acl_cmd = text[0]
 		text = text[1:]
-	except: return L('Error in parameters. Read the help about command.')
-	if not acl_cmd in acl_acts: msg = L('Items: %s') % ', '.join(acl_acts)
+	except: return L('Error in parameters. Read the help about command.','%s/%s'%(jid,nick))
+	if not acl_cmd in acl_acts: msg = L('Items: %s','%s/%s'%(jid,nick)) % ', '.join(acl_acts)
 	else:
 		try:
 			if text[0].lower() in ['sub','!sub','exp','!exp','cexp','!cexp','=','!=','<','>','<=','>=']: acl_sub_act,text = text[0].lower(),text[1:]
 			else: acl_sub_act = '='
-		except: return L('Error in parameters. Read the help about command.')
-		if acl_cmd != 'age' and acl_sub_act in ['<','>','<=','>=']: return L('Error in parameters. Read the help about command.')
+		except: return L('Error in parameters. Read the help about command.','%s/%s'%(jid,nick))
+		if acl_cmd != 'age' and acl_sub_act in ['<','>','<=','>=']: return L('Error in parameters. Read the help about command.','%s/%s'%(jid,nick))
 		if acl_sub_act in ['=','!=','sub','!sub']: text[0] = text[0].replace('%20',' ')
 		else: text[0] = text[0].replace('%20','\ ')
 		if acl_sub_act in ['exp','!exp','cexp','!cexp']:
 			try: re.compile(text[0].replace('*','*?'))
-			except: return L('Error in RegExp!')
+			except: return L('Error in RegExp!','%s/%s'%(jid,nick))
 		if flag and len(text) >= 2:
 			no_command = True
 			for tmp in comms:
 				if tmp[1] == text[1]:
 					no_command = False
 					break
-			if no_command: return L('Unknown command: %s') % text[1]
+			if no_command: return L('Unknown command: %s','%s/%s'%(jid,nick)) % text[1]
 		tmp = cur_execute_fetchall('select * from acl where jid=%s and action=%s and type=%s and text=%s and level=%s',(jid,acl_cmd, acl_sub_act, text[0], level))
 		if tmp:
 			cur_execute('delete from acl where jid=%s and action=%s and type=%s and text=%s and level=%s',(jid,acl_cmd, acl_sub_act, text[0], level))
-			msg = [L('Removed:'),L('Updated:')][flag]
-		else: msg = [L('Not found:'),L('Added:')][flag]
+			msg = [L('Removed:','%s/%s'%(jid,nick)),L('Updated:','%s/%s'%(jid,nick))][flag]
+		else: msg = [L('Not found:','%s/%s'%(jid,nick)),L('Added:','%s/%s'%(jid,nick))][flag]
 		if flag: cur_execute('insert into acl values (%s,%s,%s,%s,%s,%s,%s)', (jid, acl_cmd, acl_sub_act, text[0], ' '.join(text[1:]).replace('%20','\ '), atime, level))
 		if level == 9:
 			if atime: msg += ' [%s] %s %s %s -> %s' % (disp_time(atime),acl_cmd, acl_sub_act, text[0], ' '.join(text[1:]).replace('%20','\ ').replace('\n',' // '))
@@ -115,21 +115,21 @@ def acl_add_del(jid,text,flag):
 				mass = cur_execute_fetchone('select message from age where jid=%s and room=%s and nick=%s',(getRoom(realjid),room,nick))[0].split('\n',4)
 				mass = (mass[4], mass[0], mass[1])
 				acl_selector(a,room,realjid,nick,mass,was_joined)
-	if silent: return L('done')
+	if silent: return L('done','%s/%s'%(jid,nick))
 	else: return msg
 
-def acl_add(jid,text): return acl_add_del(jid,text,True)
+def acl_add(jid,nick,text): return acl_add_del(jid,nick,text,True)
 
-def acl_del(jid,text): return acl_add_del(jid,text,False)
+def acl_del(jid,nick,text): return acl_add_del(jid,nick,text,False)
 
 def acl_clear(room,nick):
-	if get_level(room,nick)[0] < 8: return L('You have no rights to do it!')
+	if get_level(room,nick)[0] < 8: return L('You have no rights to do it!','%s/%s'%(room,nick))
 	acl_back = cur_execute_fetchall('select * from acl where jid=%s',(room,))
 	if acl_back:
 		fname = back_folder % '%s_%s.acl' % (unicode(room),''.join(['%02d' % t for t in time.localtime()[:6]]))
 		writefile(fname,json.dumps(acl_back))
 	cur_execute('delete from acl where jid=%s',(room,))
-	return L('ACL cleared. Removed %s action(s).') % len(acl_back)
+	return L('ACL cleared. Removed %s action(s).','%s/%s'%(room,nick)) % len(acl_back)
 
 def muc_acl(type, jid, nick, text):
 	text = text.replace('\ ','%20').replace(' // ','\n').replace(' \/\/ ',' // ').split(' ')
@@ -140,14 +140,14 @@ def muc_acl(type, jid, nick, text):
 	while '' in text: text.remove('')
 	if len(text): acl_cmd = text[0]
 	else: acl_cmd = '!'
-	if not acl_cmd in acl_actions and acl_cmd[0] != '/' and not acl_cmd.isdigit(): msg = L('Items: %s') % ', '.join(acl_actions)
+	if not acl_cmd in acl_actions and acl_cmd[0] != '/' and not acl_cmd.isdigit(): msg = L('Items: %s','%s/%s'%(jid,nick)) % ', '.join(acl_actions)
 	elif acl_cmd == 'clear': msg = acl_clear(jid,nick)
 	elif acl_cmd == 'show':
 		try: t = text[1]
 		except: t = '%'
-		msg = acl_show(jid,t)
-	elif acl_cmd == 'del': msg = acl_del(jid,text[1:])
-	else: msg = acl_add(jid,text)
+		msg = acl_show(jid,nick,t)
+	elif acl_cmd == 'del': msg = acl_del(jid,nick,text[1:])
+	else: msg = acl_add(jid,nick,text)
 	send_msg(type, jid, nick, msg)
 
 def acl_action(cmd,nick,jid,room,text):

@@ -21,7 +21,7 @@
 #                                                                             #
 # --------------------------------------------------------------------------- #
 
-def test(type, jid, nick): send_msg(type, jid, nick, L('Passed!'))
+def test(type, jid, nick): send_msg(type, jid, nick, L('Passed!','%s/%s'%(jid,nick)))
 
 global execute
 

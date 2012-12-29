@@ -36,7 +36,7 @@ def last_text_cnt(text,c):
 def last_check_ascii(type, jid, nick, text):
 	for tmp in text:
 		if tmp > '~' or tmp < ' ':
-			send_msg(type, jid, nick, L('Error!'))
+			send_msg(type, jid, nick, L('Error!','%s/%s'%(jid,nick)))
 			return True
 	return None
 
@@ -60,8 +60,8 @@ def lastonetrack(type, jid, nick, text):
 	ms = lf_api('user.getrecenttracks',text, '<track')
 	if len(ms): cnt = len(ms)
 	else: cnt = 0
-	if cnt >=2: msg = L('Last track %s: %s - %s %s') % (text,get_tag(ms[1],'artist'),get_tag(ms[1],'name'),'['+last_date_now(ms[1])+']')
-	else: msg = L('Unavailable!')
+	if cnt >=2: msg = L('Last track %s: %s - %s %s','%s/%s'%(jid,nick)) % (text,get_tag(ms[1],'artist'),get_tag(ms[1],'name'),'['+last_date_now(ms[1])+']')
+	else: msg = L('Unavailable!','%s/%s'%(jid,nick))
 	send_msg(type, jid, nick, msg)
 
 def lf_api(method, user, splitter):
@@ -74,7 +74,7 @@ def lasttracks(type, jid, nick, text):
 	if last_check_ascii(type, jid, nick, text): return
 	text,cnt = last_text_cnt(text,1)
 	ms = lf_api('user.getrecenttracks',text, '<track')
-	msg = L('Last tracks %s:') % text
+	msg = L('Last tracks %s:','%s/%s'%(jid,nick)) % text
 	for a in ms[1:cnt]: msg += '\n[%s] %s - %s' % (last_date_now(a),get_tag(a,'artist'),get_tag(a,'name'))
 	send_msg(type, jid, nick, msg)
 
@@ -82,7 +82,7 @@ def lastfriends(type, jid, nick, text):
 	if not text: text = nick
 	if last_check_ascii(type, jid, nick, text): return
 	ms = lf_api('user.getfriends',text, '<user')
-	msg = L('Friends %s:') % text
+	msg = L('Friends %s:','%s/%s'%(jid,nick)) % text
 	for a in ms[1:]:
 		rn = get_tag(a,'realname')
 		if rn: msg += ' %s (%s),' % (get_tag(a,'name'),rn)
@@ -95,7 +95,7 @@ def lastloved(type, jid, nick, text):
 	if last_check_ascii(type, jid, nick, text): return
 	text,cnt = last_text_cnt(text,1)
 	ms = lf_api('user.getlovedtracks',text, '<track')
-	msg = L('Loved tracks %s:') % text
+	msg = L('Loved tracks %s:','%s/%s'%(jid,nick)) % text
 	for a in ms[1:cnt]: msg += '\n[%s] %s - %s' % (last_date_now(a),get_tag(a.split('<artist')[1],'name'),get_tag(a,'name'))
 	send_msg(type, jid, nick, msg)
 
@@ -104,7 +104,7 @@ def lastneighbours(type, jid, nick, text):
 	if last_check_ascii(type, jid, nick, text): return
 	text,cnt = last_text_cnt(text,1)
 	ms = lf_api('user.getneighbours',text, '<user')
-	msg = L('Neighbours %s:') % text
+	msg = L('Neighbours %s:','%s/%s'%(jid,nick)) % text
 	for a in ms[1:cnt]: msg += '\n%s - %s' % (get_tag(a,'match'),get_tag(a,'name'))
 	send_msg(type, jid, nick, msg)
 
@@ -113,7 +113,7 @@ def lastplaylist(type, jid, nick, text):
 	if last_check_ascii(type, jid, nick, text): return
 	text,cnt = last_text_cnt(text,2)
 	ms = lf_api('user.getplaylists',text, '<playlist')
-	msg = L('Playlists %s:') % text
+	msg = L('Playlists %s:','%s/%s'%(jid,nick)) % text
 	for a in ms[2:cnt]: msg += '\n[%s] %s (%s) - %s - %s' % (get_tag(a,'id'),get_tag(a,'title'),get_tag(a,'description'),get_tag(a,'size'),get_tag(a,'duration'))
 	send_msg(type, jid, nick, msg)
 
@@ -122,7 +122,7 @@ def topalbums(type, jid, nick, text):
 	if last_check_ascii(type, jid, nick, text): return
 	text,cnt = last_text_cnt(text,1)
 	ms = lf_api('user.gettopalbums',text, '<album')
-	msg = L('Top albums %s:') % text
+	msg = L('Top albums %s:','%s/%s'%(jid,nick)) % text
 	for a in ms[1:cnt]: msg += '\n[%s] %s - %s' % (get_tag(a,'playcount'),get_tag(a.split('<artist')[1],'name'),get_tag(a,'name'))
 	send_msg(type, jid, nick, msg)
 
@@ -131,7 +131,7 @@ def topartists(type, jid, nick, text):
 	if last_check_ascii(type, jid, nick, text): return
 	text,cnt = last_text_cnt(text,1)
 	ms = lf_api('user.gettopartists',text, '<artist')
-	msg = L('Top artists %s:') % text
+	msg = L('Top artists %s:','%s/%s'%(jid,nick)) % text
 	for a in ms[1:cnt]: msg += '\n[%s] %s' % (get_tag(a,'playcount'),get_tag(a,'name'))
 	send_msg(type, jid, nick, msg)
 
@@ -140,7 +140,7 @@ def toptags(type, jid, nick, text):
 	if last_check_ascii(type, jid, nick, text): return
 	text,cnt = last_text_cnt(text,1)
 	ms = lf_api('user.gettoptags',text, '<tag')
-	msg = L('Top tags %s:') % text
+	msg = L('Top tags %s:','%s/%s'%(jid,nick)) % text
 	for a in ms[1:cnt]: msg += '\n[%s] %s - %s' % (get_tag(a,'count'),get_tag(a,'name'),get_tag(a,'url'))
 	send_msg(type, jid, nick, msg)
 
@@ -150,7 +150,7 @@ def toptracks(type, jid, nick, text):
 	text,cnt = last_text_cnt(text,1)
 	ms = lf_api('user.gettoptracks',text, '<track')
 	if cnt > len(ms): cnt = len(ms)
-	msg = L('Top tracks %s:') % text
+	msg = L('Top tracks %s:','%s/%s'%(jid,nick)) % text
 	for a in ms[1:cnt]:
 		b = a.split('<artist')
 		msg += '\n[%s] %s - %s' % (get_tag(a,'playcount'),get_tag(b[1],'name'),get_tag(a,'name'))
@@ -162,23 +162,23 @@ def tasteometer(type, jid, nick, text):
 	text = reduce_spaces_all(text.lower().encode('utf-8').replace('\\x','%')).split(' ',1)
 	try: (user1,user2) = text
 	except:
-		send_msg(type, jid, nick, L('Need two users'))
+		send_msg(type, jid, nick, L('Need two users','%s/%s'%(jid,nick)))
 		return
 	link = '%s?method=tasteometer.compare&type1=user&type2=user&value1=%s&value2=%s&api_key=%s' % (lfm_url,user1,user2,GT('lfm_api'))
 	lfxml = html_encode(load_page(link))
 	scor = get_tag(lfxml,'score')
 	try: scor = float(scor)
 	except: scor = 0
-	if scor <= 0: msg = L('Tastes of %s and %s - soo different!') % (user1,user2)
+	if scor <= 0: msg = L('Tastes of %s and %s - soo different!','%s/%s'%(jid,nick)) % (user1,user2)
 	else:
-		msg,msg2 = L('Match tastes of %s and %s - %s') % (user1,user2,str(int(scor*100))+'%'),''
+		msg,msg2 = L('Match tastes of %s and %s - %s','%s/%s'%(jid,nick)) % (user1,user2,str(int(scor*100))+'%'),''
 		lfxml = lfxml.split('<artist')
 		cnt = len(lfxml)
 		for a in lfxml[2:cnt]: msg2 += '%s, ' % get_tag(a,'name')
-		if len(msg2): msg += '\n%s' % L('Artists: %s') % msg2[:-2]
+		if len(msg2): msg += '\n%s' % L('Artists: %s','%s/%s'%(jid,nick)) % msg2[:-2]
 	send_msg(type, jid, nick, msg)
 
-def no_api(type, jid, nick): send_msg(type, jid, nick, L('Not found LastFM api'))
+def no_api(type, jid, nick): send_msg(type, jid, nick, L('Not found LastFM api','%s/%s'%(jid,nick)))
 
 exec_yes = [(3, 'lasttracks', lasttracks, 2, L('Last scrobled tracks')),
 		(3, 'last', lastonetrack, 2, L('Last scrobled track')),

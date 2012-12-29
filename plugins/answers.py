@@ -28,7 +28,7 @@ def answers_ie(type, jid, nick, text):
 		base_size = len(cur_execute_fetchall('select * from answer'))
 		fnd = cur_execute_fetchall('select body from answer where body ilike %s group by body order by body',('%',))
 		answer = ''
-		msg = L('Export to file: %s | Total records: %s | Unique records: %s') % (fname,base_size,len(fnd))
+		msg = L('Export to file: %s | Total records: %s | Unique records: %s','%s/%s'%(jid,nick)) % (fname,base_size,len(fnd))
 		for i in fnd:
 			if i[0] != '': answer += i[0].strip() +'\n'
 		writefile(fname,answer.encode('utf-8'))
@@ -39,14 +39,14 @@ def answers_ie(type, jid, nick, text):
 			answer = readfile(fname).decode('utf-8')
 			answer = answer.split('\n')
 			cur_execute('delete from answer where body ilike %s',('%',))
-			msg = L('Import from file: %s | Total records: %s') % (fname,len(answer))
+			msg = L('Import from file: %s | Total records: %s','%s/%s'%(jid,nick)) % (fname,len(answer))
 			idx = 1
 			for i in answer:
 				if i != '':
 					cur_execute('insert into answer values (%s,%s)', (idx,unicode(i.strip())))
 					idx += 1
-		else: msg = L('File %s not found!') % fname
-	else: msg = L('What?')
+		else: msg = L('File %s not found!','%s/%s'%(jid,nick)) % fname
+	else: msg = L('What?','%s/%s'%(jid,nick))
 	send_msg(type, jid, nick, msg)
 
 global execute

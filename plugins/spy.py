@@ -66,7 +66,7 @@ def conf_spy(type, jid, nick,text):
 	if text.startswith('add '): msg = spy_add(text[4:])
 	elif text.startswith('del '): msg = spy_del(text[4:])
 	elif text == 'show': msg = spy_show()
-	if not msg: msg = L('Smoke help about command!')
+	if not msg: msg = L('Smoke help about command!','%s/%s'%(jid,nick))
 	send_msg(type, jid, nick, msg)
 
 def spy_message(room,jid,nick,type,text):

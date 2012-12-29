@@ -52,12 +52,12 @@ def time_cron_show(jid,nick,ar):
 			msg += ' -> %s' % t[5]
 			tmp.append(msg)
 			idx += 1
-		return L('Cron rules:\n%s') % '\n'.join(tmp)
-	else: return L('There is no cron rules.')
+		return L('Cron rules:\n%s','%s/%s'%(jid,nick)) % '\n'.join(tmp)
+	else: return L('There is no cron rules.','%s/%s'%(jid,nick))
 
 def time_cron_add(ar,jid,nick):
 	try: cron_time, cron_cmd = ar.split('\n',1)
-	except: return L('Not enough parameters!')
+	except: return L('Not enough parameters!','%s/%s'%(jid,nick))
 	try:
 		SM,RM,NM = 'silent','once','anonim'
 		CMD = [SM,RM,NM]
@@ -71,15 +71,15 @@ def time_cron_add(ar,jid,nick):
 		if rm: cron_time,repeat_time = ct,''
 		else: cron_time,repeat_time = ct,ct
 		next_time = crontab.CronTab(cron_time).next() + time.time()
-	except: return L('Error in time format!')
+	except: return L('Error in time format!','%s/%s'%(jid,nick))
 	lvl,rj = get_level(jid,nick)
 	amm,tcmd = -1,cron_cmd.split(' ')[0]
 	for tmp in comms:
 		if tmp[1] == tcmd:
 			amm = tmp[0]
 			break
-	if amm < 0: return L('Command not found: %s') % tcmd
-	elif amm > lvl: return L('Not allowed launch: %s') % tcmd
+	if amm < 0: return L('Command not found: %s','%s/%s'%(jid,nick)) % tcmd
+	elif amm > lvl: return L('Not allowed launch: %s','%s/%s'%(jid,nick)) % tcmd
 	else:
 		if sm: nick = '\n'
 		elif nm: nick = ''
@@ -90,13 +90,13 @@ def time_cron_del(jid,nick,ar):
 	al = get_level(jid,nick)[0]
 	if al == 9 and ar.lower() == 'all':
 		cur_execute('delete from cron where room=%s',(jid,))
-		return L('All cron rules removed!')
-	elif not ar: return L('Need choise record number.')
-	elif not ar.isdigit(): return L('Record ID is numeric.')
+		return L('All cron rules removed!','%s/%s'%(jid,nick))
+	elif not ar: return L('Need choise record number.','%s/%s'%(jid,nick))
+	elif not ar.isdigit(): return L('Record ID is numeric.','%s/%s'%(jid,nick))
 	else:
 		c = cur_execute_fetchall('select * from cron where room ilike %s order by room, time',(jid,))
 		try: rec = c[int(ar)-1]
-		except: return L('Record #%s not found!') % ar
+		except: return L('Record #%s not found!','%s/%s'%(jid,nick)) % ar
 		cur_execute('delete from cron where room=%s and jid=%s and nick=%s and time=%s and repeat=%s and command=%s and level=%s',rec)
 		msg = disp_time(rec[3])
 		if rec[2] == '\n': mode = '[silent]'
@@ -105,7 +105,7 @@ def time_cron_del(jid,nick,ar):
 		if mode: msg = '%s %s' % (msg,mode)
 		if rec[4]: msg += ' [%s]' % rec[4]
 		msg += ' -> %s' % rec[5]
-		return L('Removed: %s') % msg
+		return L('Removed: %s','%s/%s'%(jid,nick)) % msg
 
 def cron_action():
 	itt = int(time.time())

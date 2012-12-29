@@ -75,7 +75,7 @@ def watcher_reset(a,b,c,d,e):
 	global watch_reset
 	watch_reset = None
 
-def c_watcher(type, jid, nick): send_msg(type, jid, nick, L('Timeout for ask: %s | Timeout for answer: %s | Last ask: %s | Total checks: %s') % (GT('watch_size'),GT('timeout'),un_unix(int(time.time() - watch_time)),watch_count))
+def c_watcher(type, jid, nick): send_msg(type, jid, nick, L('Timeout for ask: %s | Timeout for answer: %s | Last ask: %s | Total checks: %s','%s/%s'%(jid,nick)) % (GT('watch_size'),GT('timeout'),un_unix(int(time.time() - watch_time)),watch_count))
 
 def activity_watch(type, jid, nick):
 	rooms = cur_execute_fetchall("select split_part(room,'/',1) from conference;")
@@ -83,12 +83,12 @@ def activity_watch(type, jid, nick):
 	cnf.sort(reverse=1)
 	tt = int(time.time())
 	msg = '\n'.join(['%s - %s' % (t[1],un_unix(tt-t[0])) for t in cnf])
-	rooms = ['%s - %s' % (t[0],L('Unknown')) for t in rooms if t[0] not in watch_activity.keys()]
+	rooms = ['%s - %s' % (t[0],L('Unknown','%s/%s'%(jid,nick))) for t in rooms if t[0] not in watch_activity.keys()]
 	if rooms: msg = '%s\n%s' % (msg,'\n'.join(rooms))
-	msg = L('Last activity in room(s):\n%s') % msg
+	msg = L('Last activity in room(s):\n%s','%s/%s'%(jid,nick)) % msg
 	if type == 'groupchat':
 		send_msg('chat', jid, nick, msg)
-		msg = L('Send for you in private')
+		msg = L('Send for you in private','%s/%s'%(jid,nick))
 	send_msg(type, jid, nick, msg)
 
 def connect_watch_uni(room,jid,nick,type,mass):

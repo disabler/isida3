@@ -24,19 +24,19 @@
 def net_ping(type, jid, nick, text):
 	text = text.strip().lower().encode('idna')
 	if '.' in text and len(text) > 4 and re.match(r'[-0-9a-z.]+\Z', text, re.U+re.I): msg = deidna(shell_execute('ping -c4 %s' % text))
-	else: msg = L('Smoke help about command!')
+	else: msg = L('Smoke help about command!','%s/%s'%(jid,nick))
 	send_msg(type, jid, nick, msg)
 
 def get_tld(type, jid, nick, text):
 	if len(text) >= 2:
 		tld = readfile(tld_list).decode('utf-8')
 		tld = tld.split('\n')
-		msg = L('Not found!')
+		msg = L('Not found!','%s/%s'%(jid,nick))
 		for tl in tld:
 			if tl.split('\t')[0].lower()==text.lower():
 				msg = '.'+tl.replace('\t',' - ',1).replace('\t','\n')
 				break
-	else: msg = L('What do you want to find?')
+	else: msg = L('What do you want to find?','%s/%s'%(jid,nick))
 	send_msg(type, jid, nick, msg)
 
 def get_dns(type, jid, nick, text):
@@ -49,14 +49,14 @@ def get_dns(type, jid, nick, text):
 				break
 	if is_ip:
 		try: msg = socket.gethostbyaddr(text)[0]
-		except: msg = L('I can\'t resolve it')
+		except: msg = L('I can\'t resolve it','%s/%s'%(jid,nick))
 	else:
 		try:
 			ans = socket.gethostbyname_ex(text.encode('idna'))[2]
 			msg = text+' - '
 			for an in ans: msg += an + ' | '
 			msg = msg[:-2]
-		except: msg = L('I can\'t resolve it')
+		except: msg = L('I can\'t resolve it','%s/%s'%(jid,nick))
 	send_msg(type, jid, nick, msg)
 
 def srv_nslookup(type, jid, nick, text):
@@ -93,15 +93,15 @@ def chkserver(type, jid, nick, text):
 						sock = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
 						try:
 							sock.connect((t.encode('idna'),int(a)))
-							s = L('on')
-						except: s = L('off')
+							s = L('on','%s/%s'%(jid,nick))
+						except: s = L('off','%s/%s'%(jid,nick))
 						msg += '\n%s %s' % (a,s)
 						sock.close()
 					msg = '%s%s' % (t,msg)
-				except: msg = '%s - %s' % (t,L('unknown'))
-			msg = L('Port status at %s') % msg
-		else: msg = L('What?')
-	else: msg = L('What?')
+				except: msg = '%s - %s' % (t,L('unknown','%s/%s'%(jid,nick)))
+			msg = L('Port status at %s','%s/%s'%(jid,nick)) % msg
+		else: msg = L('What?','%s/%s'%(jid,nick))
+	else: msg = L('What?','%s/%s'%(jid,nick))
 	send_msg(type, jid, nick, msg)
 
 global execute

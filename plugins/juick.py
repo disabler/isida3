@@ -63,22 +63,22 @@ def juick(type, jid, nick, text):
 		except: tmpt = ''
 		if tmpt: juick_msg(type, jid, nick, text)
 		elif text and text[0] == '@': juick_user(type, jid, nick, text)
-		else: send_msg(type, jid, nick, L('Smoke help about command!'))
+		else: send_msg(type, jid, nick, L('Smoke help about command!','%s/%s'%(jid,nick)))
 
 def juick_user(type, jid, nick, text):
 	if text and text[0] == '@': text = text[1:]
 	try: result = json.loads(html_encode(load_page(JUICK_MESSAGES_REQUEST, {'user_id':str(json.loads(html_encode(load_page(JUICK_USERS, {'uname': text})).replace('\t',' '*8))[0]['uid'])})).replace('\t',' '*8))
 	except:
-		send_msg(type, jid, nick, L('User @%s not found!') % text)
+		send_msg(type, jid, nick, L('User @%s not found!','%s/%s'%(jid,nick)) % text)
 		return
 	tp = []
 	for t in result[:GT('juick_user_post_limit')]:
 		tm = '#%s' % t['mid']
 		if t.has_key('tags'): tm = '%s *%s' % (tm, ' *'.join(t['tags']))
 		tm = '%s | %s' % (tm,replacer(t['body'][:GT('juick_user_post_size')].replace('\n',' \\ ')+['',u'…'][len(t['body']) > GT('juick_user_post_size')]))
-		if t.has_key('replies'): tm = '%s %s' % (tm, L('Replies: %s') % t['replies'])
+		if t.has_key('replies'): tm = '%s %s' % (tm, L('Replies: %s','%s/%s'%(jid,nick)) % t['replies'])
 		tp.append(tm)
-	msg = L('Found: %s') % '%s\n%s' % (text,'\n'.join(tp))
+	msg = L('Found: %s','%s/%s'%(jid,nick)) % '%s\n%s' % (text,'\n'.join(tp))
 	send_msg(type, jid, nick, msg)
 
 def juick_search(type, jid, nick, text):
@@ -86,24 +86,24 @@ def juick_search(type, jid, nick, text):
 	tp = []
 	for t in result[:GT('juick_user_post_limit')]:
 		tm = '#%s @%s: %s' % (t['mid'],replacer(t['user']['uname']),replacer(t['body'][:GT('juick_user_post_size')].replace('\n',' \\ ')+['',u'…'][len(t['body']) > GT('juick_user_post_size')]))
-		if t.has_key('replies'): tm = '%s | %s' % (tm, L('Replies: %s') % t['replies'])
+		if t.has_key('replies'): tm = '%s | %s' % (tm, L('Replies: %s','%s/%s'%(jid,nick)) % t['replies'])
 		if t.has_key('tags'): tm = '%s | *%s' % (tm, ' *'.join(t['tags']))
 		tp.append(tm)
-	msg = L('Found: %s') % '\n%s' % '\n'.join(tp)
+	msg = L('Found: %s','%s/%s'%(jid,nick)) % '\n%s' % '\n'.join(tp)
 	send_msg(type, jid, nick, msg)
 
 def juick_tags(type, jid, nick, text):
 	if text and text[0] == '@': text = text[1:]
 	try:
-		if text: hdr,url,params = L('Popular tags of @%s:') % text,JUICK_TAGS_USER,{'user_id':str(json.loads(html_encode(load_page(JUICK_USERS, {'uname': text})).replace('\t',' '*8))[0]['uid'])}
-		else: hdr,url,params = L('Popular tags:'),JUICK_TAGS,{}
+		if text: hdr,url,params = L('Popular tags of @%s:','%s/%s'%(jid,nick)) % text,JUICK_TAGS_USER,{'user_id':str(json.loads(html_encode(load_page(JUICK_USERS, {'uname': text})).replace('\t',' '*8))[0]['uid'])}
+		else: hdr,url,params = L('Popular tags:','%s/%s'%(jid,nick)),JUICK_TAGS,{}
 		result = json.loads(html_encode(load_page(url,params)).replace('\t',' '*8))
 		tags = [((t['messages'],replacer(t['tag']))) for t in result]
 		tags.sort(reverse=True)
 		msg = '%s %s' % (hdr,', '.join(['%s [%s]' % (t[1],t[0]) for t in tags[:GT('juick_user_tags_limit')]]))
 	except:
-		if text: msg = L('User @%s not found!') % text
-		else: msg = L('Unknown error!')
+		if text: msg = L('User @%s not found!','%s/%s'%(jid,nick)) % text
+		else: msg = L('Unknown error!','%s/%s'%(jid,nick))
 	send_msg(type, jid, nick, msg)
 
 def juick_msg(type, jid, nick, text):
@@ -116,7 +116,7 @@ def juick_msg(type, jid, nick, text):
 	except: j_replies = GT('juick_msg_answers_default')
 	try: result = json.loads(html_encode(load_page(JUICK_THREAD, {'mid': j_mid})).replace('\t',' '*8))
 	except:
-		send_msg(type, jid, nick, L('Message #%s is not found!') % j_mid)
+		send_msg(type, jid, nick, L('Message #%s is not found!','%s/%s'%(jid,nick)) % j_mid)
 		return
 	if j_rid:
 		found = False
@@ -125,7 +125,7 @@ def juick_msg(type, jid, nick, text):
 				result,found = t,True
 				break
 		if not found:
-			send_msg(type, jid, nick, L('Message #%s is not found!') % '%s/%s' % (j_mid,j_rid))
+			send_msg(type, jid, nick, L('Message #%s is not found!','%s/%s'%(jid,nick)) % '%s/%s' % (j_mid,j_rid))
 			return
 	else: result=result[0]
 	uname = replacer(result['user']['uname'])
@@ -134,12 +134,12 @@ def juick_msg(type, jid, nick, text):
 	body = replacer(result['body'])
 	timestamp = result['timestamp']
 	mid = str(result['mid'])
-	try: replies = L('Replies: %s') % result['replies']
+	try: replies = L('Replies: %s','%s/%s'%(jid,nick)) % result['replies']
 	except: replies = 0
 	if result.has_key('video'):
 		media = result['video']
-		media = L('Attach: %s') % media[media.keys()[0]]
-	elif result.has_key('photo'): media = L('Attach: %s') % result['photo']['medium']
+		media = L('Attach: %s','%s/%s'%(jid,nick)) % media[media.keys()[0]]
+	elif result.has_key('photo'): media = L('Attach: %s','%s/%s'%(jid,nick)) % result['photo']['medium']
 	else: media = ''
 	try: replyto = result['replyto']
 	except: replyto = ''
@@ -157,7 +157,7 @@ def juick_msg(type, jid, nick, text):
 def juick_post(type, jid, nick, text):
 	send_msg('chat', JUICK_JID, '', text)
 	time.sleep(1.2)
-	send_msg(type, jid, nick, L('Message posted to Juick.'))
+	send_msg(type, jid, nick, L('Message posted to Juick.','%s/%s'%(jid,nick)))
 
 global execute
 

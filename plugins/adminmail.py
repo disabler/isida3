@@ -33,17 +33,17 @@ def adminmail(type, jid, nick, text):
 		if am:
 			wt = int(am[0]-time.time())
 			if wt >= 0:
-				send_msg(type, jid, nick, L('Time limit exceeded. Wait: %s') % un_unix(wt))
+				send_msg(type, jid, nick, L('Time limit exceeded. Wait: %s','%s/%s'%(jid,nick)) % un_unix(wt))
 				return None
 			else: cur_execute('delete from saytoowner where jid=%s;',(fjid,))
 		cur_execute('insert into saytoowner values (%s,%s)',(fjid,int(time.time())+tmp_lim))
-		msg = L('User %s (%s) from %s at %s send massage to you: %s') % (nick,fjid,jid,time.strftime("%H:%M %d.%m.%y", time.localtime (time.time())),text)
+		msg = L('User %s (%s) from %s at %s send massage to you: %s','%s/%s'%(jid,nick)) % (nick,fjid,jid,time.strftime("%H:%M %d.%m.%y", time.localtime (time.time())),text)
 		own = cur_execute_fetchall('select * from bot_owner;')
 		if own:
 			for ajid in own: send_msg('chat', ajid[0], '', msg)
-			send_msg(type, jid, nick, L('Sent'))
-		else: send_msg(type, jid, nick, L('Owner list is empty!'))
-	else: send_msg(type, jid, nick, L('What?'))
+			send_msg(type, jid, nick, L('Sent','%s/%s'%(jid,nick)))
+		else: send_msg(type, jid, nick, L('Owner list is empty!','%s/%s'%(jid,nick)))
+	else: send_msg(type, jid, nick, L('What?','%s/%s'%(jid,nick)))
 
 global execute
 

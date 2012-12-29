@@ -39,10 +39,12 @@ def gweather_raw(type, jid, nick, text, fully):
 	def get_pressure(body): return get_maxmin(body,'PRESSURE','-')
 	def get_relwet(body): return get_maxmin(body,'RELWET','-')
 
-	tods = {'0':L('Night'),'1':L('Morning'),'2':L('Day'),'3':L('Evening')}
-	precipitation = {'4':L('rain'),'5':L('downpour'),'6':L('snow'),'7':L('snow'),'8':L('storm'),'9':L('no data'),'10':L('no precipitation')}
-	cloudiness = {'0':L('clear'),'1':L('cloudy'),'2':L('Cloudy'),'3':L('overcast')}
-	winddir = {'0':L('N'),'1':L('NE'),'2':L('E'),'3':L('SE'),'4':L('S'),'5':L('SW'),'6':L('W'),'7':L('NW')}
+	tods = {'0':L('Night','%s/%s'%(jid,nick)),'1':L('Morning','%s/%s'%(jid,nick)),'2':L('Day','%s/%s'%(jid,nick)),'3':L('Evening','%s/%s'%(jid,nick))}
+	precipitation = {'4':L('rain','%s/%s'%(jid,nick)),'5':L('downpour','%s/%s'%(jid,nick)),'6':L('snow','%s/%s'%(jid,nick)),'7':L('snow','%s/%s'%(jid,nick)),
+					 '8':L('storm','%s/%s'%(jid,nick)),'9':L('no data','%s/%s'%(jid,nick)),'10':L('no precipitation','%s/%s'%(jid,nick))}
+	cloudiness = {'0':L('clear','%s/%s'%(jid,nick)),'1':L('cloudy','%s/%s'%(jid,nick)),'2':L('Cloudy','%s/%s'%(jid,nick)),'3':L('overcast','%s/%s'%(jid,nick))}
+	winddir = {'0':L('N','%s/%s'%(jid,nick)),'1':L('NE','%s/%s'%(jid,nick)),'2':L('E','%s/%s'%(jid,nick)),'3':L('SE','%s/%s'%(jid,nick)),
+			   '4':L('S','%s/%s'%(jid,nick)),'5':L('SW','%s/%s'%(jid,nick)),'6':L('W','%s/%s'%(jid,nick)),'7':L('NW','%s/%s'%(jid,nick))}
 
 	if len(text.strip()):
 		text = text.lower()
@@ -60,33 +62,33 @@ def gweather_raw(type, jid, nick, text, fully):
 					try: body = str(SM)
 					except: body = unicode(SM)
 					noerr = None
-				if not body or body == '<?xml version="1.0" encoding="UTF-8"?>\n</xml>': body,noerr = L('Unexpected error'), None
+				if not body or body == '<?xml version="1.0" encoding="UTF-8"?>\n</xml>': body,noerr = L('Unexpected error','%s/%s'%(jid,nick)), None
 				if noerr:
 					if wzc[0][1]: ct = wzc[0][1]
 					else:
 						try: res = re.findall('<TOWN index=".*?" sname="(.*?)"',body)
 						except: res = ''
 						if res: ct = urllib2.unquote(res[0]).encode('cp1252').decode('cp1251')
-						else: ct = L('Unknown')
+						else: ct = L('Unknown','%s/%s'%(jid,nick))
 					body = body.split('<FORE')[1:]		
-					msg = L('Weather in %s:\nDate\t t%s\tWind\tClouds') % (ct,u'°')
-					if fully: msg += L('\tPressure, mm. Hg. Art.\tHumidity %')
+					msg = L('Weather in %s:\nDate\t t%s\tWind\tClouds','%s/%s'%(jid,nick)) % (ct,u'°')
+					if fully: msg += L('\tPressure, mm. Hg. Art.\tHumidity %','%s/%s'%(jid,nick))
 					for tmp in body:
 						tmp2 = '<FORE' + tmp
 						msg += '\n' + tods[get_tag_item(tmp2,'FORECAST','tod')] + ' ' + get_date(tmp2)	# дата + время суток
 						msg += '\t' + get_themp(tmp2) 													# температура
 						gwi = get_wind(tmp2)															# ветер
-						if gwi == '0': msg += L('\tCalm')
+						if gwi == '0': msg += L('\tCalm','%s/%s'%(jid,nick))
 						else: msg += '\t' + gwi+' '+winddir[get_tag_item(tmp2,'WIND','direction')]
 						msg += '\t' + cloudiness[get_tag_item(tmp2,'PHENOMENA','cloudiness')]			# облачность
 						msg += ', ' + precipitation[get_tag_item(tmp2,'PHENOMENA','precipitation')]		# осадки
 						if fully: msg += '\t' + get_pressure(tmp2) + '\t' + get_relwet(tmp2)			# давление, влажность
-				else: msg = L('Error! %s') % body
+				else: msg = L('Error! %s','%s/%s'%(jid,nick)) % body
 			else:
-				msg = L('Found:')
+				msg = L('Found:','%s/%s'%(jid,nick))
 				for tmp in wzc: msg += '\n'+tmp[0]+' - '+tmp[1]
-		else: msg = L('Not found.')
-	else: msg = L('What?')
+		else: msg = L('Not found.','%s/%s'%(jid,nick))
+	else: msg = L('What?','%s/%s'%(jid,nick))
 	send_msg(type, jid, nick, msg)
 
 def gweather(type, jid, nick, text): gweather_raw(type, jid, nick, text, None)

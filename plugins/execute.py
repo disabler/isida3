@@ -28,7 +28,7 @@ def exec_ute(type, jid, nick, text):
 	except Exception, SM:
 		try: SM = str(SM)
 		except: SM = unicode(SM)
-		text = L('I can\'t execute it! Error: %s') % SM[:int(msg_limit/2)]
+		text = L('I can\'t execute it! Error: %s','%s/%s'%(jid,nick)) % SM[:int(msg_limit/2)]
 	send_msg(type, jid, nick, text)
 
 def calc(type, jid, nick, text):
@@ -51,11 +51,11 @@ def calc(type, jid, nick, text):
 			if calc_last_res.has_key(jid): calc_last_res[jid][nick] = text
 			else: calc_last_res[jid] = {nick: text}
 		except:
-			text = L('I can\'t calculate it')
+			text = L('I can\'t calculate it','%s/%s'%(jid,nick))
 			if calc_last_res.has_key(jid): calc_last_res[jid][nick] = None
 			else: calc_last_res[jid] = {nick: None}
 	else:
-		text = L('Expression unacceptable!')
+		text = L('Expression unacceptable!','%s/%s'%(jid,nick))
 		if calc_last_res.has_key(jid): calc_last_res[jid][nick] = None
 		else: calc_last_res[jid] = {nick: None}
 	send_msg(type, jid, nick, text)

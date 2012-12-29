@@ -33,8 +33,8 @@ def quote(type, jid, nick, text):
     tmp = text.strip().split()
     if not tmp: tmp =[random.choice([q for q in quotes_list.keys() if quotes_list[q].has_key('random')])]
     if len(tmp) == 1 and tmp[0] == 'list':
-        msg = (L('Quotes:\n') + '\n'.join(['%s - %s (%s)' % (q, quotes_list[q]['title'],
-        ', '.join(k for k  in quotes_list[q].keys() if k != 'title').replace('random', L('rand')).replace('number', L('by number')).replace('search', L('search')))
+        msg = (L('Quotes:\n','%s/%s'%(jid,nick)) + '\n'.join(['%s - %s (%s)' % (q, quotes_list[q]['title'],
+        ', '.join(k for k  in quotes_list[q].keys() if k != 'title').replace('random', L('rand','%s/%s'%(jid,nick))).replace('number', L('by number','%s/%s'%(jid,nick))).replace('search', L('search','%s/%s'%(jid,nick))))
         for q in quotes_list.keys()]))
     elif len(tmp) == 1 and quotes_list.has_key(tmp[0]) and quotes_list[tmp[0]].has_key('random'):
         try:
@@ -43,7 +43,7 @@ def quote(type, jid, nick, text):
             message = re.search(unescape(quotes_list[tmp[0]]['random'][1]), body).group(1)
             msg = unhtml(message)
         except:
-            msg = L('Can\'t searching random quote!')
+            msg = L('Can\'t searching random quote!','%s/%s'%(jid,nick))
     elif len(tmp) > 1 and quotes_list.has_key(tmp[0]) and quotes_list[tmp[0]].has_key('number') and re.match('\d+\Z', tmp[1]):
         try:
             url = quotes_list[tmp[0]]['number'][0] % tmp[1]
@@ -51,9 +51,9 @@ def quote(type, jid, nick, text):
             message = re.search(unescape(quotes_list[tmp[0]]['number'][1]), body).group(1)
             msg = unhtml(message)
             if not msg:
-                msg = L('Can\'t searching quote by number!')
+                msg = L('Can\'t searching quote by number!','%s/%s'%(jid,nick))
         except:
-            msg = L('Can\'t searching quote by number!')
+            msg = L('Can\'t searching quote by number!','%s/%s'%(jid,nick))
     elif len(tmp) > 1 and quotes_list.has_key(tmp[0]) and quotes_list[tmp[0]].has_key('search'):
         try:
             url = quotes_list[tmp[0]]['search'][0] % urllib.quote(tmp[1].encode(quotes_list[tmp[0]]['search'][2]))
@@ -61,9 +61,9 @@ def quote(type, jid, nick, text):
             message = re.search(unescape(quotes_list[tmp[0]]['search'][1]), body).group(1)
             msg = unhtml(message)
         except:
-            msg = L('Quote not found!')
+            msg = L('Quote not found!','%s/%s'%(jid,nick))
     else:
-        msg = L('What?')
+        msg = L('What?','%s/%s'%(jid,nick))
     send_msg(type, jid, nick, msg)
 
 

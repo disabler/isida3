@@ -29,7 +29,7 @@ def bash_org_ru(type, jid, nick, text):
 	body = html_encode(load_page(url))
 	body = re.findall('<span class="date">(.*?)</span>.*?class="id">(.*?)</a>.*?<div class="text">(.*?)</div>',body,re.S+re.I+re.U)
 	try: msg = rss_del_nn(rss_replace('%s %s\n%s' % body[0]))
-	except: msg = L('Quote not found!')
+	except: msg = L('Quote not found!','%s/%s'%(jid,nick))
 	send_msg(type, jid, nick, msg)
 
 def ibash_org_ru(type, jid, nick, text):
@@ -40,7 +40,7 @@ def ibash_org_ru(type, jid, nick, text):
 	except: url = 'http://ibash.org.ru/random.php'
 	body = html_encode(load_page(url))
 	msg = url_id + re.findall(reg_title, body, re.S)[0]
-	if msg[-3:] == '???': msg = L('Quote not found!')
+	if msg[-3:] == '???': msg = L('Quote not found!','%s/%s'%(jid,nick))
 	else: msg += '\n'+rss_replace(re.findall(reg_body, body, re.S)[0])
 	send_msg(type, jid, nick, msg)
 

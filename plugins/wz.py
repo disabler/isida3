@@ -34,11 +34,11 @@ def get_weather(text):
 	return load_page('http://weather.noaa.gov/pub/data/observations/metar/decoded/%s.TXT' % wzc[0][0].upper())
 
 def weather(type, jid, nick, text):
-	if check_wz(text): msg = L('Error in parameters. Read the help about command.')
+	if check_wz(text): msg = L('Error in parameters. Read the help about command.','%s/%s'%(jid,nick))
 	else:
 		wzz = get_weather(text)
-		if 'Not Found' in wzz: msg = L('City not found!')
-		elif len(wzz.split('\n')) < 9: msg = L('Unexpected error')
+		if 'Not Found' in wzz: msg = L('City not found!','%s/%s'%(jid,nick))
+		elif len(wzz.split('\n')) < 9: msg = L('Unexpected error','%s/%s'%(jid,nick))
 		else:
 			wzz = wzz.split('\n')
 			wzr = []
@@ -74,11 +74,11 @@ def weather(type, jid, nick, text):
 	send_msg(type, jid, nick, msg)
 
 def weather_short(type, jid, nick, text):
-	if check_wz(text): msg = L('Error in parameters. Read the help about command.')
+	if check_wz(text): msg = L('Error in parameters. Read the help about command.','%s/%s'%(jid,nick))
 	else:
 		wzz = get_weather(text)
-		if 'Not Found' in wzz: msg = L('City not found!')
-		elif len(wzz.split('\n')) < 9: msg = L('Unexpected error')
+		if 'Not Found' in wzz: msg = L('City not found!','%s/%s'%(jid,nick))
+		elif len(wzz.split('\n')) < 9: msg = L('Unexpected error','%s/%s'%(jid,nick))
 		else:
 			wzz = wzz.split('\n')
 			wzr = []
@@ -105,21 +105,21 @@ def weather_short(type, jid, nick, text):
 	send_msg(type, jid, nick, msg)
 
 def weather_raw(type, jid, nick, text):
-	if check_wz(text): msg = L('Error in parameters. Read the help about command.')
+	if check_wz(text): msg = L('Error in parameters. Read the help about command.','%s/%s'%(jid,nick))
 	else:
 		msg = get_weather(text)[:-1]
-		if 'Not Found' in msg: msg = L('City not found!')
+		if 'Not Found' in msg: msg = L('City not found!','%s/%s'%(jid,nick))
 	send_msg(type, jid, nick, msg)
 
 def weather_search(type, jid, nick, text):
 	if len(text):
 		wzc = cur_execute_fetchall('select code,city,counry from wz where code ilike %s or city ilike %s or counry ilike %s',(text,text,text))
-		if not wzc: msg = msg = L('City not found!')
+		if not wzc: msg = msg = L('City not found!','%s/%s'%(jid,nick))
 		else:
 			msg = ''
 			for tmp in wzc: msg += '\n%s - %s (%s)' % tmp
-			msg = L('Found: %s') % msg
-	else: msg = L('What?')
+			msg = L('Found: %s','%s/%s'%(jid,nick)) % msg
+	else: msg = L('What?','%s/%s'%(jid,nick))
 	send_msg(type, jid, nick, msg)
 
 global execute
