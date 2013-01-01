@@ -1374,13 +1374,17 @@ def disconnecter():
 	game_over, bot_exit_type = True, 'restart'
 	time.sleep(2)
 
+def get_L(jid):
+	try: loc = users_locale[jid] if jid else CURRENT_LOCALE
+	except: loc = CURRENT_LOCALE
+	if not locales.has_key(loc): loc = CURRENT_LOCALE
+	return loc
+	
 def L(*par):
 	if len(par) == 2: text,jid = par
 	else: text,jid = par[0],''
 	if not len(text): return text
-	try: loc = users_locale[jid] if jid else CURRENT_LOCALE
-	except: loc = CURRENT_LOCALE
-	if not locales.has_key(loc): loc = CURRENT_LOCALE
+	loc = get_L(jid)
 	try: return locales[loc][text]
 	except: return text
 

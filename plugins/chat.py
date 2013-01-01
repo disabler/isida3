@@ -86,11 +86,7 @@ def getRandomAnswer(tx,room):
 	return answ
 
 def getSmartAnswer(type, room, nick, text):
-	rn = '%s/%s' % (room,nick)
-	try: loc = users_locale[rn] if rn else CURRENT_LOCALE
-	except: loc = CURRENT_LOCALE
-	if not locales.has_key(loc): loc = CURRENT_LOCALE
-
+	loc = get_L('%s/%s' % (room,nick))
 	if '?' in text: answ = random.choice(list_of_answers[loc]).strip()
 	else: answ = random.choice(list_of_empty[loc]).strip()
 	score,sc, var = 1.0,0,[answ]
@@ -159,14 +155,10 @@ def phrases_timer():
 					rand_nicks = [d[1] for d in megabase if d[0]==room if not cur_execute_fetchone('select pattern from bot_ignore where %s ilike pattern',(getRoom(d[4]),)) and d[1] not in [get_xnick(room), '']]
 					if rand_nicks:
 						nick = random.choice(rand_nicks)
-						rn = '%s/%s' % (room,nick)
-						try: loc = users_locale[rn] if rn else CURRENT_LOCALE
-						except: loc = CURRENT_LOCALE
-						if not locales.has_key(loc): loc = CURRENT_LOCALE
+						loc = get_L('%s/%s' % (room,nick))
 						msg = random.choice(list_of_phrases_with_highlight[loc] + list_of_phrases_no_highlight[loc])
 						msg = msg.replace('NICK', nick)
-				if get_config(room,'autophrases') == 'without highlight' or not rand_nicks:
-					msg = random.choice(list_of_phrases_no_highlight[CURRENT_LOCALE])
+				if get_config(room,'autophrases') == 'without highlight' or not rand_nicks: msg = random.choice(list_of_phrases_no_highlight[CURRENT_LOCALE])
 				pprint('Send autophrase: %s >>> %s' % (room, msg), 'dark_gray')
 				send_msg('groupchat', room, '', msg)
 
