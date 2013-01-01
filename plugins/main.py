@@ -1524,7 +1524,7 @@ def get_opener(page_name, parameters=None):
 	except Exception, SM:
 		try: SM = str(SM)
 		except: SM = unicode(SM)
-		data, result = L('Error! %s','%s/%s'%(jid,nick)) % SM.replace('>','').replace('<','').capitalize(), False
+		data, result = L('Error! %s') % SM.replace('>','').replace('<','').capitalize(), False
 	return data, result
 
 def load_page(page_name, parameters=None):
