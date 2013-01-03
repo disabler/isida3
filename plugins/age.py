@@ -23,6 +23,31 @@
 
 AGE_DEFAULT_LIMIT = 10
 AGE_MAX_LIMIT = 100
+TIME_OF_LOGGING_JOINS = 1357231720
+
+def join_time_stat(type, jid, nick, text):
+	text = text.strip()
+	if text and text.isdigit(): llim = int(text)
+	else:
+		try: llim = GT('age_default_limit')
+		except: llim = AGE_DEFAULT_LIMIT
+	if llim not in range(1,AGE_MAX_LIMIT): llim = AGE_DEFAULT_LIMIT
+	t_age_tmp = cur_execute_fetchmany(' select jid,time from first_join where room=%s and jid in (select jid from age where room=%s and status=0 order by time) order by time;',(jid,jid),llim)
+	t_age = []
+	for t in t_age_tmp:
+		tmp = cur_execute_fetchone('select nick from age where room=%s and jid=%s order by status,-time',(jid,t[0]))
+		t_age.append((tmp[0],t[1]))
+	msg = L('Joins statistic:\n%s','%s/%s'%(jid,nick)) % '\n'.join(['%s\t %s%s' % (t[0],['','~'][t[1]<TIME_OF_LOGGING_JOINS],nice_time(t[1])[2].split(', GMT',1)[0]) for t in t_age])
+	send_msg(type, jid, nick, msg)
+
+def join_time(type, jid, nick, text):
+	if not text: text = nick
+	lvl,r_jid = get_level(jid,text)
+	if lvl != -2:
+		j_time = cur_execute_fetchone('select time from first_join where room=%s and jid=%s;',(jid,getRoom(r_jid)))[0]
+		msg = L('First %s\'s join is %s%s (%s ago)','%s/%s'%(jid,nick)) % (text,['','~'][j_time<TIME_OF_LOGGING_JOINS],nice_time(j_time)[2],un_unix(int(time.time())-j_time))
+	else: msg = L('Not found!','%s/%s'%(jid,nick))
+	send_msg(type, jid, nick, msg)	
 
 def true_age_stat(type, jid, nick, text):
 	text = text.strip()
@@ -188,4 +213,6 @@ execute = [(3, 'age', true_age, 2, L('Show age of jid in conference.')),
 	 (3, 'seen_split', seen_split, 2, L('Show time of join/leave splitted by nicks.')),
 	 (3, 'agestat', true_age_stat, 2, L('Show age statistic for conference.')),
 	 (7, 'seenjid', seenjid, 2, L('Show time of join/leave + jid.')),
-	 (7, 'seenjid_split', seenjid_split, 2, L('Show time of join/leave + jid splitted by nicks.'))]
+	 (7, 'seenjid_split', seenjid_split, 2, L('Show time of join/leave + jid splitted by nicks.')),
+	 (3, 'when', join_time, 2, L('Show time of first join into room.')),
+	 (3, 'whenstat', join_time_stat, 2, L('Show statistic for time of first join into room.'))]

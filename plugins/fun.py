@@ -130,7 +130,7 @@ def to_poke(type, jid, nick, text):
 					is_found = True
 					break
 		if is_found:
-			try: hl_pokes = list_of_phrases_with_highlight[get_L('%s/%s'%(jid,nick))]
+			try: hl_pokes = list_of_phrases_with_highlight[get_L_('%s/%s'%(jid,nick))]
 			except: hl_pokes = []
 			dp = ['/me %s' % t for t in dpoke]
 			for t in hl_pokes:

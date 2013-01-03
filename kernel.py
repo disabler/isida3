@@ -656,11 +656,12 @@ def disp_time(t):
 	return '%02d:%02d:%02d, %02d.%s\'%s, %s' % (lt[3],lt[4],lt[5],lt[2],wmonth[lt[1]-1],lt[0],wday[lt[6]])
 
 def nice_time(ttim):
-	gt=tuple(time.gmtime())
+	gt=tuple(time.gmtime(ttim))
 	lt=tuple(time.localtime(ttim))
-	timeofset = int(round(int(time.mktime(lt[:5]+(0,0,0,0))-time.mktime(gt[:5]+(0,0,0,0)))/3600.0))
-	if timeofset < 0: t_gmt = 'GMT%s' % timeofset
-	else: t_gmt = 'GMT+%s' % timeofset
+	timeofset = (datetime.datetime(*lt[:6])-datetime.datetime(*gt[:6])).seconds / 3600.0
+	if timeofset < 0: t_gmt = 'GMT%s' % int(timeofset)
+	else: t_gmt = 'GMT+%s' % int(timeofset)
+	if timeofset%1: t_gmt += ':%02d' % int((timeofset%1*60/100) * 100)
 	t_utc='%s%02d%02dT%02d:%02d:%02d' % gt[:6]
 	t_display = '%02d:%02d:%02d, %02d.%s\'%s, %s, ' % (lt[3],lt[4],lt[5],lt[2],wmonth[lt[1]-1],lt[0],wday[lt[6]])
 	#t_tz = time.tzname[time.localtime()[8]]
@@ -1283,6 +1284,9 @@ def presenceCB(sess,mess):
 			else: cur_execute('update age set status=%s, message=%s where room=%s and jid=%s and nick=%s', (0,ttext,room, jid, nick))
 	else: cur_execute('insert into age values (%s,%s,%s,%s,%s,%s,%s,%s,%s)', (room,nick,jid,tt,0,0,'',ttext,nick.lower()))
 
+	if not cur_execute_fetchone('select time from first_join where room=%s and jid=%s;',(room,jid)):
+		cur_execute('insert into first_join values (%s,%s,%s);', (room,jid,tt))
+
 def onoff_no_tr(msg):
 	if msg == None or msg == False or msg == 0 or msg == '0': return 'off'
 	elif msg == True or msg == 1 or msg == '1': return 'on'
@@ -1374,7 +1378,7 @@ def disconnecter():
 	game_over, bot_exit_type = True, 'restart'
 	time.sleep(2)
 
-def get_L(jid):
+def get_L_(jid):
 	try: loc = users_locale[jid] if jid else CURRENT_LOCALE
 	except: loc = CURRENT_LOCALE
 	if not locales.has_key(loc): loc = CURRENT_LOCALE
@@ -1384,7 +1388,7 @@ def L(*par):
 	if len(par) == 2: text,jid = par
 	else: text,jid = par[0],''
 	if not len(text): return text
-	loc = get_L(jid)
+	loc = get_L_(jid)
 	try: return locales[loc][text]
 	except: return text
 

@@ -74,13 +74,13 @@ What?	Шо?
 Send message to bot's owner\nmsgtoadmin text	Надіслати повідомлення власнику бота.\nmsgtoadmin текст повідомлення
 
 # file: plugins/age.py
+Not found!	Не знайдено!
 Age statistic:\n%s	Статистика віку:\n%s
 I see:	Я бачила:
 %s %s ago	%s %s тому
 Leave %s ago	Вийшов %s тому
 Client:	Клієнт:
 Is here: %s	Знаходиться тут: %s
-Not found!	Не знайдено!
 %s (with nick: %s)	%s (з ніком: %s)
 I saw %s:	Я бачила %s:
 Send for you in private	Результат відправлений вам до привату.
