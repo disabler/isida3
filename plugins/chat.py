@@ -4,8 +4,8 @@
 # --------------------------------------------------------------------------- #
 #                                                                             #
 #    Plugin for iSida Jabber Bot                                              #
-#    Copyright (C) 2012 diSabler <dsy@dsy.name>                               #
-#    Copyright (C) 2012 Vit@liy <vitaliy@root.ua>                             #
+#    Copyright (C) diSabler <dsy@dsy.name>                                    #
+#    Copyright (C) Vit@liy <vitaliy@root.ua>                                  #
 #                                                                             #
 #    This program is free software: you can redistribute it and/or modify     #
 #    it under the terms of the GNU General Public License as published by     #
@@ -95,7 +95,7 @@ def getSmartAnswer(type, room, nick, text):
 		sc = rating(answer, text, room)
 		if sc > score: score,var = sc,dict_of_mind[loc][answer]
 		elif sc == score: var += dict_of_mind[loc][answer]
-		
+
 	answ = random.choice(var)
 	if answ[0] != '@': return answ
 	else:
@@ -165,5 +165,5 @@ def phrases_timer():
 global execute, message_act_control, timer
 
 message_act_control = [flood_action]
-timer = [phrases_timer] 
+timer = [phrases_timer]
 execute = []

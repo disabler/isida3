@@ -4,7 +4,7 @@
 # --------------------------------------------------------------------------- #
 #                                                                             #
 #    Plugin for iSida Jabber Bot                                              #
-#    Copyright (C) 2012 Vit@liy <vitaliy@root.ua>                             #
+#    Copyright (C) Vit@liy <vitaliy@root.ua>                                  #
 #                                                                             #
 #    This program is free software: you can redistribute it and/or modify     #
 #    it under the terms of the GNU General Public License as published by     #
@@ -70,7 +70,7 @@ def quote(type, jid, nick, text):
 def ithap(type, jid, nick, text): quote(type, jid, nick, 'ithap %s' % text)
 
 def afor(type, jid, nick): quote(type, jid, nick, 'afor')
-	
+
 global execute
 
 execute = [(3, 'quote', quote, 2, L('Quote from Internet. Exaples:\nquote list - list of resources\nquote [<key> [number|text]]')),

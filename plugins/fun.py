@@ -4,8 +4,8 @@
 # --------------------------------------------------------------------------- #
 #                                                                             #
 #    Plugin for iSida Jabber Bot                                              #
-#    Copyright (C) 2012 diSabler <dsy@dsy.name>                               #
-#    Copyright (C) 2012 Vit@liy <vitaliy@root.ua>                             #
+#    Copyright (C) diSabler <dsy@dsy.name>                                    #
+#    Copyright (C) Vit@liy <vitaliy@root.ua>                                  #
 #                                                                             #
 #    This program is free software: you can redistribute it and/or modify     #
 #    it under the terms of the GNU General Public License as published by     #
@@ -240,7 +240,7 @@ def godville(type, jid, nick, text):
 	except:
 		msg = L('User not found','%s/%s'%(jid,nick))
 	send_msg(type,jid,nick,msg)
-	
+
 global execute
 
 execute = [(3, 'poem', poem, 1, L('Just funny poem')),

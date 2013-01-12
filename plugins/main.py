@@ -4,7 +4,7 @@
 # --------------------------------------------------------------------------- #
 #                                                                             #
 #    Plugin for iSida Jabber Bot                                              #
-#    Copyright (C) 2012 diSabler <dsy@dsy.name>                               #
+#    Copyright (C) diSabler <dsy@dsy.name>                                    #
 #                                                                             #
 #    This program is free software: you can redistribute it and/or modify     #
 #    it under the terms of the GNU General Public License as published by     #
@@ -129,7 +129,7 @@ def get_size_human(mt):
 		mt = mt / 1024.0
 		if mt < 1024: break
 	return '%.2f%s' % (mt,t)
-		  
+		
 def is_owner(jid): return cur_execute_fetchone('select * from bot_owner where jid=%s',(getRoom(jid),)) != None
 
 def validate_nick(nick,count):
@@ -499,7 +499,7 @@ def alias(type, jid, nick, text):
 	if mode=='show':
 		if cmd == '':
 			fl = cur_execute_fetchall('select match,room from alias where room=%s or room=%s',(jid,'*'))
-			if fl: 
+			if fl:
 				aln = ', '.join([t[0] for t in fl if t[1] != '*'])
 				alg = ', '.join([t[0] for t in fl if t[1] == '*'])
 				if aln: msg = L('Aliases: %s','%s/%s'%(jid,nick)) % aln

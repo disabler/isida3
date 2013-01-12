@@ -4,7 +4,7 @@
 # --------------------------------------------------------------------------- #
 #                                                                             #
 #    Plugin for iSida Jabber Bot                                              #
-#    Copyright (C) 2012 diSabler <dsy@dsy.name>                               #
+#    Copyright (C) diSabler <dsy@dsy.name>                                    #
 #                                                                             #
 #    This program is free software: you can redistribute it and/or modify     #
 #    it under the terms of the GNU General Public License as published by     #
@@ -33,7 +33,7 @@ def leave_room(rjid, reason):
 def blacklist(type, jid, nick, text):
 	text, msg = unicode(text.lower()), ''
 	reason = L('Conference was added in blacklist','%s/%s'%(jid,nick))
-	
+
 	try: cmd,room = text.split(' ',1)
 	except: cmd,room = text,''
 	if room and '@' not in room: room = '%s@%s' % (room,lastserver)

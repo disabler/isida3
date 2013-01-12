@@ -4,7 +4,7 @@
 # --------------------------------------------------------------------------- #
 #                                                                             #
 #    Plugin for iSida Jabber Bot                                              #
-#    Copyright (C) 2012 diSabler <dsy@dsy.name>                               #
+#    Copyright (C) diSabler <dsy@dsy.name>                                    #
 #                                                                             #
 #    This program is free software: you can redistribute it and/or modify     #
 #    it under the terms of the GNU General Public License as published by     #
@@ -47,7 +47,7 @@ def join_time(type, jid, nick, text):
 		j_time = cur_execute_fetchone('select time from first_join where room=%s and jid=%s;',(jid,getRoom(r_jid)))[0]
 		msg = L('First %s\'s join is %s%s (%s ago)','%s/%s'%(jid,nick)) % (text,['','~'][j_time<TIME_OF_LOGGING_JOINS],nice_time(j_time)[2],un_unix(int(time.time())-j_time))
 	else: msg = L('Not found!','%s/%s'%(jid,nick))
-	send_msg(type, jid, nick, msg)	
+	send_msg(type, jid, nick, msg)
 
 def true_age_stat(type, jid, nick, text):
 	text = text.strip()

@@ -4,7 +4,7 @@
 # --------------------------------------------------------------------------- #
 #                                                                             #
 #    Plugin for iSida Jabber Bot                                              #
-#    Copyright (C) 2012 diSabler <dsy@dsy.name>                               #
+#    Copyright (C) diSabler <dsy@dsy.name>                                    #
 #                                                                             #
 #    This program is free software: you can redistribute it and/or modify     #
 #    it under the terms of the GNU General Public License as published by     #
@@ -193,7 +193,7 @@ def ping_async(type, jid, nick, text, is_answ):
 	else:
 		p_digits = GT('ping_digits')
 		original_ping = float(is_answ[0])
-		if iq_ping_minimal > original_ping: iq_ping_minimal = original_ping		
+		if iq_ping_minimal > original_ping: iq_ping_minimal = original_ping
 		fixed_ping = round(original_ping - iq_ping_minimal,p_digits)
 		if fixed_ping <= 0: fixed_ping = original_ping
 		f = '%'+'.0%sf' % p_digits

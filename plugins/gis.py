@@ -4,7 +4,7 @@
 # --------------------------------------------------------------------------- #
 #                                                                             #
 #    Plugin for iSida Jabber Bot                                              #
-#    Copyright (C) 2012 diSabler <dsy@dsy.name>                               #
+#    Copyright (C) diSabler <dsy@dsy.name>                                    #
 #                                                                             #
 #    This program is free software: you can redistribute it and/or modify     #
 #    it under the terms of the GNU General Public License as published by     #
@@ -70,7 +70,7 @@ def gweather_raw(type, jid, nick, text, fully):
 						except: res = ''
 						if res: ct = urllib2.unquote(res[0]).encode('cp1252').decode('cp1251')
 						else: ct = L('Unknown','%s/%s'%(jid,nick))
-					body = body.split('<FORE')[1:]		
+					body = body.split('<FORE')[1:]
 					msg = L('Weather in %s:\nDate\t t%s\tWind\tClouds','%s/%s'%(jid,nick)) % (ct,u'°')
 					if fully: msg += L('\tPressure, mm. Hg. Art.\tHumidity %','%s/%s'%(jid,nick))
 					for tmp in body:

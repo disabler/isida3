@@ -4,7 +4,7 @@
 # --------------------------------------------------------------------------- #
 #                                                                             #
 #    iSida Jabber Bot                                                         #
-#    Copyright (C) 2012 diSabler <dsy@dsy.name>                               #
+#    Copyright (C) diSabler <dsy@dsy.name>                                    #
 #                                                                             #
 #    This program is free software: you can redistribute it and/or modify     #
 #    it under the terms of the GNU General Public License as published by     #
@@ -1383,7 +1383,7 @@ def get_L_(jid):
 	except: loc = CURRENT_LOCALE
 	if not locales.has_key(loc): loc = CURRENT_LOCALE
 	return loc
-	
+
 def L(*par):
 	if len(par) == 2: text,jid = par
 	else: text,jid = par[0],''

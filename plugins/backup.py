@@ -4,7 +4,7 @@
 # --------------------------------------------------------------------------- #
 #                                                                             #
 #    Plugin for iSida Jabber Bot                                              #
-#    Copyright (C) 2012 diSabler <dsy@dsy.name>                               #
+#    Copyright (C) diSabler <dsy@dsy.name>                                    #
 #                                                                             #
 #    This program is free software: you can redistribute it and/or modify     #
 #    it under the terms of the GNU General Public License as published by     #
@@ -135,10 +135,10 @@ def conf_backup(type, jid, nick, text):
 						for tmp in raw_back['bot_config']: cur_execute('insert into config_conf (room,option,value) values (%s,%s,%s)',(jid,tmp[0],tmp[1]))
 						for tmp in raw_back['alias']:
 							cur_execute('delete from alias where room=%s and match=%s',(jid,tmp[0]))
-							cur_execute('insert into alias (room,match,cmd) values (%s,%s,%s)',(jid,tmp[0],tmp[1]))						
+							cur_execute('insert into alias (room,match,cmd) values (%s,%s,%s)',(jid,tmp[0],tmp[1]))
 						for tmp in raw_back['acl']:
 							isit = cur_execute_fetchall('select action,type,text,command,time from acl where jid=%s and action=%s and type=%s and text=%s and level=%s',(jid,tmp[0],tmp[1],tmp[2],tmp[5]))
-							if not isit: cur_execute('insert into acl values (%s,%s,%s,%s,%s,%s,%s)', tuple([jid]+list(tmp)))						
+							if not isit: cur_execute('insert into acl values (%s,%s,%s,%s,%s,%s,%s)', tuple([jid]+list(tmp)))
 						for tmp in raw_back['rss']:
 							isit = cur_execute_fetchone('select * from feed where room=%s and url=%s',(jid,tmp[0]))
 							if not isit: cur_execute('insert into feeed (url,update,type,time,room,hash) values (%s,%s,%s,%s,%s,%s)',(tmp[0],tmp[1],tmp[2],tmp[3],jid,tmp[4]))
