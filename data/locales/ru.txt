@@ -383,7 +383,7 @@ Find holiday\ndrink [name_holiday/date]	Поиск повода выпить ;)\
 Find holiday\ncalend [name_holiday/date]	Поиск повода выпить ;)\ncalend [повод/дата]
 
 # file: plugins/dumpz.py
-Posting by URL: %s	Запостила по ссылке %s 
+Posting by URL: %s	Запостила по ссылке %s
 Posting text&code on dedicated server for easy sharing.\ndumpz text - posting plain text,\ndumpz [sh|c|html|py|php|css|sql|cpp] - posting text with highlighting	Отправка текста и кода на выделенные сервера для совместного использования.\ndumpz text - отправка простого текста,\ndumpz [sh|c|html|py|php|css|sql|cpp] - отправка текста с подсветкой
 
 # file: plugins/execute.py
