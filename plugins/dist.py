@@ -26,20 +26,20 @@ dist_max_search_limit = 100
 dist_default_search_count = 10
 
 def points2distance(start, end):
-        """
-                Calculate distance (in kilometers) between two points given as (latt, long) pairs
-                based on Haversine formula (http://en.wikipedia.org/wiki/Haversine_formula).
-        """
-        start_latt = math.radians(start[0])
-        start_long = math.radians(start[1])
-        end_latt = math.radians(end[0])
-        end_long = math.radians(end[1])
-        d_long = end_long - start_long
-        a = (math.cos(end_latt) * math.sin(d_long))**2 + (math.cos(start_latt)*math.sin(end_latt)-math.sin(start_latt)*math.cos(end_latt)*math.cos(d_long))**2
-        b = math.sin(start_latt)*math.sin(end_latt) + math.cos(start_latt)*math.cos(end_latt)*math.cos(d_long)
-        dist = math.atan2(math.sqrt(a), b) * 6372.795
-        dist = int(dist + 0.5)
-        return dist
+	"""
+		Calculate distance (in kilometers) between two points given as (latt, long) pairs
+		based on Haversine formula (http://en.wikipedia.org/wiki/Haversine_formula).
+	"""
+	start_latt = math.radians(start[0])
+	start_long = math.radians(start[1])
+	end_latt = math.radians(end[0])
+	end_long = math.radians(end[1])
+	d_long = end_long - start_long
+	a = (math.cos(end_latt) * math.sin(d_long))**2 + (math.cos(start_latt)*math.sin(end_latt)-math.sin(start_latt)*math.cos(end_latt)*math.cos(d_long))**2
+	b = math.sin(start_latt)*math.sin(end_latt) + math.cos(start_latt)*math.cos(end_latt)*math.cos(d_long)
+	dist = math.atan2(math.sqrt(a), b) * 6372.795
+	dist = int(dist + 0.5)
+	return dist
 
 def city_capitalize(s):
 	s = s.capitalize()
