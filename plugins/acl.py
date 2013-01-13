@@ -231,9 +231,12 @@ def acl_selector(a,room,jid,nick,mass,was_joined):
 			break
 
 	r_ver,r_vcard = None,None
+
 	for tmp in a:
 		if (tmp[5] == 9 or lvl == tmp[5]) and tmp[0] == 'ver' and was_joined:
-			try: r_ver = acl_ver_tmp['%s/%s' % (room,nick)]
+			try:
+				r_ver = acl_ver_tmp['%s/%s' % (room,nick)]
+				break
 			except:
 				iqid,who = get_id(), '%s/%s' % (room,nick)
 				i = xmpp.Node('iq', {'id': iqid, 'type': 'get', 'to':who}, payload = [xmpp.Node('query', {'xmlns': xmpp.NS_VERSION},[])])
@@ -241,8 +244,12 @@ def acl_selector(a,room,jid,nick,mass,was_joined):
 				sender(i)
 				pprint('*** ACL version request for [%s] %s/%s' % (tmp[5],room,nick),'purple')
 				break
-		elif (tmp[5] == 9 or lvl == tmp[5]) and tmp[0] == 'vcard' and was_joined:
-			try: r_vcard = acl_vcard_tmp['%s/%s' % (room,nick)]
+
+	for tmp in a:
+		if (tmp[5] == 9 or lvl == tmp[5]) and tmp[0] == 'vcard' and was_joined:
+			try:
+				r_vcard = acl_vcard_tmp['%s/%s' % (room,nick)]
+				break
 			except:
 				iqid,who = get_id(), '%s/%s' % (room,nick)
 				i = xmpp.Node('iq', {'id': iqid, 'type': 'get', 'to':who}, payload = [xmpp.Node('vCard', {'xmlns': xmpp.NS_VCARD},[])])
