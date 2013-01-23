@@ -240,11 +240,17 @@ def utime_async(type, jid, nick, text, mode, is_answ):
 	if isa[0].startswith(L('Error! %s','%s/%s'%(jid,nick))%''): msg = isa[0]
 	else:
 		try:
-			ttup,tt = isa[0].replace('T','-').replace('Z','').replace(':','-').split('-')+['0','0',str(tuple(time.localtime())[8])],[]
-			for tmp in ttup: tt.append(int(tmp.split('.',1)[0]))
-			msg = nice_time(time.mktime(tuple(tt)) + (int(isa[1].split(':')[0])*60+int(isa[1].split(':')[1]))*60)[2]
+			ttup = isa[0].replace('T','-').replace('Z','').replace(':','-').split('-')+['0','0',str(tuple(time.localtime())[8])]
+			lt = time.localtime(time.mktime([int(tmp.split('.',1)[0]) for tmp in ttup])+(int(isa[1].split(':')[0])*60+int(isa[1].split(':')[1]))*60)
+			
+			timeofset = float(isa[1].replace(':','.'))
+			if timeofset < 0: t_gmt = 'GMT%s' % int(timeofset)
+			else: t_gmt = 'GMT+%s' % int(timeofset)
+			if timeofset%1: t_gmt += ':%02d' % int((timeofset%1*60/100) * 100)
+			
+			msg = '%02d:%02d:%02d, %02d.%s\'%s, %s, %s' % (lt[3],lt[4],lt[5],lt[2],wmonth[lt[1]-1],lt[0],wday[lt[6]],t_gmt)
 			if mode: msg = '%s | %s %s' % (msg,isa[0],isa[1])
-		except: msg = '%s %s' % (L('Unknown server answer!','%s/%s'%(jid,nick)),isa[0])
+		except: raise#msg = '%s %s' % (L('Unknown server answer!','%s/%s'%(jid,nick)),isa[0])
 	send_msg(type, jid, nick, msg)
 
 def iq_version(type, jid, nick, text): iq_version_raw(type, jid, nick, text, False)
