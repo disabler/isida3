@@ -250,7 +250,7 @@ def utime_async(type, jid, nick, text, mode, is_answ):
 			
 			msg = '%02d:%02d:%02d, %02d.%s\'%s, %s, %s' % (lt[3],lt[4],lt[5],lt[2],wmonth[lt[1]-1],lt[0],wday[lt[6]],t_gmt)
 			if mode: msg = '%s | %s %s' % (msg,isa[0],isa[1])
-		except: raise#msg = '%s %s' % (L('Unknown server answer!','%s/%s'%(jid,nick)),isa[0])
+		except: msg = '%s %s' % (L('Unknown server answer!','%s/%s'%(jid,nick)),isa[0])
 	send_msg(type, jid, nick, msg)
 
 def iq_version(type, jid, nick, text): iq_version_raw(type, jid, nick, text, False)
