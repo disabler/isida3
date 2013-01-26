@@ -43,6 +43,11 @@ def is_valid(type, jid, nick, text):
 		if hl == 1: msg += L('Latin','%s/%s'%(jid,nick))
 		elif hl == 2: msg += L('Cyrillic','%s/%s'%(jid,nick))
 		else: msg += L('Equally','%s/%s'%(jid,nick))
+		
+		def repl(t): return '[%s]' % t.group()
+		msg += ' - %s' % re.sub([u'([а-яё]+)','([a-z]+)'][hl==1],repl,text,flags=re.S+re.U+re.I)
+
+
 	send_msg(type, jid, nick, msg)
 
 def is_true(type, jid, nick, text):
