@@ -1751,8 +1751,8 @@ if not photo_hash: photo_hash = ''
 
 try:
 	try:
-		Server = tuple(server.split(':'))
-		Port = int(server.split(':')[1])
+		Server = (':'.join(server.split(':')[:-1]),server.split(':')[-1])
+		Port = int(Server[1])
 		pprint('Trying to connect to %s' % server,'yellow')
 	except: Server,Port = None,5222
 	if debug_xmpppy: cl = xmpp.Client(jid.getDomain(),Port,ENABLE_TLS=ENABLE_TLS)
