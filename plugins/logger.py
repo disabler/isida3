@@ -96,7 +96,8 @@ def write_log_with_end(curr_path,curr_file,log_body,log_he):
 	last_log_file[curr_path] = curr_file
 
 def msg_logger(room,jid,nick,type,text,logfile):
-	lt = tuple(time.localtime())
+	if GT('chatlogs_logs_gmt'): lt = tuple(time.gmtime())
+	else: lt = tuple(time.localtime())
 	curr_path = logfile % room
 	if not os.path.exists(curr_path): os.mkdir(curr_path)
 	curr_path = '%s/%s' % (curr_path,lt[0])
@@ -104,7 +105,7 @@ def msg_logger(room,jid,nick,type,text,logfile):
 	curr_path = '%s/%02d' % (curr_path,lt[1])
 	if not os.path.exists(curr_path): os.mkdir(curr_path)
 	curr_file = ['%s/%02d.txt','%s/%02d.html'][GT('html_logs_enable')] % (curr_path,lt[2])
-	ott = onlytimeadd(tuple(time.localtime()))
+	ott = onlytimeadd(lt)
 	log_body = ['[%s] ' % ott,'<p><a id="%s" name="%s" href="#%s" class="time">%s</a> ' % (ott,ott,ott,ott)][GT('html_logs_enable')]
 	if nick == '': log_body += ['*** %s\n','<span class="topic">%s</span></p>'][GT('html_logs_enable')] % text
 	else:
@@ -140,7 +141,8 @@ def presence_logger(room,jid,nick,type,mass,mode,logfile):
 		priority,not_found = mass[6],mass[7]
 		if not_found == 1 and not GT('aff_role_logs_enable'): return
 		if not_found == 2 and not GT('status_logs_enable'): return
-		lt = tuple(time.localtime())
+		if GT('chatlogs_logs_gmt'): lt = tuple(time.gmtime())
+		else: lt = tuple(time.localtime())
 		curr_path = logfile % room
 		if not os.path.exists(curr_path): os.mkdir(curr_path)
 		curr_path = '%s/%s' % (curr_path,lt[0])
@@ -148,7 +150,7 @@ def presence_logger(room,jid,nick,type,mass,mode,logfile):
 		curr_path = '%s/%02d' % (curr_path,lt[1])
 		if not os.path.exists(curr_path): os.mkdir(curr_path)
 		curr_file = ['%s/%02d.txt','%s/%02d.html'][GT('html_logs_enable')] % (curr_path,lt[2])
-		ott = onlytimeadd(tuple(time.localtime()))
+		ott = onlytimeadd(lt)
 		log_body = ['[%s] ' % ott,'<p><a id="%s" name="%s" href="#%s" class="time">%s</a> ' % (ott,ott,ott,ott)][GT('html_logs_enable')]
 		if type == 'unavailable':
 			log_body += ['*** %s','<span class="unavailable">%s'][GT('html_logs_enable')] % nick
@@ -162,12 +164,14 @@ def presence_logger(room,jid,nick,type,mass,mode,logfile):
 			log_body += ['*** %s','<span class="status">%s'][GT('html_logs_enable')] % nick
 			if not_found == 0:
 				if mode and jid != 'None': log_body += ' (%s)' % jid
-				log_body += ' %s %s, ' % (L('join as'),L("%s/%s" % (role,affiliation)))
-			elif not_found == 1: log_body += ' %s %s, ' % (L('now is'),L("%s/%s" % (role,affiliation)))
+				log_body += ' %s %s' % (L('join as'),L("%s/%s" % (role,affiliation)))
+			elif not_found == 1:
+				log_body += ' %s %s' % (L('now is'),L("%s/%s" % (role,affiliation)))
+				if exit_message: log_body += ' (%s)' % exit_message
 			elif not_found == 2: log_body += ' %s ' % L('now is')
 			if not_found == 0 or not_found == 2:
-				if show != 'None': log_body += '%s ' % L("%s_log" % show).replace('_log','')
-				else: log_body += L('online_log').replace('_log','')
+				if show != 'None': log_body += ', %s' % L("%s_log" % show).replace('_log','')
+				else: log_body += ', %s' % L('online_log').replace('_log','')
 				if priority != 'None': log_body += ' [%s]' % priority
 				else:  log_body += ' [0]'
 				if text != 'None':  log_body += ' (%s)' % text

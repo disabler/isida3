@@ -1237,6 +1237,7 @@ def presenceCB(sess,mess):
 						ntf_msg = L('Bot was %s %s with reason: %s') % (ntf_msg,room,exit_message)
 						for tmp in ntf_list: send_msg('chat', tmp, '', ntf_msg)
 	else:
+		if reason: exit_message = reason
 		c_lang = mess.getAttr('xml:lang')
 		if c_lang and nick: users_locale['%s/%s' % (room,nick)] = c_lang[:2].replace('uk','ua')
 		if nick != '':

@@ -1739,6 +1739,7 @@ owner_prefs = {'syslogs_enable': [L('Logger. Enable system logs'),'b',True],
 				'status_logs_enable':[L('Logger. Enable status change logging'),'b',True],
 				'aff_role_logs_enable':[L('Logger. Enable role and affiliation logging'),'b',True],
 				'html_logs_enable':[L('Logger. Html logs. Otherwize in text'),'b',True],
+				'chatlogs_logs_gmt':[L('Logger. Use GMT time in MUC logs'),'b',False],
 				'html_logs_end_text':[L('Logger. Additional text for logs'),'m512',''],
 				'karma_limit':[L('Karma. Minimal karma for allow krama change for participants'),'i',5],
 				'karma_show_default_limit':[L('Karma. Default length of list karma top+/-'),'i',10],
@@ -1846,7 +1847,7 @@ owner_group_juick = [L('Juick settings'),'#owner-juick',
 				['juick_user_post_limit','juick_user_post_size','juick_msg_answers_default','juick_user_tags_limit']]
 
 owner_group_logs = [L('Logs settings'),'#owner-logs',
-				['syslogs_enable','status_logs_enable','aff_role_logs_enable','html_logs_enable','html_logs_end_text']]
+				['syslogs_enable','status_logs_enable','aff_role_logs_enable','html_logs_enable','html_logs_end_text','chatlogs_logs_gmt']]
 
 owner_group_youtube = [L('Youtube settings'),'#owner-youtube',
 				['youtube_max_videos','youtube_default_videos','youtube_max_page_size','youtube_default_lang']]

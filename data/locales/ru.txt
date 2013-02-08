@@ -1269,6 +1269,7 @@ Logger. Enable system logs	Logger. Включение системных лог�
 Logger. Enable status change logging	Logger. Запись в логи смены статусов
 Logger. Enable role and affiliation logging	Logger. Запись в логи смены аффиляций и ролей
 Logger. Html logs. Otherwize in text	Logger. Ведение логов в html, иначе в виде текста
+Logger. Use GMT time in MUC logs	Logger. Использовать GMT время в логах конференций
 Logger. Additional text for logs	Logger. Дополнительный текст в конце html лога
 Karma. Minimal karma for allow krama change for participants	Karma. Минимальная карма при которой изменение кармы доступно не постоянным участникам
 Karma. Default length of list karma top+/-	Karma. Количество участников по умолчанию при показе результатов команды karma top+/-
