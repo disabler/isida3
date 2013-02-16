@@ -1548,6 +1548,7 @@ user_hash = {}
 server_hash = {}
 server_hash_list = {}
 newbie_msg = {}
+mute_msg = {}
 messages_excl = []
 rss_processed = False
 database_debug = False

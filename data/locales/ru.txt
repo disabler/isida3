@@ -1063,6 +1063,14 @@ Paste xhtml images %s	Размещать xhtml изображения: %s
 Detect and paste xhtml images in messages	Определение и размещение xhtml изображений в сообщениях
 Muc filter is %s	Muc-фильтр: %s
 Message filter for participants	Фильтр сообщений для участников
+Mute all private messages %s	Подавление всех приватных сообщений %s
+Mute all private messages	Подавление всех приватных сообщений
+Mute all public messages %s	Подавление всех публичных сообщений %s
+Mute all public messages	Подавление всех публичных сообщений
+Count of messages for action %s	Количество сообщений для действия %s
+Count of messages for action	Количество сообщений для действия
+Action for messages overflow %s	Действие при привышении количества сообщений %s
+Action for messages overflow	Действие при привышении количества сообщений
 Mute newbie %s	Подавлять сообщения от новичков: %s
 Mute all messages from newbie	Подавлять все сообщения от новичков в конференции
 Count of messages for newbie %s	Количество сообщений для новичка %s
@@ -1453,6 +1461,9 @@ Global ban. Available only for confernce owner.\nglobal_ban del - remove confere
 # file: plugins/mucfilter.py
 Warning! Your message are blocked by policy of room!	Внимание! Ваше сообщение блокировано политикой комнаты!
 Warning! This participant don't want to receive private messages!	Внимание! Этот участник не желает получать приватные сообщения!
+Muted messages count overflow!	Превышение количества подавленных сообщений!
+You couldn't send private messages! Don't repeat!	Вам запрещено отправлять приватные сообщения! Не повторяйте!
+You couldn't send public messages! Don't repeat!	Вам запрещено отправлять публичные сообщения! Не повторяйте!
 Messages count overflow from newbie!	Превышение количества сообщений от новичка!
 Your messages are blocked %ssec. after first join! Please, wait quiet!	Ваши сообщения блокируются в течении %s сек. с первого подключения. Пожалуста, ожидайте тихо!
 Blocked by content!	Блокировка по содержимому!

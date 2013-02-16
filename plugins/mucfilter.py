@@ -33,15 +33,42 @@ def muc_filter_set(iq,id,room,acclvl,query,towh,al):
 				nick = rss_replace(unicode(get_nick_by_jid_res(room,jid)))
 				skip_owner = is_owner(jid)
 				gr = getRoom(room)
-				if get_tag_item(msg,'message','type') == 'chat' and not skip_owner:
+				type = get_tag_item(msg,'message','type')
+				if type == 'chat' and not skip_owner:
 					tmp = cur_execute_fetchall('select * from muc_lock where room=%s and jid=%s', (room,tojid))
 					if tmp:
 						mute,mute_type,mute_room,mute_reason = True,'chat', '%s/%s' % (room,to_nick),L('Warning! This participant don\'t want to receive private messages!')
-						pprint('MUC-Filter lock private: %s/%s [%s] > %s: %s' % (room,nick,jid,to_nick,get_tag(msg,'body')),'brown')
+						pprint('MUC-Filter pmlock: %s/%s [%s] > %s: %s' % (room,nick,jid,to_nick,get_tag(msg,'body')),'brown')
 				if skip_owner: pass
 				elif get_config(gr,'muc_filter') and not mute:
 					body = get_tag(msg,'body')
 
+					# Mute all private messages
+					if not mute and msg and type == 'chat' and get_config(gr,'muc_filter_mute_chat'):
+						pprint('MUC-Filter lock private: %s/%s [%s] > %s: %s' % (room,nick,jid,to_nick,get_tag(msg,'body')),'brown')
+						try: cnt = mute_msg['%s|%s' % (gr,jid)]
+						except: cnt = 1
+						act = get_config(gr,'muc_filter_mute_repeat_action')
+						if act != 'off':
+							if cnt >= get_config_int(gr,'muc_filter_mute_repeat'):
+								pprint('MUC-Filter mute repeat action (%s): %s %s [%s]' % (act,gr,jid,cnt),'brown')
+								msg = muc_filter_action(act,jid,room,L('Muted messages count overflow!'))
+							else: mute_msg['%s|%s' % (gr,jid)] = cnt + 1
+						mute,mute_type,mute_room,mute_reason = True,'chat', '%s/%s' % (room,to_nick),L('You couldn\'t send private messages! Don\'t repeat!')
+
+					# Mute all public messages
+					if not mute and msg and type == 'groupchat' and get_config(gr,'muc_filter_mute_groupchat'):
+						pprint('MUC-Filter lock public: %s/%s [%s] > %s' % (room,nick,jid,get_tag(msg,'body')),'brown')
+						try: cnt = mute_msg['%s|%s' % (gr,jid)]
+						except: cnt = 1
+						act = get_config(gr,'muc_filter_mute_repeat_action')
+						if act != 'off':
+							if cnt >= get_config_int(gr,'muc_filter_mute_repeat'):
+								pprint('MUC-Filter mute repeat action (%s): %s %s [%s]' % (act,gr,jid,cnt),'brown')
+								msg = muc_filter_action(act,jid,room,L('Muted messages count overflow!'))
+							else: mute_msg['%s|%s' % (gr,jid)] = cnt + 1
+						mute,mute_reason = True,L('You couldn\'t send public messages! Don\'t repeat!')
+						
 					# Mute newbie
 					if not mute and msg and get_config(gr,'muc_filter_newbie'):
 						in_base = cur_execute_fetchall('select sum(sum) from (select sum(age) from age where jid=%s and room=%s union all select %s-time from age where jid=%s and room=%s and status=0) as sum_age;',(getRoom(jid),gr,int(time.time()),getRoom(jid),gr))

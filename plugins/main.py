@@ -1552,6 +1552,10 @@ config_prefs = {'url_title': [L('Url title is %s'), L('Automatic show title of u
 				# MUC-Filter messages
 
 				'muc_filter': [L('Muc filter is %s'), L('Message filter for participants'), [True,False], False],
+				'muc_filter_mute_chat': [L('Mute all private messages %s'), L('Mute all private messages'), [True,False], False],
+				'muc_filter_mute_groupchat': [L('Mute all public messages %s'), L('Mute all public messages'), [True,False], False],
+				'muc_filter_mute_repeat': [L('Count of messages for action %s'), L('Count of messages for action'), None, '3'],
+				'muc_filter_mute_repeat_action': [L('Action for messages overflow %s'), L('Action for messages overflow'), ['off','kick','ban'], 'off'],
 				'muc_filter_newbie': [L('Mute newbie %s'), L('Mute all messages from newbie'), [True,False], False],
 				'muc_filter_newbie_repeat': [L('Count of messages for newbie %s'), L('Count of messages for newbie for action'), None, '3'],
 				'muc_filter_newbie_repeat_action': [L('Action for messages overflow for newbie %s'), L('Action for messages overflow for newbie'), ['off','kick','ban'], 'off'],
@@ -1670,7 +1674,7 @@ config_group_censor = [L('Censor settings'),'#room-censor',
 				'censor_custom','censor_custom_rules'],None]
 
 config_group_mucfilter = [L('General Muc-filter settings'),'#room-mucfilter',
-				['muc_filter'],None]
+				['muc_filter','muc_filter_mute_chat','muc_filter_mute_groupchat','muc_filter_mute_repeat','muc_filter_mute_repeat_action'],None]
 
 config_group_mucfilter_newbie = [L('Muc-filter settings for newbie'),'#room-mucfilter-newbie',
 				['muc_filter_newbie','muc_filter_newbie_time','muc_filter_newbie_repeat','muc_filter_newbie_repeat_action'],None]
