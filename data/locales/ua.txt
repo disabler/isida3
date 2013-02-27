@@ -771,7 +771,6 @@ Search in www.kinopoisk.ru. Example:\nfilm [id] film_id\nfilm [search] film_name
 # file: plugins/known.py
 I know you as:	Я бачила тебе як:
 I know %s as:	Я бачила %s як:
-Show user's nick changes.	Показ зміни ніків.
 
 # file: plugins/lastfm.py
 Last track %s: %s - %s %s	Остання доріжка %s: %s – %s %s
@@ -1490,14 +1489,6 @@ Ukraine	Україна
 Country: %s, Phone number not found	Країна: %s, Номер телефону не знайдено
 Country: %s\n%s	Країна: %s\n%s
 Information about telephone city code, DEF code or search code for city.	Інформація про код міста, DEF-код, пошук коду за назвою.
-
-# file: plugins/price.py
-Estimated value %s is %s	Оціночна вартість домену %s складає - %s
-What site be evaluated?	Який сайт оцінювати?
-I can't process your request.	Не вийшло опрацювати запит.
-site input format is domain.tld	формат вводу сайту domain.tld
-Show estimated value of domain | Author: ferym	Показує орієнтовну оціночну вартість домену | Автор: ferym
-Show estimated value of domain | Author: Disabler	Показує орієнтовну оціночну вартість домену | Автор: Disabler
 
 # file: plugins/psto.py
 What message do you want to find?	Який пост знайти?
