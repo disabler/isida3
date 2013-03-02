@@ -118,7 +118,11 @@ def translate(type, jid, nick, text):
 												 'tl':lto})
 				try: jsonl = json.loads(search_results)['sentences']
 				except ValueError: jsonl = None
-				if jsonl: msg = rss_replace(''.join(f['trans'] for f in jsonl))
+				try: src = trlang[json.loads(search_results)['src']].capitalize()
+				except: src = None
+				if jsonl:
+					msg = rss_replace(''.join(f['trans'] for f in jsonl))
+					if src and not lfrom: msg = L('%s [Source: %s]','%s/%s'%(jid,nick)) % (msg,src)
 				else: msg = L('I can\'t translate it!','%s/%s'%(jid,nick))
 			else: msg = L('Incorrect language settings for translate. tr list - available languages.','%s/%s'%(jid,nick))
 		else: msg = L('Command\'s format: tr [from] to text','%s/%s'%(jid,nick))

@@ -65,8 +65,8 @@ def bing_translate(type, jid, nick, text):
 																'to':lto}))
 				try: msg = re.findall('responseData\(\"(.*?)\"\)\;$',unicode(translate_results),re.S+re.I+re.U)[0]
 				except: msg = L('I can\'t translate it!','%s/%s'%(jid,nick))
-			else: msg = L('Incorrect language settings for translate. tr list - available languages.','%s/%s'%(jid,nick))
-		else: msg = L('Command\'s format: tr [from] to text','%s/%s'%(jid,nick))
+			else: msg = L('Incorrect language settings for translate. bt list - available languages.','%s/%s'%(jid,nick))
+		else: msg = L('Command\'s format: bt [from] to text','%s/%s'%(jid,nick))
 	send_msg(type, jid, nick, msg)
 
 global execute
