@@ -241,8 +241,11 @@ def get_level(cjid, cnick):
 	for base in megabase:
 		if base[1] == cnick and base[0].lower()==cjid:
 			jid = base[4]
-			if '%s|%s' % (base[2],base[3]) in levl:
-				access_mode = levl['%s|%s' % (base[2],base[3])]
+			j_affl = base[3]
+			if j_affl in ['admin','owner']: j_role = 'moderator'
+			else: j_role = base[2]
+			if '%s|%s' % (j_role,j_affl) in levl:
+				access_mode = levl['%s|%s' % (j_role,j_affl)]
 				break
 	if cur_execute_fetchone('select pattern from bot_ignore where %s ilike pattern',(getRoom(jid.lower()),)): access_mode = -1
 	rjid = getRoom(jid)
