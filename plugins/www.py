@@ -123,8 +123,7 @@ def parse_url_in_message(room,jid,nick,type,text):
 				ll = link.lower()
 				for t in url_watch_ignore:
 					if ll.endswith('.%s' % t): raise
-				last_url_watch = link = enidna(link)
-				pprint('Show url-title: %s in %s' % (link,room),'white')
+				link = enidna(link)
 				original_page = load_page(urllib2.Request(link))[:4192]
 				page = html_encode(original_page)
 				if '<title' in page: tag = 'title'
@@ -137,8 +136,10 @@ def parse_url_in_message(room,jid,nick,type,text):
 					for tmp in text: cnt += int(ord(tmp) in [1056,1057])
 					if cnt >= len(text)/3: text = remove_sub_space(html_encode(get_tag(original_page,tag)).replace('\n',' ').replace('\r',' ').replace('\t',' '))
 				if text:
+					pprint('Show url-title: %s in %s' % (link,room),'white')
 					was_shown = True
 					send_msg(type, room, '', L('Title: %s','%s/%s'%(jid,nick)) % to_censore(rss_del_html(rss_replace(text)),room))
+					last_url_watch = link
 		except: pass
 	if not was_shown and get_config(getRoom(room),'content_length'):
 		try:
