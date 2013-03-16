@@ -122,7 +122,7 @@ def translate(type, jid, nick, text):
 				except: src = None
 				if jsonl:
 					msg = rss_replace(''.join(f['trans'] for f in jsonl))
-					if src and not lfrom: msg = L('%s [Source: %s]','%s/%s'%(jid,nick)) % (msg,src)
+					if src and not lfrom: msg = L('%s [Source: %s]','%s/%s'%(jid,nick)) % (msg,src.strip())
 				else: msg = L('I can\'t translate it!','%s/%s'%(jid,nick))
 			else: msg = L('Incorrect language settings for translate. tr list - available languages.','%s/%s'%(jid,nick))
 		else: msg = L('Command\'s format: tr [from] to text','%s/%s'%(jid,nick))
