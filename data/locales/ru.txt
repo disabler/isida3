@@ -1102,6 +1102,8 @@ Reduce spaces in message %s	Подавлять множественные про
 Reduce duplicates of spaces in message	Подавлять множественные пробелы в сообщениях
 Block joins without history %s	Блокировать входы без истории %s
 Block joins without history	Блокировать входы без истории
+Ban joins without history %s	Банить блокированные входы без истории %s
+Additional ban joins without history	Дополнительно банить блокированные входы без истории
 Adblock muc filter for presence is %s	Блокировка рекламы в презенсах: %s
 Adblock filter for presence	Фильтр блокировки рекламы в презенсах
 Repeat join muc filter is %s	Блокировка множественных входов: %s

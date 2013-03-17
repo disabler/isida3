@@ -244,9 +244,12 @@ def muc_filter_set(iq,id,room,acclvl,query,towh,al):
 				if not mute and newjoin and get_config(gr,'muc_filter_history'):
 					try: v = not sum([int(t) for t in msg_xmpp.getTag('presence').getTag('x',attrs={'xmlns':xmpp.NS_MUC}).getTag('history').getAttrs().values()])
 					except: v = False
-					if v:
+					if v:		
 						pprint('MUC-Filter history: %s/%s %s' % (gr,nick,jid),'brown')
 						msg,mute = unicode(xmpp.Node('presence', {'from': tojid, 'type': 'error', 'to':jid}, payload = ['replace_it',xmpp.Node('error', {'type': 'auth','code':'403'}, payload=[xmpp.Node('forbidden',{'xmlns':'urn:ietf:params:xml:ns:xmpp-stanzas'},[]),xmpp.Node('text',{'xmlns':'urn:ietf:params:xml:ns:xmpp-stanzas'},[L('Deny by history request!')])])])).replace('replace_it',get_tag(msg,'presence')),True
+						if get_config(gr,'muc_filter_history_ban'):
+							pprint('MUC-Filter history ban: %s/%s %s' % (gr,nick,jid),'brown')
+							sender(xmpp.Node('iq',{'id': get_id(), 'type': 'set', 'to':gr},payload = [xmpp.Node('query', {'xmlns': xmpp.NS_MUC_ADMIN},[xmpp.Node('item',{'affiliation':'outcast', 'jid':jid},[xmpp.Node('reason',{},'Banned by empty history at %s' % timeadd(tuple(time.localtime())))])])]))
 
 				# Validate items
 				if not mute and msg and get_config(gr,'muc_filter_validate_action') != 'off':

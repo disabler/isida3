@@ -1576,6 +1576,7 @@ config_prefs = {'url_title': [L('Url title is %s'), L('Automatic show title of u
 				# MUC-Filter presence
 
 				'muc_filter_history': [L('Block joins without history %s'), L('Block joins without history'), [True,False], True],
+				'muc_filter_history_ban': [L('Ban joins without history %s'), L('Additional ban joins without history'), [True,False], True],
 				'muc_filter_adblock_prs': [L('Adblock muc filter for presence is %s'), L('Adblock filter for presence'), ['off','kick','ban','replace','mute'], 'off'],
 				'muc_filter_rejoin': [L('Repeat join muc filter is %s'), L('Repeat join muc filter'), [True,False], False],
 				'muc_filter_whitelist': [L('Whitelist is %s'), L('Whitelist via muc filter'), [True,False], False],
@@ -1692,7 +1693,8 @@ config_group_mucfilter_hash = [L('Muc-filter settings for hash'),'#room-mucfilte
 config_group_mucfilter_content = [L('Muc-filter settings by content'),'#room-mucfilter-content',
 				['muc_filter_newline','muc_filter_newline_count','muc_filter_newline_msg_count','muc_filter_newline_msg',
 				'muc_filter_large','muc_filter_repeat','muc_filter_match','muc_filter_reduce_spaces_msg','muc_filter_reduce_spaces_prs',
-				'muc_filter_rejoin','muc_filter_repeat_prs','muc_filter_large_nick','muc_filter_large_status','muc_filter_history'],None]
+				'muc_filter_rejoin','muc_filter_repeat_prs','muc_filter_large_nick','muc_filter_large_status','muc_filter_history',
+				'muc_filter_history_ban'],None]
 
 config_group_mucfilter_raw = [L('Muc-filter settings for raw-actions'),'#room-mucfilter-raw',
 				['muc_filter_adblock_raw','muc_filter_adblock_prs_raw',
