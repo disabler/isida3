@@ -1258,7 +1258,9 @@ def presenceCB(sess,mess):
 			caps_and_send(xmpp.Presence(room, 'subscribed'))
 			caps_and_send(xmpp.Presence(room, 'subscribe'))
 			pprint('Subscribtion accepted %s' % room,'light_gray')
-		else: pprint('Subscribtion rejected %s' % room,'red')
+		else:
+			caps_and_send(xmpp.Presence(room, 'unsubscribed'))
+			pprint('Subscribtion rejected %s' % room,'red')
 	elif type == 'unsubscribed':
 		if al == 9:
 			caps_and_send(xmpp.Presence(room, 'unsubscribe'))

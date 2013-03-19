@@ -803,14 +803,14 @@ Top tracks	Топ треків
 Music tastes	Музична сумісність
 
 # file: plugins/logger.py
-chat_log	готов розмовляти
-away_log	відійшов
-xa_log	давно відійшов
-dnd_log	не турбувати
+chat_log_join	готов розмовляти
+away_log_join	відійшов
+xa_log_join	давно відійшов
+dnd_log_join	не турбувати
+online_log_join	в мережі
 Users: %s (%s)	Користувачі: %s (%s)
 join as	зайшов як
 now is	тепер
-online_log	в мережі
 Logs for %s enabled.	Логи для %s ввімкнені.
 Logs for %s disabled.	Логи для %s вимкнені.
 Logged conferences:	Я веду логи в:

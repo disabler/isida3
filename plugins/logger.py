@@ -22,7 +22,7 @@
 #                                                                             #
 # --------------------------------------------------------------------------- #
 
-# translate: chat_log,away_log,xa_log,dnd_log
+# translate: chat_log_join,away_log_join,xa_log_join,dnd_log_join,online_log_join,chat_log_change,away_log_change,xa_log_change,dnd_log_change,online_log_change
 
 smile_dictionary = {}
 last_log_file = {}
@@ -165,13 +165,15 @@ def presence_logger(room,jid,nick,type,mass,mode,logfile):
 			if not_found == 0:
 				if mode and jid != 'None': log_body += ' (%s)' % jid
 				log_body += ' %s %s' % (L('join as'),L("%s/%s" % (role,affiliation)))
+				status_type = '%s_log_join'
 			elif not_found == 1:
 				log_body += ' %s %s' % (L('now is'),L("%s/%s" % (role,affiliation)))
 				if exit_message: log_body += ' (%s)' % exit_message
-			elif not_found == 2: log_body += ' %s ' % L('now is')
+			elif not_found == 2: status_type = '%s_log_change'
 			if not_found == 0 or not_found == 2:
-				if show != 'None': log_body += ', %s' % L("%s_log" % show).replace('_log','')
-				else: log_body += ', %s' % L('online_log').replace('_log','')
+				status_mask = ' %s' if not_found else ', %s'
+				if show != 'None': log_body += status_mask % L(status_type % show).replace(status_type % '','')
+				else: log_body += status_mask % L(status_type % "online").replace(status_type % '','')
 				if priority != 'None': log_body += ' [%s]' % priority
 				else:  log_body += ' [0]'
 				if text != 'None':  log_body += ' (%s)' % text

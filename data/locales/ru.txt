@@ -809,14 +809,19 @@ Top tracks	Топ треков
 Music tastes	Музыкальная совместимость
 
 # file: plugins/logger.py
-chat_log	готов поболтать
-away_log	отошел
-xa_log	давно отошел
-dnd_log	не беспокоить
+chat_log_join	готов поболтать
+away_log_join	отошел
+xa_log_join	давно отошел
+dnd_log_join	не беспокоить
+online_log_join	в сети
+chat_log_change	готов поболтать
+away_log_change	отошел
+xa_log_change	давно отошел
+dnd_log_change	не хочет, чтобы его беспокоили
+online_log_change	доступен для разговора
 Users: %s (%s)	Пользователи: %s (%s)
 join as	зашел как
 now is	теперь
-online_log	в сети
 Logs for %s enabled.	Логи для %s включены.
 Logs for %s disabled.	Логи для %s выключены.
 Logged conferences:	Я веду логи в:
