@@ -390,8 +390,12 @@ Posting text&code on dedicated server for easy sharing.\ndumpz text - posting pl
 I can't execute it! Error: %s	Я не могу это исполнить! Ошибка: %s
 I can't calculate it	Я не могу это посчитать
 Expression unacceptable!	Недопустимое выражение!
+Width and height must be integer!	Высота и ширина должны быть целыми числами!
+Incorrect diagonal value!	Неверное значение диагонали!
+Screen	Экран
 Calculator.	Калькулятор.
 Execution of external code.	Выполнение внешнего кода.
+DPI calculator.\ndpi <width height size>	DPI калькулятор.\ndpi <высота ширина размер>
 
 # file: plugins/flibusta.py
 No news	Новинок не найдено
