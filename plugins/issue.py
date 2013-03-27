@@ -36,7 +36,7 @@ issue_number_format = '#%04d'
 def issue(type, room, nick, text):
 	subc = reduce_spaces_all(text).split()
 	acclvl,jid = get_level(room,nick)
-	if not subc or subc[0] == 'show': msg,type = issue_show(subc,room,type,nick)
+	if not subc or subc[0] == 'show' or (acclvl <= 3 and type == 'chat'): msg,type = issue_show(subc,room,type,nick)
 	elif subc[0] in ['del','delete','rm','remove']: msg = issue_remove(subc,acclvl,room,jid,nick)
 	elif subc[0] == 'pending': msg = issue_pending(subc,acclvl,room,jid,nick)
 	elif subc[0] == 'accept': msg = issue_accept(subc,acclvl,room,jid,nick)
