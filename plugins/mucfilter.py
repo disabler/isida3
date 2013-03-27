@@ -472,8 +472,10 @@ def muc_filter_set(iq,id,room,acclvl,query,towh,al):
 						nline_count = int(config_prefs['muc_filter_newline_count'][3])
 						put_config(gr,'muc_filter_newline_count',str(nline_count))
 					if status.count('\n') >= nline_count:
-						pprint('MUC-Filter prs new line (%s): %s [%s] %s' % (act,jid,room,nick+'|'+status.replace('\n','[LF]')),'brown')
-						if act == 'replace': msg = msg.replace(get_tag_full(msg,'status'),'<status>%s</status>' % reduce_spaces_all(status.replace('\n',' ')))
+						pprint('MUC-Filter prs new line (%s): %s [%s] %s' % (act,jid,room,nick+'|'+status.replace('\n','[CR]').replace('\r','[LF]')),'brown')
+						if act == 'replace':
+							status = reduce_spaces_all(status.replace('\n',' ').replace('\r',' '))
+							msg = msg.replace(get_tag_full(msg,'status'),'<status>%s</status>' % status)
 						elif newjoin: msg,mute = unicode(xmpp.Node('presence', {'from': tojid, 'type': 'error', 'to':jid}, payload = ['replace_it',xmpp.Node('error', {'type': 'auth','code':'403'}, payload=[xmpp.Node('forbidden',{'xmlns':'urn:ietf:params:xml:ns:xmpp-stanzas'},[]),xmpp.Node('text',{'xmlns':'urn:ietf:params:xml:ns:xmpp-stanzas'},[L('Blocked by content!')])])])).replace('replace_it',get_tag(msg,'presence')),True
 						elif act == 'mute': msg,mute = None,True
 						else: msg = muc_filter_action(act,jid,room,L('Blocked by content!'))
