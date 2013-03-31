@@ -36,7 +36,7 @@ issue_number_format = '#%04d'
 def issue(type, room, nick, text):
 	subc = reduce_spaces_all(text).split()
 	acclvl,jid = get_level(room,nick)
-	if not subc or subc[0] == 'show': msg,type = issue_show(subc,room,type,nick)
+	if not subc or subc[0] == 'show' or (acclvl <= 3 and type == 'chat'): msg,type = issue_show(subc,room,type,nick)
 	elif subc[0] in ['del','delete','rm','remove']: msg = issue_remove(subc,acclvl,room,jid,nick)
 	elif subc[0] == 'pending': msg = issue_pending(subc,acclvl,room,jid,nick)
 	elif subc[0] == 'accept': msg = issue_accept(subc,acclvl,room,jid,nick)
@@ -60,9 +60,9 @@ def issue_new(s,acclvl,room,jid,nick,text):
 	except: id = 1
 	tbody = cur_execute_fetchall('select id from issues where room=%s and body ilike %s',(room,'%%%s%%' % body))
 	if tbody: return L('I know same issue(s): %s','%s/%s'%(room,nick)) % ', '.join(issue_number_format % t for t in zip(*tbody)[0])
-	err = cur_execute('insert into issues values (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)', (id, room, getRoom(jid), nick, acclvl, tags, body, issue_new_id, int(time.time()),'','',0))
-	if err: return err
-	else: return L('Added issue %s','%s/%s'%(room,nick)) % issue_number_format % id
+	stts = cur_execute('insert into issues values (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)', (id, room, getRoom(jid), nick, acclvl, tags, body, issue_new_id, int(time.time()),'','',0))
+	if stts == True: return L('Added issue %s','%s/%s'%(room,nick)) % issue_number_format % id
+	else: return str(stts)
 
 def issue_show(s,room,type,nick):
 	if len(s) > 1: s = s[1]
