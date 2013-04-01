@@ -465,7 +465,7 @@ def get_joke(text):
 	def joke_upyachka(text):
 		upch = [u'пыщь!!!111адын',u'ололололо!!11',u'ГОЛАКТЕКО ОПАСНОСТЕ!!11',u'ТЕЛОИД!!',u'ЖАЖА1!',u'ОНОТОЛЕЙ!!!!!',u'ПОТС ЗОХВАЧЕН11!!!',
 				u'ПыЩЩЩЩЩЩЩЩЩь!!!!!!!1111',u'ПыЩЩЩЩЩЩЩЩЩь11111адинадин1адин']
-		return '%s %s' % (text,random.choice(upch))
+		return '%s %s' % (text.strip(),random.choice(upch))
 
 	def no_joke(text): return text
 
