@@ -1382,7 +1382,7 @@ def disconnecter():
 	time.sleep(2)
 
 def get_L_(jid):
-	try: loc = users_locale[jid] if jid else CURRENT_LOCALE
+	try: loc = users_locale[jid] if jid and not get_config(getRoom(room),'use_default_locale') else CURRENT_LOCALE
 	except: loc = CURRENT_LOCALE
 	if not locales.has_key(loc): loc = CURRENT_LOCALE
 	return loc
@@ -1394,7 +1394,7 @@ def L(*par):
 	loc = get_L_(jid)
 	try: return locales[loc][text]
 	except: return text
-
+	
 def get_id():
 	global id_count
 	id_count += 1

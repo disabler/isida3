@@ -958,6 +958,7 @@ Command prefix: %s	Префикс команд: %s
 Uptime: %s, Last session: %s	Время работы: %s, Последняя сессия: %s
 Total Error(s): %s\n	Ошибки: %s\n
 No Errors	Нет ошибок
+In current MUC used default locale for all users.	В текущей конференции используется локализация по умолчанию для всех участников.
 For %s i'll use locale: %s	Для %s я использую локализацию: %s
 For %s detected unknown locale: %s. Used default locale: %s	У %s определена неизвестная локализация: %s. Используется локализация по умолчанию: %s
 Locale for %s not found! Used default locale: %s	Локализация %s не определена. Используется локализация по умолчанию: %s
@@ -1073,6 +1074,8 @@ ACL multiaction is %s	Мультидействия в ACL %s
 Execute more than one action per pass in ACL.	Исполнять более одного действия за один проход в ACL.
 Paste xhtml images %s	Размещать xhtml изображения: %s
 Detect and paste xhtml images in messages	Определение и размещение xhtml изображений в сообщениях
+Use default locale %s	Использовать локализацию по умолчанию: %s
+Ignore locale settings and use default bot locale	Игнорировать локализации и использовать локализацию бота по умолчанию
 Muc filter is %s	Muc-фильтр: %s
 Message filter for participants	Фильтр сообщений для участников
 Mute all private messages %s	Подавление всех приватных сообщений %s

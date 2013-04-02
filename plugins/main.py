@@ -631,12 +631,14 @@ def get_nick_by_jid_res(room, jid):
 	return None
 
 def info_lang(type, jid, nick, text):
-	if not text: text = nick
-	if users_locale.has_key('%s/%s'%(jid,text)):
-		cur_lang = users_locale['%s/%s'%(jid,text)]
-		if locales.has_key(cur_lang): msg = L('For %s i\'ll use locale: %s','%s/%s'%(jid,nick)) % (text,cur_lang.upper())
-		else: msg = L('For %s detected unknown locale: %s. Used default locale: %s','%s/%s'%(jid,nick)) % (text,cur_lang.upper(),CURRENT_LOCALE.upper())
-	else: msg = L('Locale for %s not found! Used default locale: %s','%s/%s'%(jid,nick)) % (text,CURRENT_LOCALE.upper())
+	if get_config(getRoom(jid),'use_default_locale'): msg = L('In current MUC used default locale for all users.','%s/%s'%(jid,nick))
+	else:
+		if not text: text = nick
+		if users_locale.has_key('%s/%s'%(jid,text)):
+			cur_lang = users_locale['%s/%s'%(jid,text)]
+			if locales.has_key(cur_lang): msg = L('For %s i\'ll use locale: %s','%s/%s'%(jid,nick)) % (text,cur_lang.upper())
+			else: msg = L('For %s detected unknown locale: %s. Used default locale: %s','%s/%s'%(jid,nick)) % (text,cur_lang.upper(),CURRENT_LOCALE.upper())
+		else: msg = L('Locale for %s not found! Used default locale: %s','%s/%s'%(jid,nick)) % (text,CURRENT_LOCALE.upper())
 	send_msg(type, jid, nick, msg)
 
 def info_whois(type, jid, nick, text):
@@ -1551,6 +1553,7 @@ config_prefs = {'url_title': [L('Url title is %s'), L('Automatic show title of u
 				'make_stanza_jid_count':[L('Jid\'s per stanza for affiliations in backup is %s'),L('Count of jid\'s per stanza for affiliations change in backup'),None,'100'],
 				'acl_multiaction': [L('ACL multiaction is %s'), L('Execute more than one action per pass in ACL.'), [True,False], False],
 				'paste_xhtml_images': [L('Paste xhtml images %s'), L('Detect and paste xhtml images in messages'), [True,False], True],
+				'use_default_locale': [L('Use default locale %s'), L('Ignore locale settings and use default bot locale'), [True,False], False],
 
 				# MUC-Filter messages
 
@@ -1671,7 +1674,7 @@ config_prefs = {'url_title': [L('Url title is %s'), L('Automatic show title of u
 
 config_group_other = [L('Other settings'),'#room-other',
 				['url_title','parse_define','clear_answer','smiles','autoturn','make_stanza_jid_count','content_length','acl_multiaction',
-				'paste_xhtml_images'],None]
+				'paste_xhtml_images','use_default_locale'],None]
 
 config_group_censor = [L('Censor settings'),'#room-censor',
 				['censor','censor_warning','censor_action_member','censor_action_non_member',
