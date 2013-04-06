@@ -24,6 +24,7 @@
 
 ANSW_PREV = {}
 FLOOD_STATS = {}
+LAST_PHRASE = {}
 
 autophrases_time = {}
 list_of_answers, list_of_empty, list_of_phrases_with_highlight, list_of_phrases_no_highlight, dict_of_mind = {}, {}, {}, {}, {}
@@ -141,6 +142,17 @@ def flood_action(room,jid,nick,type,text):
 				else: return False
 			except: return False
 			return True
+	if get_config(room,'floodrepeat') != 'off' and get_level(room,nick)[0] > 0:
+		if LAST_PHRASE.has_key(room) and LAST_PHRASE[room][0] != jid and LAST_PHRASE[room][2] == text:
+			if LAST_PHRASE[room][1] >= get_config_int(room,'floodrepeat') - 1:
+				try: LAST_PHRASE.pop(room)
+				except: pass
+				pprint('Send msg human repeat: %s/%s [%s] <<< %s' % (room,nick,type,text),'dark_gray')
+				try: send_msg_human(type, room, '', text, 'msg_human_repeat')
+				except: return False
+				return True
+			else: LAST_PHRASE[room] = [jid,LAST_PHRASE[room][1] + 1,text]
+		else: LAST_PHRASE[room] = [jid,1,text]
 	return False
 
 def phrases_timer():

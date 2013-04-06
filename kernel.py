@@ -1022,7 +1022,9 @@ def msg_afterwork(mess,room,jid,nick,type,back_text,no_comm,access_mode,nowname)
 				except: pass
 
 def send_msg_human(type, room, nick, text, th):
-	pprint('Send msg human: %s/%s [%s] >>> %s' % (room,nick,type,text),'dark_gray')
+	if nick: rn = '%s/%s' % (room,nick)
+	else: rn = room
+	pprint('Send msg human: %s [%s] >>> %s' % (rn,type,text),'dark_gray')
 	thr(send_msg_hmn,(type, room, nick, text),th)
 
 def send_msg_hmn(type, room, nick, text):

@@ -1276,6 +1276,8 @@ Autophrases is %s	Автофразы: %s
 Autophrases	Автофразы
 Time period for autophrases is %s	Период для автофраз: %s
 Time period for autophrases	Период для автофраз
+Repeat phrase after match %s	Повторять фразу после совпадений %s
+Repeat phrase after match same messages	Повторять фразу после нескольких одинаковых сообщений
 Other settings	Прочие настройки
 Censor settings	Настройки цензора
 General Muc-filter settings	Основные настройки для Muc-фильтра
