@@ -28,7 +28,9 @@ def info_search(type, jid, nick, text):
 	if text:
 		if '\n' in text:
 			text,lim = text.split('\n',1)
-			try: lim = int(lim)
+			try:
+				lim = int(lim)
+				if lim < 100 or lim > 1: raise
 			except: lim = JIDCATCHER_DEFAULT_LIMIT
 		else: lim = JIDCATCHER_DEFAULT_LIMIT
 		cur_execute('delete from jid where server ilike %s',('<temporary>%',))
@@ -56,18 +58,28 @@ def info_res(type, jid, nick, text):
 
 def info_serv(type, jid, nick, text):
 	cur_execute('delete from jid where server ilike %s',('<temporary>%',))
+
+	if '\n' in text:
+		text,lim = text.split('\n',1)
+		try:
+			lim = int(lim)
+			if lim > 100 or lim < 1: raise
+		except: lim = JIDCATCHER_DEFAULT_LIMIT
+	else: lim = JIDCATCHER_DEFAULT_LIMIT
+	
 	if text == 'count':
-		tlen = cur_execute_fetchall('select count(*) from (select server,count(*) from jid group by server) tmp;')[0][0]
+		tlen = cur_execute_fetchone('select count(*) from (select server,count(*) from jid group by server) tmp;')[0]
 		text,jidbase = '',''
 	else:
 		text1 = '%%%s%%' % text
-		tlen = cur_execute_fetchall('select count(*) from (select server,count(*) from jid where server ilike %s group by server) tmp;',(text1,))[0][0]
-		jidbase = cur_execute_fetchall('select server,count(*) from jid where server ilike %s group by server order by -count(*),server',(text1,))
+		jidbase = cur_execute_fetchall('select * from (select row_number() over(order by -count(*)),server,count(*) from jid group by server order by -count(*),server) tmp where tmp.server ilike %s order by tmp.row_number;',(text1,))
+		tlen = len(jidbase)
+		jidbase = jidbase[:lim]
 	if not tlen: msg = L('\'%s\' not found!','%s/%s'%(jid,nick)) % text
 	else:
 		if text: msg = L('Found servers: %s','%s/%s'%(jid,nick)) % tlen
 		else: msg = L('Total servers: %s','%s/%s'%(jid,nick)) % tlen
-		if jidbase: msg = '%s\n%s' %(msg,' | '.join(['%s:%s' % jj for jj in jidbase]))
+		if jidbase: msg = '%s\n%s' %(msg,'\n'.join(['%s. %s [%s]' % jj for jj in jidbase]))
 	send_msg(type, jid, nick, msg)
 
 #room number date
