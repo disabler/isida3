@@ -143,6 +143,7 @@ def flood_action(room,jid,nick,type,text):
 			except: return False
 			return True
 	if get_config(room,'floodrepeat') != 'off' and get_level(room,nick)[0] > 0:
+		text = text.strip()
 		if LAST_PHRASE.has_key(room) and LAST_PHRASE[room][0] != jid and LAST_PHRASE[room][2] == text:
 			if LAST_PHRASE[room][1] >= get_config_int(room,'floodrepeat') - 1:
 				try: LAST_PHRASE.pop(room)
