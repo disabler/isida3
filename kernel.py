@@ -1043,8 +1043,11 @@ def to_censore(text,room):
 				if cc[-1] == cc[-2] == '': cc = ['#'.join(cc[:-2]),'#']
 				else: cc = ['#'.join(cc[:-1]),cc[-1]]
 			if cc[0]:
-				ccn.append(cc[0])
-				if len(cc) > 1: custom_replace[cc[0]] = reduce_spaces_all(cc[1])
+				try:
+					_ = re.compile(cc[0])
+					ccn.append(cc[0])
+					if len(cc) > 1: custom_replace[cc[0]] = reduce_spaces_all(cc[1])
+				except: pass
 	wca = None
 	def_replacer = GT('censor_text')
 	for c in censor+ccn:
