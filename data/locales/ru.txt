@@ -1663,6 +1663,7 @@ Calculate count of days for requested date.\nSupported date formats: dd.mm.yyyy,
 Train schedules by Yandex. Example: train city1 - city2	Расписание поездов от Яндекса. Пример: train город1 - город2
 
 # file: plugins/translate.py
+%s%s[Source: %s]	%s%s[Источник: %s]
 Incorrect language settings for translate. translate list - available languages.	Неправильно указан язык или нет текста для перевода. translate list - доступные языки
 Command's format: translate [from] to text	Формат команды: translate [с_какого] на_какой текст
 Translator from translate.ru\ntranslate [from_language] to_language text - translate text\ntranslate list - list for available languages for translate\ntranslate info <reduction> - get info about language reduction\ntranslate lang <expression> - get languages by expression	Переводчик от translate.ru\ntranslate [с_какого_языка] на_какой_язык текст - перевод текста\ntranslate list - список языков для перевода\ntranslate info <сокращение> - расшифровка сокращения языка\ntranslate lang <выражение> - найти языки за выражением

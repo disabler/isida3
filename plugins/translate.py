@@ -76,8 +76,9 @@ def translate_ru(type, jid, nick, text):
 					msg = msg.replace('||','').replace(')\n(',') (').replace('\n, ',', ').replace(' ,',',').replace(',\n',', ')
 				else: msg = result
 				if not lfrom:
-					if '\n' in msg: msg = '%s\n' % msg
-					msg = L('%s [Source: %s]','%s/%s'%(jid,nick)) % (msg,trlang[trlang2[tr_direct[0]]][1])
+					if '\n' in msg: symb = '\n'
+					else: symb = ' '
+					msg = L('%s%s[Source: %s]','%s/%s'%(jid,nick)) % (msg,symb,trlang[trlang2[tr_direct[0]]][1].strip())
 			else: msg = L('Incorrect language settings for translate. translate list - available languages.','%s/%s'%(jid,nick))
 		else: msg = L('Command\'s format: translate [from] to text','%s/%s'%(jid,nick))
 	send_msg(type, jid, nick, msg)
