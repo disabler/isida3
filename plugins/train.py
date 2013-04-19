@@ -28,7 +28,6 @@ def train(type, jid, nick, text):
 		data = html_encode(load_page(url))
 		data = data.split('<div class="b-timetable__tripname">',3)[1]
 		res = re.findall(u'<a class="b-link" href="/thread/.+?><strong>(.+?)</strong> <span class="g-nowrap">(.+?)</span>.+?<span class="g-nowrap"></span>.*?<span class="g-nowrap">(.+?)</span></a>.+?<strong>(.+?)</strong>.+?<strong>(.+?)</strong>.+?<div class="b-timetable__pathtime">(.+?)</div>', data, re.I+re.S+re.U)
-		print res
 		if res.count(res[0]) > 1: res = res[:res.index(res[0], 1)]
 		msg = '\n'.join(['%s\t%s-%s\t\t%s-%s\t(%s)' % _ for _ in res])
 		if not msg.strip() or 'b-pseudo-link js-transfers-trigger' in data: msg = L('What?','%s/%s'%(jid,nick))
