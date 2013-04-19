@@ -27,9 +27,10 @@ def train(type, jid, nick, text):
 		url = 'http://rasp.yandex.ru/search/train/?fromName=%s&toName=%s' % (from_to[0], from_to[1])
 		data = html_encode(load_page(url))
 		data = data.split('<div class="b-timetable__tripname">',3)[1]
-		res = re.findall('<a class="b-link" href="/thread/.+?><strong>(.+?)</strong> <span class="g-nowrap">(.+?)</span>.+?<span class="g-nowrap">(.+?)</span></a>.+?<strong>(.+?)</strong>.+?<strong>(.+?)</strong>.+?<div class="b-timetable__pathtime">(.+?)</div>', data, re.I+re.S+re.U)
+		res = re.findall(u'<a class="b-link" href="/thread/.+?><strong>(.+?)</strong> <span class="g-nowrap">(.+?)</span>.+?<span class="g-nowrap"></span>.*?<span class="g-nowrap">(.+?)</span></a>.+?<strong>(.+?)</strong>.+?<strong>(.+?)</strong>.+?<div class="b-timetable__pathtime">(.+?)</div>', data, re.I+re.S+re.U)
+		print res
 		if res.count(res[0]) > 1: res = res[:res.index(res[0], 1)]
-		msg = '\n'.join([u'%s\t%s-%s\t\t%s-%s\t(%s в пути)' % _ for _ in res])
+		msg = '\n'.join(['%s\t%s-%s\t\t%s-%s\t(%s)' % _ for _ in res])
 		if not msg.strip() or 'b-pseudo-link js-transfers-trigger' in data: msg = L('What?','%s/%s'%(jid,nick))
 	except: msg = L('Command execution error.','%s/%s'%(jid,nick))
 	send_msg(type,jid,nick,msg)
