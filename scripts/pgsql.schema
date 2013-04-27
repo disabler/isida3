@@ -456,5 +456,21 @@ CREATE TABLE first_join (
 CREATE INDEX join_rj ON first_join (room,jid);
 
 -- --------------------------------------------------------------------------- --
+-- URL Storage
+--
+CREATE TABLE url (
+	room text,
+	jid text,
+	nick text,
+	time integer,
+	url text
+	title text);
+
+CREATE INDEX url_r ON url (room);
+CREATE INDEX url_rj ON url (room,jid);
+CREATE INDEX url_rjn ON url (room,jid,nick);
+CREATE INDEX url_rt ON url (room,time);
+
+-- --------------------------------------------------------------------------- --
 -- THE END
 -- --------------------------------------------------------------------------- --

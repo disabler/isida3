@@ -111,30 +111,62 @@ def netwww(type, jid, nick, text):
 	else: msg = L('What?','%s/%s'%(jid,nick))
 	send_msg(type, jid, nick, msg[:msg_limit])
 
+def get_content_title(link):
+	try:
+		ll = link.lower()
+		for t in url_watch_ignore:
+			if ll.endswith('.%s' % t): raise
+		link = enidna(link)
+		original_page = load_page(urllib2.Request(link))[:4192]
+		page = html_encode(original_page)
+		if '<title' in page: tag = 'title'
+		elif '<TITLE' in page: tag = 'TITLE'
+		else: raise
+		text = remove_sub_space(get_tag(page,tag).replace('\n',' ').replace('\r',' ').replace('\t',' '))
+		while '  ' in text: text = text.replace('  ',' ')
+		if text:
+			cnt = 0
+			for tmp in text: cnt += int(ord(tmp) in [1056,1057])
+			if cnt >= len(text)/3: text = remove_sub_space(html_encode(get_tag(original_page,tag)).replace('\n',' ').replace('\r',' ').replace('\t',' '))	
+	except: text = ''
+	return text
+
 def parse_url_in_message(room,jid,nick,type,text):
 	global last_url_watch
 	if type != 'groupchat' or text == 'None' or nick == '' or getRoom(jid) == getRoom(selfjid): return
 	if get_level(room,nick)[0] < 4: return
+	if get_config(getRoom(room),'store_users_url'):
+			rjid = getRoom(jid)
+			for t in text.split():
+				link = re.findall(r'(http[s]?://.*)',t)
+				if link:
+					link = link[0].split(' ')[0]
+					if not cur_execute_fetchone('select * from url where room=%s and jid=%s and url=%s',(room,rjid,link)):
+						text = get_content_title(link)
+						if text: text = to_censore(rss_del_html(rss_replace(text)),room)
+						else:						
+							is_file,text = False,''
+							ll = link.lower()
+							for t in url_watch_ignore:
+								if ll.endswith('.%s' % t):
+									is_file = True
+									break
+							if is_file:
+								body, result = get_opener(enidna(link))
+								if result:
+									body = unicode(body.headers)
+									try: mt = float(re.findall('Content-Length.*?([0-9]+)', body, re.S+re.U+re.I)[0])
+									except: mt = None
+									if mt: text = L('Content length %s','%s/%s'%(jid,nick)) % get_size_human(mt)
+									else: text = ''
+						pprint('Store url: %s in %s/%s' % (link,room,nick),'white')
+						cur_execute('insert into url values (%s,%s,%s,%s,%s,%s);',(room,rjid,nick,int(time.time()),link,text))
 	was_shown = False
 	if get_config(getRoom(room),'url_title'):
 		try:
 			link = re.findall(r'(http[s]?://.*)',text)[0].split(' ')[0]
 			if link and last_url_watch != link and pasteurl not in link:
-				ll = link.lower()
-				for t in url_watch_ignore:
-					if ll.endswith('.%s' % t): raise
-				link = enidna(link)
-				original_page = load_page(urllib2.Request(link))[:4192]
-				page = html_encode(original_page)
-				if '<title' in page: tag = 'title'
-				elif '<TITLE' in page: tag = 'TITLE'
-				else: raise
-				text = remove_sub_space(get_tag(page,tag).replace('\n',' ').replace('\r',' ').replace('\t',' '))
-				while '  ' in text: text = text.replace('  ',' ')
-				if text:
-					cnt = 0
-					for tmp in text: cnt += int(ord(tmp) in [1056,1057])
-					if cnt >= len(text)/3: text = remove_sub_space(html_encode(get_tag(original_page,tag)).replace('\n',' ').replace('\r',' ').replace('\t',' '))
+				text = get_content_title(link)
 				if text:
 					pprint('Show url-title: %s in %s' % (link,room),'white')
 					was_shown = True

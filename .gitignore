@@ -4,6 +4,7 @@ settings/_*
 tmp/isida.pid
 tmp/starttime
 tmp/ver*
+tmp/answers.txt
 lib/DNS/*.pyc
 lib/chardet/*.pyc
 lib/xmpp/*.pyc
@@ -11,6 +12,11 @@ data/poke.txt
 data/ignored.txt
 data/paste/*.txt
 data/paste/*.html
+data/paste/*.jpg
+data/paste/*.JPG
+data/paste/*.gif
+data/paste/*.png
+data/paste/*.
 data/backup/*.acl
 data/backup/*.back
 data/backup/*@*

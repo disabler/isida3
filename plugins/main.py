@@ -1554,6 +1554,7 @@ config_prefs = {'url_title': [L('Url title is %s'), L('Automatic show title of u
 				'acl_multiaction': [L('ACL multiaction is %s'), L('Execute more than one action per pass in ACL.'), [True,False], False],
 				'paste_xhtml_images': [L('Paste xhtml images %s'), L('Detect and paste xhtml images in messages'), [True,False], True],
 				'use_default_locale': [L('Use default locale %s'), L('Ignore locale settings and use default bot locale'), [True,False], False],
+				'store_users_url': [L('Store Users URL %s'), L('Store Users URL'), [True,False], True],
 
 				# MUC-Filter messages
 
@@ -1675,7 +1676,7 @@ config_prefs = {'url_title': [L('Url title is %s'), L('Automatic show title of u
 
 config_group_other = [L('Other settings'),'#room-other',
 				['url_title','parse_define','clear_answer','smiles','autoturn','make_stanza_jid_count','content_length','acl_multiaction',
-				'paste_xhtml_images','use_default_locale'],None]
+				'paste_xhtml_images','use_default_locale','store_users_url'],None]
 
 config_group_censor = [L('Censor settings'),'#room-censor',
 				['censor','censor_warning','censor_action_member','censor_action_non_member',
