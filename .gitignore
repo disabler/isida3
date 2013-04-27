@@ -27,3 +27,4 @@ data/log/*.txt
 data/log/*.log
 data/custom_censor.txt
 plugins/_*.py
+data/url/config.py

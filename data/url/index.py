@@ -3,7 +3,7 @@
 
 # --------------------------------------------------------------------------- #
 #                                                                             #
-#    Bug Tracker                                                              #
+#    List of URL                                                              #
 #    Copyright (C) diSabler <dsy@dsy.name>                                    #
 #                                                                             #
 #    This program is free software: you can redistribute it and/or modify     #
@@ -21,7 +21,7 @@
 #                                                                             #
 # --------------------------------------------------------------------------- #
 
-import psycopg2,sys,time,os,cgi,urllib2
+import psycopg2,time,cgi,urllib2
 
 def cur_execute_fetchall(*params):
 	cur = conn.cursor()
@@ -41,50 +41,6 @@ def cur_execute_fetchall(*params):
 		conn.rollback()
 	cur.close()
 	return par
-
-def disp_time(t):
-	lt=tuple(time.localtime(t))
-	return '%02d:%02d:%02d, %02d.%s\'%02d, %s' % (lt[3],lt[4],lt[5],lt[2],wmonth[lt[1]-1],lt[0],wday[lt[6]])
-
-def L(text):
-	if not len(text): return text
-	try: return locales[text]
-	except: return text
-
-def readfile(filename):
-	fp = file(filename)
-	data = fp.read()
-	fp.close()
-	return data
-
-def writefile(filename, data):
-	fp = file(filename, 'w')
-	fp.write(data)
-	fp.close()
-
-def getFile(filename,default):
-	if os.path.isfile(filename):
-		try: filebody = eval(readfile(filename))
-		except:
-			if os.path.isfile(filename+'.back'):
-				while True:
-					try:
-						filebody = eval(readfile(filename+'.back'))
-						break
-					except: pass
-			else:
-				filebody = default
-				writefile(filename,str(default))
-	else:
-		filebody = default
-		writefile(filename,str(default))
-	writefile(filename+'.back',str(filebody))
-	return filebody
-
-def issue_for_web(i):
-	m = [['&','&amp;'],['<','&lt;'],['>','&gt;'],['\'','&apos;'],['"','&quot;'],['\n- ','\n <li>'],['\n - ','\n <li>'],['\n','<br>']]
-	for t in m: i = i.replace(t[0],t[1])
-	return i
 	
 html_head = '''
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -102,10 +58,9 @@ html_end = '''
 %s</body></html>
 '''
 
-configname = '/usr/bots/isida/settings/config.py'
-execfile(configname)
 max_link_size = 64
 url_count_limit = 100
+execfile('config.py')
 
 conn = psycopg2.connect(database=base_name, user=base_user, host=base_host, password=base_pass, port=base_port)
 
@@ -196,3 +151,5 @@ else:
 </table>
 	'''
 print html_end % cur_execute_fetchall('select value from config_owner where option=%s;',('html_logs_end_text',))[0][0]
+
+# The end is near!
