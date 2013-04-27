@@ -1076,6 +1076,8 @@ Paste xhtml images %s	Размещать xhtml изображения: %s
 Detect and paste xhtml images in messages	Определение и размещение xhtml изображений в сообщениях
 Use default locale %s	Использовать локализацию по умолчанию: %s
 Ignore locale settings and use default bot locale	Игнорировать локализации и использовать локализацию бота по умолчанию
+Store Users URL %s	Сохранять ссылки пользователей %s
+Store Users URL	Сохранять ссылки пользователей
 Muc filter is %s	Muc-фильтр: %s
 Message filter for participants	Фильтр сообщений для участников
 Mute all private messages %s	Подавление всех приватных сообщений %s
