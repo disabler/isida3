@@ -1629,6 +1629,9 @@ config_prefs = {'url_title': [L('Url title is %s'), L('Automatic show title of u
 				'muc_filter_validate_count': [L('Count of invalid items %s'), L('Count of invalid items for action'), None, '4'],
 				'muc_filter_validate_ban_server_exception': [L('Exception for ban servers %s'), L('Exception for ban servers'), None, ''],
 				'muc_filter_validate_ban_server_notify_jid': [L('Jid\'s for servers ban notify %s'), L('Jid\'s for servers ban notify'), None, ''],
+				'muc_filter_fast_join': [L('Lock fast joins %s'), L('Lock fast joins'), [True,False], True],
+				'muc_filter_fast_join_count': [L('Count of fast joins %s'), L('Count of fast joins'), None, '3'],
+				'muc_filter_fast_join_time': [L('Time for count of fast joins %s'), L('Time for count of fast joins'), None, '5'],
 
 				# Bomb
 
@@ -1721,6 +1724,9 @@ config_group_mucfilter_validate = [L('Muc-filter settings for validate items'),'
 				'muc_filter_validate_caps_node','muc_filter_validate_caps_version','muc_filter_validate_count',
 				'muc_filter_validate_action','muc_filter_validate_ban_server_exception','muc_filter_validate_ban_server_notify_jid'],None]
 
+config_group_mucfilter_fast_action = [L('Muc-filter settings for fast action'),'#room-mucfilter-fast-action',
+				['muc_filter_fast_join','muc_filter_fast_join_count','muc_filter_fast_join_time'],None]
+
 config_group_bomb = [L('Settings for bomb-joke'),'#room-bombjoke',
 				['bomb','bomb_fault','bomb_fault_persent','bomb_random','bomb_random_timer',
 				'bomb_timer','bomb_wire','bomb_action','bomb_action_level','bomb_reason','bomb_random_active',
@@ -1737,7 +1743,8 @@ config_group_flood = [L('Flood settings'),'#room-flood',
 
 config_groups = [config_group_mucfilter,config_group_mucfilter_newbie,config_group_mucfilter_hash,config_group_mucfilter_content,
 				config_group_mucfilter_raw,config_group_mucfilter_censor,config_group_mucfilter_lists,config_group_mucfilter_caps,
-				config_group_mucfilter_validate,config_group_other,config_group_bomb,config_group_karma,config_group_censor,config_group_flood]
+				config_group_mucfilter_validate,config_group_mucfilter_fast_action,config_group_other,config_group_bomb,
+				config_group_karma,config_group_censor,config_group_flood]
 
 # type:
 # b - binary (true\false)

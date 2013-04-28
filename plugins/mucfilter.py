@@ -21,6 +21,8 @@
 #                                                                             #
 # --------------------------------------------------------------------------- #
 
+muc_filter_fast_join = {}
+
 def muc_filter_set(iq,id,room,acclvl,query,towh,al):
 	msg_xmpp = iq.getTag('query', namespace=xmpp.NS_MUC_FILTER)
 	if msg_xmpp:
@@ -250,6 +252,18 @@ def muc_filter_set(iq,id,room,acclvl,query,towh,al):
 						if get_config(gr,'muc_filter_history_ban'):
 							pprint('MUC-Filter history ban: %s/%s %s' % (gr,nick,jid),'brown')
 							sender(xmpp.Node('iq',{'id': get_id(), 'type': 'set', 'to':gr},payload = [xmpp.Node('query', {'xmlns': xmpp.NS_MUC_ADMIN},[xmpp.Node('item',{'affiliation':'outcast', 'jid':jid},[xmpp.Node('reason',{},'Banned by empty history at %s' % timeadd(tuple(time.localtime())))])])]))
+
+				# Fast join filter
+				if not mute and newjoin and get_config(gr,'muc_filter_fast_join'):
+					_itt = int(time.time())
+					if muc_filter_fast_join.has_key(gr):
+						_cnt = get_config_int(gr,'muc_filter_fast_join_count')
+						_time = get_config_int(gr,'muc_filter_fast_join_time')
+						muc_filter_fast_join[gr] = [_itt] + muc_filter_fast_join[gr][:_cnt-1]
+						if len(muc_filter_fast_join[gr]) == _cnt and (muc_filter_fast_join[gr][0] - muc_filter_fast_join[gr][-1]) <= _time:
+							pprint('MUC-Filter fast join: %s/%s %s' % (gr,nick,jid),'brown')
+							msg,mute = unicode(xmpp.Node('presence', {'from': tojid, 'type': 'error', 'to':jid}, payload = ['replace_it',xmpp.Node('error', {'type': 'auth','code':'403'}, payload=[xmpp.Node('forbidden',{'xmlns':'urn:ietf:params:xml:ns:xmpp-stanzas'},[]),xmpp.Node('text',{'xmlns':'urn:ietf:params:xml:ns:xmpp-stanzas'},[L('Deny by fast join! Try again later!')])])])).replace('replace_it',get_tag(msg,'presence')),True
+					else: muc_filter_fast_join[gr] = [_itt]
 
 				# Validate items
 				if not mute and msg and get_config(gr,'muc_filter_validate_action') != 'off':
