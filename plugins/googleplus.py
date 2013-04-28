@@ -48,7 +48,7 @@ def define(type, jid, nick, text):
 			if n1 + n2 == 0: define_silent, n1, n2 = True, 1, 1
 		if not result: msg = [L('I don\'t know!','%s/%s'%(jid,nick)), ''][define_silent]
 		else:
-			if target:
+			if target and target != '0':
 				msg = ''
 				if 0 < n1 <= n2 <= len(result):
 					for k in xrange(n1 - 1, n2): msg += '%s\n%s\n\n' % (result[k][0], urllib.unquote(result[k][1].replace('%25', '%').encode('utf8')).decode('utf8'))
