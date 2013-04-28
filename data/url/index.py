@@ -115,7 +115,7 @@ if url:
 	mask = color ^ int('eee',16)
 	for t in url:
 		ll = urllib2.unquote(t[3].encode('utf8')).decode('utf8')
-		lnk = ll if len(ll) < max_link_size else '%s...' % ll[:max_link_size]
+		lnk = ll if len(ll) < max_link_size else '%s...%s' % (ll[:max_link_size-10],ll[-10:])
 		if t[4]: text = t[4].strip()
 		else: text = '-'
 		if len(text) >= max_link_size: text = '%s...' % text[:max_link_size]
