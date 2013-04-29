@@ -26,7 +26,7 @@ CREATE TABLE url (
 	jid text,
 	nick text,
 	time integer,
-	url text
+	url text,
 	title text);
 
 CREATE INDEX url_r ON url (room);
