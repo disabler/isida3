@@ -150,6 +150,8 @@ else:
 </tr>
 </table>
 	'''
-print html_end % cur_execute_fetchall('select value from config_owner where option=%s;',('html_logs_end_text',))[0][0]
+try: custom_end = cur_execute_fetchall('select value from config_owner where option=%s;',('html_logs_end_text',))[0][0]
+except: custom_end = ''
+print html_end % custom_end
 
 # The end is near!
