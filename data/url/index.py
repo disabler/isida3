@@ -80,12 +80,31 @@ nickz = [' '] + nickz
 if not nickz: print 'Error! Stored URL not found!'
 if not nick or nick not in nickz: nick = nickz[0]
 
+
+try: min_date = cur_execute_fetchall('select time from url order by time limit 1;')[0][0]
+except: min_date = int(time.time())
+try: now_date = cur_execute_fetchall('select time from url order by -time limit 1;')[0][0]
+except: now_date = int(time.time())
+
+min_date = '%04d-%02d-%02d' % time.localtime(min_date)[:3]
+max_date = '%04d-%02d-%02d' % time.localtime(now_date)[:3]
+try:
+	sel_date = form.getvalue('calendar')
+	now_date = sel_date
+except:
+	sel_date = ''
+	now_date = max_date
+
 drop_list = '''<form action="/url/" method=post>
+Choice room/nick
 <select name="room">
 %s</select>
 <select name="nick">
 %s</select>
-<input type=submit value="&nbsp;apply&nbsp;">
+<input type=submit value="&nbsp;Apply&nbsp;">
+and/or Choice date
+<input type="date" name="calendar" value="%s" max="%s" min="%s">
+<input type="submit" value="&nbsp;Apply&nbsp;">
 </form>'''
 
 drop_opt = '<option value="%s">%s\n'
@@ -93,22 +112,28 @@ drop_opt = '<option value="%s">%s\n'
 dopt_r = drop_opt % (room,room) + ''.join([drop_opt % (t,t) for t in roomz if t != room])
 dopt_n = drop_opt % (nick,nick) + ''.join([drop_opt % (t,t) for t in nickz if t != nick])
 
-print html_head % (drop_list % (dopt_r.encode('utf8'),dopt_n.encode('utf8')),)
+print html_head % (drop_list % (dopt_r.encode('utf8'),dopt_n.encode('utf8'),now_date,max_date,min_date),)
+
+if sel_date: date_from, date_to = sel_date, sel_date
+else: date_from, date_to = min_date, max_date
+
+date_from = int(time.mktime([int(t) for t in date_from.split('-')]+[0,0,0,0,0,0]))
+date_to = int(time.mktime([int(t) for t in date_to.split('-')]+[23,59,59,0,0,0]))
 
 if room != ' ':
 	if nick != ' ':
-		url_count = cur_execute_fetchall('select count(*) from url where room=%s;',(room,))[0][0]
-		url = cur_execute_fetchall('select jid,nick,time,url,title from url where room=%s and nick=%s order by -time limit %s;',(room,nick,url_count_limit))
+		url_count = cur_execute_fetchall('select count(*) from url where room=%s and time>%s and time<%s;',(room,date_from,date_to))[0][0]
+		url = cur_execute_fetchall('select jid,nick,time,url,title from url where room=%s and nick=%s and time>%s and time<%s order by -time limit %s;',(room,nick,date_from,date_to,url_count_limit))
 	else:
-		url_count = cur_execute_fetchall('select count(*) from url where room=%s;',(room,))[0][0]
-		url = cur_execute_fetchall('select jid,nick,time,url,title from url where room=%s order by -time limit %s;',(room,url_count_limit))
+		url_count = cur_execute_fetchall('select count(*) from url where room=%s and time>%s and time<%s;',(room,date_from,date_to))[0][0]
+		url = cur_execute_fetchall('select jid,nick,time,url,title from url where room=%s and time>%s and time<%s order by -time limit %s;',(room,date_from,date_to,url_count_limit))
 else:
 	if nick != ' ':
-		url_count = cur_execute_fetchall('select count(*) from url;')[0][0]
-		url = cur_execute_fetchall('select jid,nick,time,url,title from url where nick=%s order by -time limit %s;',(nick,url_count_limit,))
+		url_count = cur_execute_fetchall('select count(*) from url where time>%s and time<%s;',(date_from,date_to))[0][0]
+		url = cur_execute_fetchall('select jid,nick,time,url,title from url where nick=%s and time>%s and time<%s order by -time limit %s;',(nick,date_from,date_to,url_count_limit))
 	else:
-		url_count = cur_execute_fetchall('select count(*) from url;')[0][0]
-		url = cur_execute_fetchall('select jid,nick,time,url,title from url order by -time limit %s;',(url_count_limit,))
+		url_count = cur_execute_fetchall('select count(*) from url where time>%s and time<%s;',(date_from,date_to))[0][0]
+		url = cur_execute_fetchall('select jid,nick,time,url,title from url where time>%s and time<%s order by -time limit %s;',(date_from,date_to,url_count_limit))
 if url:
 	tm = []
 	color = int('ccc',16)
