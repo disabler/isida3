@@ -52,9 +52,9 @@ html_head = '''
 <div class="title">%s</div>
 
 <div class="main">
-<p>'''
+'''
 html_end = '''
-</p></div><br>
+</div><br>
 %s</body></html>
 '''
 
