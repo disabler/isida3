@@ -135,6 +135,7 @@ def parse_url_in_message(room,jid,nick,type,text):
 	global last_url_watch
 	if type != 'groupchat' or text == 'None' or nick == '' or getRoom(jid) == getRoom(selfjid): return
 	if get_level(room,nick)[0] < 4: return
+	content_title = None
 	if get_config(getRoom(room),'store_users_url'):
 			rjid = getRoom(jid)
 			for t in text.split():
@@ -142,10 +143,12 @@ def parse_url_in_message(room,jid,nick,type,text):
 				if link:
 					link = link[0].split(' ')[0]
 					if not cur_execute_fetchone('select * from url where room=%s and jid=%s and url=%s',(room,rjid,link)):
-						text = get_content_title(link)
-						if text: text = to_censore(rss_del_html(rss_replace(text)),room)
+						ttext = get_content_title(link)
+						if ttext:
+							ttext = to_censore(rss_del_html(rss_replace(ttext)),room)
+							content_title = [link,ttext]
 						else:						
-							is_file,text = False,''
+							is_file,ttext = False,''
 							ll = link.lower()
 							for t in url_watch_ignore:
 								if ll.endswith('.%s' % t):
@@ -157,22 +160,23 @@ def parse_url_in_message(room,jid,nick,type,text):
 									body = unicode(body.headers)
 									try: mt = float(re.findall('Content-Length.*?([0-9]+)', body, re.S+re.U+re.I)[0])
 									except: mt = None
-									if mt: text = L('Content length %s','%s/%s'%(jid,nick)) % get_size_human(mt)
-									else: text = ''
+									if mt: ttext = L('Content length %s','%s/%s'%(jid,nick)) % get_size_human(mt)
+									else: ttext = ''
 						pprint('Store url: %s in %s/%s' % (link,room,nick),'white')
-						cur_execute('insert into url values (%s,%s,%s,%s,%s,%s);',(room,rjid,nick,int(time.time()),link,text))
+						cur_execute('insert into url values (%s,%s,%s,%s,%s,%s);',(room,rjid,nick,int(time.time()),link,ttext))
 	was_shown = False
 	if get_config(getRoom(room),'url_title'):
 		try:
 			link = re.findall(r'(http[s]?://.*)',text)[0].split(' ')[0]
 			if link and last_url_watch != link and pasteurl not in link:
-				text = get_content_title(link)
-				if text:
+				if content_title and content_title[0] == link: ttext = content_title[1]
+				else: ttext = get_content_title(link)
+				if ttext:
 					pprint('Show url-title: %s in %s' % (link,room),'white')
 					was_shown = True
-					send_msg(type, room, '', L('Title: %s','%s/%s'%(jid,nick)) % to_censore(rss_del_html(rss_replace(text)),room))
+					send_msg(type, room, '', L('Title: %s','%s/%s'%(jid,nick)) % to_censore(rss_del_html(rss_replace(ttext)),room))
 					last_url_watch = link
-		except: pass
+		except: raise
 	if not was_shown and get_config(getRoom(room),'content_length'):
 		try:
 			link = re.findall(u'(http[s]?://[-0-9a-zа-я.]+\/[-a-zа-я0-9._?#=@%/]+\.[a-z0-9]{2,7})',text,re.I+re.U+re.S)[0]
