@@ -52,9 +52,9 @@ html_head = '''
 <div class="title">%s</div>
 
 <div class="main">
-<p>'''
+'''
 html_end = '''
-</p></div><br>
+</div><br>
 %s</body></html>
 '''
 
@@ -90,10 +90,11 @@ min_date = '%04d-%02d-%02d' % time.localtime(min_date)[:3]
 max_date = '%04d-%02d-%02d' % time.localtime(now_date)[:3]
 try:
 	sel_date = form.getvalue('calendar')
+	if not sel_date: raise
 	now_date = sel_date
 except:
 	sel_date = ''
-	now_date = max_date
+	now_date = ''#max_date
 
 drop_list = '''<form action="/url/" method=post>
 Choice room/nick
