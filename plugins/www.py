@@ -176,7 +176,7 @@ def parse_url_in_message(room,jid,nick,type,text):
 					was_shown = True
 					send_msg(type, room, '', L('Title: %s','%s/%s'%(jid,nick)) % to_censore(rss_del_html(rss_replace(ttext)),room))
 					last_url_watch = link
-		except: raise
+		except: pass
 	if not was_shown and get_config(getRoom(room),'content_length'):
 		try:
 			link = re.findall(u'(http[s]?://[-0-9a-zа-я.]+\/[-a-zа-я0-9._?#=@%/]+\.[a-z0-9]{2,7})',text,re.I+re.U+re.S)[0]
