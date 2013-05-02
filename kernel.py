@@ -1219,6 +1219,7 @@ def presenceCB(sess,mess):
 		try: users_locale.pop('%s/%s' % (room,nick))
 		except: pass
 		if status=='307': exit_type,exit_message = L('kicked'),reason
+		elif status=='321': exit_type,exit_message = L('kicked'),L('revoke member affiliation in members-only room')
 		elif status=='301': exit_type,exit_message = L('banned'),reason
 		elif status=='303': exit_type,exit_message = L('change nick to %s') % chg_nick,''
 		else: exit_type,exit_message = L('leave'),text

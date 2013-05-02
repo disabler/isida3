@@ -34,6 +34,7 @@ off	выкл
 Deny by hash lock!	Ограничение по хешу клиента!
 /me detect bad stanza from %s	/me смотрит на %s и думает: "Факин умник детектед!"
 kicked	выгнали
+revoke member affiliation in members-only room	лишение статуса постоянного участника в конференции только для постоянных участников
 banned	забанили
 change nick to %s	сменил(а) ник на %s
 leave	вышел
