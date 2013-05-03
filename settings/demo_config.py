@@ -52,16 +52,24 @@ CommandsLog = True											# логгирование команд бота
 
 #-------------------------------------------------------#
 #----------------- Настройка баз данных ----------------#
-base_type = 'pgsql'     # тип базы: pgsql, mysql или sqlite3
-#base_type = 'sqlite3'   # тип базы: pgsql, mysql или sqlite3
-#base_type = 'mysql'     # тип базы: pgsql, mysql или sqlite3
-base_name = 'isidabot'  # название базы
-base_user = 'isidabot'  # пользователь базы
-base_host = 'localhost' # хост базы
-base_pass = '******'    # пароль базы
-base_port = '5432'		# порт для подключения. стандартные для postgresql - 5432; mysql - 3306
-#base_port = '3306'		# порт для подключения. стандартные для postgresql - 5432; mysql - 3306
-#base_charset = 'utf8'   # кодировка для mysql
+#---------------------- PostgreSQL ---------------------#
+base_type = 'pgsql'			# тип базы: pgsql
+base_name = 'isidabot'		# название базы для PostgreSQL
+base_user = 'isidabot'		# пользователь базы для PostgreSQL
+base_host = 'localhost'		# хост базы для PostgreSQL
+base_pass = '******'		# пароль базы для PostgreSQL
+base_port = '5432'			# порт для подключения. стандартный - 5432
+
+#----------------------- SQLite3 -----------------------#
+#base_type = 'sqlite3'		# тип базы: sqlite3
+
+#------------------------ MySQL ------------------------#
+#base_type = 'mysql'		# тип базы: mysql
+#base_name = 'isidabot'		# название базы для MySQL
+#base_user = 'isidabot'		# пользователь базы для MySQL
+#base_host = 'localhost'	# хост базы для MySQL
+#base_pass = '******'		# пароль базы для MySQL
+#base_port = '3306'			# порт для подключения. стандартный - 3306
 
 
 #-------------------------------------------------------#

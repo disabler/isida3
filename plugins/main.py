@@ -211,7 +211,7 @@ def atempt_to_shutdown(critical):
 	if thread_type:
 		try: garbage_collector_timer.cancel()
 		except: pass
-	if base_type != 'sqlite3':
+	if base_type not in ['sqlite3','mysql']:
 		conn.commit()
 		conn.close()
 	flush_stats()
@@ -1258,10 +1258,10 @@ def html_encode(body):
 
 def rss_flush(jid,link,break_point):
 	tstop = cur_execute_fetchone('select hash from feed where room=%s and url=%s',(jid,link))
-	if tstop: tstop = tstop[0]
+	if tstop: tstop = tstop[0] if base_type == 'pgsql' else eval(tstop[0])
 	else: tstop = []
 	if not break_point: break_point = tstop
-	cur_execute('update feed set time=%s, hash=%s where room=%s and url=%s',(int(time.time()),break_point,jid,link))
+	cur_execute('update feed set time=%s, hash=%s where room=%s and url=%s',(int(time.time()),break_point if base_type == 'pgsql' else str(break_point),jid,link))
 	return tstop
 
 def smart_concat(text):
@@ -1324,7 +1324,7 @@ def rss(type, jid, nick, text):
 		except: ofset = 4
 		if timetype == 'm' and ofset < GT('rss_min_time_limit'): timetype = '%sm' % GT('rss_min_time_limit')
 		else: timetype = str(ofset)+timetype
-		cur_execute('insert into feed values (%s,%s,%s,%s,%s,%s);',(link, timetype, text[3], int(time.time()), getRoom(jid),[]))
+		cur_execute('insert into feed values (%s,%s,%s,%s,%s,%s);',(link, timetype, text[3], int(time.time()), getRoom(jid),[] if base_type == 'pgsql' else '[]'))
 		msg = L('Add feed to schedule: %s (%s) %s','%s/%s'%(jid,nick)) % (link,timetype,text[3])
 		rss(type, jid, nick, 'get %s 1 %s' % (link,text[3]))
 	elif mode == 'del':

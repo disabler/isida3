@@ -73,17 +73,33 @@ def cur_execute_sqlite3(*params):
 	conn.close()
 	return par
 	
+def cur_execute_mysql(*params):
+	conn = mysqldb.connect(database=base_name, user=base_user, host=base_host, password=base_pass, port=base_port)
+	cur = conn.cursor()
+	par = True
+	try:
+		params = list(params)
+		params[0] = params[0].replace(' ilike ',' like ').replace(' update ',' `update` ').replace(' repeat ',' `repeat` ').replace(' option ',' `option` ').replace(' count ',' `count` ').replace(' match ',' `match` ').replace('split_part(','substring_index(')
+		params = tuple(params)
+		cur.execute(*params)
+		prm = params[0].split()[0].lower()
+		if prm in ['update','insert','delete','create','drop','alter']: conn.commit()
+	except Exception, par:
+		par = None
+		conn.rollback()
+		if halt_on_exception: raise
+	conn.commit()
+	conn.close()
+	return par
+
 def cur_execute(*params):
 	if base_type == 'sqlite3': return cur_execute_sqlite3(*params)
+	elif base_type == 'mysql': return cur_execute_mysql(*params)
 	global conn
 	cur = conn.cursor()
 	if base_type == 'pgsql': psycopg2.extensions.register_type(psycopg2.extensions.UNICODE, cur)
 	par = True
 	try:
-		if base_type == 'mysql':
-			params = list(params)
-			params[0] = params[0].replace(' ilike ',' like ')
-			params = tuple(params)
 		cur.execute(*params)
 		prm = params[0].split()[0].lower()
 		if prm in ['update','insert','delete','create','drop','alter']: conn.commit()
@@ -119,18 +135,35 @@ def cur_execute_fetchone_sqlite3(*params):
 	conn.close()
 	return par
 
+def cur_execute_fetchone_mysql(*params):
+	conn = mysqldb.connect(database=base_name, user=base_user, host=base_host, password=base_pass, port=base_port)
+	try: cur = conn.cursor()
+	except: return None
+	par = None
+	try:
+		params = list(params)
+		params[0] = params[0].replace(' ilike ',' like ').replace(' update ',' `update` ').replace(' repeat ',' `repeat` ').replace(' option ',' `option` ').replace(' count ',' `count` ').replace(' match ',' `match` ').replace('split_part(','substring_index(')
+		params = tuple(params)
+		cur.execute(*params)
+		try: par = cur.fetchone()
+		except Exception, par:
+			par = None
+			if halt_on_exception: raise
+	except Exception, par:
+		par = None
+		conn.rollback()
+	conn.close()
+	return par
+
 def cur_execute_fetchone(*params):
 	if base_type == 'sqlite3': return cur_execute_fetchone_sqlite3(*params)
+	elif base_type == 'mysql': return cur_execute_fetchone_mysql(*params)
 	global conn
 	try: cur = conn.cursor()
 	except: return None
 	if base_type == 'pgsql': psycopg2.extensions.register_type(psycopg2.extensions.UNICODE, cur)
 	par = None
 	try:
-		if base_type == 'mysql':
-			params = list(params)
-			params[0] = params[0].replace(' ilike ',' like ')
-			params = tuple(params)
 		cur.execute(*params)
 		try: par = cur.fetchone()
 		except Exception, par:
@@ -172,18 +205,36 @@ def cur_execute_fetchall_sqlite3(*params):
 	conn.close()
 	return par
 
+def cur_execute_fetchall_mysql(*params):
+	conn = mysqldb.connect(database=base_name, user=base_user, host=base_host, password=base_pass, port=base_port)
+	try: cur = conn.cursor()
+	except: return None
+	par = None
+	try:
+		params = list(params)
+		params[0] = params[0].replace(' ilike ',' like ').replace(' update ',' `update` ').replace(' repeat ',' `repeat` ').replace(' option ',' `option` ').replace(' count ',' `count` ').replace(' match ',' `match` ').replace('split_part(','substring_index(')
+		params = tuple(params)
+		cur.execute(*params)
+		try: par = cur.fetchall()
+		except Exception, par:
+			par = None
+			if halt_on_exception: raise
+	except Exception, par:
+		par = None
+		conn.rollback()
+		if halt_on_exception: raise
+	conn.close()
+	return par
+
 def cur_execute_fetchall(*params):
 	if base_type == 'sqlite3': return cur_execute_fetchall_sqlite3(*params)
+	elif base_type == 'mysql': return cur_execute_fetchall_mysql(*params)
 	global conn
 	try: cur = conn.cursor()
 	except: return None
 	if base_type == 'pgsql': psycopg2.extensions.register_type(psycopg2.extensions.UNICODE, cur)
 	par = None
 	try:
-		if base_type == 'mysql':
-			params = list(params)
-			params[0] = params[0].replace(' ilike ',' like ')
-			params = tuple(params)
 		cur.execute(*params)
 		try: par = cur.fetchall()
 		except Exception, par:
@@ -224,17 +275,34 @@ def cur_execute_fetchmany_sqlite3(*params):
 	conn.close()
 	return par
 
+def cur_execute_fetchmany_mysql(*params):
+	conn = mysqldb.connect(database=base_name, user=base_user, host=base_host, password=base_pass, port=base_port)
+	try: cur = conn.cursor()
+	except: return None
+	try:
+		params = list(params)
+		params[0] = params[0].replace(' ilike ',' like ').replace(' update ',' `update` ').replace(' repeat ',' `repeat` ').replace(' option ',' `option` ').replace(' count ',' `count` ').replace(' match ',' `match` ').replace('split_part(','substring_index(')
+		params = tuple(params)
+		cur.execute(params[0],params[1])
+		try: par = cur.fetchmany(params[-1])
+		except Exception, par:
+			par = None
+			if halt_on_exception: raise
+	except Exception, par:
+		conn.rollback()
+		par = None
+		if halt_on_exception: raise
+	conn.close()
+	return par
+
 def cur_execute_fetchmany(*params):
 	if base_type == 'sqlite3': return cur_execute_fetchmany_sqlite3(*params)
+	elif base_type == 'mysql': return cur_execute_fetchmany_mysql(*params)
 	global conn
 	try: cur = conn.cursor()
 	except: return None
 	if base_type == 'pgsql': psycopg2.extensions.register_type(psycopg2.extensions.UNICODE, cur)
 	try:
-		if base_type == 'mysql':
-			params = list(params)
-			params[0] = params[0].replace(' ilike ',' like ')
-			params = tuple(params)
 		cur.execute(params[0],params[1])
 		try: par = cur.fetchmany(params[-1])
 		except Exception, par:
@@ -394,7 +462,7 @@ def getFile(filename,default):
 	return filebody
 
 def get_config(room,item):
-	setup = cur_execute_fetchone('select value from config_conf where room=%s and option=%s',(room,item))
+	setup = cur_execute_fetchone('select value from config_conf where room=%s and option = %s',(room,item))
 	try:
 		if setup[0] in ['True','true']: return True
 		elif setup[0] in ['False','false','None','none']: return False
@@ -404,24 +472,24 @@ def get_config(room,item):
 		except: return None
 
 def get_config_int(room,item):
-	setup = cur_execute_fetchone('select value from config_conf where room=%s and option=%s',(room,item))
+	setup = cur_execute_fetchone('select value from config_conf where room=%s and option = %s',(room,item))
 	try: return int(setup[0])
 	except: return int(config_prefs[item][3])
 
 def get_config_float(room,item):
-	setup = cur_execute_fetchone('select value from config_conf where room=%s and option=%s',(room,item))
+	setup = cur_execute_fetchone('select value from config_conf where room=%s and option = %s',(room,item))
 	try: return float(setup[0])
 	except: return float(config_prefs[item][3])
 
 def put_config(room,item,value):
 	if value in [True,False,None]: value = str(value)
-	setup = cur_execute_fetchone('select value from config_conf where room=%s and option=%s',(room,item))
-	if setup: cur_execute('update config_conf set value=%s where room=%s and option=%s', (value,room,item))
+	setup = cur_execute_fetchone('select value from config_conf where room=%s and option = %s',(room,item))
+	if setup: cur_execute('update config_conf set value=%s where room=%s and option = %s', (value,room,item))
 	else: cur_execute('insert into config_conf values (%s,%s,%s)', (room,item,value))
 
 def GT(item):
 	try:
-		gt_result = cur_execute_fetchone('select value from config_owner where option=%s;',(item,))[0]
+		gt_result = cur_execute_fetchone('select value from config_owner where option = %s;',(item,))[0]
 		if gt_result in ['true','false','none']: gt_result = gt_result.capitalize()
 	except:
 		try: gt_result = owner_prefs[item][2]
@@ -431,8 +499,8 @@ def GT(item):
 
 def PT(item,value):
 	if value in [True,False,None] or isinstance(value,type([])): value = str(value)
-	setup = cur_execute_fetchone('select value from config_owner where option=%s;',(item,))
-	if setup: cur_execute('update config_owner set value=%s where option=%s', (value,item))
+	setup = cur_execute_fetchone('select value from config_owner where option = %s;',(item,))
+	if setup: cur_execute('update config_owner set value=%s where option = %s', (value,item))
 	else: cur_execute('insert into config_owner values (%s,%s)', (item,value))
 
 def get_subtag(body,tag):
@@ -1520,7 +1588,7 @@ def update_locale():
 	global CURRENT_LOCALE
 	locales = {}
 	llist = ['en'] + [tmp[:-4] for tmp in os.listdir(loc_folder[:-6]) if tmp[-4:]=='.txt']
-	CL = cur_execute_fetchone('select value from config_owner where option=%s', ('bot_locale',))
+	CL = cur_execute_fetchone('select value from config_owner where option = %s', ('bot_locale',))
 	if CL: CURRENT_LOCALE = CL[0]
 	for t in llist:
 		locales[t] = {}
@@ -1684,7 +1752,7 @@ if base_type == 'pgsql':
 	import psycopg2
 	import psycopg2.extensions
 elif base_type == 'mysql':
-	import MySQLdb
+	import mysql.connector as mysqldb
 elif base_type == 'sqlite3':
 	import sqlite3
 else: errorHandler('Unknown database backend!')
@@ -1757,7 +1825,7 @@ pprint('-'*50,'blue')
 if os.path.basename(sys.argv[0]) != 'isida.py': errorHandler('Ugly launch detect! Read wiki!')
 
 if base_type == 'pgsql': conn = psycopg2.connect(database=base_name, user=base_user, host=base_host, password=base_pass, port=base_port)
-elif base_type == 'mysql': conn = MySQLdb.connect(db=base_name, user=base_user, host=base_host, passwd=base_pass, port=int(base_port), charset=base_charset)
+elif base_type == 'mysql': pass
 elif base_type == 'sqlite3': pass
 else: errorHandler('Can\'t connect to `%s` base type!' % base_type)
 
