@@ -50,6 +50,7 @@ import xmpp
 global execute, prefix, comms, hashlib, trace
 
 def cur_execute(*params):
+	global conn
 	if base_type == 'sqlite3': conn = sqlite3.connect(sqlite_base)
 	cur = conn.cursor()
 	if base_type == 'pgsql': psycopg2.extensions.register_type(psycopg2.extensions.UNICODE, cur)
@@ -76,6 +77,7 @@ def cur_execute(*params):
 	return par
 
 def cur_execute_fetchone(*params):
+	global conn
 	if base_type == 'sqlite3': conn = sqlite3.connect(sqlite_base)
 	try: cur = conn.cursor()
 	except: return None
@@ -108,6 +110,7 @@ def cur_execute_fetchone(*params):
 	return par
 
 def cur_execute_fetchall(*params):
+	global conn
 	if base_type == 'sqlite3': conn = sqlite3.connect(sqlite_base)
 	try: cur = conn.cursor()
 	except: return None
@@ -140,6 +143,7 @@ def cur_execute_fetchall(*params):
 	return par
 
 def cur_execute_fetchmany(*params):
+	global conn
 	if base_type == 'sqlite3': conn = sqlite3.connect(sqlite_base)
 	try: cur = conn.cursor()
 	except: return None
