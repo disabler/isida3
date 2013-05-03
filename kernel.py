@@ -50,13 +50,15 @@ import xmpp
 global execute, prefix, comms, hashlib, trace
 
 def cur_execute(*params):
+	if base_type == 'sqlite3': conn = sqlite3.connect(sqlite_base)
 	cur = conn.cursor()
 	if base_type == 'pgsql': psycopg2.extensions.register_type(psycopg2.extensions.UNICODE, cur)
 	par = True
 	try:
-		if base_type == 'mysql':
+		if base_type in ['mysql','sqlite3']:
 			params = list(params)
 			params[0] = params[0].replace(' ilike ',' like ')
+			if base_type == 'sqlite3': params[0] = params[0].replace('%s','?')
 			params = tuple(params)
 		cur.execute(*params)
 		prm = params[0].split()[0].lower()
@@ -70,17 +72,20 @@ def cur_execute(*params):
 		conn.rollback()
 		if halt_on_exception: raise
 	cur.close()
+	if base_type == 'sqlite3': conn.close()
 	return par
 
 def cur_execute_fetchone(*params):
+	if base_type == 'sqlite3': conn = sqlite3.connect(sqlite_base)
 	try: cur = conn.cursor()
 	except: return None
 	if base_type == 'pgsql': psycopg2.extensions.register_type(psycopg2.extensions.UNICODE, cur)
 	par = None
 	try:
-		if base_type == 'mysql':
+		if base_type in ['mysql','sqlite3']:
 			params = list(params)
 			params[0] = params[0].replace(' ilike ',' like ')
+			if base_type == 'sqlite3': params[0] = params[0].replace('%s','?')
 			params = tuple(params)
 		cur.execute(*params)
 		try: par = cur.fetchone()
@@ -99,17 +104,20 @@ def cur_execute_fetchone(*params):
 		else: par = None
 		conn.rollback()
 	cur.close()
+	if base_type == 'sqlite3': conn.close()
 	return par
 
 def cur_execute_fetchall(*params):
+	if base_type == 'sqlite3': conn = sqlite3.connect(sqlite_base)
 	try: cur = conn.cursor()
 	except: return None
 	if base_type == 'pgsql': psycopg2.extensions.register_type(psycopg2.extensions.UNICODE, cur)
 	par = None
 	try:
-		if base_type == 'mysql':
+		if base_type in ['mysql','sqlite3']:
 			params = list(params)
 			params[0] = params[0].replace(' ilike ',' like ')
+			if base_type == 'sqlite3': params[0] = params[0].replace('%s','?')
 			params = tuple(params)
 		cur.execute(*params)
 		try: par = cur.fetchall()
@@ -128,16 +136,19 @@ def cur_execute_fetchall(*params):
 		conn.rollback()
 		if halt_on_exception: raise
 	cur.close()
+	if base_type == 'sqlite3': conn.close()
 	return par
 
 def cur_execute_fetchmany(*params):
+	if base_type == 'sqlite3': conn = sqlite3.connect(sqlite_base)
 	try: cur = conn.cursor()
 	except: return None
 	if base_type == 'pgsql': psycopg2.extensions.register_type(psycopg2.extensions.UNICODE, cur)
 	try:
-		if base_type == 'mysql':
+		if base_type in ['mysql','sqlite3']:
 			params = list(params)
 			params[0] = params[0].replace(' ilike ',' like ')
+			if base_type == 'sqlite3': params[0] = params[0].replace('%s','?')
 			params = tuple(params)
 		cur.execute(params[0],params[1])
 		try: par = cur.fetchmany(params[-1])
@@ -157,6 +168,7 @@ def cur_execute_fetchmany(*params):
 		else: par = None
 		if halt_on_exception: raise
 	cur.close()
+	if base_type == 'sqlite3': conn.close()
 	return par
 
 def get_color(c):
@@ -946,7 +958,7 @@ def messageCB(sess,mess):
 			btl = btext.lower()
 			alias = cur_execute_fetchone("select match,cmd from alias where (room=%s or room=%s) and (match=%s or %s ilike match||' %%') order by room desc",(room,'*',btl,btl))
 			if alias:
-				pprint('%s %s/%s [%s] %s' % (jid,room,nick,access_mode,text),'bright_cyan')
+				pprint('%s %s/%s [%s|alias] %s' % (jid,room,nick,access_mode,text),'bright_cyan')
 				argz = btext[len(alias[0])+1:]
 				if not argz:
 					ppr = alias[1].replace('%*', '').replace('%{reduce}*', '').replace('%{reduceall}*', '').replace('%{unused}*', '')
@@ -1563,7 +1575,7 @@ database_debug = False
 current_join = {}
 default_censor_set = 1				# номер набора правил для цензора
 users_locale = {}
-base_type = 'pgsql'     # тип базы: pgsql или mysql
+base_type = 'pgsql'     # тип базы: pgsql, mysql, sqlite3
 base_name = 'isidabot'  # название базы
 base_user = 'isidabot'  # пользователь базы
 base_host = 'localhost' # хост базы
@@ -1589,7 +1601,13 @@ if base_type == 'pgsql':
 	import psycopg2.extensions
 elif base_type == 'mysql':
 	import MySQLdb
+elif base_type == 'sqlite3':
+	import sqlite3
 else: errorHandler('Unknown database backend!')
+
+if base_type in ['mysql','sqlite3']:
+	class psycopg2():
+		def InterfaceError(): return None
 
 if thread_type:
 	import threading
@@ -1656,6 +1674,7 @@ if os.path.basename(sys.argv[0]) != 'isida.py': errorHandler('Ugly launch detect
 
 if base_type == 'pgsql': conn = psycopg2.connect(database=base_name, user=base_user, host=base_host, password=base_pass, port=base_port)
 elif base_type == 'mysql': conn = MySQLdb.connect(db=base_name, user=base_user, host=base_host, passwd=base_pass, port=int(base_port), charset=base_charset)
+elif base_type == 'sqlite3': pass
 else: errorHandler('Can\'t connect to `%s` base type!' % base_type)
 
 own = cur_execute_fetchall('select * from bot_owner;')

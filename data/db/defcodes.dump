@@ -1,4 +1,3 @@
-CREATE TABLE def_ru_stat (phone text, region text, city text);
 INSERT INTO "def_ru_stat" VALUES('73012xxxxxx','Бурятия','Улан-Удэ');
 INSERT INTO "def_ru_stat" VALUES('730130xxxxx','Бурятия','Нижнеангарск, Северобайкальск');
 INSERT INTO "def_ru_stat" VALUES('730131xxxxx','Бурятия','Баргузин');
@@ -2441,7 +2440,6 @@ INSERT INTO "def_ru_stat" VALUES('787938xxxxx','Ставропольский к�
 INSERT INTO "def_ru_stat" VALUES('787951xxxxx','Ставропольский край','Георгиевск');
 INSERT INTO "def_ru_stat" VALUES('787961xxxxx','Ставропольский край','Ессентукская');
 INSERT INTO "def_ru_stat" VALUES('787964xxxxx','Ставропольский край','Курская');
-CREATE TABLE def_ua_stat (phone text, region text, city text);
 INSERT INTO "def_ua_stat" VALUES('380312xxxxxx','Закарпатская область','Ужгород и Ужгородский район (за исключением города Чоп)');
 INSERT INTO "def_ua_stat" VALUES('3803131xxxxx','Закарпатская область','Мукачевский район');
 INSERT INTO "def_ua_stat" VALUES('3803132xxxxx','Закарпатская область','Раховский район');
@@ -3038,7 +3036,6 @@ INSERT INTO "def_ua_stat" VALUES('38096xxxxxxx','','Киевстар (включ
 INSERT INTO "def_ua_stat" VALUES('38097xxxxxxx','','Киевстар (включая djuice)');
 INSERT INTO "def_ua_stat" VALUES('38098xxxxxxx','','Киевстар (включая djuice)');
 INSERT INTO "def_ua_stat" VALUES('38099xxxxxxx','','MTC');
-CREATE TABLE def_ru_mobile (provider text, region text, def integer, defbegin integer, defend integer, "date" text);
 INSERT INTO "def_ru_mobile" VALUES('ЗАО "Астарта"','Южно-Сахалинск Сахалинская область',901,1370000,1379999,'13-11-2000');
 INSERT INTO "def_ru_mobile" VALUES('ЗАО "Астарта"','Южно-Сахалинск Сахалинская область',901,9370000,9379999,'01-09-2000');
 INSERT INTO "def_ru_mobile" VALUES('ЗАО "Дельта Телеком"','Новгород Великий Новгородская область',901,9640000,9649999,'05-12-2005');
@@ -6656,7 +6653,3 @@ INSERT INTO "def_ru_mobile" VALUES('Республика Марий Эл ф-л �
 INSERT INTO "def_ru_mobile" VALUES('Республика Марий Эл ф-л ОАО "Ростелеком"','Йошкар-Ола Республика Марий Эл',902,7430000,7459999,'25-11-2004');
 INSERT INTO "def_ru_mobile" VALUES('Тамбовский ф-л ОАО "Ростелеком"','Тамбов Тамбовская область',902,7200000,7349999,'01-07-2007');
 INSERT INTO "def_ru_mobile" VALUES('Тамбовский ф-л ОАО "Ростелеком"','Тамбов Тамбовская область',902,9350000,9399999,'01-07-2007');
-CREATE INDEX def_ru_stat_ph on def_ru_stat (phone,city);
-CREATE INDEX def_ua_stat_ph on def_ua_stat (phone,city);
-CREATE INDEX def_ru_mobile_ph on def_ru_mobile (def,defbegin,defend);
-COMMIT;

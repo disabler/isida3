@@ -211,8 +211,9 @@ def atempt_to_shutdown(critical):
 	if thread_type:
 		try: garbage_collector_timer.cancel()
 		except: pass
-	conn.commit()
-	conn.close()
+	if base_type != 'sqlite3':
+		conn.commit()
+		conn.close()
 	flush_stats()
 
 def atempt_to_shutdown_with_reason(text,sleep_time,exit_type,critical):

@@ -1,4 +1,3 @@
-CREATE TABLE wz (code text, city text, counry text);
 INSERT INTO "wz" VALUES('AABS','None','None');
 INSERT INTO "wz" VALUES('AAXX','None','None');
 INSERT INTO "wz" VALUES('AGGH','Honiara / Henderson','Solomon Islands');
@@ -6817,5 +6816,3 @@ INSERT INTO "wz" VALUES('ZYMD','None','None');
 INSERT INTO "wz" VALUES('ZYQQ','Qiqihar','China');
 INSERT INTO "wz" VALUES('ZYTL','Dalian','China');
 INSERT INTO "wz" VALUES('ZYTX','Shenyang / Taokian','China');
-CREATE INDEX ccc on wz (code,city,counry);
-COMMIT;
