@@ -21,9 +21,15 @@
 #                                                                             #
 # --------------------------------------------------------------------------- #
 
-def oboobs(type, jid, nick): send_msg(type, jid, nick, 'http://media.oboobs.ru/%s' % json.loads(load_page('http://api.oboobs.ru/noise/1/'))[0]['preview'])
+def oboobs(type, jid, nick):
+	try: msg = 'http://media.oboobs.ru/%s' % json.loads(load_page('http://api.oboobs.ru/noise/1/'))[0]['preview']
+	except: msg = L('Error!','%s/%s'%(jid,nick))
+	send_msg(type, jid, nick, msg)
 
-def obutts(type, jid, nick): send_msg(type, jid, nick, 'http://media.obutts.ru/%s' % json.loads(load_page('http://api.obutts.ru/noise/1/'))[0]['preview'])
+def obutts(type, jid, nick):
+	try: msg = 'http://media.obutts.ru/%s' % json.loads(load_page('http://api.obutts.ru/noise/1/'))[0]['preview']
+	except: msg = L('Error!','%s/%s'%(jid,nick))
+	send_msg(type, jid, nick, msg)
 
 global execute
 

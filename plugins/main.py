@@ -872,7 +872,7 @@ def conf_limit(type, jid, nick, text):
 def bot_plugin(type, jid, nick, text):
 	global plname, plugins, execute, gtimer, gpresence, gmassage, giq_hook
 	text = text.split()
-	opt = text[0]
+	opt = text[0] if text else ''
 	try: name = '%s.py' % text[1]
 	except: name = ''
 	msg = L('Wrong arguments!','%s/%s'%(jid,nick))

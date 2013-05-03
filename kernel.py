@@ -665,12 +665,12 @@ def os_version():
 			(value, type) = _winreg.QueryValueEx(handle, value)
 			return value
 		def get(key): return get_registry_value("HKEY_LOCAL_MACHINE", "SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion",key)
-		osInfo = get("ProductName")
+		osInfo = ' '.join(get("ProductName").split()[:3])
 		buildInfo = get("CurrentBuildNumber")
 		try:
 			spInfo = get("CSDVersion")
-			isidaOs = '%s %s (Build: %s) / Python %s' % (osInfo,spInfo,buildInfo,isidaPyVer)
-		except: isidaOs = '%s (Build: %s) / Python %s' % (osInfo,buildInfo,isidaPyVer)
+			isidaOs = '%s %s [%s] / Python %s' % (osInfo,spInfo,buildInfo,isidaPyVer)
+		except: isidaOs = '%s [%s] / Python %s' % (osInfo,buildInfo,isidaPyVer)
 	else: isidaOs = 'unknown'
 	return isidaOs
 
