@@ -2,7 +2,7 @@
 
 #-------------------------------------------------------#
 #				 Isida-bot Config file
-#						v3.1ru
+#						v3.2ru
 #-------------------------------------------------------#
 
 
@@ -52,8 +52,9 @@ CommandsLog = True											# логгирование команд бота
 
 #-------------------------------------------------------#
 #----------------- Настройка баз данных ----------------#
-base_type = 'pgsql'     # тип базы: pgsql или mysql
-#base_type = 'mysql'     # тип базы: pgsql или mysql
+base_type = 'pgsql'     # тип базы: pgsql, mysql или sqlite3
+#base_type = 'sqlite3'   # тип базы: pgsql, mysql или sqlite3
+#base_type = 'mysql'     # тип базы: pgsql, mysql или sqlite3
 base_name = 'isidabot'  # название базы
 base_user = 'isidabot'  # пользователь базы
 base_host = 'localhost' # хост базы
@@ -68,6 +69,7 @@ base_port = '5432'		# порт для подключения. стандартн
 tmp_folder = 'tmp/%s'							# папка временных данных
 data_folder = 'data/%s'							# папка данных
 set_folder 	= 'settings/%s'						# папка настроек
+sqlite_base = data_folder % 'sqlite3.db'		# файл с базой sqlite3
 slog_folder = data_folder % 'log/%s'			# папка системных логов
 back_folder = data_folder % 'backup/%s'			# папка хранения резервных копий
 loc_folder 	= data_folder % 'locales/%s.txt'	# папка локализаций
