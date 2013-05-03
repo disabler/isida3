@@ -79,8 +79,8 @@ def conf_backup(type, jid, nick, text):
 				iqid = get_id()
 				i = xmpp.Node('iq', {'id': iqid, 'type': 'set', 'to':jid}, payload = [xmpp.Node('query', {'xmlns': xmpp.NS_MUC_ADMIN},[xmpp.Node('item',{'affiliation':'admin', 'jid':getRoom(str(selfjid))},[])])])
 				sender(i)
-				backup_async[back_id]['alias'] = cur_execute_fetchall('select match,cmd from alias where room=%s',(jid,))
-				backup_async[back_id]['bot_config'] = cur_execute_fetchall('select option,value from config_conf where room=%s',(jid,))
+				backup_async[back_id]['alias'] = cur_execute_fetchall('select match ,cmd from alias where room=%s',(jid,))
+				backup_async[back_id]['bot_config'] = cur_execute_fetchall('select option ,value from config_conf where room=%s',(jid,))
 				backup_async[back_id]['acl'] = cur_execute_fetchall('select action,type,text,command,time,level from acl where jid=%s',(jid,))
 				backup_async[back_id]['rss'] = cur_execute_fetchall('select url,update,type,time,hash from feed where room=%s',(jid,))
 
@@ -132,10 +132,10 @@ def conf_backup(type, jid, nick, text):
 						sender(xmpp.Node('iq', {'id': get_id(), 'type': 'set', 'to':jid}, payload = [xmpp.Node('query', {'xmlns': xmpp.NS_MUC_ADMIN},[xmpp.Node('item',{'affiliation':'admin', 'jid':getRoom(unicode(selfjid))},[])])]))
 						time.sleep(bst)
 						cur_execute_fetchall('delete from config_conf where room=%s',(jid,))
-						for tmp in raw_back['bot_config']: cur_execute('insert into config_conf (room,option,value) values (%s,%s,%s)',(jid,tmp[0],tmp[1]))
+						for tmp in raw_back['bot_config']: cur_execute('insert into config_conf (room, option ,value) values (%s,%s,%s)',(jid,tmp[0],tmp[1]))
 						for tmp in raw_back['alias']:
-							cur_execute('delete from alias where room=%s and match=%s',(jid,tmp[0]))
-							cur_execute('insert into alias (room,match,cmd) values (%s,%s,%s)',(jid,tmp[0],tmp[1]))
+							cur_execute('delete from alias where room=%s and match =%s',(jid,tmp[0]))
+							cur_execute('insert into alias (room, match ,cmd) values (%s,%s,%s)',(jid,tmp[0],tmp[1]))
 						for tmp in raw_back['acl']:
 							isit = cur_execute_fetchall('select action,type,text,command,time from acl where jid=%s and action=%s and type=%s and text=%s and level=%s',(jid,tmp[0],tmp[1],tmp[2],tmp[5]))
 							if not isit: cur_execute('insert into acl values (%s,%s,%s,%s,%s,%s,%s)', tuple([jid]+list(tmp)))

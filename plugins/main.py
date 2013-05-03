@@ -477,9 +477,9 @@ def alias(type, jid, nick, text):
 		elif mode == 'add_global' and am != 9: msg = L('Not allowed create global alias for: %s','%s/%s'%(jid,nick)) % tcmd
 		else:
 			gjid = jid if mode == 'add' else '*'
-			fl = cur_execute_fetchone('select match from alias where room=%s and match=%s',(gjid,cmd))
+			fl = cur_execute_fetchone('select match from alias where room=%s and match =%s',(gjid,cmd))
 			if fl:
-				cur_execute('delete from alias where room=%s and match=%s',(gjid,cmd))
+				cur_execute('delete from alias where room=%s and match =%s',(gjid,cmd))
 				msg = L('Updated:','%s/%s'%(jid,nick))
 			else: msg = L('Added:','%s/%s'%(jid,nick))
 			cur_execute('insert into alias values (%s,%s,%s)',(gjid,cmd,cbody))
@@ -487,7 +487,7 @@ def alias(type, jid, nick, text):
 	if mode in ['del','del_global']:
 		gjid = jid if mode == 'del' else '*'
 		msg = L('Unable to remove %s','%s/%s'%(jid,nick)) % cmd
-		fl = cur_execute_fetchone('select cmd from alias where room=%s and match=%s',(gjid,cmd))
+		fl = cur_execute_fetchone('select cmd from alias where room=%s and match =%s',(gjid,cmd))
 		if fl:
 			am,amm = get_level(jid,nick)[0],-1
 			tcmd = fl[0].split(' ',1)[0].lower()
@@ -498,11 +498,11 @@ def alias(type, jid, nick, text):
 			if mode == 'del' and amm > am: msg = L('Not allowed remove alias for: %s','%s/%s'%(jid,nick)) % tcmd
 			elif mode == 'del_global' and am != 9: msg = L('Not allowed remove global alias for: %s','%s/%s'%(jid,nick)) % tcmd
 			else:
-				cur_execute('delete from alias where room=%s and match=%s',(gjid,cmd))
+				cur_execute('delete from alias where room=%s and match =%s',(gjid,cmd))
 				msg = L('Removed: %s','%s/%s'%(jid,nick)) % cmd
 	if mode=='show':
 		if cmd == '':
-			fl = cur_execute_fetchall('select match,room from alias where room=%s or room=%s',(jid,'*'))
+			fl = cur_execute_fetchall('select match ,room from alias where room=%s or room=%s order by match ',(jid,'*'))
 			if fl:
 				aln = ', '.join([t[0] for t in fl if t[1] != '*'])
 				alg = ', '.join([t[0] for t in fl if t[1] == '*'])
@@ -512,7 +512,7 @@ def alias(type, jid, nick, text):
 					else: msg = L('Global aliases: %s','%s/%s'%(jid,nick)) % alg
 			else: msg = L('Aliases not found!','%s/%s'%(jid,nick))
 		else:
-			fl = cur_execute_fetchall('select match,cmd,room from alias where (room=%s or room=%s) and match ilike %s',(jid,'*','%%%s%%'%cmd))
+			fl = cur_execute_fetchall('select match ,cmd,room from alias where (room=%s or room=%s) and match ilike %s order by match ',(jid,'*','%%%s%%'%cmd))
 			if fl:
 				aln = '\n'.join(['%s = %s' % (t[0],t[1]) for t in fl if t[2] != '*'])
 				alg = '\n'.join(['%s = %s' % (t[0],t[1]) for t in fl if t[2] == '*'])

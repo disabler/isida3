@@ -1108,7 +1108,8 @@ def messageCB(sess,mess):
 		if is_par: no_comm = com_parser(access_mode, nowname, type, room, nick, text, jid)
 		if no_comm:
 			btl = btext.lower()
-			alias = cur_execute_fetchone("select match,cmd from alias where (room=%s or room=%s) and (match=%s or %s ilike match||' %%') order by room desc",(room,'*',btl,btl))
+			if base_type == 'mysql': alias = cur_execute_fetchone("select match ,cmd from alias where (room=%s or room=%s) and ( match =%s or %s like concat( match ,' %%')) order by room desc",(room,'*',btl,btl))
+			else: alias = cur_execute_fetchone("select match ,cmd from alias where (room=%s or room=%s) and ( match =%s or %s ilike `match`||' %%') order by room desc",(room,'*',btl,btl))
 			if alias:
 				pprint('%s %s/%s [%s|alias] %s' % (jid,room,nick,access_mode,text),'bright_cyan')
 				argz = btext[len(alias[0])+1:]

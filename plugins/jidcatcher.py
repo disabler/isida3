@@ -87,7 +87,7 @@ def info_serv(type, jid, nick, text):
 def info_top(type, jid, nick, text):
 	if text: room = text
 	else: room = getRoom(jid)
-	cnf = cur_execute_fetchone('select count,time from top where room=%s',(room,))
+	cnf = cur_execute_fetchone('select count ,time from top where room=%s',(room,))
 	if cnf: msg = L('Max count of members: %s %s','%s/%s'%(jid,nick)) % (cnf[0], '(%s)' % disp_time(cnf[1]))
 	else: msg = L('Statistic not found!','%s/%s'%(jid,nick))
 	send_msg(type, jid, nick, msg)
@@ -103,7 +103,7 @@ def jidcatcher_presence(room,jid,nick,type,text):
 		cnt = len(['' for t in megabase if t[0]==room])
 		cnf = cur_execute_fetchone('select count from top where room=%s',(room,))
 		if cnf:
-			if cnt > cnf[0]: cur_execute('update top set count=%s, time=%s where room=%s;',(cnt,int(time.time()),room))
+			if cnt > cnf[0]: cur_execute('update top set count =%s, time=%s where room=%s;',(cnt,int(time.time()),room))
 		else: cur_execute('insert into top values (%s,%s,%s);',(room,cnt,int(time.time())))
 
 global execute, presence_control
