@@ -49,9 +49,14 @@ import xmpp
 
 global execute, prefix, comms, hashlib, trace
 
+def sqlite3_split_part(txt, spltr, cnt):
+	if txt: return (txt.split(spltr) + [''] * (cnt-1))[cnt-1]
+	else: return txt
+
 def cur_execute(*params):
-	global conn
-	if base_type == 'sqlite3': conn = sqlite3.connect(sqlite_base)
+	if base_type == 'sqlite3':
+		conn = sqlite3.connect(sqlite_base)
+		if 'split_part' in list(params)[0]: conn.create_function('split_part', 3, sqlite3_split_part)
 	cur = conn.cursor()
 	if base_type == 'pgsql': psycopg2.extensions.register_type(psycopg2.extensions.UNICODE, cur)
 	par = True
@@ -77,8 +82,9 @@ def cur_execute(*params):
 	return par
 
 def cur_execute_fetchone(*params):
-	global conn
-	if base_type == 'sqlite3': conn = sqlite3.connect(sqlite_base)
+	if base_type == 'sqlite3':
+		conn = sqlite3.connect(sqlite_base)
+		if 'split_part' in list(params)[0]: conn.create_function('split_part', 3, sqlite3_split_part)
 	try: cur = conn.cursor()
 	except: return None
 	if base_type == 'pgsql': psycopg2.extensions.register_type(psycopg2.extensions.UNICODE, cur)
@@ -110,8 +116,9 @@ def cur_execute_fetchone(*params):
 	return par
 
 def cur_execute_fetchall(*params):
-	global conn
-	if base_type == 'sqlite3': conn = sqlite3.connect(sqlite_base)
+	if base_type == 'sqlite3':
+		conn = sqlite3.connect(sqlite_base)
+		if 'split_part' in list(params)[0]: conn.create_function('split_part', 3, sqlite3_split_part)
 	try: cur = conn.cursor()
 	except: return None
 	if base_type == 'pgsql': psycopg2.extensions.register_type(psycopg2.extensions.UNICODE, cur)
@@ -143,8 +150,9 @@ def cur_execute_fetchall(*params):
 	return par
 
 def cur_execute_fetchmany(*params):
-	global conn
-	if base_type == 'sqlite3': conn = sqlite3.connect(sqlite_base)
+	if base_type == 'sqlite3':
+		conn = sqlite3.connect(sqlite_base)
+		if 'split_part' in list(params)[0]: conn.create_function('split_part', 3, sqlite3_split_part)
 	try: cur = conn.cursor()
 	except: return None
 	if base_type == 'pgsql': psycopg2.extensions.register_type(psycopg2.extensions.UNICODE, cur)
@@ -1603,8 +1611,10 @@ else: errorHandler('%s is missed.' % configname)
 if base_type == 'pgsql':
 	import psycopg2
 	import psycopg2.extensions
+	global conn
 elif base_type == 'mysql':
 	import MySQLdb
+	global conn
 elif base_type == 'sqlite3':
 	import sqlite3
 else: errorHandler('Unknown database backend!')
