@@ -53,18 +53,36 @@ def sqlite3_split_part(txt, spltr, cnt):
 	if txt: return (txt.split(spltr) + [''] * (cnt-1))[cnt-1]
 	else: return txt
 
+def cur_execute_sqlite3(*params):
+	conn = sqlite3.connect(sqlite_base)	
+	if 'split_part' in list(params)[0]: conn.create_function('split_part', 3, sqlite3_split_part)
+	cur = conn.cursor()
+	par = True
+	try:
+		params = list(params)
+		params[0] = params[0].replace(' ilike ',' like ').replace('%s','?')
+		params = tuple(params)
+		cur.execute(*params)
+		prm = params[0].split()[0].lower()
+		if prm in ['update','insert','delete','create','drop','alter']: conn.commit()
+	except Exception, par:
+		par = None
+		conn.rollback()
+		if halt_on_exception: raise
+	conn.commit()
+	conn.close()
+	return par
+	
 def cur_execute(*params):
-	if base_type == 'sqlite3':
-		conn = sqlite3.connect(sqlite_base)
-		if 'split_part' in list(params)[0]: conn.create_function('split_part', 3, sqlite3_split_part)
+	if base_type == 'sqlite3': return cur_execute_sqlite3(*params)
+	global conn
 	cur = conn.cursor()
 	if base_type == 'pgsql': psycopg2.extensions.register_type(psycopg2.extensions.UNICODE, cur)
 	par = True
 	try:
-		if base_type in ['mysql','sqlite3']:
+		if base_type == 'mysql':
 			params = list(params)
 			params[0] = params[0].replace(' ilike ',' like ')
-			if base_type == 'sqlite3': params[0] = params[0].replace('%s','?')
 			params = tuple(params)
 		cur.execute(*params)
 		prm = params[0].split()[0].lower()
@@ -78,22 +96,40 @@ def cur_execute(*params):
 		conn.rollback()
 		if halt_on_exception: raise
 	cur.close()
-	if base_type == 'sqlite3': conn.close()
+	return par
+
+def cur_execute_fetchone_sqlite3(*params):
+	conn = sqlite3.connect(sqlite_base)
+	if 'split_part' in list(params)[0]: conn.create_function('split_part', 3, sqlite3_split_part)
+	try: cur = conn.cursor()
+	except: return None
+	par = None
+	try:
+		params = list(params)
+		params[0] = params[0].replace(' ilike ',' like ').replace('%s','?')
+		params = tuple(params)
+		cur.execute(*params)
+		try: par = cur.fetchone()
+		except Exception, par:
+			par = None
+			if halt_on_exception: raise
+	except Exception, par:
+		par = None
+		conn.rollback()
+	conn.close()
 	return par
 
 def cur_execute_fetchone(*params):
-	if base_type == 'sqlite3':
-		conn = sqlite3.connect(sqlite_base)
-		if 'split_part' in list(params)[0]: conn.create_function('split_part', 3, sqlite3_split_part)
+	if base_type == 'sqlite3': return cur_execute_fetchone_sqlite3(*params)
+	global conn
 	try: cur = conn.cursor()
 	except: return None
 	if base_type == 'pgsql': psycopg2.extensions.register_type(psycopg2.extensions.UNICODE, cur)
 	par = None
 	try:
-		if base_type in ['mysql','sqlite3']:
+		if base_type == 'mysql':
 			params = list(params)
 			params[0] = params[0].replace(' ilike ',' like ')
-			if base_type == 'sqlite3': params[0] = params[0].replace('%s','?')
 			params = tuple(params)
 		cur.execute(*params)
 		try: par = cur.fetchone()
@@ -112,22 +148,41 @@ def cur_execute_fetchone(*params):
 		else: par = None
 		conn.rollback()
 	cur.close()
-	if base_type == 'sqlite3': conn.close()
+	return par
+
+def cur_execute_fetchall_sqlite3(*params):
+	conn = sqlite3.connect(sqlite_base)
+	if 'split_part' in list(params)[0]: conn.create_function('split_part', 3, sqlite3_split_part)
+	try: cur = conn.cursor()
+	except: return None
+	par = None
+	try:
+		params = list(params)
+		params[0] = params[0].replace(' ilike ',' like ').replace('%s','?')
+		params = tuple(params)
+		cur.execute(*params)
+		try: par = cur.fetchall()
+		except Exception, par:
+			par = None
+			if halt_on_exception: raise
+	except Exception, par:
+		par = None
+		conn.rollback()
+		if halt_on_exception: raise
+	conn.close()
 	return par
 
 def cur_execute_fetchall(*params):
-	if base_type == 'sqlite3':
-		conn = sqlite3.connect(sqlite_base)
-		if 'split_part' in list(params)[0]: conn.create_function('split_part', 3, sqlite3_split_part)
+	if base_type == 'sqlite3': return cur_execute_fetchall_sqlite3(*params)
+	global conn
 	try: cur = conn.cursor()
 	except: return None
 	if base_type == 'pgsql': psycopg2.extensions.register_type(psycopg2.extensions.UNICODE, cur)
 	par = None
 	try:
-		if base_type in ['mysql','sqlite3']:
+		if base_type == 'mysql':
 			params = list(params)
 			params[0] = params[0].replace(' ilike ',' like ')
-			if base_type == 'sqlite3': params[0] = params[0].replace('%s','?')
 			params = tuple(params)
 		cur.execute(*params)
 		try: par = cur.fetchall()
@@ -146,21 +201,39 @@ def cur_execute_fetchall(*params):
 		conn.rollback()
 		if halt_on_exception: raise
 	cur.close()
-	if base_type == 'sqlite3': conn.close()
+	return par
+
+def cur_execute_fetchmany_sqlite3(*params):
+	conn = sqlite3.connect(sqlite_base)
+	if 'split_part' in list(params)[0]: conn.create_function('split_part', 3, sqlite3_split_part)
+	try: cur = conn.cursor()
+	except: return None
+	try:
+		params = list(params)
+		params[0] = params[0].replace(' ilike ',' like ').replace('%s','?')
+		params = tuple(params)
+		cur.execute(params[0],params[1])
+		try: par = cur.fetchmany(params[-1])
+		except Exception, par:
+			par = None
+			if halt_on_exception: raise
+	except Exception, par:
+		conn.rollback()
+		par = None
+		if halt_on_exception: raise
+	conn.close()
 	return par
 
 def cur_execute_fetchmany(*params):
-	if base_type == 'sqlite3':
-		conn = sqlite3.connect(sqlite_base)
-		if 'split_part' in list(params)[0]: conn.create_function('split_part', 3, sqlite3_split_part)
+	if base_type == 'sqlite3': return cur_execute_fetchmany_sqlite3(*params)
+	global conn
 	try: cur = conn.cursor()
 	except: return None
 	if base_type == 'pgsql': psycopg2.extensions.register_type(psycopg2.extensions.UNICODE, cur)
 	try:
-		if base_type in ['mysql','sqlite3']:
+		if base_type == 'mysql':
 			params = list(params)
 			params[0] = params[0].replace(' ilike ',' like ')
-			if base_type == 'sqlite3': params[0] = params[0].replace('%s','?')
 			params = tuple(params)
 		cur.execute(params[0],params[1])
 		try: par = cur.fetchmany(params[-1])
@@ -180,7 +253,6 @@ def cur_execute_fetchmany(*params):
 		else: par = None
 		if halt_on_exception: raise
 	cur.close()
-	if base_type == 'sqlite3': conn.close()
 	return par
 
 def get_color(c):
@@ -1611,10 +1683,8 @@ else: errorHandler('%s is missed.' % configname)
 if base_type == 'pgsql':
 	import psycopg2
 	import psycopg2.extensions
-	global conn
 elif base_type == 'mysql':
 	import MySQLdb
-	global conn
 elif base_type == 'sqlite3':
 	import sqlite3
 else: errorHandler('Unknown database backend!')
