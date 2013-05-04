@@ -141,7 +141,7 @@ def parse_url_in_message(room,jid,nick,type,text):
 			for t in text.split():
 				link = re.findall(r'(http[s]?://.*)',t)
 				if link:
-					link = link[0].split(' ')[0]
+					link = link[0].split(' ')[0].split('"')[0].split('\'')[0]
 					if not cur_execute_fetchone('select * from url where room=%s and jid=%s and url=%s',(room,rjid,link)):
 						ttext = get_content_title(link)
 						if ttext:
@@ -167,7 +167,7 @@ def parse_url_in_message(room,jid,nick,type,text):
 	was_shown = False
 	if get_config(getRoom(room),'url_title'):
 		try:
-			link = re.findall(r'(http[s]?://.*)',text)[0].split(' ')[0]
+			link = re.findall(r'(http[s]?://.*)',text)[0].split(' ')[0].split('"')[0].split('\'')[0]
 			if link and last_url_watch != link and pasteurl not in link:
 				if content_title and content_title[0] == link: ttext = content_title[1]
 				else: ttext = get_content_title(link)

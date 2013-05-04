@@ -1462,8 +1462,8 @@ def presenceCB(sess,mess):
 		cur_execute('insert into first_join values (%s,%s,%s);', (room,jid,tt))
 
 def onoff_no_tr(msg):
-	if msg == None or msg == False or msg == 0 or msg == '0': return 'off'
-	elif msg == True or msg == 1 or msg == '1': return 'on'
+	if msg in [None,False,0,'0']: return 'off'
+	elif msg in [True,1,'1']: return 'on'
 	else: return msg
 
 def onoff(msg): return L(onoff_no_tr(msg))

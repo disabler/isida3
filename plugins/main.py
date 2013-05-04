@@ -538,18 +538,18 @@ def un_unix(val):
 		day_h,day_l = tt[2]/10%10,tt[2] % 10
 		if day_h == 1: ret = L('%s days, %s') % (tt[2],ret)
 		else:
-			if day_l in [5,6,7,8,9]: ret = L('%s days, %s') % (tt[2],ret)
-			elif day_l in [2,3,4]: ret = L('%s Days, %s').lower() % (tt[2],ret)
+			if day_l in xrange(5,10): ret = L('%s days, %s') % (tt[2],ret)
+			elif day_l in xrange(2,5): ret = L('%s Days, %s').lower() % (tt[2],ret)
 			elif day_l == 1: ret = L('%s day, %s') % (tt[2],ret)
 	if sum(tt[:2]):
-		if tt[1] in [5,6,7,8,9,10,11,12]: ret = L('%s months, %s') % (tt[1],ret)
-		elif tt[1] in [2,3,4]: ret = L('%s Months, %s').lower() % (tt[1],ret)
+		if tt[1] in xrange(5,13): ret = L('%s months, %s') % (tt[1],ret)
+		elif tt[1] in xrange(2,5): ret = L('%s Months, %s').lower() % (tt[1],ret)
 		elif tt[1] == 1: ret = L('%s month, %s') % (tt[1],ret)
 	if tt[0]:
 		ty = tt[0] % 100
 		if ty >= 20: ty = ty % 10
 		if ty in [0]+range(5,21): ret = L('%s years, %s') % (tt[0],ret)
-		elif ty in [2,3,4]: ret = L('%s Years, %s').lower() % (tt[0],ret)
+		elif ty in xrange(2,5): ret = L('%s Years, %s').lower() % (tt[0],ret)
 		else: ret = L('%s year, %s') % (tt[0],ret)
 	return ret
 
@@ -566,14 +566,12 @@ def close_age():
 	tt = int(time.time())
 	for ab in ccu: cur_execute('insert into age values (%s,%s,%s,%s,%s,%s,%s,%s,%s)', (ab[0],ab[1],ab[2],tt,ab[4]+(tt-ab[3]),1,ab[6],ab[7],ab[1].lower()))
 
-
 def close_age_room(room):
 	cur_execute('delete from age where jid ilike %s',('<temporary>%',))
 	ccu = cur_execute_fetchall('select * from age where status=%s and room=%s order by room',(0,room))
 	cur_execute('delete from age where status=%s and room=%s',(0,room))
 	tt = int(time.time())
 	for ab in ccu: cur_execute('insert into age values (%s,%s,%s,%s,%s,%s,%s,%s,%s)', (ab[0],ab[1],ab[2],tt,ab[4]+(tt-ab[3]),1,ab[6],ab[7],ab[1].lower()))
-
 
 def sfind(mass,stri):
 	for a in mass:
@@ -1070,12 +1068,6 @@ def info(type, jid, nick):
 		msg += L('\nUsed virtual ram: %s, Used real ram: %s','%s/%s'%(jid,nick)) % memstat
 	send_msg(type, jid, nick, msg)
 
-# 0 - конфа
-# 1 - ник
-# 2 - роль
-# 3 - аффиляция
-# 4 - jid
-
 def info_base(type, jid, nick):
 	msg = L('What need find?','%s/%s'%(jid,nick))
 	if nick != '':
@@ -1253,8 +1245,6 @@ def html_encode(body):
 	else:
 		try: return smart_encode(body,enc)
 		except: return L('Encoding error!')
-
-#[room, nick, role, affiliation, jid]
 
 def rss_flush(jid,link,break_point):
 	tstop = cur_execute_fetchone('select hash from feed where room=%s and url=%s',(jid,link))
