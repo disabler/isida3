@@ -523,14 +523,6 @@ def alias(type, jid, nick, text):
 			else: msg = L('Aliases not found!','%s/%s'%(jid,nick))
 	send_msg(type, jid, nick, msg)
 
-def fspace(mass):
-	bdd = []
-	for b in mass:
-		if len(b) and len(b) != b.count(' '):
-			while b[0] == ' ': b = b[1:]
-		bdd.append(b)
-	return bdd
-
 def un_unix(val):
 	tt = map(lambda q,a: q-a, time.gmtime(val), time.gmtime(0))[:6]
 	ret = '%02d:%02d:%02d' % tuple(tt[3:6])
@@ -563,13 +555,6 @@ def close_age():
 	cur_execute('delete from age where jid ilike %s',('<temporary>%',))
 	ccu = cur_execute_fetchall('select * from age where status=%s order by room',(0,))
 	cur_execute('delete from age where status=%s', (0,))
-	tt = int(time.time())
-	for ab in ccu: cur_execute('insert into age values (%s,%s,%s,%s,%s,%s,%s,%s,%s)', (ab[0],ab[1],ab[2],tt,ab[4]+(tt-ab[3]),1,ab[6],ab[7],ab[1].lower()))
-
-def close_age_room(room):
-	cur_execute('delete from age where jid ilike %s',('<temporary>%',))
-	ccu = cur_execute_fetchall('select * from age where status=%s and room=%s order by room',(0,room))
-	cur_execute('delete from age where status=%s and room=%s',(0,room))
 	tt = int(time.time())
 	for ab in ccu: cur_execute('insert into age values (%s,%s,%s,%s,%s,%s,%s,%s,%s)', (ab[0],ab[1],ab[2],tt,ab[4]+(tt-ab[3]),1,ab[6],ab[7],ab[1].lower()))
 
@@ -746,13 +731,6 @@ def bot_rejoin(type, jid, nick, text):
 			cur_execute('delete from conference where room ilike %s;', ('%s/%%'%getRoom(text),))
 			cur_execute('insert into conference values (%s,%s)',(text,passwd))
 	else: send_msg(type, jid, nick, L('I have never been in %s','%s/%s'%(jid,nick)) % getRoom(text))
-
-def remove_by_half(cb,rm):
-	for tmp in cb:
-		if tmp[:len(rm)] == rm:
-			cb.remove(tmp)
-			break
-	return cb
 
 def bot_join(type, jid, nick, text):
 	global lastserver, lastnick, pres_answer
@@ -1111,13 +1089,6 @@ def real_search(type, jid, nick, text):
 	else: msg = L('What do you need to find?','%s/%s'%(jid,nick))
 	send_msg(type, jid, nick, msg)
 
-def isNumber(text):
-	try:
-		it = int(text,16)
-		if it >= 32 and it <= 127: return chr(int(text,16))
-		else: return '?'
-	except: return 'None'
-
 def unescape(text):
 	def fixup(m):
 		text = m.group(0)
@@ -1152,10 +1123,6 @@ def esc_max2(ms):
 
 def esc_min2(ms):
 	for tmp in rlmas_min: ms = ms.replace(tmp[1],tmp[0])
-	return ms
-
-def esc_max(ms):
-	for tmp in rmass: ms = ms.replace(tmp[0],tmp[1])
 	return ms
 
 def esc_min(ms):
@@ -1200,8 +1167,6 @@ def remove_replace_ltgt(text,item):
 	T = re.findall('<.*?>', text, re.S)
 	for tmp in T: text = text.replace(tmp,item,1)
 	return text
-
-def remove_ltgt(text): return remove_replace_ltgt(text,'')
 
 def replace_ltgt(text): return remove_replace_ltgt(text,' ')
 

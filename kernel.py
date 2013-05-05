@@ -476,11 +476,6 @@ def get_config_int(room,item):
 	try: return int(setup[0])
 	except: return int(config_prefs[item][3])
 
-def get_config_float(room,item):
-	setup = cur_execute_fetchone('select value from config_conf where room=%s and option = %s',(room,item))
-	try: return float(setup[0])
-	except: return float(config_prefs[item][3])
-
 def put_config(room,item,value):
 	if value in [True,False,None]: value = str(value)
 	setup = cur_execute_fetchone('select value from config_conf where room=%s and option = %s',(room,item))
@@ -545,8 +540,6 @@ def smart_encode(text,enc):
 		except: pass
 	return tx
 
-def tZ(val): return '%02d' % val
-
 def timeadd(lt): return '%02d.%02d.%02d %02d:%02d:%02d' % (lt[2],lt[1],lt[0],lt[3],lt[4],lt[5])
 
 def onlytimeadd(lt): return '%02d:%02d:%02d' % (lt[3],lt[4],lt[5])
@@ -589,22 +582,6 @@ def send_presence_all(sm):
 def errorHandler(text):
 	draw_warning(text)
 	sys.exit('exit')
-
-def arr_semi_find(array, string):
-	pos = 0
-	for arr in array:
-		if string.lower() in arr.lower(): break
-		pos += 1
-	if pos != len(array): return pos
-	else: return -1
-
-def arr_del_by_pos(array, position):
-	return array[:position] + array[position+1:]
-
-def arr_del_semi_find(array, string):
-	pos = arr_semi_find(array, string)
-	if pos >= 0: array = arr_del_by_pos(array,pos)
-	return array
 
 def get_joke(text):
 
@@ -837,10 +814,6 @@ def nice_time(ttim):
 	#return t_utc,t_tz,t_display
 	t_display += t_gmt
 	return t_utc,t_gmt,t_display
-
-def get_valid_tag(body,tag):
-	if tag in body: return get_subtag(body,tag)
-	else: return 'None'
 
 def get_eval_item(mess,string):
 	try:
@@ -2035,8 +2008,8 @@ while 1:
 			elif int(str(cyc)): cycles_used += 1
 			else: cycles_unused += 1
 			if plugins_reload:
-				import isida
-				isida.update(get_repo())
+				from isida import update as isida_update
+				isida_update(get_repo())
 				botVersion = get_bot_version()
 				bot_softwareinfo['software_version'] = botVersion
 				pprint('*** Reload localization','white')
