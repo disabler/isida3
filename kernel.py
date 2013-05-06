@@ -843,7 +843,7 @@ def caps_matcher(c_caps,c_list):
 	for t in c_list:
 		r = int(t[0] == '*')*2+int(t[-1] == '*')
 		if r == 3 and t[1:-1].lower() in c_caps.lower(): return True
-		elif r == 2 and c_caps.endsswith(t[1:]): return True
+		elif r == 2 and c_caps.endswith(t[1:]): return True
 		elif r == 1 and c_caps.startswith(t[:-1]): return True
 		elif c_caps == t: return True
 	return result
