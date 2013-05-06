@@ -197,7 +197,7 @@ def ping_async(type, jid, nick, text, is_answ):
 		fixed_ping = round(original_ping - iq_ping_minimal,p_digits)
 		if fixed_ping <= 0: fixed_ping = original_ping
 		f = '%'+'.0%sf' % p_digits
-		if text == '': msg = L('Ping from you %s sec.','%s/%s'%(jid,nick)) % f % fixed_ping
+		if text in ['',nick]: msg = L('Ping from you %s sec.','%s/%s'%(jid,nick)) % f % fixed_ping
 		else: msg = L('Ping from %s %s sec.','%s/%s'%(jid,nick)) % (text, f % fixed_ping)
 	send_msg(type, jid, nick, msg)
 
