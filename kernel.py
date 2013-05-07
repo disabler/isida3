@@ -1439,7 +1439,9 @@ def onoff_no_tr(msg):
 	elif msg in [True,1,'1']: return 'on'
 	else: return msg
 
-def onoff(msg): return L(onoff_no_tr(msg))
+def onoff(*msg):
+	if len(msg) == 1: return L(onoff_no_tr(msg[0]))
+	else: return L(onoff_no_tr(msg[0]),msg[1])
 
 def getName(jid):
 	jid = unicode(jid)

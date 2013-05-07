@@ -359,7 +359,7 @@ def disco_iq_get(iq,id,room,acclvl,query,towh,al):
 			if node == '' or node == xmpp.NS_COMMANDS:
 				if towh == selfjid: settings_set = owner_groups
 				else: settings_set = config_groups
-				for tmp in settings_set: i.getTag('query').setTag('item',attrs={'node':disco_config_node+tmp[1], 'name':tmp[0],'jid':towh})
+				for tmp in settings_set: i.getTag('query').setTag('item',attrs={'node':disco_config_node+tmp[1], 'name':L(tmp[0],room),'jid':towh})
 			return i
 		elif node == '':
 			i=xmpp.Iq(to=room, typ='result')
@@ -427,19 +427,19 @@ def disco_iq_set(iq,id,room,acclvl,query,towh,al):
 									PT(t,tm)
 									if tp[-1] == 'e' and old_tm != tm: eval(owner_prefs[t][-1])
 								except: pass
-							sucess_answer = [L('Settings unsuccesfully accepted:\n%s') % '\n'.join(unsucess),L('Settings succesfully accepted')][sucess_label]
+							sucess_answer = [L('Settings unsuccesfully accepted:\n%s',room) % '\n'.join(unsucess),L('Settings succesfully accepted',room)][sucess_label]
 							i.setTag('command',namespace=xmpp.NS_COMMANDS,attrs={'status':'completed', 'node':disco_config_node+tn,'sessionid':id})
 							i.getTag('command').setTag('note',attrs={'type':'info'})
 							i.getTag('command').setTagData('note',sucess_answer)
 							i.getTag('command').setTag('x',namespace=xmpp.NS_DATA)
-							i.getTag('command').getTag('x').setTagData('title',L('Settings'))
+							i.getTag('command').getTag('x').setTagData('title',L('Settings',room))
 							i.getTag('command').getTag('x').setTagData('instrustion',sucess_answer)
 							pprint('*** bot reconfigure by %s' % unicode(room),'purple')
 						else:
 							i.setTag('command',namespace=xmpp.NS_COMMANDS,attrs={'status':'executing', 'node':disco_config_node+tn,'sessionid':id})
 							i.getTag('command').setTag('x',namespace=xmpp.NS_DATA,attrs={'type':'form'})
 							#i.getTag('command').getTag('x').setTag('item',attrs={'node':disco_config_node+tn, 'name':'Configuration','jid':selfjid})
-							#i.getTag('command').getTag('x').setTagData('instructions',L('For configure required x:data-compatible client'))
+							#i.getTag('command').getTag('x').setTagData('instructions',L('For configure required x:data-compatible client',room))
 							tkeys = []
 							for tmp in owner_groups: tkeys.append(tmp[1])
 							if tn in tkeys:
@@ -447,7 +447,7 @@ def disco_iq_set(iq,id,room,acclvl,query,towh,al):
 									if tn == tmp[1]:
 										c_prefs,c_name = tmp[2],tmp[0]
 										break
-								i.getTag('command').getTag('x').setTagData('title',c_name)
+								i.getTag('command').getTag('x').setTagData('title',L(c_name,room))
 								cnf_prefs = {}
 								for tmp in c_prefs: cnf_prefs[tmp] = owner_prefs[tmp]
 								tmp = cnf_prefs.keys()
@@ -458,7 +458,7 @@ def disco_iq_set(iq,id,room,acclvl,query,towh,al):
 								for t in tt: tmp.append(t[1])
 								for t in tmp:
 									itm = owner_prefs[t]
-									itm_label = itm[0].replace('%s','').replace(':','').strip()
+									itm_label = L(itm[0],room).replace('%s','').replace(':','').strip()
 									if itm[1][0] == 'b':
 										dc = GT(t) in [True,1,'1','on']
 										i.getTag('command').getTag('x').setTag('field',attrs={'type':'boolean','label':itm_label,'var':t})\
@@ -477,7 +477,7 @@ def disco_iq_set(iq,id,room,acclvl,query,towh,al):
 										for t2 in itm[3]:
 											i.getTag('command').getTag('x').getTag('field',\
 											attrs={'type':'list-single','label':itm_label,'var':t})\
-											.setTag('option',attrs={'label':L(t2)})\
+											.setTag('option',attrs={'label':L(t2,room)})\
 											.setTagData('value',t2)
 					else:
 						if get_tag_item(unicode(iq),'x','type') == 'submit':
@@ -494,19 +494,19 @@ def disco_iq_set(iq,id,room,acclvl,query,towh,al):
 										else: tm = config_prefs[t][3]
 									put_config(getRoom(room),t,tm)
 								except: pass
-							sucess_answer = L('Settings succesfully accepted')
+							sucess_answer = L('Settings succesfully accepted',room)
 							i.setTag('command',namespace=xmpp.NS_COMMANDS,attrs={'status':'completed', 'node':disco_config_node+tn,'sessionid':id})
 							i.getTag('command').setTag('note',attrs={'type':'info'})
 							i.getTag('command').setTagData('note',sucess_answer)
 							i.getTag('command').setTag('x',namespace=xmpp.NS_DATA)
-							i.getTag('command').getTag('x').setTagData('title',L('Settings'))
+							i.getTag('command').getTag('x').setTagData('title',L('Settings',room))
 							i.getTag('command').getTag('x').setTagData('instrustion',sucess_answer)
 							pprint('*** reconfigure by %s' % unicode(room),'purple')
 						else:
 							i.setTag('command',namespace=xmpp.NS_COMMANDS,attrs={'status':'executing', 'node':disco_config_node+tn,'sessionid':id})
 							i.getTag('command').setTag('x',namespace=xmpp.NS_DATA,attrs={'type':'form'})
 							#i.getTag('command').getTag('x').setTag('item',attrs={'node':disco_config_node+tn, 'name':'Configuration','jid':selfjid})
-							#i.getTag('command').getTag('x').setTagData('instructions',L('For configure required x:data-compatible client'))
+							#i.getTag('command').getTag('x').setTagData('instructions',L('For configure required x:data-compatible client',room))
 							tkeys = []
 							for tmp in config_groups: tkeys.append(tmp[1])
 							if tn in tkeys:
@@ -514,15 +514,15 @@ def disco_iq_set(iq,id,room,acclvl,query,towh,al):
 									if tn == tmp[1]:
 										c_prefs,c_name = tmp[2],tmp[0]
 										break
-								i.getTag('command').getTag('x').setTagData('title',c_name)
+								i.getTag('command').getTag('x').setTagData('title',L(c_name,room))
 								cnf_prefs = {}
 								for tmp in c_prefs: cnf_prefs[tmp] = config_prefs[tmp]
 								tmp = cnf_prefs.keys()
 								tmp.sort()
 								for t in tmp:
 									itm = config_prefs[t]
-									itm_label = itm[0].replace('%s','').replace(':','').strip()
-									itm_desc = itm[1].strip()
+									itm_label = L(itm[0],room).replace('%s','').replace(':','').strip()
+									itm_desc = L(itm[1],room).strip()
 									if itm[2] == [True,False]:
 										dc = get_config(getRoom(room),t) in [True,1,'1','on']
 										i.getTag('command').getTag('x').setTag('field',attrs={'type':'boolean','label':itm_label,'var':t})\
@@ -542,12 +542,12 @@ def disco_iq_set(iq,id,room,acclvl,query,towh,al):
 										for t2 in itm[2]:
 											i.getTag('command').getTag('x').getTag('field',\
 											attrs={'type':'list-single','label':itm_label,'var':t})\
-											.setTag('option',attrs={'label':onoff(t2)})\
+											.setTag('option',attrs={'label':onoff(t2,room)})\
 											.setTagData('value',t2)
 									i.getTag('command').getTag('x').getTag('field',attrs={'label':itm_label,'var':t})\
 									.setTagData('desc',itm_desc)
 
-							else: i.getTag('command').getTag('x').setTagData('title',L('Unknown configuration request!'))
+							else: i.getTag('command').getTag('x').setTagData('title',L('Unknown configuration request!',room))
 					return i
 				else:
 					if tn:
@@ -593,19 +593,19 @@ def disco_iq_set(iq,id,room,acclvl,query,towh,al):
 								PT(t,tm)
 								if tp[-1] == 'e' and old_tm != tm: eval(owner_prefs[t][-1])
 							except: pass
-						sucess_answer = [L('Settings unsuccesfully accepted:\n%s') % '\n'.join(unsucess),L('Settings succesfully accepted')][sucess_label]
+						sucess_answer = [L('Settings unsuccesfully accepted:\n%s',room) % '\n'.join(unsucess),L('Settings succesfully accepted',room)][sucess_label]
 						i.setTag('command',namespace=xmpp.NS_COMMANDS,attrs={'status':'completed', 'node':disco_config_node+tn,'sessionid':id})
 						i.getTag('command').setTag('note',attrs={'type':'info'})
 						i.getTag('command').setTagData('note',sucess_answer)
 						i.getTag('command').setTag('x',namespace=xmpp.NS_DATA)
-						i.getTag('command').getTag('x').setTagData('title',L('Settings'))
+						i.getTag('command').getTag('x').setTagData('title',L('Settings',room))
 						i.getTag('command').getTag('x').setTagData('instrustion',sucess_answer)
 						pprint('*** bot reconfigure by %s' % unicode(room),'purple')
 					else:
 						i.setTag('command',namespace=xmpp.NS_COMMANDS,attrs={'status':'executing', 'node':disco_config_node+tn,'sessionid':id})
 						i.getTag('command').setTag('x',namespace=xmpp.NS_DATA,attrs={'type':'form'})
 						#i.getTag('command').getTag('x').setTag('item',attrs={'node':disco_config_node+tn, 'name':'Configuration','jid':selfjid})
-						#i.getTag('command').getTag('x').setTagData('instructions',L('For configure required x:data-compatible client'))
+						#i.getTag('command').getTag('x').setTagData('instructions',L('For configure required x:data-compatible client',room))
 						tkeys = []
 						for tmp in owner_groups: tkeys.append(tmp[1])
 						if tn in tkeys:
@@ -613,7 +613,7 @@ def disco_iq_set(iq,id,room,acclvl,query,towh,al):
 								if tn == tmp[1]:
 									c_prefs,c_name = tmp[2],tmp[0]
 									break
-							i.getTag('command').getTag('x').setTagData('title',c_name)
+							i.getTag('command').getTag('x').setTagData('title',L(c_name,room))
 							cnf_prefs = {}
 							for tmp in c_prefs: cnf_prefs[tmp] = owner_prefs[tmp]
 							tmp = cnf_prefs.keys()
@@ -624,7 +624,7 @@ def disco_iq_set(iq,id,room,acclvl,query,towh,al):
 							for t in tt: tmp.append(t[1])
 							for t in tmp:
 								itm = owner_prefs[t]
-								itm_label = itm[0].replace('%s','').replace(':','').strip()
+								itm_label = L(itm[0],room).replace('%s','').replace(':','').strip()
 								if itm[1] == 'b':
 									dc = GT(t) in [True,1,'1','on']
 									i.getTag('command').getTag('x').setTag('field',attrs={'type':'boolean','label':itm_label,'var':t})\
@@ -643,7 +643,7 @@ def disco_iq_set(iq,id,room,acclvl,query,towh,al):
 									for t2 in itm[3]:
 										i.getTag('command').getTag('x').getTag('field',\
 										attrs={'type':'list-single','label':itm_label,'var':t})\
-										.setTag('option',attrs={'label':L(t2)})\
+										.setTag('option',attrs={'label':L(t2,room)})\
 										.setTagData('value',t2)
 				else:
 					if get_tag_item(unicode(iq),'x','type') == 'submit':
@@ -660,12 +660,12 @@ def disco_iq_set(iq,id,room,acclvl,query,towh,al):
 									else: tm = config_prefs[t][3]
 								put_config(getRoom(room),t,tm)
 							except: pass
-						sucess_answer = L('Settings succesfully accepted')
+						sucess_answer = L('Settings succesfully accepted',room)
 						i.setTag('command',namespace=xmpp.NS_COMMANDS,attrs={'status':'completed', 'node':disco_config_node+tn,'sessionid':id})
 						i.getTag('command').setTag('note',attrs={'type':'info'})
 						i.getTag('command').setTagData('note',sucess_answer)
 						i.getTag('command').setTag('x',namespace=xmpp.NS_DATA)
-						i.getTag('command').getTag('x').setTagData('title',L('Settings'))
+						i.getTag('command').getTag('x').setTagData('title',L('Settings',room))
 						i.getTag('command').getTag('x').setTagData('instrustion',sucess_answer)
 
 						pprint('*** reconfigure by %s' % unicode(room),'purple')
@@ -673,7 +673,7 @@ def disco_iq_set(iq,id,room,acclvl,query,towh,al):
 						i.setTag('command',namespace=xmpp.NS_COMMANDS,attrs={'status':'executing', 'node':disco_config_node+tn,'sessionid':id})
 						i.getTag('command').setTag('x',namespace=xmpp.NS_DATA,attrs={'type':'form'})
 						#i.getTag('command').getTag('x').setTag('item',attrs={'node':disco_config_node+tn, 'name':'Configuration','jid':selfjid})
-						#i.getTag('command').getTag('x').setTagData('instructions',L('For configure required x:data-compatible client'))
+						#i.getTag('command').getTag('x').setTagData('instructions',L('For configure required x:data-compatible client',room))
 						tkeys = []
 						for tmp in config_groups: tkeys.append(tmp[1])
 						if tn in tkeys:
@@ -681,15 +681,15 @@ def disco_iq_set(iq,id,room,acclvl,query,towh,al):
 								if tn == tmp[1]:
 									c_prefs,c_name = tmp[2],tmp[0]
 									break
-							i.getTag('command').getTag('x').setTagData('title',c_name)
+							i.getTag('command').getTag('x').setTagData('title',L(c_name,room))
 							cnf_prefs = {}
 							for tmp in c_prefs: cnf_prefs[tmp] = config_prefs[tmp]
 							tmp = cnf_prefs.keys()
 							tmp.sort()
 							for t in tmp:
 								itm = config_prefs[t]
-								itm_label = itm[0].replace('%s','').replace(':','').strip()
-								itm_desc = itm[1].strip()
+								itm_label = L(itm[0],room).replace('%s','').replace(':','').strip()
+								itm_desc = L(itm[1],room).strip()
 								if itm[2] == [True,False]:
 									dc = get_config(getRoom(room),t) in [True,1,'1','on']
 									i.getTag('command').getTag('x').setTag('field',attrs={'type':'boolean','label':itm_label,'var':t})\
@@ -709,11 +709,11 @@ def disco_iq_set(iq,id,room,acclvl,query,towh,al):
 									for t2 in itm[2]:
 										i.getTag('command').getTag('x').getTag('field',\
 										attrs={'type':'list-single','label':itm_label,'var':t})\
-										.setTag('option',attrs={'label':onoff(t2)})\
+										.setTag('option',attrs={'label':onoff(t2,room)})\
 										.setTagData('value',t2)
 								i.getTag('command').getTag('x').getTag('field',attrs={'label':itm_label,'var':t})\
 								.setTagData('desc',itm_desc)
-						else: i.getTag('command').getTag('x').setTagData('title',L('Unknown configuration request!'))
+						else: i.getTag('command').getTag('x').setTagData('title',L('Unknown configuration request!',room))
 				return i
 	return None
 
