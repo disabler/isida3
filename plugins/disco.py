@@ -522,6 +522,7 @@ def disco_iq_set(iq,id,room,acclvl,query,towh,al):
 								for t in tmp:
 									itm = config_prefs[t]
 									itm_label = itm[0].replace('%s','').replace(':','').strip()
+									itm_desc = itm[1].strip()
 									if itm[2] == [True,False]:
 										dc = get_config(getRoom(room),t) in [True,1,'1','on']
 										i.getTag('command').getTag('x').setTag('field',attrs={'type':'boolean','label':itm_label,'var':t})\
@@ -543,6 +544,9 @@ def disco_iq_set(iq,id,room,acclvl,query,towh,al):
 											attrs={'type':'list-single','label':itm_label,'var':t})\
 											.setTag('option',attrs={'label':onoff(t2)})\
 											.setTagData('value',t2)
+									i.getTag('command').getTag('x').getTag('field',attrs={'label':itm_label,'var':t})\
+									.setTagData('desc',itm_desc)
+
 							else: i.getTag('command').getTag('x').setTagData('title',L('Unknown configuration request!'))
 					return i
 				else:
@@ -685,6 +689,7 @@ def disco_iq_set(iq,id,room,acclvl,query,towh,al):
 							for t in tmp:
 								itm = config_prefs[t]
 								itm_label = itm[0].replace('%s','').replace(':','').strip()
+								itm_desc = itm[1].strip()
 								if itm[2] == [True,False]:
 									dc = get_config(getRoom(room),t) in [True,1,'1','on']
 									i.getTag('command').getTag('x').setTag('field',attrs={'type':'boolean','label':itm_label,'var':t})\
@@ -706,6 +711,8 @@ def disco_iq_set(iq,id,room,acclvl,query,towh,al):
 										attrs={'type':'list-single','label':itm_label,'var':t})\
 										.setTag('option',attrs={'label':onoff(t2)})\
 										.setTagData('value',t2)
+								i.getTag('command').getTag('x').getTag('field',attrs={'label':itm_label,'var':t})\
+								.setTagData('desc',itm_desc)
 						else: i.getTag('command').getTag('x').setTagData('title',L('Unknown configuration request!'))
 				return i
 	return None
