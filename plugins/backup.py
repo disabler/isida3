@@ -61,7 +61,7 @@ def conf_backup(type, jid, nick, text):
 			b = []
 			for c in a:
 				if not c.endswith('.txt') and not c.endswith('.back'): b.append((c,os.path.getmtime(back_folder % c)))
-			if len(b): msg = '%s %s' % (L('Available copies:','%s/%s'%(jid,nick)), ', '.join(['%s (%s)' % (c[0],disp_time(c[1])) for c in b]))
+			if len(b): msg = '%s %s' % (L('Available copies:','%s/%s'%(jid,nick)), ', '.join(['%s (%s)' % (c[0],disp_time(c[1],'%s/%s'%(jid,nick))) for c in b]))
 			else: msg = L('Backup copies not found.','%s/%s'%(jid,nick))
 		elif mode == 'now':
 

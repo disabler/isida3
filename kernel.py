@@ -792,11 +792,17 @@ def paste_text(text,room,jid):
 	fl.close()
 	return pasteurl+url
 
-def disp_time(t):
+def disp_time(*t):
+	if len(t) == 2: rn = t[1]
+	else: rn = ''
+	t = t[0]
 	lt=tuple(time.localtime(t))
-	return '%02d:%02d:%02d, %02d.%s\'%s, %s' % (lt[3],lt[4],lt[5],lt[2],wmonth[lt[1]-1],lt[0],wday[lt[6]])
+	return '%02d:%02d:%02d, %02d.%s\'%s, %s' % (lt[3],lt[4],lt[5],lt[2],L(wmonth[lt[1]-1],rn),lt[0],L(wday[lt[6]],rn))
 
-def nice_time(ttim):
+def nice_time(*ttim):
+	if len(ttim) == 2: rn = ttim[1]
+	else: rn = ''
+	ttim = ttim[0]	
 	gt=tuple(time.gmtime(ttim))
 	lt=tuple(time.localtime(ttim))
 	timeofset = (datetime.datetime(*lt[:6])-datetime.datetime(*gt[:6])).seconds / 3600.0
@@ -804,7 +810,7 @@ def nice_time(ttim):
 	else: t_gmt = 'GMT+%s' % int(timeofset)
 	if timeofset%1: t_gmt += ':%02d' % int((timeofset%1*60/100) * 100)
 	t_utc='%s%02d%02dT%02d:%02d:%02d' % gt[:6]
-	t_display = '%02d:%02d:%02d, %02d.%s\'%s, %s, ' % (lt[3],lt[4],lt[5],lt[2],wmonth[lt[1]-1],lt[0],wday[lt[6]])
+	t_display = '%02d:%02d:%02d, %02d.%s\'%s, %s, ' % (lt[3],lt[4],lt[5],lt[2],L(wmonth[lt[1]-1],rn),lt[0],L(wday[lt[6]],rn))
 	#t_tz = time.tzname[time.localtime()[8]]
 	#enc = chardet.detect(t_tz)['encoding']
 	#if t_tz == None: body = ''
@@ -988,7 +994,7 @@ def com_parser(access_mode, nowname, type, room, nick, text, jid):
 	if last_command[1:7] == [nowname, type, room, nick, text, jid] and time.time() < last_command[7]+GT('ddos_diff')[access_mode]:
 		ddos_ignore[jjid] = [room,nick,time.time()+GT('ddos_limit')[access_mode]]
 		pprint('!!! DDOS Detect: %s %s/%s %s %s' % (access_mode, room, nick, jid, text),'bright_red')
-		send_msg(type, room, nick, L('Warning! Exceeded the limit of sending the same commands. You to ignore for %s.','%s/%s'%(room,nick)) % un_unix(GT('ddos_limit')[access_mode]))
+		send_msg(type, room, nick, L('Warning! Exceeded the limit of sending the same commands. You to ignore for %s.','%s/%s'%(room,nick)) % un_unix(GT('ddos_limit')[access_mode],'%s/%s'%(room,nick)))
 		return None
 	no_comm = True
 	cof = cur_execute_fetchall('select * from commonoff;')#!!!
@@ -2033,7 +2039,7 @@ while 1:
 						presence_control,message_control,message_act_control,iq_control,timer,execute,iq_hook = [],[],[],[],[],[],[]
 						pprint('Append plugin: %s' % pl,'cyan')
 						execfile(pl_folder % pl)
-						for cm in execute: comms.append((cm[0],cm[1],cm[2],cm[3],L('Plugin %s. %s') % (pl[:-3],cm[4]))+cm[5:])
+						for cm in execute: comms.append((cm[0],cm[1],cm[2],cm[3],'%s\r%s' % (pl[:-3],cm[4]))+cm[5:])
 						for tmr in timer: gtimer.append(tmr)
 						for tmp in presence_control: gpresence.append(tmp)
 						for tmp in message_control: gmessage.append(tmp)

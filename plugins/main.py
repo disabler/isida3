@@ -21,7 +21,7 @@
 #                                                                             #
 # --------------------------------------------------------------------------- #
 
-# translate: random,smart,full,partial,on,off,kick,ban,replace,mute,visitor,truncate,paste,chat,online,away,xa,dnd,on start,on shutdown,by time,black,white,without highlight,all,ban server,Loading...
+# translate: random,smart,full,partial,on,off,kick,ban,replace,mute,visitor,truncate,paste,chat,online,away,xa,dnd,on start,on shutdown,by time,black,white,without highlight,all,ban server,Loading...,Mon,Tue,Wed,Thu,Fri,Sat,Sun,Jan,Fed,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec,no limit,visitor/none,visitor/member,participant/none,participant/member,moderator/none,moderator/member,moderator/admin,moderator/owner,bot owner,You should be at least %s to do it.,You must be a %s to do it.
 
 rlmas_min = (('&','&amp;'),('\"','&quot;'),('\'','&apos;'),('<','&lt;'),('>','&gt;'))
 
@@ -69,10 +69,10 @@ rmass = (('&','&amp;'),('\"','&quot;'),('\'','&apos;'),('~','&tilde;'),(' ','&nb
 levl = {'no|limit':0,'visitor|none':1,'visitor|member':2,'participant|none':3,'participant|member':4,
 		'moderator|none':5,'moderator|member':6,'moderator|admin':7,'moderator|owner':8,'bot|owner':9}
 
-unlevl = [L('no limit'),L('visitor/none'),L('visitor/member'), L('participant/none'),L('participant/member'),
-		  L('moderator/none'),L('moderator/member'),L('moderator/admin'),L('moderator/owner'),L('bot owner')]
+unlevl = ['no limit','visitor/none','visitor/member','participant/none','participant/member',
+		  'moderator/none','moderator/member','moderator/admin','moderator/owner','bot owner']
 
-unlevltxt = [L('You should be at least %s to do it.'),L('You must be a %s to do it.')]
+unlevltxt = ['You should be at least %s to do it.','You must be a %s to do it.']
 
 unlevlnum = [0,0,0,0,0,0,0,0,0,1]
 
@@ -103,9 +103,8 @@ presence_error = {'401':L('Password required'),
 				  '403':L('Forbidden'),
 				  '407':L('Members-only')}
 
-wday = [L('Mon'),L('Tue'),L('Wed'),L('Thu'),L('Fri'),L('Sat'),L('Sun')]
-wlight = [L('Winter time'),L('Summer time')]
-wmonth = [L('Jan'),L('Fed'),L('Mar'),L('Apr'),L('May'),L('Jun'),L('Jul'),L('Aug'),L('Sep'),L('Oct'),L('Nov'),L('Dec')]
+wday = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun']
+wmonth = ['Jan','Fed','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']
 
 two_en = ['aa', 'aq', 'bc', 'bd', 'bf', 'bg', 'bh', 'bk', 'bn', 'bp', 'bq', 'bw', 'bx', 'bz', 'cb', 'cd', 'cf', 'cg', 'cj', \
 		  'cm', 'cn', 'cp', 'cs', 'cv', 'cw', 'cx', 'cz', 'db', 'dc', 'dh', 'dj', 'dp', 'dq', 'dt', 'dx', 'dz', 'ej', 'fb', \
@@ -191,17 +190,17 @@ def ddos_info(type, room, nick, text):
 	if text == []: text = ['']
 	if text[0] in ['','show']:
 		tmas = []
-		for tmp in ddos_ignore.keys(): tmas.append('%s/%s [%s] %s' % (ddos_ignore[tmp][0],ddos_ignore[tmp][1],tmp,un_unix(ddos_ignore[tmp][2]-time.time())))
-		if tmas: msg = L('Ignore list: %s') % '; '.join(tmas)
-		else: msg = L('List is empty.')
+		for tmp in ddos_ignore.keys(): tmas.append('%s/%s [%s] %s' % (ddos_ignore[tmp][0],ddos_ignore[tmp][1],tmp,un_unix(ddos_ignore[tmp][2]-time.time(),'%s/%s'%(jid,nick))))
+		if tmas: msg = L('Ignore list: %s','%s/%s'%(jid,nick)) % '; '.join(tmas)
+		else: msg = L('List is empty.','%s/%s'%(jid,nick))
 	elif text[0] in ['del','remove'] and len(text) > 1:
 		if ddos_ignore.has_key(text[1]):
 			try:
 				ddos_ignore.pop(text[1])
-				msg = L('Removed: %s') % text[1]
-			except: msg = L('Not found: %s') % text[1]
-		else: msg = L('Not found: %s') % text[1]
-	else: msg = L('Error in parameters. Read the help about command.')
+				msg = L('Removed: %s','%s/%s'%(jid,nick)) % text[1]
+			except: msg = L('Not found: %s','%s/%s'%(jid,nick)) % text[1]
+		else: msg = L('Not found: %s','%s/%s'%(jid,nick)) % text[1]
+	else: msg = L('Error in parameters. Read the help about command.','%s/%s'%(jid,nick))
 	send_msg(type, room, nick, msg)
 
 def atempt_to_shutdown(critical):
@@ -266,22 +265,22 @@ def show_syslogs(type, jid, nick, text):
 	lsz += 1
 	lsz = 1 if lsz <= 0 else (last_logs_size if lsz > last_logs_size else lsz)
 	msg = '\n'.join([tmp for tmp in last_logs_store if txt in tmp][1:lsz][::-1])
-	send_msg(type, jid, nick, L('Last syslogs: %s') % '\n%s' % msg)
+	send_msg(type, jid, nick, L('Last syslogs: %s','%s/%s'%(jid,nick)) % '\n%s' % msg)
 
 def show_syslogs_search(type, jid, nick, text):
 	if '\n' in text: text,value = text.lower().split('\n',1)
 	else: text,value = text.lower(),''
 	if not text.strip():
-		send_msg(type, jid, nick, L('What?'))
+		send_msg(type, jid, nick, L('What?','%s/%s'%(jid,nick)))
 		return
 	if value:
 		try: _ = re.compile(value)
 		except:
-			send_msg(type, jid, nick, L('Error in RegExp!'))
+			send_msg(type, jid, nick, L('Error in RegExp!','%s/%s'%(jid,nick)))
 			return
 	try: _ = re.compile(text)
 	except:
-		send_msg(type, jid, nick, L('Error in RegExp!'))
+		send_msg(type, jid, nick, L('Error in RegExp!','%s/%s'%(jid,nick)))
 		return
 	files = [t for t in os.listdir(slog_folder % '') if re.findall('^[0-9]{8}\.txt$',t)]
 	files.sort()
@@ -293,8 +292,8 @@ def show_syslogs_search(type, jid, nick, text):
 			if m:
 				if value: matches.append('*** %s%s%s%s-%s%s-%s%s ***' % tuple(t.split('.')[0]))
 				matches += m
-	if matches: msg = L('Last syslogs: %s') % '\n%s' % '\n'.join(matches)
-	else: msg = L('Not found!')
+	if matches: msg = L('Last syslogs: %s','%s/%s'%(jid,nick)) % '\n%s' % '\n'.join(matches)
+	else: msg = L('Not found!','%s/%s'%(jid,nick))
 	if len(msg) > msg_limit*5-4: msg = u'[…]%s' % msg[-msg_limit*5+4:]
 	send_msg(type, jid, nick, msg)
 
@@ -311,24 +310,27 @@ def set_locale(type, jid, nick, text):
 	else: msg = L('Current locale: %s','%s/%s'%(jid,nick)) % GT('bot_locale')
 	send_msg(type, jid, nick, msg)
 
-def shell_execute(cmd):
-	if GT('paranoia_mode'): result = L('Command temporary blocked!')
+def shell_execute(*cmd):
+	if len(cmd) == 2: rn = cmd[1]
+	else: rn = ''
+	cmd = cmd[0]
+	if GT('paranoia_mode'): result = L('Command temporary blocked!',rn)
 	else:
 		tmp_file = '%s.tmp' % int(time.time())
 		try:
 			error_answ = os.system('%s > %s' % (cmd.encode('utf-8'),tmp_file))
 			if not error_answ:
 				try: body = readfile(tmp_file)
-				except: body = L('Command execution error.')
+				except: body = L('Command execution error.',rn)
 				if len(body):
 					enc = chardet.detect(body)['encoding']
 					result = remove_sub_space(unicode(body,enc))
 				else: result = L('ok')
-			else: result = L('Command execution error.')
+			else: result = L('Command execution error.',rn)
 		except Exception, SM:
 			try: SM = str(SM)
 			except: SM = unicode(SM)
-			result = L('I can\'t execute it! Error: %s') % SM
+			result = L('I can\'t execute it! Error: %s',rn) % SM
 		try: os.remove(tmp_file)
 		except: pass
 	return result
@@ -524,26 +526,30 @@ def alias(type, jid, nick, text):
 			else: msg = L('Aliases not found!','%s/%s'%(jid,nick))
 	send_msg(type, jid, nick, msg)
 
-def un_unix(val):
+def un_unix(*val):
+	if len(val) == 2: rn = val[1]
+	else: rn = ''
+	val = val[0]
+	
 	tt = map(lambda q,a: q-a, time.gmtime(val), time.gmtime(0))[:6]
 	ret = '%02d:%02d:%02d' % tuple(tt[3:6])
 	if sum(tt[:3]):
 		day_h,day_l = tt[2]/10%10,tt[2] % 10
-		if day_h == 1: ret = L('%s days, %s') % (tt[2],ret)
+		if day_h == 1: ret = L('%s days, %s',rn) % (tt[2],ret)
 		else:
-			if day_l in xrange(5,10): ret = L('%s days, %s') % (tt[2],ret)
-			elif day_l in xrange(2,5): ret = L('%s Days, %s').lower() % (tt[2],ret)
-			elif day_l == 1: ret = L('%s day, %s') % (tt[2],ret)
+			if day_l in xrange(5,10): ret = L('%s days, %s',rn) % (tt[2],ret)
+			elif day_l in xrange(2,5): ret = L('%s Days, %s',rn).lower() % (tt[2],ret)
+			elif day_l == 1: ret = L('%s day, %s',rn) % (tt[2],ret)
 	if sum(tt[:2]):
-		if tt[1] in xrange(5,13): ret = L('%s months, %s') % (tt[1],ret)
-		elif tt[1] in xrange(2,5): ret = L('%s Months, %s').lower() % (tt[1],ret)
-		elif tt[1] == 1: ret = L('%s month, %s') % (tt[1],ret)
+		if tt[1] in xrange(5,13): ret = L('%s months, %s',rn) % (tt[1],ret)
+		elif tt[1] in xrange(2,5): ret = L('%s Months, %s',rn).lower() % (tt[1],ret)
+		elif tt[1] == 1: ret = L('%s month, %s',rn) % (tt[1],ret)
 	if tt[0]:
 		ty = tt[0] % 100
 		if ty >= 20: ty = ty % 10
-		if ty in [0]+range(5,21): ret = L('%s years, %s') % (tt[0],ret)
-		elif ty in xrange(2,5): ret = L('%s Years, %s').lower() % (tt[0],ret)
-		else: ret = L('%s year, %s') % (tt[0],ret)
+		if ty in [0]+range(5,21): ret = L('%s years, %s',rn) % (tt[0],ret)
+		elif ty in xrange(2,5): ret = L('%s Years, %s',rn).lower() % (tt[0],ret)
+		else: ret = L('%s year, %s',rn) % (tt[0],ret)
 	return ret
 
 def close_age_null():
@@ -571,7 +577,7 @@ def get_local_prefix(jid):
 
 def get_prefix(lprefix):
 	if lprefix != '': return lprefix
-	else: return L('absent')
+	else: return 'absent'
 
 def set_prefix(type, jid, nick, text):
 	access_mode = get_level(jid,nick)[0]
@@ -582,11 +588,11 @@ def set_prefix(type, jid, nick, text):
 		elif text != '': lprefix = text
 		if lprefix == None: lprefix = prefix
 		put_config(getRoom(jid),'prefix',lprefix)
-		prf = get_prefix(lprefix)
-	else: prf = get_prefix(get_local_prefix(jid))
+		prf = L(get_prefix(lprefix),'%s/%s'%(jid,nick))
+	else: prf = L(get_prefix(get_local_prefix(jid)),'%s/%s'%(jid,nick))
 	send_msg(type, jid, nick, L('Command prefix: %s','%s/%s'%(jid,nick)) % prf)
 
-def uptime(type, jid, nick): send_msg(type, jid, nick, L('Uptime: %s, Last session: %s','%s/%s'%(jid,nick)) % (get_uptime_str(), un_unix(int(time.time())-sesstime)))
+def uptime(type, jid, nick): send_msg(type, jid, nick, L('Uptime: %s, Last session: %s','%s/%s'%(jid,nick)) % (un_unix(int(time.time()-starttime),'%s/%s'%(jid,nick)), un_unix(int(time.time())-sesstime,'%s/%s'%(jid,nick))))
 
 def show_error(type, jid, nick, text):
 	if text.lower() == 'clear': writefile(LOG_FILENAME,'')
@@ -644,7 +650,7 @@ def raw_who(room,nick,text):
 		msg += ', ' + [L('Ignored','%s/%s'%(room,nick)),L('Minimal','%s/%s'%(room,nick)),L('Visitor','%s/%s'%(room,nick)),L('Visitor and Member','%s/%s'%(room,nick)),L('Participant','%s/%s'%(room,nick)),L('Member','%s/%s'%(room,nick)), L('Moderator','%s/%s'%(room,nick)),L('Moderator and member','%s/%s'%(room,nick)),L('Admin','%s/%s'%(room,nick)),L('Owner','%s/%s'%(room,nick)),L('Bot\'s owner','%s/%s'%(room,nick))][access_mode+1]
 		if realjid != 'None':
 			msg = L('%s, jid detected','%s/%s'%(room,nick)) % msg
-			if ddos_ignore.has_key(getRoom(realjid)): msg = '%s, %s' % (msg,L('temporary ignored (%s)','%s/%s'%(room,nick)) % un_unix(ddos_ignore[getRoom(realjid)][2]-time.time()))
+			if ddos_ignore.has_key(getRoom(realjid)): msg = '%s, %s' % (msg,L('temporary ignored (%s)','%s/%s'%(room,nick)) % un_unix(ddos_ignore[getRoom(realjid)][2]-time.time(),'%s/%s'%(room,nick)))
 	return msg
 
 def info_comm(type, jid, nick):
@@ -656,7 +662,7 @@ def info_comm(type, jid, nick):
 	for j in range(0,access_mode+1):
 		cm = [t[1] for t in tmp if t[0] == j]
 		if cm: msg += u'\n• %s … %s' % (j,', '.join(cm))
-	msg = L('Total commands: %s | Prefix: %s | Your access level: %s | Available commands: %s%s','%s/%s'%(jid,nick)) % (len(comms), get_prefix(get_local_prefix(jid)), access_mode, len(tmp), msg)
+	msg = L('Total commands: %s | Prefix: %s | Your access level: %s | Available commands: %s%s','%s/%s'%(jid,nick)) % (len(comms), L(get_prefix(get_local_prefix(jid)),'%s/%s'%(jid,nick)), access_mode, len(tmp), msg)
 	send_msg(type, jid, nick, msg)
 
 def helpme(type, jid, nick, text):
@@ -678,7 +684,7 @@ def helpme(type, jid, nick, text):
 		elif not len(tm+cm): msg = L('"%s" not found','%s/%s'%(jid,nick)) % text
 		else:
 			tm.sort()
-			msg = L('Prefix: %s, Available help for commands:\n','%s/%s'%(jid,nick)) % get_prefix(get_local_prefix(jid))
+			msg = L('Prefix: %s, Available help for commands:\n','%s/%s'%(jid,nick)) % L(get_prefix(get_local_prefix(jid)),'%s/%s'%(jid,nick))
 			for i in range(0,10):
 				tmsg = []
 				for tmp in tm:
@@ -1026,17 +1032,15 @@ def info_where_plus(type, jid, nick):
 	if hr_count: msg += L('\nHidden conference(s): %s','%s/%s'%(jid,nick)) % hr_count
 	send_msg(type, jid, nick, msg)
 
-def get_uptime_str(): return un_unix(int(time.time()-starttime))
-
 def info(type, jid, nick):
 	msg = L('Conference(s): %s (for more info use \'where\' command)\n','%s/%s'%(jid,nick)) % cur_execute_fetchone('select count(*) from conference;')[0]
 	msg += L('Server: %s | Nick: %s\n','%s/%s'%(jid,nick)) % (lastserver,lastnick)
 	msg += L('Message size limit: %s\n','%s/%s'%(jid,nick)) % msg_limit
 	msg += L('Local time: %s\n','%s/%s'%(jid,nick)) % timeadd(tuple(time.localtime()))
-	msg += L('Uptime: %s, Last session: %s','%s/%s'%(jid,nick)) % (get_uptime_str(), un_unix(int(time.time())-sesstime))
+	msg += L('Uptime: %s, Last session: %s','%s/%s'%(jid,nick)) % (un_unix(int(time.time()-starttime),'%s/%s'%(jid,nick)), un_unix(int(time.time())-sesstime),'%s/%s'%(jid,nick))
 	floods = get_config(getRoom(jid),'flood')
 	censors = get_config(getRoom(jid),'censor')
-	msg += L('\nFlood: %s | Censor: %s | Prefix: %s','%s/%s'%(jid,nick)) % (onoff(floods),onoff(censors),get_prefix(get_local_prefix(jid)))
+	msg += L('\nFlood: %s | Censor: %s | Prefix: %s','%s/%s'%(jid,nick)) % (onoff(floods),onoff(censors),L(get_prefix(get_local_prefix(jid)),'%s/%s'%(jid,nick)))
 	msg += L('\nExecuted threads: %s | Error(s): %s','%s/%s'%(jid,nick)) % (th_cnt,thread_error_count)
 	msg += L('\nMessage in: %s | out: %s','%s/%s'%(jid,nick)) % (message_in,message_out)
 	msg += L('\nPresence in: %s | out: %s','%s/%s'%(jid,nick)) % (presence_in,presence_out)
@@ -1044,7 +1048,7 @@ def info(type, jid, nick):
 	msg += L('\nUnknown out: %s','%s/%s'%(jid,nick)) % unknown_out
 	msg += L('\nCycles used: %s | unused: %s','%s/%s'%(jid,nick)) % (cycles_used,cycles_unused)
 	if not GT('paranoia_mode'):
-		try: memstat = tuple([get_size_human(int(t)*1024.0) for t in shell_execute('ps -o vsz,rss -p %s' % os.getpid()).split()[2:]])
+		try: memstat = tuple([get_size_human(int(t)*1024.0) for t in shell_execute('ps -o vsz,rss -p %s' % os.getpid(),'%s/%s'%(jid,nick)).split()[2:]])
 		except: memstat = (L('Unknown','%s/%s'%(jid,nick)),L('Unknown','%s/%s'%(jid,nick)))
 		msg += L('\nUsed virtual ram: %s, Used real ram: %s','%s/%s'%(jid,nick)) % memstat
 	send_msg(type, jid, nick, msg)
@@ -1255,7 +1259,7 @@ def rss(type, jid, nick, text):
 			msg = L('All schedule feeds:','%s/%s'%(jid,nick))
 			for rs in feedbase:
 				msg += '\n%s\t%s (%s) %s' % (getName(rs[4]),rs[0],rs[1],rs[2])
-				try: msg += ' - %s' % disp_time(rs[3])
+				try: msg += ' - %s' % disp_time(rs[3],'%s/%s'%(jid,nick))
 				except: msg += ' - Unknown'
 	elif mode == 'show':
 		feedbase = cur_execute_fetchall('select * from feed where room=%s;',(jid,))
@@ -1264,7 +1268,7 @@ def rss(type, jid, nick, text):
 			msg = ''
 			for rs in feedbase:
 				msg += '\n%s (%s) %s' % tuple(rs[0:3])
-				try: msg += ' - %s' % disp_time(rs[3])
+				try: msg += ' - %s' % disp_time(rs[3],'%s/%s'%(jid,nick))
 				except: msg += ' - Unknown'
 			if len(msg): msg = L('Schedule feeds for %s:%s','%s/%s'%(jid,nick)) % (jid,msg)
 			else: msg = L('Schedule feeds for %s not found!','%s/%s'%(jid,nick)) % jid

@@ -28,7 +28,7 @@ def shell_silent(type, jid, nick, text):
 	sysshell(type, jid, nick, text, 0)
 
 def sysshell(type, jid, nick, text, mode):
-	msg = shell_execute(text)
+	msg = shell_execute(text,'%s/%s'%(jid,nick))
 	if mode: send_msg(type, jid, nick, msg)
 
 global execute

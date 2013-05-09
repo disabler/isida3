@@ -45,8 +45,8 @@ def time_cron_show(jid,nick,ar):
 			if t[2] == '\n': mode = '[silent]'
 			elif not t[2]: mode = '[anonim]'
 			else: mode = ''
-			if room=='%': msg = '%s|%s' % (t[0],disp_time(t[3]))
-			else: msg = '%s. %s' % (idx,disp_time(t[3]))
+			if room=='%': msg = '%s|%s' % (t[0],disp_time(t[3],'%s/%s'%(jid,nick)))
+			else: msg = '%s. %s' % (idx,disp_time(t[3],'%s/%s'%(jid,nick)))
 			if mode: msg = '%s %s' % (msg,mode)
 			if t[4]: msg += ' [%s]' % t[4]
 			msg += ' -> %s' % t[5]
@@ -84,7 +84,7 @@ def time_cron_add(ar,jid,nick):
 		if sm: nick = '\n'
 		elif nm: nick = ''
 		cur_execute('insert into cron values (%s,%s,%s,%s,%s,%s,%s)', (jid,getRoom(rj),nick,next_time,repeat_time,cron_cmd,lvl))
-		return '%s -> %s' % (disp_time(next_time),cron_cmd)
+		return '%s -> %s' % (disp_time(next_time,'%s/%s'%(jid,nick)),cron_cmd)
 
 def time_cron_del(jid,nick,ar):
 	al = get_level(jid,nick)[0]
@@ -98,7 +98,7 @@ def time_cron_del(jid,nick,ar):
 		try: rec = c[int(ar)-1]
 		except: return L('Record #%s not found!','%s/%s'%(jid,nick)) % ar
 		cur_execute('delete from cron where room=%s and jid=%s and nick=%s and time=%s and repeat=%s and command=%s and level=%s',rec)
-		msg = disp_time(rec[3])
+		msg = disp_time(rec[3],'%s/%s'%(jid,nick))
 		if rec[2] == '\n': mode = '[silent]'
 		elif not rec[2]: mode = '[anonim]'
 		else: mode = ''

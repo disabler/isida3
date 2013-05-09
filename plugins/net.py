@@ -23,7 +23,7 @@
 
 def net_ping(type, jid, nick, text):
 	text = text.strip().lower().encode('idna')
-	if '.' in text and len(text) > 4 and re.match(r'[-0-9a-z.]+\Z', text, re.U+re.I): msg = deidna(shell_execute('ping -c4 %s' % text))
+	if '.' in text and len(text) > 4 and re.match(r'[-0-9a-z.]+\Z', text, re.U+re.I): msg = deidna(shell_execute('ping -c4 %s' % text,'%s/%s'%(jid,nick)))
 	else: msg = L('Smoke help about command!','%s/%s'%(jid,nick))
 	send_msg(type, jid, nick, msg)
 
@@ -71,7 +71,7 @@ def srv_host(type, jid, nick, text):
 def srv_raw_check(type, jid, nick, text):
 	text = enidna_raw(text)
 	text = ''.join(re.findall(u'[-a-z0-9._?#=@% ]+',text,re.S+re.I)[0])
-	send_msg(type, jid, nick, deidna(shell_execute(text)))
+	send_msg(type, jid, nick, deidna(shell_execute(text,'%s/%s'%(jid,nick))))
 
 def chkserver(type, jid, nick, text):
 	for a in ':;&/|\\\n\t\r': text = text.replace(a,' ')
@@ -84,7 +84,7 @@ def chkserver(type, jid, nick, text):
 		if len(t)==1 and len(port)>=1:
 			t = t[0]
 			port.sort()
-			msg = shell_execute('nmap %s -p%s -P0 -T5' % (t.encode('idna'),','.join(port)))
+			msg = shell_execute('nmap %s -p%s -P0 -T5' % (t.encode('idna'),','.join(port)),'%s/%s'%(jid,nick))
 			try: msg = '%s\n%s' % (t.encode('idna'),reduce_spaces_all(re.findall('SERVICE(.*)Nmap',msg,re.S+re.U)[0][1:-2]))
 			except:
 				try:

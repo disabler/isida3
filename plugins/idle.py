@@ -29,8 +29,8 @@ def idle(type, jid, nick, text):
 	msg = L('I can\'t find %s','%s/%s'%(jid,nick)) % text
 	for tmp in idle_base:
 		if tmp[0] == jid and tmp[1] == text:
-			if text == nick: msg = L('Your last activity was %s ago','%s/%s'%(jid,nick)) % un_unix(int(time.time())-tmp[3])
-			else: msg = L('%s\'s last ativity was %s ago','%s/%s'%(jid,nick)) % (text, un_unix(int(time.time())-tmp[3]))
+			if text == nick: msg = L('Your last activity was %s ago','%s/%s'%(jid,nick)) % un_unix(int(time.time())-tmp[3],'%s/%s'%(jid,nick))
+			else: msg = L('%s\'s last ativity was %s ago','%s/%s'%(jid,nick)) % (text, un_unix(int(time.time())-tmp[3],'%s/%s'%(jid,nick)))
 			if tmp[2] == 'm': msg += ' ('+L('message','%s/%s'%(jid,nick))+')'
 			else: msg += ' ('+L('presence','%s/%s'%(jid,nick))+')'
 			break

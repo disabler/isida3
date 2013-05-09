@@ -24,49 +24,50 @@
 spy_stat_time = int(time.time())	# время последнего сканирования
 
 #conf hrs usrs msgs action
-def spy_add(text):
-	if text == '': return L('what do you want to add?')
+def spy_add(text,rn):
+	if text == '': return L('what do you want to add?',rn)
 	text = text.lower()
 	sconf = text.split(' ')[0]
 	try: saction = text.split(' ',1)[1]
-	except: return L('not given tracking')
+	except: return L('not given tracking',rn)
 	for tmp in saction.split(' '):
 		if tmp[0] != 'u' and tmp[0] != 'm':
-			return L('is not specified criterion tracking')
+			return L('is not specified criterion tracking',rn)
 		try: int(tmp[1:])
-		except: return L('incorrect digital parameter')
-	if sconf not in [t[0] for t in cur_execute_fetchone('select room from conference;')]: return L('I am not in the %s ') % sconf
+		except: return L('incorrect digital parameter',rn)
+	if sconf not in [t[0] for t in cur_execute_fetchone('select room from conference;')]: return L('I am not in the %s ',rn) % sconf
 	if cur_execute_fetchone('select room from spy where room=%s;',(sconf,)):
-		msg = L('Updated: %s') % text
+		msg = L('Updated: %s',rn) % text
 		cur_execute('delete from spy where room=%s;',(sconf,))
-	else: msg = L('Append: %s') % text
+	else: msg = L('Append: %s',rn) % text
 	cnt = len(['' for t in megabase if t[0]==tmp[0]])
 	cur_execute('insert into spy values (%s,%s,%s,%s,%s)',(sconf,int(time.time()),cnt,0,saction))
 	return msg
 
-def spy_del(text):
-	if text == '': return L('what do you want remove?')
+def spy_del(text,rn):
+	if text == '': return L('what do you want remove?',rn)
 	text = text.lower().split(' ')[0]
 	if cur_execute_fetchone('select room from spy where room=%s;',(text,)):
 		cur_execute('delete from spy where room=%s;',(text,))
-		return L('Removed: %s') % text
-	else: return L('Not found: %s') % text
+		return L('Removed: %s',rn) % text
+	else: return L('Not found: %s',rn) % text
 
-def spy_show():
+def spy_show(rn):
 	sb = cur_execute_fetchall('select * from spy;')
 	if not sb: return L('List is empty.')
-	msg = L('Monitoring conferences:')
-	msg += '\n%s' % '\n'.join(['%s %s (%s|u%s|m%s)' % (tmp[0],tmp[4],un_unix(int(time.time()-tmp[1])),tmp[2],tmp[3]) for tmp in sb])
-	msg += L('\nNext scanning across %s') % un_unix(int(GT('scan_time')-(time.time()-spy_stat_time)))
+	msg = L('Monitoring conferences:',rn)
+	msg += '\n%s' % '\n'.join(['%s %s (%s|u%s|m%s)' % (tmp[0],tmp[4],un_unix(int(time.time()-tmp[1]),rn),tmp[2],tmp[3]) for tmp in sb])
+	msg += L('\nNext scanning across %s',rn) % un_unix(int(GT('scan_time')-(time.time()-spy_stat_time)),rn)
 	return msg
 
 def conf_spy(type, jid, nick,text):
 	text = text.strip().lower()
+	rn = '%s/%s'%(jid,nick)
 	msg = None
-	if text.startswith('add '): msg = spy_add(text[4:])
-	elif text.startswith('del '): msg = spy_del(text[4:])
-	elif text == 'show': msg = spy_show()
-	if not msg: msg = L('Smoke help about command!','%s/%s'%(jid,nick))
+	if text.startswith('add '): msg = spy_add(text[4:],rn)
+	elif text.startswith('del '): msg = spy_del(text[4:],rn)
+	elif text == 'show': msg = spy_show(rn)
+	if not msg: msg = L('Smoke help about command!',rn)
 	send_msg(type, jid, nick, msg)
 
 def spy_message(room,jid,nick,type,text):

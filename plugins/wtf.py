@@ -89,8 +89,8 @@ def wtf_get(ff,type, jid, nick, text):
 		ww = cur_execute_fetchone('select * from wtf where (room=%s or room=%s or room=%s) and wtfword=%s order by -time',(jid,'global','import',text))
 		if ww:
 			msg = L('I know that %s is %s','%s/%s'%(jid,nick)) % (text,ww[5])
-			if ff == 1: msg += L('\nfrom: %s %s','%s/%s'%(jid,nick)) % (ww[3],'[%s]' % disp_time(ww[6]))
-			elif ff == 2: msg = L('I know that %s was defined by %s %s %s','%s/%s'%(jid,nick)) % (text,ww[3],'(%s)' % ww[2],'[%s]' % disp_time(ww[6]))
+			if ff == 1: msg += L('\nfrom: %s %s','%s/%s'%(jid,nick)) % (ww[3],'[%s]' % disp_time(ww[6],'%s/%s'%(jid,nick)))
+			elif ff == 2: msg = L('I know that %s was defined by %s %s %s','%s/%s'%(jid,nick)) % (text,ww[3],'(%s)' % ww[2],'[%s]' % disp_time(ww[6],'%s/%s'%(jid,nick)))
 		else: msg = L('I don\'t know!','%s/%s'%(jid,nick))
 	else: msg = L('What search?','%s/%s'%(jid,nick))
 	send_msg(type, jid, nick, msg)
@@ -136,7 +136,7 @@ def gdfn(type, jid, nick, text):
 				if t[7] >= max: max,match=t[7],t
 			if match[7] > al:
 				msg,text = L('Not enough rights!','%s/%s'%(jid,nick)),''
-				try: msg += ' ' + unlevltxt[unlevlnum[match[7]]] % unlevl[match[7]]
+				try: msg += ' ' + L(unlevltxt[unlevlnum[match[7]]],'%s/%s'%(jid,nick)) % L(unlevl[match[7]],'%s/%s'%(jid,nick))
 				except: pass
 			elif text == '':
 				msg = L('Definition removed!','%s/%s'%(jid,nick))

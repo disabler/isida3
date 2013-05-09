@@ -40,7 +40,7 @@ def iq_iq_get(iq,id,room,acclvl,query,towh,al):
 
 	elif iq.getTag(name='query', namespace=xmpp.NS_TIME) and GT('iq_time_enable'):
 		pprint('*** iq:time from %s' % unicode(room),'magenta')
-		t_utc,t_tz,t_display = nice_time(time.time())
+		t_utc,t_tz,t_display = nice_time(time.time(),room)
 		i=xmpp.Iq(to=room, typ='result')
 		i.setAttr(key='id', val=id)
 		i.setQueryNS(namespace=xmpp.NS_TIME)
@@ -167,7 +167,7 @@ def iq_uptime(type, jid, nick, text):
 def uptime_async(type, jid, nick, text, is_answ):
 	isa = is_answ[1][0]
 	try:
-		msg = L('Uptime: %s','%s/%s'%(jid,nick)) % un_unix(int(get_tag_item(isa,'query','seconds')))
+		msg = L('Uptime: %s','%s/%s'%(jid,nick)) % un_unix(int(get_tag_item(isa,'query','seconds')),'%s/%s'%(jid,nick))
 		up_stat = esc_min(get_tag(isa,'query'))
 		if len(up_stat): msg = '%s // %s' % (msg,up_stat)
 	except: msg = L('I can\'t do it','%s/%s'%(jid,nick))
@@ -248,7 +248,7 @@ def utime_async(type, jid, nick, text, mode, is_answ):
 			else: t_gmt = 'GMT+%s' % int(timeofset)
 			if timeofset%1: t_gmt += ':%02d' % int((timeofset%1*60/100) * 100)
 			
-			msg = '%02d:%02d:%02d, %02d.%s\'%s, %s, %s' % (lt[3],lt[4],lt[5],lt[2],wmonth[lt[1]-1],lt[0],wday[lt[6]],t_gmt)
+			msg = '%02d:%02d:%02d, %02d.%s\'%s, %s, %s' % (lt[3],lt[4],lt[5],lt[2],L(wmonth[lt[1]-1],'%s/%s'%(jid,nick)),lt[0],L(wday[lt[6]],'%s/%s'%(jid,nick)),t_gmt)
 			if mode: msg = '%s | %s %s' % (msg,isa[0],isa[1])
 		except: msg = '%s %s' % (L('Unknown server answer!','%s/%s'%(jid,nick)),isa[0])
 	send_msg(type, jid, nick, msg)

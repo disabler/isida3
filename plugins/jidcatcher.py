@@ -88,7 +88,7 @@ def info_top(type, jid, nick, text):
 	if text: room = text
 	else: room = getRoom(jid)
 	cnf = cur_execute_fetchone('select count ,time from top where room=%s',(room,))
-	if cnf: msg = L('Max count of members: %s %s','%s/%s'%(jid,nick)) % (cnf[0], '(%s)' % disp_time(cnf[1]))
+	if cnf: msg = L('Max count of members: %s %s','%s/%s'%(jid,nick)) % (cnf[0], '(%s)' % disp_time(cnf[1],'%s/%s'%(jid,nick)))
 	else: msg = L('Statistic not found!','%s/%s'%(jid,nick))
 	send_msg(type, jid, nick, msg)
 

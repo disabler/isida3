@@ -26,20 +26,22 @@ muc_filter_fast_join = {}
 def muc_filter_set(iq,id,room,acclvl,query,towh,al):
 	msg_xmpp = iq.getTag('query', namespace=xmpp.NS_MUC_FILTER)
 	if msg_xmpp:
-		msg,mute,mute_type,mute_room,mute_reason = get_tag(unicode(msg_xmpp),'query'),None,'groupchat',room,L('Warning! Your message are blocked by policy of room!')
+		msg,mute,mute_type,mute_room = get_tag(unicode(msg_xmpp),'query'),None,'groupchat',room
+		jid = rss_replace(get_tag_item(msg,'message','from'))
+		nick = rss_replace(unicode(get_nick_by_jid_res(room,jid)))
+		rn = '%s/%s' % (room,nick)
+		mute_reason = L('Warning! Your message are blocked by policy of room!',rn)
 		if msg[:2] == '<m':
 			if '<body>' in msg and '</body>' in msg:
-				jid = rss_replace(get_tag_item(msg,'message','from'))
 				to_nick = getResourse(get_tag_item(msg,'message','to'))
 				tojid = rss_replace(getRoom(get_level(room,to_nick)[1]))
-				nick = rss_replace(unicode(get_nick_by_jid_res(room,jid)))
 				skip_owner = is_owner(jid)
 				gr = getRoom(room)
 				type = get_tag_item(msg,'message','type')
 				if type == 'chat' and not skip_owner:
 					tmp = cur_execute_fetchall('select * from muc_lock where room=%s and jid=%s', (room,tojid))
 					if tmp:
-						mute,mute_type,mute_room,mute_reason = True,'chat', '%s/%s' % (room,to_nick),L('Warning! This participant don\'t want to receive private messages!')
+						mute,mute_type,mute_room,mute_reason = True,'chat', '%s/%s' % (room,to_nick),L('Warning! This participant don\'t want to receive private messages!',rn)
 						pprint('MUC-Filter pmlock: %s/%s [%s] > %s: %s' % (room,nick,jid,to_nick,get_tag(msg,'body')),'brown')
 				if skip_owner: pass
 				elif get_config(gr,'muc_filter') and not mute:
@@ -54,9 +56,9 @@ def muc_filter_set(iq,id,room,acclvl,query,towh,al):
 						if act != 'off':
 							if cnt >= get_config_int(gr,'muc_filter_mute_repeat'):
 								pprint('MUC-Filter mute repeat action (%s): %s %s [%s]' % (act,gr,jid,cnt),'brown')
-								msg = muc_filter_action(act,jid,room,L('Muted messages count overflow!'))
+								msg = muc_filter_action(act,jid,room,L('Muted messages count overflow!',rn))
 							else: mute_msg['%s|%s' % (gr,jid)] = cnt + 1
-						mute,mute_type,mute_room,mute_reason = True,'chat', '%s/%s' % (room,to_nick),L('You couldn\'t send private messages! Don\'t repeat!')
+						mute,mute_type,mute_room,mute_reason = True,'chat', '%s/%s' % (room,to_nick),L('You couldn\'t send private messages! Don\'t repeat!',rn)
 
 					# Mute all public messages
 					if not mute and msg and type == 'groupchat' and get_config(gr,'muc_filter_mute_groupchat'):
@@ -67,9 +69,9 @@ def muc_filter_set(iq,id,room,acclvl,query,towh,al):
 						if act != 'off':
 							if cnt >= get_config_int(gr,'muc_filter_mute_repeat'):
 								pprint('MUC-Filter mute repeat action (%s): %s %s [%s]' % (act,gr,jid,cnt),'brown')
-								msg = muc_filter_action(act,jid,room,L('Muted messages count overflow!'))
+								msg = muc_filter_action(act,jid,room,L('Muted messages count overflow!',rn))
 							else: mute_msg['%s|%s' % (gr,jid)] = cnt + 1
-						mute,mute_reason = True,L('You couldn\'t send public messages! Don\'t repeat!')
+						mute,mute_reason = True,L('You couldn\'t send public messages! Don\'t repeat!',rn)
 						
 					# Mute newbie
 					if not mute and msg and get_config(gr,'muc_filter_newbie'):
@@ -89,9 +91,9 @@ def muc_filter_set(iq,id,room,acclvl,query,towh,al):
 							if act != 'off':
 								if cnt >= get_config_int(gr,'muc_filter_newbie_repeat'):
 									pprint('MUC-Filter mute newbie repeat action (%s): %s %s [%s]' % (act,gr,jid,cnt),'brown')
-									msg = muc_filter_action(act,jid,room,L('Messages count overflow from newbie!'))
+									msg = muc_filter_action(act,jid,room,L('Messages count overflow from newbie!',rn))
 								else: newbie_msg['%s|%s' % (gr,jid)] = cnt + 1
-							mute,mute_reason = True,L('Your messages are blocked %ssec. after first join! Please, wait quiet!') % newbie_time
+							mute,mute_reason = True,L('Your messages are blocked %ssec. after first join! Please, wait quiet!',rn) % newbie_time
 
 					# New Line
 					if not mute and msg and get_config(gr,'muc_filter_newline_msg') != 'off':
@@ -107,8 +109,8 @@ def muc_filter_set(iq,id,room,acclvl,query,towh,al):
 							if act == 'replace':
 								body = body.replace('\n',' ')
 								msg = msg.replace(get_tag_full(msg,'body'),'<body>%s</body>' % body)
-							elif act == 'mute': mute,mute_reason = True,L('Blocked by content!')
-							else: msg = muc_filter_action(act,jid,room,L('Blocked by content!'))
+							elif act == 'mute': mute,mute_reason = True,L('Blocked by content!',rn)
+							else: msg = muc_filter_action(act,jid,room,L('Blocked by content!',rn))
 
 					# Reduce spaces
 					if not mute and msg and get_config(gr,'muc_filter_reduce_spaces_msg') and '  ' in body:
@@ -130,8 +132,8 @@ def muc_filter_set(iq,id,room,acclvl,query,towh,al):
 							if act == 'replace':
 								for tmp in f: body = body.replace(tmp,[GT('censor_text')*len(tmp),GT('censor_text')][len(GT('censor_text'))>1])
 								msg = msg.replace(get_tag_full(msg,'body'),'<body>%s</body>' % body)
-							elif act == 'mute': mute,mute_reason = True,L('AD-Block!')
-							else: msg = muc_filter_action(act,jid,room,L('AD-Block!'))
+							elif act == 'mute': mute,mute_reason = True,L('AD-Block!',rn)
+							else: msg = muc_filter_action(act,jid,room,L('AD-Block!',rn))
 
 					# Raw AD-Block filter
 					if not mute and msg and need_raw and get_config(gr,'muc_filter_adblock_raw') != 'off':
@@ -144,8 +146,8 @@ def muc_filter_set(iq,id,room,acclvl,query,towh,al):
 							if f:
 								act = get_config(gr,'muc_filter_adblock_raw')
 								pprint('MUC-Filter msg raw adblock (%s): %s [%s] %s' % (act,jid,room,body),'brown')
-								if act == 'mute': mute,mute_reason = True,L('Raw AD-Block!')
-								else: msg = muc_filter_action(act,jid,room,L('Raw AD-Block!'))
+								if act == 'mute': mute,mute_reason = True,L('Raw AD-Block!',rn)
+								else: msg = muc_filter_action(act,jid,room,L('Raw AD-Block!',rn))
 
 					# Repeat message filter
 					if not mute and msg and get_config(gr,'muc_filter_repeat') != 'off':
@@ -167,8 +169,8 @@ def muc_filter_set(iq,id,room,acclvl,query,towh,al):
 								if action:
 									act = get_config(gr,'muc_filter_repeat')
 									pprint('MUC-Filter msg repeat (%s): %s [%s] %s' % (act,jid,room,body),'brown')
-									if act == 'mute': mute,mute_reason = True,L('Repeat message block!')
-									else: msg = muc_filter_action(act,jid,room,L('Repeat message block!'))
+									if act == 'mute': mute,mute_reason = True,L('Repeat message block!',rn)
+									else: msg = muc_filter_action(act,jid,room,L('Repeat message block!',rn))
 							else: muc_repeat[grj] = 0
 						last_msg_base[grj] = body
 						last_msg_time_base[grj] = time.time()
@@ -185,8 +187,8 @@ def muc_filter_set(iq,id,room,acclvl,query,towh,al):
 						if warn_match > GT('muc_filter_match_warning_match') or warn_space > GT('muc_filter_match_warning_space') or '\n'*GT('muc_filter_match_warning_nn') in body:
 							act = get_config(gr,'muc_filter_match')
 							pprint('MUC-Filter msg matcher (%s): %s [%s] %s' % (act,jid,room,body),'brown')
-							if act == 'mute': mute,mute_reason = True,L('Match message block!')
-							else: msg = muc_filter_action(act,jid,room,L('Match message block!'))
+							if act == 'mute': mute,mute_reason = True,L('Match message block!',rn)
+							else: msg = muc_filter_action(act,jid,room,L('Match message block!',rn))
 
 					# Censor filter
 					need_raw = True
@@ -195,8 +197,8 @@ def muc_filter_set(iq,id,room,acclvl,query,towh,al):
 						need_raw = False
 						pprint('MUC-Filter msg censor (%s): %s [%s] %s' % (act,jid,room,body),'brown')
 						if act == 'replace': msg = msg.replace(get_tag_full(msg,'body'),'<body>%s</body>' % esc_max2(to_censore(esc_min2(body),gr)))
-						elif act == 'mute': mute,mute_reason = True,L('Blocked by censor!')
-						else: msg = muc_filter_action(act,jid,room,L('Blocked by censor!'))
+						elif act == 'mute': mute,mute_reason = True,L('Blocked by censor!',rn)
+						else: msg = muc_filter_action(act,jid,room,L('Blocked by censor!',rn))
 
 					# Raw censor filter
 					if not mute and msg and need_raw and get_config(gr,'muc_filter_censor_raw') != 'off':
@@ -204,8 +206,8 @@ def muc_filter_set(iq,id,room,acclvl,query,towh,al):
 						if rawbody and rawbody != to_censore(rawbody,gr):
 							act = get_config(gr,'muc_filter_censor_raw')
 							pprint('MUC-Filter msg raw censor (%s): %s [%s] %s' % (act,jid,room,body),'brown')
-							if act == 'mute': mute,mute_reason = True,L('Blocked by raw censor!')
-							else: msg = muc_filter_action(act,jid,room,L('Blocked by raw censor!'))
+							if act == 'mute': mute,mute_reason = True,L('Blocked by raw censor!',rn)
+							else: msg = muc_filter_action(act,jid,room,L('Blocked by raw censor!',rn))
 
 					# Large message filter
 					if not mute and msg and get_config(gr,'muc_filter_large') != 'off' and len(body) > GT('muc_filter_large_message_size'):
@@ -214,10 +216,10 @@ def muc_filter_set(iq,id,room,acclvl,query,towh,al):
 						if act == 'paste' or act == 'truncate':
 							url = paste_text(rss_replace(body),room,jid)
 							if act == 'truncate': body = u'%s[…] %s' % (body[:GT('muc_filter_large_message_size')],url)
-							else: body = L('Large message%s %s') % (u'…',url)
+							else: body = L('Large message%s %s',rn) % (u'…',url)
 							msg = msg.replace(get_tag_full(msg,'body'),'<body>%s</body>' % body)
-						elif act == 'mute': mute,mute_reason = True,L('Large message block!')
-						else: msg = muc_filter_action(act,jid,room,L('Large message block!'))
+						elif act == 'mute': mute,mute_reason = True,L('Large message block!',rn)
+						else: msg = muc_filter_action(act,jid,room,L('Large message block!',rn))
 
 				if mute: msg = unicode(xmpp.Message(to=jid,body=mute_reason,typ=mute_type,frm=mute_room))
 			else: msg = None
@@ -248,7 +250,7 @@ def muc_filter_set(iq,id,room,acclvl,query,towh,al):
 					except: v = False
 					if v:		
 						pprint('MUC-Filter history: %s/%s %s' % (gr,nick,jid),'brown')
-						msg,mute = unicode(xmpp.Node('presence', {'from': tojid, 'type': 'error', 'to':jid}, payload = ['replace_it',xmpp.Node('error', {'type': 'auth','code':'403'}, payload=[xmpp.Node('forbidden',{'xmlns':'urn:ietf:params:xml:ns:xmpp-stanzas'},[]),xmpp.Node('text',{'xmlns':'urn:ietf:params:xml:ns:xmpp-stanzas'},[L('Deny by history request!')])])])).replace('replace_it',get_tag(msg,'presence')),True
+						msg,mute = unicode(xmpp.Node('presence', {'from': tojid, 'type': 'error', 'to':jid}, payload = ['replace_it',xmpp.Node('error', {'type': 'auth','code':'403'}, payload=[xmpp.Node('forbidden',{'xmlns':'urn:ietf:params:xml:ns:xmpp-stanzas'},[]),xmpp.Node('text',{'xmlns':'urn:ietf:params:xml:ns:xmpp-stanzas'},[L('Deny by history request!',rn)])])])).replace('replace_it',get_tag(msg,'presence')),True
 						if get_config(gr,'muc_filter_history_ban'):
 							pprint('MUC-Filter history ban: %s/%s %s' % (gr,nick,jid),'brown')
 							sender(xmpp.Node('iq',{'id': get_id(), 'type': 'set', 'to':gr},payload = [xmpp.Node('query', {'xmlns': xmpp.NS_MUC_ADMIN},[xmpp.Node('item',{'affiliation':'outcast', 'jid':jid},[xmpp.Node('reason',{},'Banned by empty history at %s' % timeadd(tuple(time.localtime())))])])]))
@@ -262,7 +264,7 @@ def muc_filter_set(iq,id,room,acclvl,query,towh,al):
 						muc_filter_fast_join[gr] = [_itt] + muc_filter_fast_join[gr][:_cnt-1]
 						if len(muc_filter_fast_join[gr]) == _cnt and (muc_filter_fast_join[gr][0] - muc_filter_fast_join[gr][-1]) <= _time:
 							pprint('MUC-Filter fast join: %s/%s %s' % (gr,nick,jid),'brown')
-							msg,mute = unicode(xmpp.Node('presence', {'from': tojid, 'type': 'error', 'to':jid}, payload = ['replace_it',xmpp.Node('error', {'type': 'auth','code':'403'}, payload=[xmpp.Node('forbidden',{'xmlns':'urn:ietf:params:xml:ns:xmpp-stanzas'},[]),xmpp.Node('text',{'xmlns':'urn:ietf:params:xml:ns:xmpp-stanzas'},[L('Deny by fast join! Try again later!')])])])).replace('replace_it',get_tag(msg,'presence')),True
+							msg,mute = unicode(xmpp.Node('presence', {'from': tojid, 'type': 'error', 'to':jid}, payload = ['replace_it',xmpp.Node('error', {'type': 'auth','code':'403'}, payload=[xmpp.Node('forbidden',{'xmlns':'urn:ietf:params:xml:ns:xmpp-stanzas'},[]),xmpp.Node('text',{'xmlns':'urn:ietf:params:xml:ns:xmpp-stanzas'},[L('Deny by fast join! Try again later!',rn)])])])).replace('replace_it',get_tag(msg,'presence')),True
 					else: muc_filter_fast_join[gr] = [_itt]
 
 				# Validate items
@@ -304,7 +306,7 @@ def muc_filter_set(iq,id,room,acclvl,query,towh,al):
 					if not is_valid:
 						act = get_config(gr,'muc_filter_validate_action')
 						pprint('MUC-Filter invalid items [%s]: %s/%s %s [%s] %s %s %s' % (act,gr,nick,jid,validate_count,id_node,id_ver,id_hash),'brown')
-						msg,mute = unicode(xmpp.Node('presence', {'from': tojid, 'type': 'error', 'to':jid}, payload = ['replace_it',xmpp.Node('error', {'type': 'auth','code':'403'}, payload=[xmpp.Node('forbidden',{'xmlns':'urn:ietf:params:xml:ns:xmpp-stanzas'},[]),xmpp.Node('text',{'xmlns':'urn:ietf:params:xml:ns:xmpp-stanzas'},[L('Deny by validation!')])])])).replace('replace_it',get_tag(msg,'presence')),True
+						msg,mute = unicode(xmpp.Node('presence', {'from': tojid, 'type': 'error', 'to':jid}, payload = ['replace_it',xmpp.Node('error', {'type': 'auth','code':'403'}, payload=[xmpp.Node('forbidden',{'xmlns':'urn:ietf:params:xml:ns:xmpp-stanzas'},[]),xmpp.Node('text',{'xmlns':'urn:ietf:params:xml:ns:xmpp-stanzas'},[L('Deny by validation!',rn)])])])).replace('replace_it',get_tag(msg,'presence')),True
 						tmp_server = getServer(jid)
 						tmp2_server = '%s/%s' % (gr,tmp_server)
 						if act == 'ban' and not server_hash_list.has_key('%s/%s' % (gr,getRoom(jid))):
@@ -316,7 +318,7 @@ def muc_filter_set(iq,id,room,acclvl,query,towh,al):
 							tmp_notify = get_config(gr,'muc_filter_validate_ban_server_notify_jid')
 							if len(tmp_notify):
 								for tmp in tmp_notify.split():
-									if len(tmp): send_msg('chat', tmp, '', L('Server %s was banned in %s') % (tmp_server,gr))
+									if len(tmp): send_msg('chat', tmp, '', L('Server %s was banned in %s',rn) % (tmp_server,gr))
 
 
 				# Lock by caps
@@ -340,7 +342,7 @@ def muc_filter_set(iq,id,room,acclvl,query,towh,al):
 						c_caps = '%s %s %s' % (id_node,id_ver,id_bmver)
 						if caps_matcher(c_caps,c_list) ^ caps_negate:
 							pprint('MUC-Filter caps node lock (%s): %s/%s %s %s' % (['black','white'][caps_negate],gr,nick,jid,c_caps),'brown')
-							msg,mute = unicode(xmpp.Node('presence', {'from': tojid, 'type': 'error', 'to':jid}, payload = ['replace_it',xmpp.Node('error', {'type': 'auth','code':'403'}, payload=[xmpp.Node('forbidden',{'xmlns':'urn:ietf:params:xml:ns:xmpp-stanzas'},[]),xmpp.Node('text',{'xmlns':'urn:ietf:params:xml:ns:xmpp-stanzas'},[L('Deny by node lock!')])])])).replace('replace_it',get_tag(msg,'presence')),True
+							msg,mute = unicode(xmpp.Node('presence', {'from': tojid, 'type': 'error', 'to':jid}, payload = ['replace_it',xmpp.Node('error', {'type': 'auth','code':'403'}, payload=[xmpp.Node('forbidden',{'xmlns':'urn:ietf:params:xml:ns:xmpp-stanzas'},[]),xmpp.Node('text',{'xmlns':'urn:ietf:params:xml:ns:xmpp-stanzas'},[L('Deny by node lock!',rn)])])])).replace('replace_it',get_tag(msg,'presence')),True
 					if caps_error: writefile(slog_folder % 'bad_stanza_%s.txt' % int(time.time()),unicode(msg_xmpp).encode('utf-8'))
 
 				# Hash lock
@@ -376,7 +378,7 @@ def muc_filter_set(iq,id,room,acclvl,query,towh,al):
 						hashes['%s/%s' % (gr,nick)] = current_hash
 						if current_hash in hashes_list:
 							pprint('MUC-Filter hash lock: %s/%s %s %s' % (gr,nick,jid,current_hash),'brown')
-							msg,mute = unicode(xmpp.Node('presence', {'from': tojid, 'type': 'error', 'to':jid}, payload = ['replace_it',xmpp.Node('error', {'type': 'auth','code':'403'}, payload=[xmpp.Node('forbidden',{'xmlns':'urn:ietf:params:xml:ns:xmpp-stanzas'},[]),xmpp.Node('text',{'xmlns':'urn:ietf:params:xml:ns:xmpp-stanzas'},[L('Deny by hash lock!')])])])).replace('replace_it',get_tag(msg,'presence')),True
+							msg,mute = unicode(xmpp.Node('presence', {'from': tojid, 'type': 'error', 'to':jid}, payload = ['replace_it',xmpp.Node('error', {'type': 'auth','code':'403'}, payload=[xmpp.Node('forbidden',{'xmlns':'urn:ietf:params:xml:ns:xmpp-stanzas'},[]),xmpp.Node('text',{'xmlns':'urn:ietf:params:xml:ns:xmpp-stanzas'},[L('Deny by hash lock!',rn)])])])).replace('replace_it',get_tag(msg,'presence')),True
 							tmp_server = getServer(jid)
 							tmp2_server = '%s/%s' % (gr,tmp_server)
 							if get_config(gr,'muc_filter_hash_ban_by_rejoin') and not server_hash.has_key(tmp2_server):
@@ -398,7 +400,7 @@ def muc_filter_set(iq,id,room,acclvl,query,towh,al):
 										tmp_notify = get_config(gr,'muc_filter_hash_ban_server_by_rejoin_notify_jid')
 										if len(tmp_notify):
 											for tmp in tmp_notify.split():
-												if len(tmp): send_msg('chat', tmp, '', L('Server %s was banned in %s') % (tmp_server,gr))
+												if len(tmp): send_msg('chat', tmp, '', L('Server %s was banned in %s',rn) % (tmp_server,gr))
 						else: pprint('User hash: %s %s/%s %s' % (current_hash,gr,nick,jid),'white')
 
 				# Blacklist
@@ -414,14 +416,14 @@ def muc_filter_set(iq,id,room,acclvl,query,towh,al):
 						if not is_bl and bl_nick and re.findall(bl_nick,nick,re.S+re.U+re.I): is_bl = True
 						if is_bl:
 							pprint('MUC-Filter blacklist: %s/%s %s' % (gr,nick,jid),'brown')
-							msg,mute = unicode(xmpp.Node('presence', {'from': tojid, 'type': 'error', 'to':jid}, payload = ['replace_it',xmpp.Node('error', {'type': 'auth','code':'403'}, payload=[xmpp.Node('forbidden',{'xmlns':'urn:ietf:params:xml:ns:xmpp-stanzas'},[]),xmpp.Node('text',{'xmlns':'urn:ietf:params:xml:ns:xmpp-stanzas'},[L('Deny by blacklist!')])])])).replace('replace_it',get_tag(msg,'presence')),True
+							msg,mute = unicode(xmpp.Node('presence', {'from': tojid, 'type': 'error', 'to':jid}, payload = ['replace_it',xmpp.Node('error', {'type': 'auth','code':'403'}, payload=[xmpp.Node('forbidden',{'xmlns':'urn:ietf:params:xml:ns:xmpp-stanzas'},[]),xmpp.Node('text',{'xmlns':'urn:ietf:params:xml:ns:xmpp-stanzas'},[L('Deny by blacklist!',rn)])])])).replace('replace_it',get_tag(msg,'presence')),True
 
 				# Whitelist
 				if not mute and msg and get_config(gr,'muc_filter_whitelist') and newjoin:
 					in_base = cur_execute_fetchone('select jid from age where room=%s and jid=%s',(gr,getRoom(jid)))
 					if not in_base:
 						pprint('MUC-Filter whitelist: %s/%s %s' % (gr,nick,jid),'brown')
-						msg,mute = unicode(xmpp.Node('presence', {'from': tojid, 'type': 'error', 'to':jid}, payload = ['replace_it',xmpp.Node('error', {'type': 'auth','code':'403'}, payload=[xmpp.Node('forbidden',{'xmlns':'urn:ietf:params:xml:ns:xmpp-stanzas'},[]),xmpp.Node('text',{'xmlns':'urn:ietf:params:xml:ns:xmpp-stanzas'},[L('Deny by whitelist!')])])])).replace('replace_it',get_tag(msg,'presence')),True
+						msg,mute = unicode(xmpp.Node('presence', {'from': tojid, 'type': 'error', 'to':jid}, payload = ['replace_it',xmpp.Node('error', {'type': 'auth','code':'403'}, payload=[xmpp.Node('forbidden',{'xmlns':'urn:ietf:params:xml:ns:xmpp-stanzas'},[]),xmpp.Node('text',{'xmlns':'urn:ietf:params:xml:ns:xmpp-stanzas'},[L('Deny by whitelist!',rn)])])])).replace('replace_it',get_tag(msg,'presence')),True
 
 				# AD-Block filter
 				need_raw = True
@@ -439,9 +441,9 @@ def muc_filter_set(iq,id,room,acclvl,query,towh,al):
 						if act == 'replace':
 							for tmp in fs: status = status.replace(tmp,[GT('censor_text')*len(tmp),GT('censor_text')][len(GT('censor_text'))>1])
 							msg = msg.replace(get_tag_full(msg,'status'),'<status>%s</status>' % status)
-						elif newjoin: msg,mute = unicode(xmpp.Node('presence', {'from': tojid, 'type': 'error', 'to':jid}, payload = ['replace_it',xmpp.Node('error', {'type': 'auth','code':'403'}, payload=[xmpp.Node('forbidden',{'xmlns':'urn:ietf:params:xml:ns:xmpp-stanzas'},[]),xmpp.Node('text',{'xmlns':'urn:ietf:params:xml:ns:xmpp-stanzas'},[L('AD-Block!')])])])).replace('replace_it',get_tag(msg,'presence')),True
+						elif newjoin: msg,mute = unicode(xmpp.Node('presence', {'from': tojid, 'type': 'error', 'to':jid}, payload = ['replace_it',xmpp.Node('error', {'type': 'auth','code':'403'}, payload=[xmpp.Node('forbidden',{'xmlns':'urn:ietf:params:xml:ns:xmpp-stanzas'},[]),xmpp.Node('text',{'xmlns':'urn:ietf:params:xml:ns:xmpp-stanzas'},[L('AD-Block!',rn)])])])).replace('replace_it',get_tag(msg,'presence')),True
 						elif act == 'mute': msg,mute = None,True
-						else: msg = muc_filter_action(act,jid,room,L('AD-Block!'))
+						else: msg = muc_filter_action(act,jid,room,L('AD-Block!',rn))
 					if fn and msg:
 						need_raw = False
 						act = get_config(gr,'muc_filter_adblock_prs')
@@ -449,9 +451,9 @@ def muc_filter_set(iq,id,room,acclvl,query,towh,al):
 						if act == 'replace':
 							for tmp in fn: nick = nick.replace(tmp,[GT('censor_text')*len(tmp),GT('censor_text')][len(GT('censor_text'))>1])
 							msg = msg.replace(esc_max2(tojid),'%s/%s' % (tojid.split('/',1)[0],nick))
-						elif newjoin: msg,mute = unicode(xmpp.Node('presence', {'from': tojid, 'type': 'error', 'to':jid}, payload = ['replace_it',xmpp.Node('error', {'type': 'auth','code':'403'}, payload=[xmpp.Node('forbidden',{'xmlns':'urn:ietf:params:xml:ns:xmpp-stanzas'},[]),xmpp.Node('text',{'xmlns':'urn:ietf:params:xml:ns:xmpp-stanzas'},[L('AD-Block!')])])])).replace('replace_it',get_tag(msg,'presence')),True
+						elif newjoin: msg,mute = unicode(xmpp.Node('presence', {'from': tojid, 'type': 'error', 'to':jid}, payload = ['replace_it',xmpp.Node('error', {'type': 'auth','code':'403'}, payload=[xmpp.Node('forbidden',{'xmlns':'urn:ietf:params:xml:ns:xmpp-stanzas'},[]),xmpp.Node('text',{'xmlns':'urn:ietf:params:xml:ns:xmpp-stanzas'},[L('AD-Block!',rn)])])])).replace('replace_it',get_tag(msg,'presence')),True
 						elif act == 'mute': msg,mute = None,True
-						else: msg = muc_filter_action(act,jid,room,L('AD-Block!'))
+						else: msg = muc_filter_action(act,jid,room,L('AD-Block!',rn))
 
 				# Raw AD-Block filter
 				if not mute and msg and need_raw and get_config(gr,'muc_filter_adblock_prs_raw') != 'off':
@@ -466,15 +468,15 @@ def muc_filter_set(iq,id,room,acclvl,query,towh,al):
 					if rawstatus and fs:
 						act = get_config(gr,'muc_filter_adblock_prs_raw')
 						pprint('MUC-Filter raw adblock prs status (%s): %s [%s] %s' % (act,jid,room,status),'brown')
-						if newjoin: msg,mute = unicode(xmpp.Node('presence', {'from': tojid, 'type': 'error', 'to':jid}, payload = ['replace_it',xmpp.Node('error', {'type': 'auth','code':'403'}, payload=[xmpp.Node('forbidden',{'xmlns':'urn:ietf:params:xml:ns:xmpp-stanzas'},[]),xmpp.Node('text',{'xmlns':'urn:ietf:params:xml:ns:xmpp-stanzas'},[L('AD-Block!')])])])).replace('replace_it',get_tag(msg,'presence')),True
+						if newjoin: msg,mute = unicode(xmpp.Node('presence', {'from': tojid, 'type': 'error', 'to':jid}, payload = ['replace_it',xmpp.Node('error', {'type': 'auth','code':'403'}, payload=[xmpp.Node('forbidden',{'xmlns':'urn:ietf:params:xml:ns:xmpp-stanzas'},[]),xmpp.Node('text',{'xmlns':'urn:ietf:params:xml:ns:xmpp-stanzas'},[L('AD-Block!',rn)])])])).replace('replace_it',get_tag(msg,'presence')),True
 						elif act == 'mute': msg,mute = None,True
-						else: msg = muc_filter_action(act,jid,room,L('Raw AD-Block!'))
+						else: msg = muc_filter_action(act,jid,room,L('Raw AD-Block!',rn))
 					if rawnick and fn and msg:
 						act = get_config(gr,'muc_filter_adblock_prs_raw')
 						pprint('MUC-Filter raw adblock prs nick (%s): %s [%s] %s' % (act,jid,room,nick),'brown')
-						if newjoin: msg,mute = unicode(xmpp.Node('presence', {'from': tojid, 'type': 'error', 'to':jid}, payload = ['replace_it',xmpp.Node('error', {'type': 'auth','code':'403'}, payload=[xmpp.Node('forbidden',{'xmlns':'urn:ietf:params:xml:ns:xmpp-stanzas'},[]),xmpp.Node('text',{'xmlns':'urn:ietf:params:xml:ns:xmpp-stanzas'},[L('AD-Block!')])])])).replace('replace_it',get_tag(msg,'presence')),True
+						if newjoin: msg,mute = unicode(xmpp.Node('presence', {'from': tojid, 'type': 'error', 'to':jid}, payload = ['replace_it',xmpp.Node('error', {'type': 'auth','code':'403'}, payload=[xmpp.Node('forbidden',{'xmlns':'urn:ietf:params:xml:ns:xmpp-stanzas'},[]),xmpp.Node('text',{'xmlns':'urn:ietf:params:xml:ns:xmpp-stanzas'},[L('AD-Block!',rn)])])])).replace('replace_it',get_tag(msg,'presence')),True
 						elif act == 'mute': msg,mute = None,True
-						else: msg = muc_filter_action(act,jid,room,L('Raw AD-Block!'))
+						else: msg = muc_filter_action(act,jid,room,L('Raw AD-Block!',rn))
 
 				# New Line
 				if not mute and msg and get_config(gr,'muc_filter_newline') != 'off':
@@ -490,9 +492,9 @@ def muc_filter_set(iq,id,room,acclvl,query,towh,al):
 						if act == 'replace':
 							status = reduce_spaces_all(status.replace('\n',' ').replace('\r',' '))
 							msg = msg.replace(get_tag_full(msg,'status'),'<status>%s</status>' % status)
-						elif newjoin: msg,mute = unicode(xmpp.Node('presence', {'from': tojid, 'type': 'error', 'to':jid}, payload = ['replace_it',xmpp.Node('error', {'type': 'auth','code':'403'}, payload=[xmpp.Node('forbidden',{'xmlns':'urn:ietf:params:xml:ns:xmpp-stanzas'},[]),xmpp.Node('text',{'xmlns':'urn:ietf:params:xml:ns:xmpp-stanzas'},[L('Blocked by content!')])])])).replace('replace_it',get_tag(msg,'presence')),True
+						elif newjoin: msg,mute = unicode(xmpp.Node('presence', {'from': tojid, 'type': 'error', 'to':jid}, payload = ['replace_it',xmpp.Node('error', {'type': 'auth','code':'403'}, payload=[xmpp.Node('forbidden',{'xmlns':'urn:ietf:params:xml:ns:xmpp-stanzas'},[]),xmpp.Node('text',{'xmlns':'urn:ietf:params:xml:ns:xmpp-stanzas'},[L('Blocked by content!',rn)])])])).replace('replace_it',get_tag(msg,'presence')),True
 						elif act == 'mute': msg,mute = None,True
-						else: msg = muc_filter_action(act,jid,room,L('Blocked by content!'))
+						else: msg = muc_filter_action(act,jid,room,L('Blocked by content!',rn))
 
 				# Reduce spaces
 				if not mute and msg and get_config(gr,'muc_filter_reduce_spaces_prs') and ('  ' in status or '  ' in nick):
@@ -513,9 +515,9 @@ def muc_filter_set(iq,id,room,acclvl,query,towh,al):
 							status = esc_max2(to_censore(esc_min2(status),gr))
 							msg = msg.replace(get_tag_full(msg,'status'),'<status>%s</status>' % status).replace(esc_max2(tojid),'%s/%s' % (tojid.split('/',1)[0],to_censore(esc_max2(nick),gr)))
 						else: msg = msg.replace(esc_max2(tojid),'%s/%s' % (tojid.split('/',1)[0],to_censore(esc_max2(nick),gr)))
-					elif newjoin: msg,mute = unicode(xmpp.Node('presence', {'from': tojid, 'type': 'error', 'to':jid}, payload = ['replace_it',xmpp.Node('error', {'type': 'auth','code':'403'}, payload=[xmpp.Node('forbidden',{'xmlns':'urn:ietf:params:xml:ns:xmpp-stanzas'},[]),xmpp.Node('text',{'xmlns':'urn:ietf:params:xml:ns:xmpp-stanzas'},[L('Blocked by censor!')])])])).replace('replace_it',get_tag(msg,'presence')),True
+					elif newjoin: msg,mute = unicode(xmpp.Node('presence', {'from': tojid, 'type': 'error', 'to':jid}, payload = ['replace_it',xmpp.Node('error', {'type': 'auth','code':'403'}, payload=[xmpp.Node('forbidden',{'xmlns':'urn:ietf:params:xml:ns:xmpp-stanzas'},[]),xmpp.Node('text',{'xmlns':'urn:ietf:params:xml:ns:xmpp-stanzas'},[L('Blocked by censor!',rn)])])])).replace('replace_it',get_tag(msg,'presence')),True
 					elif act == 'mute': msg,mute = None,True
-					else: msg = muc_filter_action(act,jid,room,L('Blocked by censor!'))
+					else: msg = muc_filter_action(act,jid,room,L('Blocked by censor!',rn))
 
 				# Raw censor filter
 				if not mute and msg and need_raw and get_config(gr,'muc_filter_censor_prs_raw') != 'off':
@@ -524,26 +526,26 @@ def muc_filter_set(iq,id,room,acclvl,query,towh,al):
 					if (rawstatus or rawnick) and '%s|%s' % (rawstatus,rawnick) != to_censore('%s|%s' % (rawstatus,rawnick),gr):
 						act = get_config(gr,'muc_filter_censor_prs_raw')
 						pprint('MUC-Filter prs raw censor (%s): %s [%s] %s' % (act,jid,room,nick+'|'+status),'brown')
-						if newjoin: msg,mute = unicode(xmpp.Node('presence', {'from': tojid, 'type': 'error', 'to':jid}, payload = ['replace_it',xmpp.Node('error', {'type': 'auth','code':'403'}, payload=[xmpp.Node('forbidden',{'xmlns':'urn:ietf:params:xml:ns:xmpp-stanzas'},[]),xmpp.Node('text',{'xmlns':'urn:ietf:params:xml:ns:xmpp-stanzas'},[L('Blocked by censor!')])])])).replace('replace_it',get_tag(msg,'presence')),True
+						if newjoin: msg,mute = unicode(xmpp.Node('presence', {'from': tojid, 'type': 'error', 'to':jid}, payload = ['replace_it',xmpp.Node('error', {'type': 'auth','code':'403'}, payload=[xmpp.Node('forbidden',{'xmlns':'urn:ietf:params:xml:ns:xmpp-stanzas'},[]),xmpp.Node('text',{'xmlns':'urn:ietf:params:xml:ns:xmpp-stanzas'},[L('Blocked by censor!',rn)])])])).replace('replace_it',get_tag(msg,'presence')),True
 						elif act == 'mute': msg,mute = None,True
-						else: msg = muc_filter_action(act,jid,room,L('Blocked by raw censor!'))
+						else: msg = muc_filter_action(act,jid,room,L('Blocked by raw censor!',rn))
 
 				# Large status filter
 				if not mute and msg and get_config(gr,'muc_filter_large_status') != 'off' and len(esc_min2(status)) > GT('muc_filter_large_status_size'):
 					act = get_config(gr,'muc_filter_large_status')
 					pprint('MUC-Filter large status (%s): %s [%s] %s' % (act,jid,room,status),'brown')
 					if act == 'truncate': msg = msg.replace(get_tag_full(msg,'status'),u'<status>%s…</status>' % esc_max2(esc_min2(status)[:GT('muc_filter_large_status_size')]))
-					elif newjoin: msg,mute = unicode(xmpp.Node('presence', {'from': tojid, 'type': 'error', 'to':jid}, payload = ['replace_it',xmpp.Node('error', {'type': 'auth','code':'403'}, payload=[xmpp.Node('forbidden',{'xmlns':'urn:ietf:params:xml:ns:xmpp-stanzas'},[]),xmpp.Node('text',{'xmlns':'urn:ietf:params:xml:ns:xmpp-stanzas'},[L('Large status block!')])])])).replace('replace_it',get_tag(msg,'presence')),True
+					elif newjoin: msg,mute = unicode(xmpp.Node('presence', {'from': tojid, 'type': 'error', 'to':jid}, payload = ['replace_it',xmpp.Node('error', {'type': 'auth','code':'403'}, payload=[xmpp.Node('forbidden',{'xmlns':'urn:ietf:params:xml:ns:xmpp-stanzas'},[]),xmpp.Node('text',{'xmlns':'urn:ietf:params:xml:ns:xmpp-stanzas'},[L('Large status block!',rn)])])])).replace('replace_it',get_tag(msg,'presence')),True
 					elif act == 'mute': msg,mute = None,True
-					else: msg = muc_filter_action(act,jid,room,L('Large status block!'))
+					else: msg = muc_filter_action(act,jid,room,L('Large status block!',rn))
 
 				# Large nick filter
 				if not mute and msg and get_config(gr,'muc_filter_large_nick') != 'off' and len(esc_min2(nick)) > GT('muc_filter_large_nick_size'):
 					act = get_config(gr,'muc_filter_large_nick')
 					if act == 'truncate': msg = msg.replace(esc_max2(tojid),u'%s/%s…' % (tojid.split('/',1)[0],esc_max2(esc_min2(nick)[:GT('muc_filter_large_nick_size')])))
-					elif newjoin: msg,mute = unicode(xmpp.Node('presence', {'from': tojid, 'type': 'error', 'to':jid}, payload = ['replace_it',xmpp.Node('error', {'type': 'auth','code':'403'}, payload=[xmpp.Node('forbidden',{'xmlns':'urn:ietf:params:xml:ns:xmpp-stanzas'},[]),xmpp.Node('text',{'xmlns':'urn:ietf:params:xml:ns:xmpp-stanzas'},[L('Large nick block!')])])])).replace('replace_it',get_tag(msg,'presence')),True
+					elif newjoin: msg,mute = unicode(xmpp.Node('presence', {'from': tojid, 'type': 'error', 'to':jid}, payload = ['replace_it',xmpp.Node('error', {'type': 'auth','code':'403'}, payload=[xmpp.Node('forbidden',{'xmlns':'urn:ietf:params:xml:ns:xmpp-stanzas'},[]),xmpp.Node('text',{'xmlns':'urn:ietf:params:xml:ns:xmpp-stanzas'},[L('Large nick block!',rn)])])])).replace('replace_it',get_tag(msg,'presence')),True
 					elif act == 'mute': msg,mute = None,True
-					else: msg = muc_filter_action(act,jid,room,L('Large nick block!'))
+					else: msg = muc_filter_action(act,jid,room,L('Large nick block!',rn))
 
 				# Rejoin filter
 				if not mute and msg and get_config(gr,'muc_filter_rejoin') and newjoin:
@@ -553,7 +555,7 @@ def muc_filter_set(iq,id,room,acclvl,query,towh,al):
 					if len(muc_rejoins[ttojid]) == GT('muc_filter_rejoin_count'):
 						tmo = muc_rejoins[ttojid][GT('muc_filter_rejoin_count')-1] - muc_rejoins[ttojid][0]
 						if tmo < GT('muc_filter_rejoin_timeout'):
-							msg,mute = unicode(xmpp.Node('presence', {'from': tojid, 'type': 'error', 'to':jid}, payload = ['replace_it',xmpp.Node('error', {'type': 'auth','code':'403'}, payload=[xmpp.Node('forbidden',{'xmlns':'urn:ietf:params:xml:ns:xmpp-stanzas'},[]),xmpp.Node('text',{'xmlns':'urn:ietf:params:xml:ns:xmpp-stanzas'},[L('To many rejoins! Wait %s sec.') % GT('muc_filter_rejoin_timeout')])])])).replace('replace_it',get_tag(msg,'presence')),True
+							msg,mute = unicode(xmpp.Node('presence', {'from': tojid, 'type': 'error', 'to':jid}, payload = ['replace_it',xmpp.Node('error', {'type': 'auth','code':'403'}, payload=[xmpp.Node('forbidden',{'xmlns':'urn:ietf:params:xml:ns:xmpp-stanzas'},[]),xmpp.Node('text',{'xmlns':'urn:ietf:params:xml:ns:xmpp-stanzas'},[L('To many rejoins! Wait %s sec.',rn) % GT('muc_filter_rejoin_timeout')])])])).replace('replace_it',get_tag(msg,'presence')),True
 							pprint('MUC-Filter rejoin: %s [%s] %s' % (jid,room,nick),'brown')
 
 				# Status filter
@@ -567,7 +569,7 @@ def muc_filter_set(iq,id,room,acclvl,query,towh,al):
 							act = get_config(gr,'muc_filter_repeat_prs')
 							pprint('MUC-Filter status (%s): %s [%s] %s' % (act,jid,room,nick),'brown')
 							if act == 'mute': msg,mute = None,True
-							else: msg = muc_filter_action(act,jid,room,L('Status-flood block!'))
+							else: msg = muc_filter_action(act,jid,room,L('Status-flood block!',rn))
 
 		if msg:
 			i=xmpp.Iq(to=room, typ='result')

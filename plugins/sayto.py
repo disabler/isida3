@@ -38,7 +38,7 @@ def sayto(type, jid, nick, text):
 				msg = ''
 				for cc in cm:
 					zz = cc[0].split('\n')
-					tmsg = '\n' + cc[1] +'/'+ zz[0] +' ('+un_unix(time.time()-int(zz[1]))+'|'+un_unix(GT('sayto_timeout')-(time.time()-int(zz[1])))+') '+L('for','%s/%s'%(jid,nick))+' '+cc[2]+' - '+cc[3]
+					tmsg = '\n' + cc[1] +'/'+ zz[0] +' ('+un_unix(time.time()-int(zz[1]),'%s/%s'%(jid,nick))+'|'+un_unix(GT('sayto_timeout')-(time.time()-int(zz[1])),'%s/%s'%(jid,nick))+') '+L('for','%s/%s'%(jid,nick))+' '+cc[2]+' - '+cc[3]
 					if len(text) and text.lower() in tmsg.lower(): msg += tmsg
 					elif not len(text): msg += tmsg
 				if len(msg): msg = L('Not transfered messages: %s','%s/%s'%(jid,nick)) % msg
@@ -109,7 +109,7 @@ def sayto_presence(room,jid,nick,type,text):
 			for cc in cm:
 				if '\n' in cc[0]:
 					zz = cc[0].split('\n')
-					if zz[0]: msg = L('%s (%s ago) convey for you: %s','%s/%s'%(room,nick)) % (zz[0], un_unix(time.time()-int(zz[1])), cc[3])
+					if zz[0]: msg = L('%s (%s ago) convey for you: %s','%s/%s'%(room,nick)) % (zz[0], un_unix(time.time()-int(zz[1]),'%s/%s'%(room,nick)), cc[3])
 					else: msg = L('You ask remember: %s','%s/%s'%(room,nick)) % cc[3]
 				else: msg = L('%s convey for you: %s','%s/%s'%(room,nick)) % (cc[3], cc[0])
 				send_msg('chat', room, nick, msg)

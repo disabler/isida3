@@ -23,8 +23,10 @@
 
 # id, room, jid, nick, level, tags, body, status, date, comment, accept_by, accept_date
 
-issue_status = [L('new'),L('pending'),L('accepted'),L('rejected'),L('removed'),L('done')]
-issue_status_show = ['',L('Pending by'),L('Accepted by'),L('Rejected by'),L('Removed by'),L('Mark as done by')]
+# translate: new,pending,accepted,rejected,removed,done,Pending by,Accepted by,Rejected by,Removed by,Mark as done by
+
+issue_status = ['new','pending','accepted','rejected','removed','done']
+issue_status_show = ['','Pending by','Accepted by','Rejected by','Removed by','Mark as done by']
 issue_new_id     = 0
 issue_pending_id = 1
 issue_accept_id  = 2
@@ -79,10 +81,10 @@ def issue_show(s,room,type,nick):
 			send_msg(type, room, nick, L('Sent in private message','%s/%s'%(room,nick)))
 			type = 'chat'
 		for t in iss:
-			if t[2]: tmp = '%s (%s) *%s | %s\n%s' % (issue_number_format % t[0],issue_status[t[4]],' *'.join(t[2].split()),L('Created by %s','%s/%s'%(room,nick)) % t[1],t[3])
-			else: tmp = '%s (%s) %s\n%s' % (issue_number_format % t[0],issue_status[t[4]],L('Created by %s','%s/%s'%(room,nick)) % t[1],t[3])
+			if t[2]: tmp = '%s (%s) *%s | %s\n%s' % (issue_number_format % t[0],L(issue_status[t[4]],'%s/%s'%(room,nick)),' *'.join(t[2].split()),L('Created by %s','%s/%s'%(room,nick)) % t[1],t[3])
+			else: tmp = '%s (%s) %s\n%s' % (issue_number_format % t[0],L(issue_status[t[4]],'%s/%s'%(room,nick)),L('Created by %s','%s/%s'%(room,nick)) % t[1],t[3])
 			if t[4]:
-				tmp = '%s\n%s %s [%s]' % (tmp,issue_status_show[t[4]],t[6],disp_time(t[7]))
+				tmp = '%s\n%s %s [%s]' % (tmp,L(issue_status_show[t[4]],'%s/%s'%(room,nick)),t[6],disp_time(t[7],'%s/%s'%(room,nick)))
 				if t[5]: tmp += L(', by reason: %s','%s/%s'%(room,nick)) % t[5]
 			tm.append(tmp)
 		return L('Issue(s) list:\n%s','%s/%s'%(room,nick)) % '\n\n'.join(tm), type

@@ -33,7 +33,7 @@ def adminmail(type, jid, nick, text):
 		if am:
 			wt = int(am[0]-time.time())
 			if wt >= 0:
-				send_msg(type, jid, nick, L('Time limit exceeded. Wait: %s','%s/%s'%(jid,nick)) % un_unix(wt))
+				send_msg(type, jid, nick, L('Time limit exceeded. Wait: %s','%s/%s'%(jid,nick)) % un_unix(wt,'%s/%s'%(jid,nick)))
 				return None
 			else: cur_execute('delete from saytoowner where jid=%s;',(fjid,))
 		cur_execute('insert into saytoowner values (%s,%s)',(fjid,int(time.time())+tmp_lim))

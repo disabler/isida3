@@ -41,7 +41,7 @@ def svn_get(type, jid, nick,text):
 			if count > 10: count = 10
 			sh_exe = 'sh -c \"LANG=%s svn log %s --limit %s\"' % (L('en_EN.UTF8','%s/%s'%(jid,nick)),url,count)
 		if verb: sh_exe = '%s -v\"' % sh_exe[:-1]
-		svn_log = shell_execute(sh_exe).replace('\n\n','\n')
+		svn_log = shell_execute(sh_exe,'%s/%s'%(jid,nick)).replace('\n\n','\n')
 		while svn_log[-1] in ['-','\n']: svn_log = svn_log[:-1]
 		rpl = re.findall('-{10,}',svn_log)
 		if rpl: svn_log = svn_log.replace(rpl[0],'-'*3)

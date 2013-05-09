@@ -37,7 +37,7 @@ def join_time_stat(type, jid, nick, text):
 	for t in t_age_tmp:
 		tmp = cur_execute_fetchone('select nick from age where room=%s and jid=%s order by status,-time',(jid,t[0]))
 		t_age.append((tmp[0],t[1]))
-	msg = L('Joins statistic:\n%s','%s/%s'%(jid,nick)) % '\n'.join(['%s\t %s%s' % (t[0],['','~'][t[1]<TIME_OF_LOGGING_JOINS],nice_time(t[1])[2].split(', GMT',1)[0]) for t in t_age])
+	msg = L('Joins statistic:\n%s','%s/%s'%(jid,nick)) % '\n'.join(['%s\t %s%s' % (t[0],['','~'][t[1]<TIME_OF_LOGGING_JOINS],nice_time(t[1],'%s/%s'%(jid,nick))[2].split(', GMT',1)[0]) for t in t_age])
 	send_msg(type, jid, nick, msg)
 
 def join_time(type, jid, nick, text):
@@ -45,7 +45,7 @@ def join_time(type, jid, nick, text):
 	lvl,r_jid = get_level(jid,text)
 	if lvl != -2:
 		j_time = cur_execute_fetchone('select time from first_join where room=%s and jid=%s;',(jid,getRoom(r_jid)))[0]
-		msg = L('First %s\'s join is %s%s (%s ago)','%s/%s'%(jid,nick)) % (text,['','~'][j_time<TIME_OF_LOGGING_JOINS],nice_time(j_time)[2],un_unix(int(time.time())-j_time))
+		msg = L('First %s\'s join is %s%s (%s ago)','%s/%s'%(jid,nick)) % (text,['','~'][j_time<TIME_OF_LOGGING_JOINS],nice_time(j_time,'%s/%s'%(jid,nick))[2],un_unix(int(time.time())-j_time,'%s/%s'%(jid,nick)))
 	else: msg = L('Not found!','%s/%s'%(jid,nick))
 	send_msg(type, jid, nick, msg)
 
@@ -61,7 +61,7 @@ def true_age_stat(type, jid, nick, text):
 	for t in t_age_tmp:
 		tmp = cur_execute_fetchone('select nick from age where room=%s and jid=%s order by status,-time',(jid,t[0]))
 		t_age.append((tmp[0],t[1]))
-	msg = L('Age statistic:\n%s','%s/%s'%(jid,nick)) % '\n'.join(['%s\t%s' % (t[0],un_unix(t[1])) for t in t_age])
+	msg = L('Age statistic:\n%s','%s/%s'%(jid,nick)) % '\n'.join(['%s\t%s' % (t[0],un_unix(t[1],'%s/%s'%(jid,nick))) for t in t_age])
 	send_msg(type, jid, nick, msg)
 
 def true_age_split(type, jid, nick, text):
@@ -97,17 +97,17 @@ def true_age_raw(type, jid, nick, text, xtype):
 			else: r_age = int(time.time()) - tmp[3] + tmp[4]
 			if xtype: msg += '\n%s. %s' % (cnt + 1, tmp[1])
 			else: msg += ' %s' % tmp[1]
-			msg += '\t%s, ' % un_unix(r_age)
+			msg += '\t%s, ' % un_unix(r_age,'%s/%s'%(jid,nick))
 			if tmp[5]:
-				if tmp[6]: msg += L('%s %s ago','%s/%s'%(jid,nick)) % (tmp[6], un_unix(int(time.time() - tmp[3])))
-				else: msg += L('Leave %s ago','%s/%s'%(jid,nick)) % un_unix(int(time.time() - tmp[3]))
+				if tmp[6]: msg += L('%s %s ago','%s/%s'%(jid,nick)) % (tmp[6], un_unix(int(time.time() - tmp[3]),'%s/%s'%(jid,nick)))
+				else: msg += L('Leave %s ago','%s/%s'%(jid,nick)) % un_unix(int(time.time() - tmp[3]),'%s/%s'%(jid,nick))
 				t7sp = tmp[7].split('\r')[0]
 				if t7sp.count('\n') > 3:
 					stat = t7sp.split('\n', 4)[4]
 					if stat: msg += ' (%s)' % stat
 				elif t7sp: msg += ' (%s)' % t7sp
 				if '\r' in tmp[7]: msg += ', %s %s' % (L('Client:','%s/%s'%(jid,nick)),' // '.join(tmp[7].split('\r')[-1].split(' // ')[:-1]))
-			else: msg += L('Is here: %s','%s/%s'%(jid,nick)) % un_unix(int(time.time() - tmp[3]))
+			else: msg += L('Is here: %s','%s/%s'%(jid,nick)) % un_unix(int(time.time() - tmp[3]),'%s/%s'%(jid,nick))
 			if not xtype: msg = msg.replace('\t', ' - ')
 	else: msg = L('Not found!','%s/%s'%(jid,nick))
 	send_msg(type, jid, nick, msg)
@@ -143,15 +143,15 @@ def seen_raw(type, jid, nick, text, xtype):
 			if text != tmp[1]: msg += L('%s (with nick: %s)','%s/%s'%(jid,nick)) % (text,tmp[1])
 			else: msg += tmp[1]
 			if tmp[5]:
-				if tmp[6]: msg += ' - ' + L('%s %s ago','%s/%s'%(jid,nick)) % (tmp[6], un_unix(int(time.time() - tmp[3])))
-				else: msg += ' - ' + L('Leave %s ago','%s/%s'%(jid,nick)) % un_unix(int(time.time() - tmp[3]))
+				if tmp[6]: msg += ' - ' + L('%s %s ago','%s/%s'%(jid,nick)) % (tmp[6], un_unix(int(time.time() - tmp[3]),'%s/%s'%(jid,nick)))
+				else: msg += ' - ' + L('Leave %s ago','%s/%s'%(jid,nick)) % un_unix(int(time.time() - tmp[3]),'%s/%s'%(jid,nick))
 				t7sp = tmp[7].split('\r')[0]
 				if t7sp.count('\n') > 3:
 					stat = t7sp.split('\n',4)[4]
 					if stat: msg += ' (%s)' % stat
 				elif t7sp: msg += ' (%s)' % t7sp
 				if '\r' in tmp[7]: msg += ', %s %s' % (L('Client:','%s/%s'%(jid,nick)),' // '.join(tmp[7].split('\r')[-1].split(' // ')[:-1]))
-			else: msg += ' - '+ L('Is here: %s','%s/%s'%(jid,nick)) % un_unix(int(time.time()-tmp[3]))
+			else: msg += ' - '+ L('Is here: %s','%s/%s'%(jid,nick)) % un_unix(int(time.time()-tmp[3]),'%s/%s'%(jid,nick))
 	else: msg = L('Not found!','%s/%s'%(jid,nick))
 	send_msg(type, jid, nick, msg)
 
@@ -189,15 +189,15 @@ def seenjid_raw(type, jid, nick, text, xtype):
 		for cnt, tmp in enumerate(sbody):
 			msg += '\n%s. %s (%s)' % (cnt + 1, tmp[1], tmp[2])
 			if tmp[5]:
-				if tmp[6]: msg += '\t' + L('%s %s ago','%s/%s'%(jid,nick)) % (tmp[6], un_unix(int(time.time() - tmp[3])))
-				else: msg += '\t' + L('Leave %s ago','%s/%s'%(jid,nick)) % un_unix(int(time.time() - tmp[3]))
+				if tmp[6]: msg += '\t' + L('%s %s ago','%s/%s'%(jid,nick)) % (tmp[6], un_unix(int(time.time() - tmp[3]),'%s/%s'%(jid,nick)))
+				else: msg += '\t' + L('Leave %s ago','%s/%s'%(jid,nick)) % un_unix(int(time.time() - tmp[3]),'%s/%s'%(jid,nick))
 				t7sp = tmp[7].split('\r')[0]
 				if t7sp.count('\n') > 3:
 					stat = t7sp.split('\n', 4)[4]
 					if stat: msg += ' (%s)' % stat
 				elif t7sp: msg += ' (%s)' % t7sp
 				if '\r' in tmp[7]: msg += ', %s %s' % (L('Client:','%s/%s'%(jid,nick)), tmp[7].split('\r')[-1])
-			else: msg += '\t' + L('Is here: %s','%s/%s'%(jid,nick)) % un_unix(int(time.time() - tmp[3]))
+			else: msg += '\t' + L('Is here: %s','%s/%s'%(jid,nick)) % un_unix(int(time.time() - tmp[3]),'%s/%s'%(jid,nick))
 			if not xtype: msg = msg.replace('\t', ' - ')
 	else: msg = L('Not found!','%s/%s'%(jid,nick))
 	if type == 'groupchat' and ztype:

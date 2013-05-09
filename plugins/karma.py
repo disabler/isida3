@@ -188,7 +188,7 @@ def karma_change(room,jid,nick,type,text,value):
 			if karmajid == getRoom(selfjid): return
 			elif karmajid == 'None': msg = L('You can\'t change karma in outdoor conference!','%s/%s'%(room,nick))
 			elif karmajid == jid: msg = L('You can\'t change own karma!','%s/%s'%(room,nick))
-			elif get_config(getRoom(jid),'karma_limit') and karma_get_limit(room,nick)[0] == 0: msg = L('Karma limit is %s','%s/%s'%(room,nick)) % L('over','%s/%s'%(room,nick)) + '. ' + L('Please wait: %s','%s/%s'%(room,nick)) % un_unix(int(86400-(time.time() - karma_get_limit(room,nick)[2])))
+			elif get_config(getRoom(jid),'karma_limit') and karma_get_limit(room,nick)[0] == 0: msg = L('Karma limit is %s','%s/%s'%(room,nick)) % L('over','%s/%s'%(room,nick)) + '. ' + L('Please wait: %s','%s/%s'%(room,nick)) % un_unix(int(86400-(time.time() - karma_get_limit(room,nick)[2])),'%s/%s'%(room,nick))
 			else:
 				stat = cur_execute_fetchone('select last from karma_commiters where room=%s and jid=%s and karmajid=%s',(room,jid,karmajid))
 				karma_valid, karma_time = None, int(time.time())
@@ -218,7 +218,7 @@ def karma_change(room,jid,nick,type,text,value):
 						cur_execute('delete from karma where room=%s and jid=%s',(room,karmajid))
 					else: stat = value
 					cur_execute('insert into karma values (%s,%s,%s)',(room,karmajid,stat))
-					msg = L('You changes %s\'s karma to %s. Next time to change across: %s','%s/%s'%(room,nick)) % (text,karma_val(stat),un_unix(GT('karma_timeout')[k_acc]))
+					msg = L('You changes %s\'s karma to %s. Next time to change across: %s','%s/%s'%(room,nick)) % (text,karma_val(stat),un_unix(GT('karma_timeout')[k_acc],'%s/%s'%(room,nick)))
 					pprint('karma change in %s for %s to %s' % (room,text,stat),'green')
 					am = None
 					if get_config(room,'karma_action'):
@@ -231,7 +231,7 @@ def karma_change(room,jid,nick,type,text,value):
 						if am:
 							karma_action_do(*am)
 							pprint('karma action in %s for %s is %s' % am,'bright_green')
-				else: msg = L('Time from last change %s\'s karma is very small. Please wait %s','%s/%s'%(room,nick)) % (text,un_unix(int(stat[0])+GT('karma_timeout')[k_acc]-karma_time))
+				else: msg = L('Time from last change %s\'s karma is very small. Please wait %s','%s/%s'%(room,nick)) % (text,un_unix(int(stat[0])+GT('karma_timeout')[k_acc]-karma_time,'%s/%s'%(room,nick)))
 				if get_config(room,'karma_limit'):
 					k_val = karma_get_limit(room,nick)[0]
 					if k_val >= 0: msg += '. ' + L('Karma limit is %s','%s/%s'%(room,nick)) % [L('over','%s/%s'%(room,nick)), k_val][k_val > 0]
