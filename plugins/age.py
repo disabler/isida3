@@ -207,12 +207,12 @@ def seenjid_raw(type, jid, nick, text, xtype):
 
 global execute
 
-execute = [(3, 'age', true_age, 2, L('Show age of jid in conference.')),
-	 (3, 'age_split', true_age_split, 2, L('Show age of jid in conference splitted by nicks.')),
-	 (3, 'seen', seen, 2, L('Show time of join/leave.')),
-	 (3, 'seen_split', seen_split, 2, L('Show time of join/leave splitted by nicks.')),
-	 (3, 'agestat', true_age_stat, 2, L('Show age statistic for conference.')),
-	 (7, 'seenjid', seenjid, 2, L('Show time of join/leave + jid.')),
-	 (7, 'seenjid_split', seenjid_split, 2, L('Show time of join/leave + jid splitted by nicks.')),
-	 (3, 'when', join_time, 2, L('Show time of first join into room.')),
-	 (3, 'whenstat', join_time_stat, 2, L('Show statistic for time of first join into room.'))]
+execute = [(3, 'age', true_age, 2, 'Show age of jid in conference.'),
+	 (3, 'age_split', true_age_split, 2, 'Show age of jid in conference splitted by nicks.'),
+	 (3, 'seen', seen, 2, 'Show time of join/leave.'),
+	 (3, 'seen_split', seen_split, 2, 'Show time of join/leave splitted by nicks.'),
+	 (3, 'agestat', true_age_stat, 2, 'Show age statistic for conference.'),
+	 (7, 'seenjid', seenjid, 2, 'Show time of join/leave + jid.'),
+	 (7, 'seenjid_split', seenjid_split, 2, 'Show time of join/leave + jid splitted by nicks.'),
+	 (3, 'when', join_time, 2, 'Show time of first join into room.'),
+	 (3, 'whenstat', join_time_stat, 2, 'Show statistic for time of first join into room.')]

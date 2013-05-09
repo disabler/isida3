@@ -32,4 +32,4 @@ def jc(type, jid, nick, text):
 
 global execute
 
-execute = [(3, 'jc', jc, 2, L('Show information about conference from jc.jabber.ru.\njc [address]'))]
+execute = [(3, 'jc', jc, 2, 'Show information about conference from jc.jabber.ru.\njc [address]')]

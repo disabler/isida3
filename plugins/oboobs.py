@@ -33,5 +33,5 @@ def obutts(type, jid, nick):
 
 global execute
 
-execute = [(3, 'oboobs', oboobs, 1, L('Show random picture from oboobs.ru')),
-		   (3, 'obutts', obutts, 1, L('Show random picture from obutts.ru'))]
+execute = [(3, 'oboobs', oboobs, 1, 'Show random picture from oboobs.ru'),
+		   (3, 'obutts', obutts, 1, 'Show random picture from obutts.ru')]

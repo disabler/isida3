@@ -44,6 +44,6 @@ def findhash(type, jid, nick, text):
 
 global execute
 
-execute = [(3, 'md5', md5body, 2, L('Calculate phrase md5 sum.')),
-		   (4, 'hashbody', hashbody, 2, L('Show presence-hash of nick')),
-		   (6, 'findhash', findhash, 2, L('Show room and nick by presence-hash'))]
+execute = [(3, 'md5', md5body, 2, 'Calculate phrase md5 sum.'),
+		   (4, 'hashbody', hashbody, 2, 'Show presence-hash of nick'),
+		   (6, 'findhash', findhash, 2, 'Show room and nick by presence-hash')]

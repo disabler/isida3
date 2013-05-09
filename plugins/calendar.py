@@ -38,4 +38,4 @@ def month_cal(type, jid, nick, text):
 
 global execute
 
-execute = [(3, 'calendar', month_cal, 2, L('Calendar. Without parameters show calendar for current month.\ncalendar [month][year][symbol_splitter]'))]
+execute = [(3, 'calendar', month_cal, 2, 'Calendar. Without parameters show calendar for current month.\ncalendar [month][year][symbol_splitter]')]

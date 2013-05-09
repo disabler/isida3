@@ -124,5 +124,5 @@ def clients_stats(type, jid, nick, text):
 
 global execute
 
-execute = [(4, 'clients_old', clients_stats_old, 2, L('Show clients statistic when available.\nclients [total|global|all[ short][ os]] [string]')),
-		   (4, 'clients', clients_stats, 2, L('Show clients statistic when available.\nclients [total|global|all[ short][ os]] [string]'))]
+execute = [(4, 'clients_old', clients_stats_old, 2, 'Show clients statistic when available.\nclients [total|global|all[ short][ os]] [string]'),
+		   (4, 'clients', clients_stats, 2, 'Show clients statistic when available.\nclients [total|global|all[ short][ os]] [string]')]

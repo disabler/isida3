@@ -130,4 +130,4 @@ global execute, timer
 
 timer = [cron_action]
 
-execute = [(7, 'cron', time_cron, 2, L('Execute command by cron. Used unix-type time format.\ncron [once] [anonim|silent] * * * * *\ncommand'))]
+execute = [(7, 'cron', time_cron, 2, 'Execute command by cron. Used unix-type time format.\ncron [once] [anonim|silent] * * * * *\ncommand')]

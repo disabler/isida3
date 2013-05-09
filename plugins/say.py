@@ -38,7 +38,7 @@ def set_topic(type, jid, nick, text):
 
 global execute
 
-execute = [(6, 'say', say, 2, L('"Say" command. Bot say in conference all text after command.')),
-	 (6, 'psay', psay, 2, L('"Say" command. Bot say in private all text after command.\npsay <nick>\ntext')),
-	 (9, 'gsay', gsay, 2, L('Global message in all conferences, where bot is present.')),
-	 (7, 'topic', set_topic, 2, L('Set conference topic.'))]
+execute = [(6, 'say', say, 2, '"Say" command. Bot say in conference all text after command.'),
+	 (6, 'psay', psay, 2, '"Say" command. Bot say in private all text after command.\npsay <nick>\ntext'),
+	 (9, 'gsay', gsay, 2, 'Global message in all conferences, where bot is present.'),
+	 (7, 'topic', set_topic, 2, 'Set conference topic.')]

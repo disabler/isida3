@@ -57,4 +57,4 @@ global execute
 message_control = [append_to_idle]
 presence_control = [remove_from_idle]
 
-execute = [(0, 'idle', idle, 2, L('Idle time'))]
+execute = [(0, 'idle', idle, 2, 'Idle time')]

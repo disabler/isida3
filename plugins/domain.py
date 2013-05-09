@@ -68,5 +68,5 @@ def domaininfo(type, jid, nick, text):
 
 global execute
 
-execute = [(3, 'domain_info_raw', domaininfo_raw, 2, L('Domain/IP address whois info.')),
-		   (3, 'domain_info', domaininfo, 2, L('Domain/IP address whois info.'))]
+execute = [(3, 'domain_info_raw', domaininfo_raw, 2, 'Domain/IP address whois info.'),
+		   (3, 'domain_info', domaininfo, 2, 'Domain/IP address whois info.')]

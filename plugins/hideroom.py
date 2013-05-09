@@ -47,4 +47,4 @@ def hide_room(type, jid, nick, text):
 
 global execute
 
-execute = [(9, 'hide', hide_room, 2, L('Hide conference.\nhide [add|del|show] [room@conference.server.tld]'))]
+execute = [(9, 'hide', hide_room, 2, 'Hide conference.\nhide [add|del|show] [room@conference.server.tld]')]

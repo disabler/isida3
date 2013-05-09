@@ -106,10 +106,10 @@ def chkserver(type, jid, nick, text):
 
 global execute
 
-execute = [(6, 'nslookup', srv_nslookup, 2, L('Command nslookup')),
-		   (6, 'host', srv_host, 2, L('Command host')),
-		   (6, 'dig', srv_dig, 2, L('Command dig')),
-		   (4, 'port', chkserver, 2, L('Check port activity\nport server port1 [port2 ...]')),
-		   (4, 'net_ping', net_ping, 2, L('Net Ping.\nnet_ping ip|domain')),
-		   (3, 'dns', get_dns, 2, L('DNS resolver.')),
-		   (3, 'tld', get_tld, 2, L('Search domain zones TLD.'))]
+execute = [(6, 'nslookup', srv_nslookup, 2, 'Command nslookup'),
+		   (6, 'host', srv_host, 2, 'Command host'),
+		   (6, 'dig', srv_dig, 2, 'Command dig'),
+		   (4, 'port', chkserver, 2, 'Check port activity\nport server port1 [port2 ...]'),
+		   (4, 'net_ping', net_ping, 2, 'Net Ping.\nnet_ping ip|domain'),
+		   (3, 'dns', get_dns, 2, 'DNS resolver.'),
+		   (3, 'tld', get_tld, 2, 'Search domain zones TLD.')]

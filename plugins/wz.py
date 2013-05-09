@@ -124,7 +124,7 @@ def weather_search(type, jid, nick, text):
 
 global execute
 
-execute = [(3, 'wzz', weather_raw, 2, L('Weather by airport code. Full version.')),
-	 (3, 'wzs', weather_short, 2, L('Weather by airport code. Short version.')),
-	 (3, 'wz', weather, 2, L('Weather by airport code. Optimized version.')),
-	 (3, 'wzsearch', weather_search, 2, L('Search weather by code, city, country.'))]
+execute = [(3, 'wzz', weather_raw, 2, 'Weather by airport code. Full version.'),
+	 (3, 'wzs', weather_short, 2, 'Weather by airport code. Short version.'),
+	 (3, 'wz', weather, 2, 'Weather by airport code. Optimized version.'),
+	 (3, 'wzsearch', weather_search, 2, 'Search weather by code, city, country.')]

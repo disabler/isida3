@@ -46,6 +46,6 @@ def ibash_org_ru(type, jid, nick, text):
 
 global execute
 
-execute = [(3, 'bash', bash_org_ru, 2, L('Quote from bash.org.ru\nbash [number]')),
-		   (3, 'ibash', ibash_org_ru, 2, L('Quote from ibash.org.ru\nibash [number]'))]
+execute = [(3, 'bash', bash_org_ru, 2, 'Quote from bash.org.ru\nbash [number]'),
+		   (3, 'ibash', ibash_org_ru, 2, 'Quote from ibash.org.ru\nibash [number]')]
 

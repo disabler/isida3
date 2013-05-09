@@ -253,4 +253,4 @@ global execute, message_control
 
 message_act_control = [karma_check]
 
-execute = [(3, 'karma', karma, 2, L('Karma.\nkarma [show] nick\nkarma top+|- [count]\nFor change karma: nick: +1\nnick: -1'))]
+execute = [(3, 'karma', karma, 2, 'Karma.\nkarma [show] nick\nkarma top+|- [count]\nFor change karma: nick: +1\nnick: -1')]

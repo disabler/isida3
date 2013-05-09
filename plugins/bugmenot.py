@@ -95,5 +95,5 @@ global execute, presence_control
 
 presence_control = [bmn_clear]
 
-execute = [(3, 'bugmenot', bugmenot, 2, L('Search in bugmenot.com'))]
+execute = [(3, 'bugmenot', bugmenot, 2, 'Search in bugmenot.com')]
 

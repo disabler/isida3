@@ -310,15 +310,15 @@ global execute, iq_hook
 
 iq_hook = [[50,'get',iq_iq_get]]
 
-execute = [(3, 'ver', iq_version, 2, L('Client version.')),
-		   (3, 'ver+', iq_version_caps, 2, L('Client version with caps.')),
-		   (3, 'caps', noiq_caps, 2, L('Show caps node and version of client.')),
-		   (3, 'ping_old', ping, 2, L('Ping - reply time. You can ping nick in room, jid, server or transport.')),
-		   (3, 'ping', urn_ping, 2, L('Ping - reply time. You can ping nick in room, jid, server or transport.')),
-		   (3, 'time_old', iq_time, 2, L('Client side time.')),
-		   (3, 'time', iq_utime, 2, L('Client side time.')),
-		   (3, 'time_old_raw', iq_time_raw, 2, L('Client side time + raw time format.')),
-		   (3, 'time_raw', iq_utime_raw, 2, L('Client side time + raw time format.')),
-		   (3, 'stats', iq_stats, 2, L('Users server statistic.')),
-		   (3, 'vcard_raw', iq_vcard, 2, L('vCard query. Recomends make command base alias for query needs info.\nvcard_raw [nick] - query generic info\nvcard_raw nick\nshow - show available fields\nvcard_raw nick\n[field:name|field:name] - show requested fields from vcard.')),
-		   (3, 'uptime', iq_uptime, 2, L('Server or jid uptime.'))]
+execute = [(3, 'ver', iq_version, 2, 'Client version.'),
+		   (3, 'ver+', iq_version_caps, 2, 'Client version with caps.'),
+		   (3, 'caps', noiq_caps, 2, 'Show caps node and version of client.'),
+		   (3, 'ping_old', ping, 2, 'Ping - reply time. You can ping nick in room, jid, server or transport.'),
+		   (3, 'ping', urn_ping, 2, 'Ping - reply time. You can ping nick in room, jid, server or transport.'),
+		   (3, 'time_old', iq_time, 2, 'Client side time.'),
+		   (3, 'time', iq_utime, 2, 'Client side time.'),
+		   (3, 'time_old_raw', iq_time_raw, 2, 'Client side time + raw time format.'),
+		   (3, 'time_raw', iq_utime_raw, 2, 'Client side time + raw time format.'),
+		   (3, 'stats', iq_stats, 2, 'Users server statistic.'),
+		   (3, 'vcard_raw', iq_vcard, 2, 'vCard query. Recomends make command base alias for query needs info.\nvcard_raw [nick] - query generic info\nvcard_raw nick\nshow - show available fields\nvcard_raw nick\n[field:name|field:name] - show requested fields from vcard.'),
+		   (3, 'uptime', iq_uptime, 2, 'Server or jid uptime.')]

@@ -243,10 +243,10 @@ def godville(type, jid, nick, text):
 
 global execute
 
-execute = [(3, 'poem', poem, 1, L('Just funny poem')),
-		(3, 'oracle', oracle, 2, L('Prophecy oracle. Example: oracle your_answer?')),
-		(3, 'coin', coin, 2, L('Heads or tails')),
-		(3, 'poke', to_poke, 2, L('"Poke" command\npoke nick - say a random phrase for nick\nControls command, available only for bot owner:\npoke show - show list of phrases\npoke add phrase - add phrase\npoke del phrase_number - remove phrase.')),
-		(3, 'life', life, 2, L('Info about your life. Example: life dd.mm.yy [hour:min:sec]')),
-		(3, 'zalgo', zalgo, 2, L('Zalgo translate')),
-		(3, 'godville', godville, 2, L('Information about hero from Godville.net.\ngodville [last|stat|extstat|inv|quest] username'))]
+execute = [(3, 'poem', poem, 1, 'Just funny poem'),
+		(3, 'oracle', oracle, 2, 'Prophecy oracle. Example: oracle your_answer?'),
+		(3, 'coin', coin, 2, 'Heads or tails'),
+		(3, 'poke', to_poke, 2, '"Poke" command\npoke nick - say a random phrase for nick\nControls command, available only for bot owner:\npoke show - show list of phrases\npoke add phrase - add phrase\npoke del phrase_number - remove phrase.'),
+		(3, 'life', life, 2, 'Info about your life. Example: life dd.mm.yy [hour:min:sec]'),
+		(3, 'zalgo', zalgo, 2, 'Zalgo translate'),
+		(3, 'godville', godville, 2, 'Information about hero from Godville.net.\ngodville [last|stat|extstat|inv|quest] username')]

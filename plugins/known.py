@@ -43,4 +43,4 @@ def known(type, jid, nick, text):
 
 global execute
 
-execute = [(3, 'known', known, 2, L('Show user\'s nick changes.\nknown <nick>\n[count|all]'))]
+execute = [(3, 'known', known, 2, 'Show user\'s nick changes.\nknown <nick>\n[count|all]')]

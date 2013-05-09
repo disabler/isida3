@@ -82,5 +82,5 @@ global execute,message_control
 
 message_control = [psto_catch]
 
-execute = [(3, 'psto', psto, 2, L('Miniblogs http://psto.net\npsto [#]post[/[from_comment][-][to_comment]] - show post')),
-		   (9, 'psto_post', psto_post, 2, L('Send message to blog at psto.net'))]
+execute = [(3, 'psto', psto, 2, 'Miniblogs http://psto.net\npsto [#]post[/[from_comment][-][to_comment]] - show post'),
+		   (9, 'psto_post', psto_post, 2, 'Send message to blog at psto.net')]

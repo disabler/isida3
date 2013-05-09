@@ -35,4 +35,4 @@ def whowas(type, jid, nick, text):
 
 global execute
 
-execute = [(3, 'whowas', whowas, 2, L('Show list of users for last day'))]
+execute = [(3, 'whowas', whowas, 2, 'Show list of users for last day')]

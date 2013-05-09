@@ -151,5 +151,5 @@ def dist(type, jid, nick, text):
 
 global execute
 
-execute = [(3, 'dist', dist, 2, L('Distance between cities.\ndist search city [count of cities]\ndist city1 - city2')),
-			(3, 'city', city, 2, L('Cities and other place-name of the world. Examples:\ncity add place-name\n[latitude, longtitude] - add city to database\ncity del place-name - delete city from database\ncity search [count of results|range of results] place-name - search city\ncity map place-name - city on the map\ncity place-name - coordinates of city'))]
+execute = [(3, 'dist', dist, 2, 'Distance between cities.\ndist search city [count of cities]\ndist city1 - city2'),
+			(3, 'city', city, 2, 'Cities and other place-name of the world. Examples:\ncity add place-name\n[latitude, longtitude] - add city to database\ncity del place-name - delete city from database\ncity search [count of results|range of results] place-name - search city\ncity map place-name - city on the map\ncity place-name - coordinates of city')]

@@ -97,5 +97,5 @@ def gweatherplus(type, jid, nick, text): gweather_raw(type, jid, nick, text, Tru
 
 global execute
 
-execute = [(3, 'gis', gweather, 2, L('Weather forecast (short). Courtesy Gismeteo.Ru | http://www.gismeteo.ru')),
-		   (3, 'gis+', gweatherplus, 2, L('Weather forecast (full). Courtesy Gismeteo.Ru | http://www.gismeteo.ru'))]
+execute = [(3, 'gis', gweather, 2, 'Weather forecast (short). Courtesy Gismeteo.Ru | http://www.gismeteo.ru'),
+		   (3, 'gis+', gweatherplus, 2, 'Weather forecast (full). Courtesy Gismeteo.Ru | http://www.gismeteo.ru')]

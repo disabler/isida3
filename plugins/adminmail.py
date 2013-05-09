@@ -47,4 +47,4 @@ def adminmail(type, jid, nick, text):
 
 global execute
 
-execute = [(4, 'msgtoadmin', adminmail, 2, L('Send message to bot\'s owner\nmsgtoadmin text'))]
+execute = [(4, 'msgtoadmin', adminmail, 2, 'Send message to bot\'s owner\nmsgtoadmin text')]

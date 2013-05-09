@@ -49,4 +49,4 @@ def kinopoisk(type, jid, nick, text):
 
 global execute
 
-execute = [(0, 'film', kinopoisk, 2, L('Search in www.kinopoisk.ru. Example:\nfilm [id] film_id\nfilm [search] film_name'))]
+execute = [(0, 'film', kinopoisk, 2, 'Search in www.kinopoisk.ru. Example:\nfilm [id] film_id\nfilm [search] film_name')]

@@ -217,4 +217,4 @@ def log_room(type, jid, nick, text):
 		else: msg = L('What?','%s/%s'%(jid,nick))
 	send_msg(type, jid, nick, msg)
 
-execute = [(9, 'log', log_room, 2, L('Logging history conference.\nlog [add|del|show][ room@conference.server.tld]'))]
+execute = [(9, 'log', log_room, 2, 'Logging history conference.\nlog [add|del|show][ room@conference.server.tld]')]

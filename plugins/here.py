@@ -28,4 +28,4 @@ def muc_here(type, jid, nick):
 
 global execute
 
-execute = [(3, 'here', muc_here, 1, L('Current participants list'))]
+execute = [(3, 'here', muc_here, 1, 'Current participants list')]

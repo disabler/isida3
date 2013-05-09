@@ -21,7 +21,7 @@
 #                                                                             #
 # --------------------------------------------------------------------------- #
 
-# translate: random,smart,full,partial,on,off,kick,ban,replace,mute,visitor,truncate,paste,chat,online,away,xa,dnd,on start,on shutdown,by time,black,white,without highlight,all,ban server
+# translate: random,smart,full,partial,on,off,kick,ban,replace,mute,visitor,truncate,paste,chat,online,away,xa,dnd,on start,on shutdown,by time,black,white,without highlight,all,ban server,Loading...
 
 rlmas_min = (('&','&amp;'),('\"','&quot;'),('\'','&apos;'),('<','&lt;'),('>','&gt;'))
 
@@ -666,10 +666,11 @@ def helpme(type, jid, nick, text):
 	elif len(text) > 1:
 		tm,cm = [],[]
 		for tmp in comms:
+			help_descr = L(tmp[4],'%s/%s'%(jid,nick))
 			if tmp[1] == text:
-				cm = (tmp[1],tmp[0],tmp[4])
+				cm = (tmp[1],tmp[0],help_descr)
 				break
-			elif text in tmp[1].lower() or text in tmp[4].lower(): tm.append((tmp[0], tmp[1], tmp[4]))
+			elif text in tmp[1].lower() or text in help_descr.lower(): tm.append((tmp[0], tmp[1], help_descr))
 		if cm: msg = '%s. ' % cm[0].capitalize() + L('Access level: %s. %s','%s/%s'%(jid,nick)) % (cm[1],cm[2])
 		elif len(tm) == 1: msg = '%s. ' % tm[0][1].capitalize() + L('Access level: %s. %s','%s/%s'%(jid,nick)) % (tm[0][0],tm[0][2])
 		elif not len(tm+cm): msg = L('"%s" not found','%s/%s'%(jid,nick)) % text
@@ -1712,206 +1713,211 @@ config_groups = [config_group_mucfilter,config_group_mucfilter_newbie,config_gro
 # d - droplist
 # XXe - execute latest field by eval
 
-owner_prefs = {'syslogs_enable': [L('Logger. Enable system logs'),'b',True],
-				'status_logs_enable':[L('Logger. Enable status change logging'),'b',True],
-				'aff_role_logs_enable':[L('Logger. Enable role and affiliation logging'),'b',True],
-				'html_logs_enable':[L('Logger. Html logs. Otherwize in text'),'b',True],
-				'chatlogs_logs_gmt':[L('Logger. Use GMT time in MUC logs'),'b',False],
-				'html_logs_end_text':[L('Logger. Additional text for logs'),'m512',''],
-				'karma_limit':[L('Karma. Minimal karma for allow krama change for participants'),'i',5],
-				'karma_show_default_limit':[L('Karma. Default length of list karma top+/-'),'i',10],
-				'karma_show_max_limit':[L('Karma. Maximal length of list karma top+/-'),'i',20],
-				'watch_size':[L('Watcher. Frequency of requests in watcher'),'i',900],
-				'user_agent':[L('Www. User-agent for web queries'),'m256','Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.95 Safari/537.11'],
-				'size_overflow':[L('Www. Limit of page in bytes for www command'),'i',262144],
-				'youtube_max_videos':[L('Youtube. Maximal links number'),'i',10],
-				'youtube_default_videos':[L('Youtube. Default links number'),'i',3],
-				'youtube_max_page_size':[L('Youtube. Page size limit'),'i',131072],
-				'youtube_default_lang':[L('Youtube. Default language'),'t2','ru'],
-				'age_default_limit':[L('Age. Default number of users for age commands'),'i',10],
-				'age_max_limit':[L('Age. Maximal number of users for age commands'),'i',100],
-				'anek_private_limit':[L('Anek. Anekdote size for private send'),'i',500],
-				'troll_default_limit':[L('Troll. Default message number for troll command'),'i',10],
-				'troll_max_limit':[L('Troll. Maximal message number for troll command'),'i',100],
-				'troll_sleep_time':[L('Troll. Delay between messages for troll command'),'f',0.05],
-				'backup_sleep_time':[L('Backup. Requests delay for backup command'),'f',0.1],
-				'calendar_default_splitter':[L('Calendar. Default splitter for calendar'),'t10','_'],
-				'clear_delay':[L('Clear. Delay between massages in clear command'),'f',1.3],
-				'clear_default_count':[L('Clear. Default message number for clear command'),'i',20],
-				'clear_max_count':[L('Clear. Maximal message number for clear command'),'i',100],
-				'ping_digits':[L('Iq. Number after point in ping'),'i',3],
-				'lfm_api':[L('LastFM. Api for lastfm plugin'),'t64','no api'],
-				'lastfm_max_limit':[L('LastFM. Number of answers for lastfm plugin'),'i',10],
-				'reboot_time':[L('Kernel. Restart timeout for error at bot initial (no connection, auth error)'),'i',180],
-				'timeout':[L('Iq. Timeout for iq queries'),'i',600],
-				'schedule_time':[L('Kernel. Schedule time'),'i',10],
-				'sayto_timeout':[L('Sayto. Age of message in sayto before delete it from base with undelivered'),'i',1209600],
-				'sayto_cleanup_time':[L('Sayto. Timeout for sayto base cleanup'),'i',86400],
-				'scan_time':[L('Spy. Time for spy scan'),'i',1800],
-				'spy_action_time':[L('Spy. Time for reaction on spy scan'),'i',86400],
-				'rss_max_feed_limit':[L('Rss. Maximum rss count'),'i',10],
-				'rss_min_time_limit':[L('Rss. Minimal time for rss check in minutes'),'i',10],
-				'rss_get_timeout':[L('Rss. Timeout for rss request from server in seconds'),'i',15],
-				'whereis_time_dec':[L('Whereis. Frequency for answer check for whereis command'),'f',0.5],
-				'watcher_room_activity':[L('Watcher. Try rejoin in rooms with low activity'),'b',True],
-				'watcher_self_ping':[L('Watcher. Allow self ping'),'b',True],
-				'disco_max_limit':[L('Disco. Maximus andwers count for disco command'),'i',10],
-				'juick_user_post_limit':[L('Juick. Number of posts'),'i',10],
-				'juick_user_post_size':[L('Juick. Number of symbols in post'),'i',50],
-				'juick_msg_answers_default':[L('Juick. Number of answers'),'i',10],
-				'juick_user_tags_limit':[L('Juick. Number of tags'),'i',10],
-				'iq_time_enable':[L('Iq. Allow answer to time request'),'b',True],
-				'iq_uptime_enable':[L('Iq. Allow answer to uptime request'),'b',True],
-				'iq_version_enable':[L('Iq. Allow answer to version request'),'b',True],
-				'iq_disco_enable':[L('Iq. Allow answer to service discovery'),'b',True],
-				'iq_ping_enable':[L('Iq. Allow answer to ping'),'b',True],
-				'iq_show_rooms_disco':[L('Iq. Show bot rooms in service discovery'),'b',True],
-				'paranoia_mode':[L('Kernel. Paranoic mode. Disable all execute possibles on bot'),'b',False],
-				'show_loading_by_status':[L('Kernel. Bot status. Show different status for bot loading'),'b',True],
-				'show_loading_by_status_show':[L('Kernel. Bot status. Status while loading'),'d','dnd',['chat','online','away','xa','dnd']],
-				'show_loading_by_status_message':[L('Kernel. Bot status. Message while loading'),'t256',L('Loading...')],
-				'show_loading_by_status_percent':[L('Kernel. Bot status. Show percent of loading'),'b',True],
-				'show_loading_by_status_room':[L('Kernel. Bot status. Show join to room while loading'),'b',True],
-				'kick_ban_notify':[L('Kernel. Notify when bot is kicked or banned'),'b',True],
-				'kick_ban_notify_jid':[L('Kernel. Notify jid for bot kick or ban'),'t1024',''],
-				'watch_activity_timeout':[L('Watcher. Timeout for no actions in room for rejoin'),'i',1800],
-				'muc_filter_large_message_size':[L('Muc-filter. Message size for filter'),'i',512],
-				'muc_filter_match_count':[L('Muc-filter. A kind words count'),'i',3],
-				'muc_filter_match_warning_match':[L('Muc-filter. Number of kind parts in message'),'i',3],
-				'muc_filter_match_warning_space':[L('Muc-filter. Number of empty parts in message'),'i',5],
-				'muc_filter_match_view':[L('Muc-filter. Message limit'),'i',512],
-				'muc_filter_match_warning_nn':[L('Muc-filter. Number of empty new lines'),'i',3],
-				'muc_filter_rejoin_count':[L('Muc-filter. Number of reconnects for monitoring'),'i',3],
-				'muc_filter_rejoin_timeout':[L('Muc-filter. Time for reconnect count'),'i',120],
-				'muc_filter_status_count':[L('Muc-filter. Number of precences per time'),'i',3],
-				'muc_filter_status_timeout':[L('Muc-filter. Time between presences'),'i',600],
-				'muc_filter_large_status_size':[L('Muc-filter. Maximux status-message size'),'i',50],
-				'muc_filter_large_nick_size':[L('Muc-filter. Maximum nick size'),'i',20],
-				'muc_filter_repeat_count':[L('Muc-filter. Repeat count'),'i',3],
-				'muc_filter_repeat_time': [L('Muc-filter. Timeout for repeat message'), 'i', 3600],
-				'html_paste_enable':[L('Paste. Paste as html. Otherwize as text'),'b',True],
-				'yandex_api_key':[L('City. Yandex.Map API-key'),'t128','no api'],
-				'bing_api_key':[L('Bing. Translator API-key'),'t128','no api'],
-				'censor_text':[L('Kernel. Text for hide censore'),'t32','[censored]'],
-				'ddos_limit':[L('Kernel. Time of ignore for anti-ddos'),'l10','[1800,1800,1800,1800,1800,600,300,150,60,0]'],
-				'ddos_diff':[L('Kernel. Anti-ddos time delay between messages'),'l10','[30,30,30,30,20,20,15,10,5,0]'],
-				'ddos_iq_requests':[L('Kernel. Iq anti-ddos. Requests number'),'i',30],
-				'ddos_iq_limit':[L('Kernel. Iq anti-ddos. Time limits for requests'),'i',10],
-				'amsg_limit_size':[L('Msgtoadmin. Size limit for msgtoadmin'),'i',1024],
-				'amsg_limit':[L('Msgtoadmin. Time limit for next message for msgtoadmin'),'l10','[86400,86400,86400,86400,86400,86400,43200,3600,1800,60]'],
-				'karma_timeout':[L('Karma. Time for karma change from access level'),'l10','[86400,86400,86400,86400,86400,86400,43200,3600,1800,5]'],
-				'karma_discret':[L('Karma. Difference between two action in karma'),'i',5],
-				'karma_discret_lim_up':[L('Karma. Upper value of karma for control action'),'i',100],
-				'karma_discret_lim_dn':[L('Karma. Lower value of karma for control action'),'i',-100],
-				'disco_exclude':[L('Disco. Exclude from disco by regexps'),'m256e',u'([؀-ݭ)\n(ﭐ-ﻼ])\n(syria|arab)','disco_exclude_update()'],
-				'exclude_messages':[L('Kernel. Exclude symbols from bot\'s messages'),'m256e',u'([؀-ۿ])\n([ݐ-ݿ])\n([ﭐ-﷿])\n([ﹰ-﻿])','message_exclude_update()'],
-				'1st_april_joke':[L('Kernel. 1st April joke'),'b',True],
-				'soft_update_resend_hash':[L('Kernel. Send new hash into rooms after soft update'),'b',False]
+owner_prefs = {'syslogs_enable': ['Logger. Enable system logs','b',True],
+				'status_logs_enable':['Logger. Enable status change logging','b',True],
+				'aff_role_logs_enable':['Logger. Enable role and affiliation logging','b',True],
+				'html_logs_enable':['Logger. Html logs. Otherwize in text','b',True],
+				'chatlogs_logs_gmt':['Logger. Use GMT time in MUC logs','b',False],
+				'html_logs_end_text':['Logger. Additional text for logs','m512',''],
+				'karma_limit':['Karma. Minimal karma for allow krama change for participants','i',5],
+				'karma_show_default_limit':['Karma. Default length of list karma top+/-','i',10],
+				'karma_show_max_limit':['Karma. Maximal length of list karma top+/-','i',20],
+				'watch_size':['Watcher. Frequency of requests in watcher','i',900],
+				'user_agent':['Www. User-agent for web queries','m256','Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.95 Safari/537.11'],
+				'size_overflow':['Www. Limit of page in bytes for www command','i',262144],
+				'youtube_max_videos':['Youtube. Maximal links number','i',10],
+				'youtube_default_videos':['Youtube. Default links number','i',3],
+				'youtube_max_page_size':['Youtube. Page size limit','i',131072],
+				'youtube_default_lang':['Youtube. Default language','t2','ru'],
+				'age_default_limit':['Age. Default number of users for age commands','i',10],
+				'age_max_limit':['Age. Maximal number of users for age commands','i',100],
+				'anek_private_limit':['Anek. Anekdote size for private send','i',500],
+				'troll_default_limit':['Troll. Default message number for troll command','i',10],
+				'troll_max_limit':['Troll. Maximal message number for troll command','i',100],
+				'troll_sleep_time':['Troll. Delay between messages for troll command','f',0.05],
+				'backup_sleep_time':['Backup. Requests delay for backup command','f',0.1],
+				'calendar_default_splitter':['Calendar. Default splitter for calendar','t10','_'],
+				'clear_delay':['Clear. Delay between massages in clear command','f',1.3],
+				'clear_default_count':['Clear. Default message number for clear command','i',20],
+				'clear_max_count':['Clear. Maximal message number for clear command','i',100],
+				'ping_digits':['Iq. Number after point in ping','i',3],
+				'lfm_api':['LastFM. Api for lastfm plugin','t64','no api'],
+				'lastfm_max_limit':['LastFM. Number of answers for lastfm plugin','i',10],
+				'reboot_time':['Kernel. Restart timeout for error at bot initial (no connection, auth error)','i',180],
+				'timeout':['Iq. Timeout for iq queries','i',600],
+				'schedule_time':['Kernel. Schedule time','i',10],
+				'sayto_timeout':['Sayto. Age of message in sayto before delete it from base with undelivered','i',1209600],
+				'sayto_cleanup_time':['Sayto. Timeout for sayto base cleanup','i',86400],
+				'scan_time':['Spy. Time for spy scan','i',1800],
+				'spy_action_time':['Spy. Time for reaction on spy scan','i',86400],
+				'rss_max_feed_limit':['Rss. Maximum rss count','i',10],
+				'rss_min_time_limit':['Rss. Minimal time for rss check in minutes','i',10],
+				'rss_get_timeout':['Rss. Timeout for rss request from server in seconds','i',15],
+				'whereis_time_dec':['Whereis. Frequency for answer check for whereis command','f',0.5],
+				'watcher_room_activity':['Watcher. Try rejoin in rooms with low activity','b',True],
+				'watcher_self_ping':['Watcher. Allow self ping','b',True],
+				'disco_max_limit':['Disco. Maximus andwers count for disco command','i',10],
+				'juick_user_post_limit':['Juick. Number of posts','i',10],
+				'juick_user_post_size':['Juick. Number of symbols in post','i',50],
+				'juick_msg_answers_default':['Juick. Number of answers','i',10],
+				'juick_user_tags_limit':['Juick. Number of tags','i',10],
+				'iq_time_enable':['Iq. Allow answer to time request','b',True],
+				'iq_uptime_enable':['Iq. Allow answer to uptime request','b',True],
+				'iq_version_enable':['Iq. Allow answer to version request','b',True],
+				'iq_disco_enable':['Iq. Allow answer to service discovery','b',True],
+				'iq_ping_enable':['Iq. Allow answer to ping','b',True],
+				'iq_show_rooms_disco':['Iq. Show bot rooms in service discovery','b',True],
+				'paranoia_mode':['Kernel. Paranoic mode. Disable all execute possibles on bot','b',False],
+				'show_loading_by_status':['Kernel. Bot status. Show different status for bot loading','b',True],
+				'show_loading_by_status_show':['Kernel. Bot status. Status while loading','d','dnd',['chat','online','away','xa','dnd']],
+				'show_loading_by_status_message':['Kernel. Bot status. Message while loading','t256','Loading...'],
+				'show_loading_by_status_percent':['Kernel. Bot status. Show percent of loading','b',True],
+				'show_loading_by_status_room':['Kernel. Bot status. Show join to room while loading','b',True],
+				'kick_ban_notify':['Kernel. Notify when bot is kicked or banned','b',True],
+				'kick_ban_notify_jid':['Kernel. Notify jid for bot kick or ban','t1024',''],
+				'watch_activity_timeout':['Watcher. Timeout for no actions in room for rejoin','i',1800],
+				'muc_filter_large_message_size':['Muc-filter. Message size for filter','i',512],
+				'muc_filter_match_count':['Muc-filter. A kind words count','i',3],
+				'muc_filter_match_warning_match':['Muc-filter. Number of kind parts in message','i',3],
+				'muc_filter_match_warning_space':['Muc-filter. Number of empty parts in message','i',5],
+				'muc_filter_match_view':['Muc-filter. Message limit','i',512],
+				'muc_filter_match_warning_nn':['Muc-filter. Number of empty new lines','i',3],
+				'muc_filter_rejoin_count':['Muc-filter. Number of reconnects for monitoring','i',3],
+				'muc_filter_rejoin_timeout':['Muc-filter. Time for reconnect count','i',120],
+				'muc_filter_status_count':['Muc-filter. Number of precences per time','i',3],
+				'muc_filter_status_timeout':['Muc-filter. Time between presences','i',600],
+				'muc_filter_large_status_size':['Muc-filter. Maximux status-message size','i',50],
+				'muc_filter_large_nick_size':['Muc-filter. Maximum nick size','i',20],
+				'muc_filter_repeat_count':['Muc-filter. Repeat count','i',3],
+				'muc_filter_repeat_time': ['Muc-filter. Timeout for repeat message', 'i', 3600],
+				'html_paste_enable':['Paste. Paste as html. Otherwize as text','b',True],
+				'yandex_api_key':['City. Yandex.Map API-key','t128','no api'],
+				'bing_api_key':['Bing. Translator API-key','t128','no api'],
+				'censor_text':['Kernel. Text for hide censore','t32','[censored]'],
+				'ddos_limit':['Kernel. Time of ignore for anti-ddos','l10','[1800,1800,1800,1800,1800,600,300,150,60,0]'],
+				'ddos_diff':['Kernel. Anti-ddos time delay between messages','l10','[30,30,30,30,20,20,15,10,5,0]'],
+				'ddos_iq_requests':['Kernel. Iq anti-ddos. Requests number','i',30],
+				'ddos_iq_limit':['Kernel. Iq anti-ddos. Time limits for requests','i',10],
+				'amsg_limit_size':['Msgtoadmin. Size limit for msgtoadmin','i',1024],
+				'amsg_limit':['Msgtoadmin. Time limit for next message for msgtoadmin','l10','[86400,86400,86400,86400,86400,86400,43200,3600,1800,60]'],
+				'karma_timeout':['Karma. Time for karma change from access level','l10','[86400,86400,86400,86400,86400,86400,43200,3600,1800,5]'],
+				'karma_discret':['Karma. Difference between two action in karma','i',5],
+				'karma_discret_lim_up':['Karma. Upper value of karma for control action','i',100],
+				'karma_discret_lim_dn':['Karma. Lower value of karma for control action','i',-100],
+				'disco_exclude':['Disco. Exclude from disco by regexps','m256e',u'([؀-ݭ)\n(ﭐ-ﻼ])\n(syria|arab)','disco_exclude_update()'],
+				'exclude_messages':['Kernel. Exclude symbols from bot\'s messages','m256e',u'([؀-ۿ])\n([ݐ-ݿ])\n([ﭐ-﷿])\n([ﹰ-﻿])','message_exclude_update()'],
+				'1st_april_joke':['Kernel. 1st April joke','b',True],
+				'soft_update_resend_hash':['Kernel. Send new hash into rooms after soft update','b',False],
+				'notepad':['Notepad','m4096','']
 				}
 
-owner_group_mucfilter = [L('Muc-filter settings'),'#owner-mucfilter',
+owner_group_mucfilter = ['Muc-filter settings','#owner-mucfilter',
 				['muc_filter_large_message_size','muc_filter_match_count','muc_filter_match_warning_match',
 				'muc_filter_match_warning_space','muc_filter_match_view','muc_filter_match_warning_nn',
 				'muc_filter_rejoin_count','muc_filter_rejoin_timeout','muc_filter_status_count',
 				'muc_filter_status_timeout','muc_filter_large_status_size','muc_filter_large_nick_size',
 				'muc_filter_repeat_count','muc_filter_repeat_time']]
 
-owner_group_iq = [L('Iq requests settings'),'#owner-iq',
+owner_group_iq = ['Iq requests settings','#owner-iq',
 				['iq_time_enable','iq_uptime_enable','iq_version_enable','iq_disco_enable',
 				'iq_ping_enable','ping_digits','timeout','iq_show_rooms_disco']]
 
-owner_group_juick = [L('Juick settings'),'#owner-juick',
+owner_group_juick = ['Juick settings','#owner-juick',
 				['juick_user_post_limit','juick_user_post_size','juick_msg_answers_default','juick_user_tags_limit']]
 
-owner_group_logs = [L('Logs settings'),'#owner-logs',
+owner_group_logs = ['Logs settings','#owner-logs',
 				['syslogs_enable','status_logs_enable','aff_role_logs_enable','html_logs_enable','html_logs_end_text','chatlogs_logs_gmt']]
 
-owner_group_youtube = [L('Youtube settings'),'#owner-youtube',
+owner_group_youtube = ['Youtube settings','#owner-youtube',
 				['youtube_max_videos','youtube_default_videos','youtube_max_page_size','youtube_default_lang']]
 
-owner_group_other = [L('Other settings'),'#owner-other',
+owner_group_other = ['Other settings','#owner-other',
 				['anek_private_limit','backup_sleep_time','calendar_default_splitter',
 				'disco_max_limit','disco_exclude','html_paste_enable','yandex_api_key','bing_api_key']]
 
-owner_group_karma = [L('Karma settings'),'#owner-karma',
+owner_group_karma = ['Karma settings','#owner-karma',
 				['karma_limit','karma_show_default_limit','karma_show_max_limit','karma_timeout','karma_discret','karma_discret_lim_up','karma_discret_lim_dn']]
 
-owner_group_www = [L('WWW settings'),'#owner-www',
+owner_group_www = ['WWW settings','#owner-www',
 				['size_overflow','user_agent']]
 
-owner_group_troll = [L('Antitroll settings'),'#owner-troll',
+owner_group_troll = ['Antitroll settings','#owner-troll',
 				['troll_default_limit','troll_max_limit','troll_sleep_time']]
 
-owner_group_kernel = [L('Kernel settings'),'#owner-kernel',
+owner_group_kernel = ['Kernel settings','#owner-kernel',
 				['censor_text','ddos_limit','ddos_diff','paranoia_mode','reboot_time','schedule_time',
 				'show_loading_by_status','show_loading_by_status_show','show_loading_by_status_message',
 				'show_loading_by_status_percent','kick_ban_notify','kick_ban_notify_jid',
 				'ddos_iq_requests','ddos_iq_limit','exclude_messages','1st_april_joke','soft_update_resend_hash']]
 
-owner_group_lastfm = [L('LastFM settings'),'#owner-lastfm',
+owner_group_lastfm = ['LastFM settings','#owner-lastfm',
 				['lfm_api','lastfm_max_limit']]
 
-owner_group_whereis = [L('Whereis settings'),'#owner-whereis',
+owner_group_whereis = ['Whereis settings','#owner-whereis',
 				['whereis_time_dec']]
 
-owner_group_watcher = [L('Watcher settings'),'#owner-watcher',
+owner_group_watcher = ['Watcher settings','#owner-watcher',
 				['watch_size','watcher_room_activity','watch_activity_timeout','watcher_self_ping']]
 
-owner_group_clear = [L('Clear settings'),'#owner-clear',
+owner_group_clear = ['Clear settings','#owner-clear',
 				['clear_delay','clear_default_count','clear_max_count']]
 
-owner_group_rss = [L('RSS settings'),'#owner-rss',
+owner_group_rss = ['RSS settings','#owner-rss',
 				['rss_max_feed_limit','rss_min_time_limit','rss_get_timeout']]
 
-owner_group_amsg = [L('Message for admin settings'),'#owner-amsg',
+owner_group_amsg = ['Message for admin settings','#owner-amsg',
 				['amsg_limit_size','amsg_limit']]
 
-owner_group_age = [L('Age settings'),'#owner-age',
+owner_group_age = ['Age settings','#owner-age',
 				['age_default_limit','age_max_limit']]
 
-owner_group_sayto = [L('Sayto settings'),'#owner-sayto',
+owner_group_sayto = ['Sayto settings','#owner-sayto',
 				['sayto_timeout','sayto_cleanup_time']]
 
-owner_group_spy = [L('Spy settings'),'#owner-spy',
+owner_group_spy = ['Spy settings','#owner-spy',
 				['scan_time','spy_action_time']]
+
+owner_group_notepad = ['Notepad','#owner-notepad',
+				['notepad']]
 
 owner_groups = [owner_group_amsg,owner_group_rss,owner_group_clear,
 				owner_group_kernel,owner_group_lastfm,owner_group_whereis,
 				owner_group_watcher,owner_group_troll,owner_group_www,
 				owner_group_karma,owner_group_sayto,owner_group_age,
 				owner_group_mucfilter,owner_group_iq,owner_group_juick,
-				owner_group_logs,owner_group_youtube,owner_group_other]
+				owner_group_logs,owner_group_youtube,owner_group_other,
+				owner_group_notepad]
 
 comms = [
-	 (0, 'help', helpme, 2, L('Help system. Helps without commands: about, donation, access')),
-	 (9, 'join', bot_join, 2, L('Join conference.\njoin room[@conference.server.ru[/nick]]\n[password]')),
-	 (9, 'leave', bot_leave, 2, L('Leave conference.\nleave room[@conference.server.ru[/nick]]')),
-	 (9, 'rejoin', bot_rejoin, 2, L('Rejoin conference.\nrejoin room[@conference.server.ru[/nick]]\n[password]')),
-	 (9, 'bot_owner', owner, 2, L('Bot owners list.\nbot_owner show\nbot_owner add|del jid')),
-	 (9, 'bot_ignore', ignore, 2, L('Black list.\nbot_ignore show\nbot_ignore add|del jid')),
-	 (9, 'syslogs', show_syslogs, 2, L('Show bot\'s syslogs.\nsyslogs [number of records] [text]')),
-	 (9, 'syslogs_search', show_syslogs_search, 2, L('Search in bot\'s syslogs.\nsyslogs_search <regexp>\n[date regexp]')),
-	 (6, 'where', info_where, 1, L('Show conferences.')),
-	 (6, 'where+', info_where_plus, 1, L('Show conferences.')),
-	 (0, 'inbase', info_base, 1, L('Your identification in global base.')),
-	 (9, 'look', real_search, 2, L('Search user in conferences where the bot is.')),
-	 (9, 'glook', real_search_owner, 2, L('Search user in conferences where the bot is. Also show jid\'s')),
-	 (7, 'rss', rss, 2, L('News:\nrss show - show current.\nrss add url time mode - add news.\nrss del url - remove news.\nrss get url feeds mode - get current news.\nrss new url feeds mode - get unread news only.\nrss clear - clear all news in current conference.\nrss all - show all news in all conferences.\n\nurl - url of rss/atom chanel. can set without http://\ntime - update time. number + time identificator. h - hour, m - minute. allowed only one identificator.\nfeeds - number of messages to receive. 10 max.\nmode - receive mode. full - full news, head - only headers, body - only bodies.\nwith -url to be show url of news.')),
-	 (7, 'alias', alias, 2, L('Aliases.\nalias add|add_global new=old\nalias del|del_global|show text')),
-	 (0, 'commands', info_comm, 1, L('Show commands list.')),
-	 (8, 'comm', comm_on_off, 2, L('Enable/Disable commands.\ncomm - show disable commands\ncomm on command - enable command\ncomm off command1[ command2 command3 ...] - disable one or more command')),
-	 (0, 'bot_uptime', uptime, 1, L('Show bot uptime.')),
-	 (6, 'info', info, 1, L('Misc information about bot.')),
-	 (3, 'new', vcs_info, 1, L('Last VCS update log')),
-	 (9, 'limit', conf_limit, 2, L('Set temporary message limit.')),
-	 (9, 'plugin', bot_plugin, 2, L('Plugin system.\nplugin show|local\nplugin add|del name')),
-	 (9, 'error', show_error, 2, L('Show error(s).\nerror [number|clear]')),
-	 (0, 'whoami', info_access, 1, L('Your identification.')),
-	 (0, 'whois', info_whois, 2, L('Identification.')),
-	 (0, 'lang', info_lang, 2, L('Show language for user.')),
-	 (0, 'status', status, 2, L('Show status.')),
-	 (3, 'prefix', set_prefix, 2, L('Set command prefix. Use \'none\' for disable prefix')),
+	 (0, 'help', helpme, 2, 'Help system. Helps without commands: about, donation, access'),
+	 (9, 'join', bot_join, 2, 'Join conference.\njoin room[@conference.server.ru[/nick]]\n[password]'),
+	 (9, 'leave', bot_leave, 2, 'Leave conference.\nleave room[@conference.server.ru[/nick]]'),
+	 (9, 'rejoin', bot_rejoin, 2, 'Rejoin conference.\nrejoin room[@conference.server.ru[/nick]]\n[password]'),
+	 (9, 'bot_owner', owner, 2, 'Bot owners list.\nbot_owner show\nbot_owner add|del jid'),
+	 (9, 'bot_ignore', ignore, 2, 'Black list.\nbot_ignore show\nbot_ignore add|del jid'),
+	 (9, 'syslogs', show_syslogs, 2, 'Show bot\'s syslogs.\nsyslogs [number of records] [text]'),
+	 (9, 'syslogs_search', show_syslogs_search, 2, 'Search in bot\'s syslogs.\nsyslogs_search <regexp>\n[date regexp]'),
+	 (6, 'where', info_where, 1, 'Show conferences.'),
+	 (6, 'where+', info_where_plus, 1, 'Show conferences.'),
+	 (0, 'inbase', info_base, 1, 'Your identification in global base.'),
+	 (9, 'look', real_search, 2, 'Search user in conferences where the bot is.'),
+	 (9, 'glook', real_search_owner, 2, 'Search user in conferences where the bot is. Also show jid\'s'),
+	 (7, 'rss', rss, 2, 'News:\nrss show - show current.\nrss add url time mode - add news.\nrss del url - remove news.\nrss get url feeds mode - get current news.\nrss new url feeds mode - get unread news only.\nrss clear - clear all news in current conference.\nrss all - show all news in all conferences.\n\nurl - url of rss/atom chanel. can set without http://\ntime - update time. number + time identificator. h - hour, m - minute. allowed only one identificator.\nfeeds - number of messages to receive. 10 max.\nmode - receive mode. full - full news, head - only headers, body - only bodies.\nwith -url to be show url of news.'),
+	 (7, 'alias', alias, 2, 'Aliases.\nalias add|add_global new=old\nalias del|del_global|show text'),
+	 (0, 'commands', info_comm, 1, 'Show commands list.'),
+	 (8, 'comm', comm_on_off, 2, 'Enable/Disable commands.\ncomm - show disable commands\ncomm on command - enable command\ncomm off command1[ command2 command3 ...] - disable one or more command'),
+	 (0, 'bot_uptime', uptime, 1, 'Show bot uptime.'),
+	 (6, 'info', info, 1, 'Misc information about bot.'),
+	 (3, 'new', vcs_info, 1, 'Last VCS update log'),
+	 (9, 'limit', conf_limit, 2, 'Set temporary message limit.'),
+	 (9, 'plugin', bot_plugin, 2, 'Plugin system.\nplugin show|local\nplugin add|del name'),
+	 (9, 'error', show_error, 2, 'Show error(s).\nerror [number|clear]'),
+	 (0, 'whoami', info_access, 1, 'Your identification.'),
+	 (0, 'whois', info_whois, 2, 'Identification.'),
+	 (0, 'lang', info_lang, 2, 'Show language for user.'),
+	 (0, 'status', status, 2, 'Show status.'),
+	 (3, 'prefix', set_prefix, 2, 'Set command prefix. Use \'none\' for disable prefix'),
 	 (9, 'set_locale', set_locale, 2, 'Change bot localization.\nset_locale en|%s' % '|'.join([tmp[:-4] for tmp in os.listdir(loc_folder[:-6]) if tmp[-4:]=='.txt'])),
-	 (7, 'config', configure, 2, L('Conference configure.\nconfig [show[ status]|help][ item]')),
-	 (4, 'pmlock', muc_filter_lock, 2, L('Deny recieve messages from unaffiliated participants in private')),
-	 (9, 'ddos', ddos_info, 2, L('Temporary ignore with ddos detect.\nddos [show|del jid]'))]
+	 (7, 'config', configure, 2, 'Conference configure.\nconfig [show[ status]|help][ item]'),
+	 (4, 'pmlock', muc_filter_lock, 2, 'Deny recieve messages from unaffiliated participants in private'),
+	 (9, 'ddos', ddos_info, 2, 'Temporary ignore with ddos detect.\nddos [show|del jid]')]

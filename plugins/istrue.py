@@ -60,5 +60,5 @@ def is_true(type, jid, nick, text):
 
 global execute
 
-execute = [(3, 'true', is_true, 2, L('Check truth of expession.')),
-		   (3, 'valid', is_valid, 2, L('Check different languages symbols in nick.'))]
+execute = [(3, 'true', is_true, 2, 'Check truth of expession.'),
+		   (3, 'valid', is_valid, 2, 'Check different languages symbols in nick.')]

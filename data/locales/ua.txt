@@ -534,13 +534,13 @@ adjective	прикметник
 phrase	вислів
 conjunction	сполучник
 abbreviation	абревіатура
+Google URL Shortener/Unshortener	Сервіс скорочення посиланнь від Google
+Google QR-code generator	Сервіс генерації QR-кодів від Google
 Google Calculator results not found	Калькулятор google не може це підрахувати!
 I don't know!	Хм. Мені про це ніхто не розповідав...
 Command execution error.	Помилка виконання команди.
 Google Calculator	Калькулятор google
 Definition for a word or phrase.\ndefine word - random define of word or phrase\ndefine N word - N-th define of word or phrase\ndefine a-b word - from a to b defines of word or phrase	Визначення для слова чи виразу.\ndefine слово - випадкове визначення слова чи виразу\ndefine N слово - N-нне визначення слова чи виразу\ndefine a-b word - визначення слова чи фрази з номеру a і до b
-Google URL Shortener/Unshortener	Сервіс скорочення посиланнь від Google
-Google QR-code generator	Сервіс генерації QR-кодів від Google
 Google Dictionary\ngdict [from_language] to_language word	Словник Google\ngdict [з_мови] на_мову слово
 
 # file: plugins/here.py
@@ -861,6 +861,7 @@ white	білий
 without highlight	без підсвічування
 all	всі
 ban server	банити сервер
+Loading...	Завантажуюсь...
 no limit	без обмежень
 visitor/none	гість без повноважень
 visitor/member	гість і постійний учасник
@@ -1042,379 +1043,6 @@ Help for %s not found!	Допомога для %s не знайдена
 text field	текстове поле
 on	ввімк
 Ignore messages from unaffiliated participants in private - %s	Ігнорування повідомлень від учасників без повноважень - %s
-Url title is %s	Показ заголовків посилань: %s
-Automatic show title of urls in conference	Автоматичний показ заголовків посилань
-Content length %s	Розмір вмісту %s
-Automatic show lenght of content in conference	Автоматичне відображення розміру контенту за посиланням в конференції
-Censor is %s	Цензор: %s
-Censor	Ввімкнення вимкнення цензора
-Censor message is %s	Цензор повідомлень: %s
-Censor message	Цензор повідомлень
-Censor warning is %s	Цензор-нотифікатор: %s
-Warning for moderators and higher	Попередження для модераторів і вище
-Censor action for member is %s	Дія цензора на постійних учасників: %s
-Censor action for member	Дія цензора на постійних учасників
-Censor action for non member is %s	Дія цензора на не постійних учасників: %s
-Censor action for non member	Дія цензора на не постійних учасників
-Custom censor is %s	Користувацький цензор %s
-Custom censor	Користувацький цензор
-Custom rules for censor is %s	Правила для користувацького цензора %s
-Custom rules for censor	Правила для користувацького цензора
-Parse define is %s	Пошук визначень %s
-Automatic parse definition via google	Автоматичний пошук визначень через Google
-Clear notification by %s	Сповіщення при очищенні %s
-Clear notification by presence or message	Тип сповіщень при очищенні: повідомлення чи презенси
-Smiles in logs is %s	Смайли в логах: %s
-Smiles in logs	Смайли в логах
-Autoturn layout of text is %s	Автозміна розкладки тексту: %s
-Turn text from one layout to another.	Якщо текст не заданий - "перевертає" останнє повідомлення з української розкладки на англійську та назад.
-Jid's per stanza for affiliations in backup is %s	Кількість Jid'ів в станзі зміни аффіляції при відновленні копії конференції %s
-Count of jid's per stanza for affiliations change in backup	Количество Jid'ов в станзе смены аффиляции при восстановлении копии конференции. Рекомендації: ejabberd - 200, prosody - 1
-ACL multiaction is %s	Мультидії в ACL %s
-Execute more than one action per pass in ACL.	Виконувати більше однієї дії за один прохід в ACL.
-Paste xhtml images %s	Розміщувати xhtml-зображеняя: %s
-Detect and paste xhtml images in messages	Визначення та розміщення xhtml-зображеннь в повідомленнях
-Use default locale %s	Використовувати локалізацію за замовчуванням: %s
-Ignore locale settings and use default bot locale	Ігнорувати локалізації та використовувати локалізацію бота за замовчуванням
-Store Users URL %s	Зберігати посилання користувачів %s
-Store Users URL	Зберігати посилання користувачів
-Muc filter is %s	Muc-фільтр: %s
-Message filter for participants	Фільтр повідомлень для учасників
-Mute all private messages %s	Придушення всих приватних повідомленнь %s
-Mute all private messages	Придушення всих приватних повідомленнь
-Mute all public messages %s	Придушення всих публічних повідомленнь %s
-Mute all public messages	Придушення всих публічних повідомленнь
-Count of messages for action %s	Кількість повідомленнь для дії %s
-Count of messages for action	Кількість повідомленнь для дії
-Action for messages overflow %s	Дія при перевищенні кількість повідомленнь %s
-Action for messages overflow	Дія при перевищенні кількості повідомленнь
-Mute newbie %s	Блокувати повідомлення від новачків: %s
-Mute all messages from newbie	Блокувати всі повідомлення від новачків в конференції
-Count of messages for newbie %s	Кількість повідомленнь для новачка %s
-Count of messages for newbie for action	Кількість повідомленнь для новачка для дій
-Action for messages overflow for newbie %s	Дія при перевищенні кількості повідомленнь від новачка %s
-Action for messages overflow for newbie	Дія при перевищенні кількості повідомленнь від новачка
-Mute newbie time %s	Вік новачків: %s
-Time of mute all messages from newbie	Час, на протязі якого учасник вважається новачком
-Adblock muc filter is %s	Блокування реклами: %s
-Adblock filter	Фільтр блокування реклами
-Repeat muc filter is %s	Повтор повідомлень: %s
-Repeat same messages filter	Фільтр повторів схожих повідомлень
-Match muc filter is %s	Повтори всередині повідомлень: %s
-Repeat text in message filter	Фільтр повторів всередині повідомлень
-Large muc filter is %s	Великі повідомлення: %s
-Large message filter	Фільтр великих повідомлень
-Censor muc filter is %s	Muc-цензор: %s
-Censor filter	Muc-цензор
-Raw adblock muc filter is %s	Блокування прихованої реклами: %s
-Raw adblock filter	Блокування прихованої реклами
-Raw censor muc filter is %s	Блокування цензором прихованого мата: %s
-Raw censor filter	Блокування цензором прихованого мата
-Persent of short words for raw actions is %s	Процент коротких слів для увімкнення перевірки прихованих дій: %s
-Persent of short words for raw actions	Процент коротких слів для увімкнення перевірки прихованих дій
-Reduce spaces in message %s	Блокувати численні проміжки в повідомленнях: %s
-Reduce duplicates of spaces in message	Блокувати численні проміжки в повідомленнях
-Block joins without history %s	Блокувати входи без історії %s
-Block joins without history	Блокувати входи без історії
-Ban joins without history %s	Банити заблоковані входи без історії %s
-Additional ban joins without history	Дрдатково банити заблоковані входи без історії
-Adblock muc filter for presence is %s	Блокування реклами в презенсах: %s
-Adblock filter for presence	Фільтр блокування реклами в презенсах
-Repeat join muc filter is %s	Багаторазові входи: %s
-Repeat join muc filter	Фільтр багаторазові входів
-Whitelist is %s	Білий список: %s
-Whitelist via muc filter	Білий список через muc-фільтр
-Blacklist is %s	Чорний список %s
-Blacklist via muc filter	Чорний список через muc-фільтр
-Blacklist rules for jid's %s	Чорный список. Правила для jid'ів: %s
-Jid's rules for blacklist via muc filter.	Правила для jid'ів для чорного списку через muc-фільтр
-Blacklist rules for nick's %s	Чорный список. Правила для ніків: %s
-Nick's rules for blacklist via muc filter.	Правила для ніків для чорного списку через muc-фільтр
-New line in presence muc filter is %s	Блокування статусів з новими рядками: %s
-New line muc filter	Блокування статусів з новими рядками
-New line count in presence muc filter is %s	Кількість нових рядків для блокування: %s
-Count of new line muc filter	Кількість нових рядків для блокування
-New line in message muc filter is %s	Блокування повідомленнь з новими рядками: %s
-New line count in message muc filter is %s	Кількість нових рядків в повідомленні для блокування: %s
-Repeat presence muc filter is %s	Презенс-флуд: %s
-Repeat presence muc filter	Фільтр презенс-флуду
-Large nick muc filter is %s	Довгі ніки: %s
-Large nick muc filter	Фільтр довгих ніків
-Large status muc filter is %s	Довгі статуси: %s
-Large status muc filter	Фільтр довгих статусів
-Censor muc filter for presence is %s	Цензор для презенсів: %s
-Censor muc filter for presence	Цензор для презенсів
-Deny by hash %s	Заборона на вхід по хешу: %s
-Lock joins via hash	Блокування входу по хешу клієнту
-Deny hashes list %s	Список заборонених хешів: %s
-Hashes list for lock joins	Список хешів для блокування входу
-Hash. Check activity %s	Хеш. Перевірка активності: %s
-Actions by hash activity	Дії по активності хешу
-Hash. Ban if hash activity %s	Хеш. Бан при активності хешу %s
-Actions for ban by hash activity	Бан при активності хешу
-Hash. Timeout for clean hash activity %s	Хеш. Таймаут між підключеннями для бана по хешу %s
-Time period for clean hash activity	Таймаут між підключеннями для бана по хешу
-Hash. Ban server by hash activity %s	Хеш. Банити сервери при активності хешу %s
-Ban server by hash activity	Банити сервери при активності хешу
-Hash. Exception for ban servers %s	Хеш. Вийнятки для бана серверів %s
-Exception for ban servers	Вийнятки для бана серверів
-Hash. Jid's for servers ban notify %s	Хеш. Jid'и для нотифікацій про бан серверів %s
-Jid's for servers ban notify	Jid'и для нотифікацій про бан серверів
-Hash. Count of rejoins from server for ban %s	Хеш. Кількість підключеннь для бана сервера %s
-Count of rejoins from server for ban	Кількість підключеннь для бана сервера
-Hash. Timeout of rejoins from server for ban %s	Хеш. Таймаут на підключення з сервера для бана %s
-Timeout of rejoins from server for ban	Таймаут на підключення з сервера для бана
-Hash. Time for events %s	Хеш. Період перевірки: %s
-Time period for events	Період часу для перевірки активності хешів
-Hash. Events count %s	Хеш. Кількість подій: %s
-Events count per time period	Кількість подій за заданий проміжок часу
-Hash. Action type %s	Хеш. Тип дії при активності: %s
-Type of action	Тип дії при підвищеній активності хешу
-Hash. Time to disable action %s	Хеш. Час відключення дії: %s
-Time to disable action	Час відключення дії при підвищеній активності хешу
-Hash. Action for already joined %s	Хеш. Дія для вже підключених: %s
-Action for already joined	Дія для вже підключених клієнтів
-Raw censor muc filter for presence is %s	Блокування цензором прихованого мата в презенсах: %s
-Raw censor muc filter for presence	Блокування цензором прихованого мата в презенсах
-Raw adblock muc filter for presence is %s	Блокування прихованої реклами в презенсах: %s
-Raw adblock filter for presence	Блокування прихованої реклами в презенсах
-Reduce spaces in presence %s	Блокувати численні проміжки в презенсах: %s
-Reduce duplicates of spaces in presence	Блокувати численні проміжки в презенсах
-Limitation by caps %s	Обмеження по капсу %s
-Limitation to join by caps	Обмеження підключеннь по капсу
-Type of list %s	Тип списку %s
-Type of list for caps	Тип списку для капсів
-Whitelist %s	Білий список %s
-Whitelist for caps	Білий список для капсів
-Blacklist %s	Чорний список %s
-Blacklist for caps	Чорний список для капсів
-Smart lists %s	Розумні списки %s
-Smart lists for caps	розумні списки капсів
-Smart whitelist %s	Розумний білий список %s
-Smart whitelist for caps	Розумний білий список для капсів
-Smart blacklist %s	Розумний чорний список %s
-Smart blacklist for caps	Розумний чорний список для капсів
-Action for invalid items %s	Дія для некоректних елементів %s
-Action for invalid items	Дія для некоректних елементів
-Validate nick %s	Перевірка ніку %s
-Validate nick	Перевірка ніку
-Validate login %s	Перевірка логіну %s
-Validate login	Перевірка логіну
-Validate resource %s	Перевірка ресурсу %s
-Validate resource	Перевірка ресурсу
-Validate caps node %s	Перевірка ноди в капсі %s
-Validate caps node	Перевірка ноди в капсі
-Validate caps version %s	Перевірка версії в капсі %s
-Validate caps version	Перевірка версії в капсі
-Count of invalid items %s	Кількість некоректних елементів %s
-Count of invalid items for action	Кількість некоректних елементів для дії
-Exception for ban servers %s	Виключення серверів для бану %s
-Jid's for servers ban notify %s	Jid'и для нотифікацій про бан серверів
-Lock fast joins %s	Блокування швидких входів %s
-Lock fast joins	Блокування швидких входів
-Count of fast joins %s	Кількість швидких входів %s
-Count of fast joins	Кількість швидких входів
-Time for count of fast joins %s	Інтервал між швидкими входами %s
-Time for count of fast joins	Інтервал між швидкими входами
-Bomb. Allow take a bomb %s	Bomb. Дозволити роздачу бомб: %s
-Allow take a bomb in current conference	Дозволити роздачу бомб в даній конференції
-Bomb. Allow random unexplosive bombs %s	Bomb. Іноді не підривати бомби: %s
-Allow some times take unexplosive bombs	Іноді не підривати бомби
-Bomb. Persent of fault bombs %s	Bomb. Процент неробочих бомб: %s
-Persent of fault bombs	Процент неробочих бомб
-Bomb. Allow bot take a bomb to random user %s	Bomb. Видавати бомбу випадковому користувачеві: %s
-Allow bot take a bomb to random user	Видавати бомбу випадковому користувачеві
-Bomb. Allow random bombs only in active room %s	Bomb. Випадкові бомби тільки в активній конференції: %s
-Allow random bombs only in active room	Випадкові бомби тільки в активній конференції
-Bomb. Time for detect room as unactive %s	Bomb. Час протягом якого конференція вважається активною: %s
-Time for detect room as unactive	Час протягом якого конференція вважається активною
-Bomb. Time between random bombs %s	Bomb. Час між випадковими бомбами: %s
-Time between random bombs	Час між випадковими бомбами
-Bomb. Persent of mistakes for time between random bombs %s	Bomb. Погрішність часу між випадковими бомбами в процентах: %s
-Persent of mistakes for time between random bombs	Погрішність часу між випадковими бомбами в процентах
-Bomb. Persent of skiped random bombs %s	Bomb. Процент не установки випадкових бомб: %s
-Persent of mistakes skiped random bombs	Процент не установки випадкових бомб
-Bomb. Timer is %s	Bomb. Таймер бомби: %s
-Time to deactivate a bomb	Таймер бомби
-Bomb. Wire count is %s	Bomb. Кількість проводів у бомби: %s
-Wire count for bomb	Кількість проводів у бомби
-Bomb. Action for bomb explode %s	Bomb. Дія при вибуху: %s
-Type of action for bomb explode	Дія при вибуху
-Bomb. Don't use action when access level lower than or equal %s	Не використовувати дію, якщо доступ нижче чи рівний %s
-Ignore bomb action depends from access level	Ігнорування дії бомби в залежності від доступу
-Bomb. Reason %s	Bomb. Причина з якою буде дія: %s
-Reason for bomb explode	Причина з якою буде дія
-KA-BO-OM!!!111	БА-БА-АХ!!!!
-Bomb. Idle for unable get the bomb %s	Bomb. Час мовчання учасника, після якого йому неможна давати бомбу %s
-Idle for unable get the bomb	Час мовчання учасника, після якого йому неможна давати бомбу
-Karma. Actions for karma change is %s	Karma. Дії при зміні карми: %s
-Allow change role/affiliation by karma change	Дозволити зміну статусу учасника в залежності від карми
-Karma. Reason for actions by karma change is %s	Karma. Різон для дії при зміні карми: %s
-Reason for change role/affiliation by karma change	Різон для дії при зміні карми
-by karma change!	внаслідок зміни карми!
-Karma. Ban when karma is lower than %s	Karma. Забороняти вхід при зниженні карми до %s
-Ban when karma is lower than defined value	Забороняти вхід при зниженні карми менше вказаного значення
-Karma. Kick when karma is lower than %s	Karma. Виганяти при зниженні карми до %s
-Kick when karma is lower than defined value	Виганяти вхід при зниженні карми менше вказаного значення
-Karma. Revoke voice when karma is lower than %s	Позбавляти голосу при зниженні карми до %s
-Revoke voice when karma is lower than defined value	Позбавляти голосу при зниженні карми менше вказаного значення
-Karma. None affiliation when karma is lower than %s	Позбавляти повноважень при зниженні карми до %s
-Revoke affiliation when karma is lower than defined value	Позбавляти повноважень при зниженні карми менше вказаного значення
-Karma. Participant affiliation when karma is higher than %s	Надавати повноважень при підвищенні карми до %s
-Give a participant affiliation when karma is higher than defined value	Надавати повноважень при підвищенні карми вище вказаного значення
-Karma. Member affiliation when karma is higher than %s	Надавати повноваження постійного учасника при підвищенні карми до %s
-Give a member affiliation when karma is higher than defined value	Надавати повноваження постійного учасника при підвищенні карми вище вказаного значення
-Karma. Moderator role when karma is higher than %s	Надавати повноваження модератора при підвищенні карми до %s
-Give a moderator role when karma is higher than defined value	Надавати повноваження модератора при підвищенні карми вище вказаного значення
-Hard rule for karma is %s	Жорстке правило для зміни карми %s
-Not allow any symbols between nick and karma digit	Заборонити будь-які символи між ніком та цифрою карми
-Limits for karma change is %s	Обмеження зміни карми %s
-Limitation of karma's change. Depends of access level	Обмеження зміни карми в залежності від рівня доступу
-Value of limits for karma change %s	Значення обмеженнь карми %s
-Value of limitation of karma's change. Depends of access level	Значення обмеженнь зміни карми в залежності від рівня доступу
-Flood is %s	Флуд: %s
-Autoanswer	Ввімкнення/вимкнення самонавчального відповідача
-Autoflood is %s	Автофлуд: %s
-Autoflood	Автофлуд
-Number of message for autoflood's start: %s	Кількість повідомленнь для початку автофлуду: %s
-Number of message for autoflood's start	Кількість повідомленнь для початку автофлуду
-Time period for autoflood's start: %s	Період часу для початку автофлуду: %s
-Time period for autoflood's start	Період часу для початку автофлуду
-Autophrases is %s	Автофрази: %s
-Autophrases	Автофрази
-Time period for autophrases is %s	Період для автофраз: %s
-Time period for autophrases	Період для автофраз
-Repeat phrase after match %s	Повторювати фразу після збігу %s
-Repeat phrase after match same messages	Повторювати фразу після кількох однакових повідомленнь
-Other settings	Інші налаштування
-Censor settings	Налаштування цензора
-General Muc-filter settings	Основні налаштування для Muc-фільтру
-Muc-filter settings for newbie	Muc-фільтр для новачків
-Muc-filter settings for hash	Muc-фільтр для дій по хешу
-Muc-filter settings by content	Muc-фільтр для дій по вмісту
-Muc-filter settings for raw-actions	Muc-фільтр для підозрілих дій
-Muc-filter settings for censor/ad-block	Muc-фільтр для цензора/блокування реклами
-Muc-filter settings for while/black lists	Muc-фільтр для білого/чорного списків
-Muc-filter settings for while/black lists by caps	Muc-фільтр для списків по капсам
-Muc-filter settings for validate items	Muc-фільтр для перевірки коректності елементів
-Muc-filter settings for fast action	Muc-фільтр для швидких операцій
-Settings for bomb-joke	Налаштування бомби-жарту
-Actions for karma change	Дії при зміні карми
-Flood settings	Налаштування флуду
-Logger. Enable system logs	Logger. Ввімкнення системних логів
-Logger. Enable status change logging	Logger. Запис в логи зміни статусів
-Logger. Enable role and affiliation logging	Logger. Запис в логи зміни афіляцій і ролей
-Logger. Html logs. Otherwize in text	Logger. Ведення логів в html, інакше у вигляді звичайного тексту
-Logger. Use GMT time in MUC logs	Logger. Використовувати GMT-час в логах конференцій
-Logger. Additional text for logs	Logger. Додатковий текст в кінці html лога
-Karma. Minimal karma for allow krama change for participants	Karma. Мінімальна карма з якою зміна карми доступна не постійним учасникам
-Karma. Default length of list karma top+/-	Karma. Кількість учасників за замовчуванням при показі результатів команди karma top+/-
-Karma. Maximal length of list karma top+/-	Karma. Максимальна кількість учасників для показу результатів команди karma top+/-
-Watcher. Frequency of requests in watcher	Watcher. Період запитів в секундах для плагіна watcher
-Www. User-agent for web queries	Www. User-agent для більшості web-запитів
-Www. Limit of page in bytes for www command	Www. Ліміт розміру сторінки в байтах для команди www
-Youtube. Maximal links number	Youtube. Максимальна кількість посилань при показі
-Youtube. Default links number	Youtube. Кількість посилань за замовчуванням
-Youtube. Page size limit	Youtube. Ліміт розміру сторінки при завантаженні
-Youtube. Default language	Youtube. Мова за замовчуванням
-Age. Default number of users for age commands	Age. Кількість учасників за замовчуванням для плагіна age
-Age. Maximal number of users for age commands	Age. Максимальна кількість учасників для плагіну age
-Anek. Anekdote size for private send	Anek. Розмір понад який анекдот буде відправлено до привату
-Troll. Default message number for troll command	Troll. Кількість повідомлень для команди troll
-Troll. Maximal message number for troll command	Troll. Максимальна кількість повідомлень для команди troll
-Troll. Delay between messages for troll command	Troll. Затримка відправки повідомлень для команди troll
-Backup. Requests delay for backup command	Backup. Затримка при запитах команди backup
-Calendar. Default splitter for calendar	Calendar. Типовий розділювач для календаря
-Clear. Delay between massages in clear command	Clear. Затримка між повідомленнями при команді clear
-Clear. Default message number for clear command	Clear. Кількість повідомлень при команді clear
-Clear. Maximal message number for clear command	Clear. Максимальна кількість повідомлень при команді clear
-Iq. Number after point in ping	Iq. Кількість знаків після коми при пінгу
-LastFM. Api for lastfm plugin	LastFM. API для роботи плагіна lastfm
-LastFM. Number of answers for lastfm plugin	LastFM. Кількість відповідей для команди плагіна lastfm
-Kernel. Restart timeout for error at bot initial (no connection, auth error)	Kernel. Таймаут рестартів бота на стадії підключення (немає iнету, помилка авторизації)
-Iq. Timeout for iq queries	Iq. Таймаут в секундах на iq запити
-Kernel. Schedule time	Час перевірки розкладу
-Sayto. Age of message in sayto before delete it from base with undelivered	Sayto. Час життя повідомлень, які бот не зміг передати за командою sayto
-Sayto. Timeout for sayto base cleanup	Sayto. Час через який проводяться зачистки sayto-бази
-Spy. Time for spy scan	Spy. Інтервал сканування для команди scan
-Spy. Time for reaction on spy scan	Spy. Інтервал реакції на сканування для команди spy
-Rss. Maximum rss count	RSS. Максимальна кількість новин
-Rss. Minimal time for rss check in minutes	RSS. мінімальний час для перевірки новин
-Rss. Timeout for rss request from server in seconds	Rss. Таймаут запиту новини з сервера в секунду
-Whereis. Frequency for answer check for whereis command	Whereis. Частота перевірки відповіді для команди whereis
-Watcher. Try rejoin in rooms with low activity	Watcher. Намагатися перезаходити в малоактивні кімнати
-Watcher. Allow self ping	Watcher. Пінгувати самого себе
-Disco. Maximus andwers count for disco command	Disco. Максимальна кількість відповідей для команди disco
-Juick. Number of posts	Juick. Кількість постів
-Juick. Number of symbols in post	Juick. Кількість символів в пості
-Juick. Number of answers	Juick. Кількість відповідей
-Juick. Number of tags	Juick. Кількість тегів
-Iq. Allow answer to time request	Iq. Дозвіл відповідати на запит часу бота
-Iq. Allow answer to uptime request	Iq. Дозвіл відповідати на запит аптайму бота
-Iq. Allow answer to version request	Iq. Дозвіл відповідати на запит версії бота
-Iq. Allow answer to service discovery	Iq. Дозвіл відповідати на запит огляду сервісів бота
-Iq. Allow answer to ping	Iq. Дозвіл відповідати на запит пінгу бота
-Iq. Show bot rooms in service discovery	Iq. Показувати конференції бота при огляді сервісів
-Kernel. Paranoic mode. Disable all execute possibles on bot	Kernel. Режим для параноїків. Заборона виконання будь-якого зовнішнього коду
-Kernel. Bot status. Show different status for bot loading	Kernel. Bot status. Особливий статус при завантаженні
-Kernel. Bot status. Status while loading	Kernel. Bot status. Статус при завантаженні
-Kernel. Bot status. Message while loading	Kernel. Bot status. Статус-повідомлення при завантаженні
-Loading...	Завантажуюсь...
-Kernel. Bot status. Show percent of loading	Kernel. Bot status. Показувати процент завантаження
-Kernel. Bot status. Show join to room while loading	Kernel. Bot status. Показувати конференції, в які бот заходить при завантаженні
-Kernel. Notify when bot is kicked or banned	Kernel. Notify. Повідомляти про те, що бота вигнали чи забанили
-Kernel. Notify jid for bot kick or ban	Kernel. Notify. Список jid'ів для повідомлень про кік чи бан бота
-Watcher. Timeout for no actions in room for rejoin	Watcher. Таймаут неактивності конференцій для перезаходу
-Muc-filter. Message size for filter	Muc-filter. Розмір повідомлення для фільтра
-Muc-filter. A kind words count	Muc-filter. Лічильник однакових символів
-Muc-filter. Number of kind parts in message	Muc-filter. Кількість однакових слів в повідомленні
-Muc-filter. Number of empty parts in message	Muc-filter. Кількість пустих частин в повідомленні
-Muc-filter. Message limit	Muc-filter. Ліміт розміру повідомлень
-Muc-filter. Number of empty new lines	Muc-filter. Кількість пустих переводів рядків
-Muc-filter. Number of reconnects for monitoring	Muc-filter. Кількість перез'єднань для моніторингу
-Muc-filter. Time for reconnect count	Muc-filter. Проміжок часу на перез'єднання
-Muc-filter. Number of precences per time	Muc-filter. Кількість статус-презенсів за час
-Muc-filter. Time between presences	Muc-filter. Проміжок часу на статус-презенси
-Muc-filter. Maximux status-message size	Muc-filter. Максимальний розмір статус-повідомлення
-Muc-filter. Maximum nick size	Muc-filter. Максимальний розмір ніка
-Muc-filter. Repeat count	Muc-filter. Кількість повторів схожих повідомлень
-Muc-filter. Timeout for repeat message	Muc-filter. Таймаут повторів схожих повідомлень
-Paste. Paste as html. Otherwize as text	Paste. Html розмічення, інакше в вигляді тексту
-City. Yandex.Map API-key	City. Yandex.Map API-ключ
-Bing. Translator API-key	Bing. Api-ключ перекладача
-Kernel. Text for hide censore	Kernel. Текст для закриття мату
-Kernel. Time of ignore for anti-ddos	Kernel. Час ігнору при ddos'і в залежності від рівня доступу
-Kernel. Anti-ddos time delay between messages	Kernel. Проміжок між повідомленнями для вмикання анти-ddos
-Kernel. Iq anti-ddos. Requests number	Kernel. Iq anti-ddos. Кількість запитів
-Kernel. Iq anti-ddos. Time limits for requests	Kernel. Iq anti-ddos. Ліміт часу на запити
-Msgtoadmin. Size limit for msgtoadmin	Msgtoadmin. Ліміт розміру повідомлення для команди msgtoadmin
-Msgtoadmin. Time limit for next message for msgtoadmin	Ліміт часу наступної відправки повідомлення для команди msgtoadmin
-Karma. Time for karma change from access level	Karma. Час через який дозволено міняти карму в залежності від рівня доступу
-Karma. Difference between two action in karma	Karma. Різниця між двома діями карми
-Karma. Upper value of karma for control action	Karma. Верхня межа карми при перевірці правильності значень
-Karma. Lower value of karma for control action	Нижня межа карми при перевірці правильності значень
-Disco. Exclude from disco by regexps	Disco. Видаляти з обзору по регекспу
-Kernel. Exclude symbols from bot's messages	Kernel. Видалити символи із повідомленнь бота
-Kernel. 1st April joke	Kernel. Першотравневий жарт
-Kernel. Send new hash into rooms after soft update	Kernel. Надсилати новий хеш до конференції після м'якого поновлення
-Muc-filter settings	Налаштування muc-фільтру
-Iq requests settings	Налаштування iq запитів
-Juick settings	Налаштування Juick
-Logs settings	Налаштування логів
-Youtube settings	Налаштування Youtube
-Karma settings	Налаштування карми
-WWW settings	Налаштування WWW
-Antitroll settings	Налаштування антитроля
-Kernel settings	Налаштування ядра
-LastFM settings	Налаштування LastFM
-Whereis settings	Налаштування whereis
-Watcher settings	Налаштування watcher
-Clear settings	Налаштування clear
-RSS settings	Налаштування RSS
-Message for admin settings	Налаштування повідомлень адміну
-Age settings	Налаштування age
-Sayto settings	Налаштування sayto
-Spy settings	Налаштування spy
 Help system. Helps without commands: about, donation, access	Показує поточні розділи довідкової системи. Розділи довідки без команд: about, donation, доступ
 Join conference.\njoin room[@conference.server.ru[/nick]]\n[password]	Вхід до конференції:\njoin room@conference.server.ru/nick - вхід до конференції room з ніком nick.\njoin room@conference.server.ru - вхід до конференції room з останнім заданим ніком.\njoin room - вхід до конференції room на останньому заданому сервері з останнім заданим ніком.
 Leave conference.\nleave room[@conference.server.ru[/nick]]	Вихід з конференції:\nleave - вихід з поточної конференції.\nleave room - вихід з конференції room на останньому заданому сервері.\nleave room@conference.server.ru - вихід з конференції room
@@ -1442,6 +1070,7 @@ Identification.	Ідентифікація перед ботом.
 Show language for user.	Показ мови, на якій бот буде спілкуватися з користувачем.
 Show status.	Показ статусу.
 Set command prefix. Use 'none' for disable prefix	Встановлення префіксу команд. Без параметрів показує поточний статус. Якщо параметром буде none префікс буде відключено
+Change bot localization.\nset_locale en|ru|ua	Change bot localization.\nset_locale en|ru|UA
 Conference configure.\nconfig [show[ status]|help][ item]	Налаштування конференції.\nconfig [show[ status]|help][ item]
 Deny recieve messages from unaffiliated participants in private	Заборона прийому повідомлень від учасників без повноважень в приваті
 Temporary ignore with ddos detect.\nddos [show|del jid]	Тимчасовий ігнор при підозрі на ddos.\nddos [show|del jid]
@@ -1681,6 +1310,7 @@ Translator from translate.ru\ntranslate [from_language] to_language text - trans
 # file: plugins/turn.py
 qwertyuiop[]asdfghjkl;'zxcvbnm,.`QWERTYUIOP{}ASDFGHJKL:"ZXCVBNM<>~	йцукенгшщзхїфівапролджєячсмитьбюёЙЦУКЕНГШЩЗХЇФІВАПРОЛДЖЄЯЧСМИТЬБЮЁqwertyuiop[]asdfghjkl;'zxcvbnm,.`QWERTYUIOP{}ASDFGHJKL:"ZXCVBNM<>~
 QWERTYUIOP{}ASDFGHJKL:"ZXCVBNM<>~qwertyuiop[]asdfghjkl;'zxcvbnm,.`	qwertyuiop[]asdfghjkl;'zxcvbnm,.`QWERTYUIOP{}ASDFGHJKL:"ZXCVBNM<>~йцукенгшщзхїфівапролджєячсмитьбюёЙЦУКЕНГШЩЗХЇФІВАПРОЛДЖЄЯЧСМИТЬБЮЁ
+Turn text from one layout to another.	Якщо текст не заданий - "перевертає" останнє повідомлення з української розкладки на англійську та назад.
 
 # file: plugins/watcher.py
 Timeout for ask: %s | Timeout for answer: %s | Last ask: %s | Total checks: %s	Таймаут запитів: %s | Таймаут відповідей: %s | Останній запит: %s | Усього перевірок: %s
@@ -1731,6 +1361,7 @@ Found feed(s):%s%s	Канал(и):%s%s
 It's just you. %s is up.	Лише у тебе. %s працює.
 It's not just you! %s looks down from here.	Не лише у тебе. %s лежить.
 RegExp not found!	RegExp не знайдений!
+Content length %s	Розмір вмісту %s
 Title: %s	Заголовок: %s
 Length of %s is %s	Розмір %s - %s
 Show web page.\nwww regexp\n[http://]url - page after regexp\nwww [http://]url - without html tags	Показує зміст веб-сторінки.\nwww regexp\n[http://]url - сторінка, оброблена regexp\nwww [http://]url - сторінка з прибраними html-тегами
@@ -1747,3 +1378,366 @@ Search weather by code, city, country.	Пошук погоди по коду м�
 
 # file: plugins/youtube.py
 Search at YouTube	Пошук по YouTube
+
+# file: Generic
+Automatic show lenght of content in conference	Автоматичне відображення розміру контенту за посиланням в конференції
+Karma. None affiliation when karma is lower than %s	Позбавляти повноважень при зниженні карми до %s
+Revoke affiliation when karma is lower than defined value	Позбавляти повноважень при зниженні карми менше вказаного значення
+Bomb. Allow take a bomb %s	Bomb. Дозволити роздачу бомб: %s
+Allow take a bomb in current conference	Дозволити роздачу бомб в даній конференції
+Hard rule for karma is %s	Жорстке правило для зміни карми %s
+Not allow any symbols between nick and karma digit	Заборонити будь-які символи між ніком та цифрою карми
+Validate caps version %s	Перевірка версії в капсі %s
+Validate caps version	Перевірка версії в капсі
+Bomb. Persent of mistakes for time between random bombs %s	Bomb. Погрішність часу між випадковими бомбами в процентах: %s
+Persent of mistakes for time between random bombs	Погрішність часу між випадковими бомбами в процентах
+Paste xhtml images %s	Розміщувати xhtml-зображеняя: %s
+Detect and paste xhtml images in messages	Визначення та розміщення xhtml-зображеннь в повідомленнях
+Bomb. Timer is %s	Bomb. Таймер бомби: %s
+Time to deactivate a bomb	Таймер бомби
+Karma. Member affiliation when karma is higher than %s	Надавати повноваження постійного учасника при підвищенні карми до %s
+Give a member affiliation when karma is higher than defined value	Надавати повноваження постійного учасника при підвищенні карми вище вказаного значення
+Time period for autophrases is %s	Період для автофраз: %s
+Time period for autophrases	Період для автофраз
+Hash. Check activity %s	Хеш. Перевірка активності: %s
+Actions by hash activity	Дії по активності хешу
+Repeat phrase after match %s	Повторювати фразу після збігу %s
+Repeat phrase after match same messages	Повторювати фразу після кількох однакових повідомленнь
+Hash. Ban if hash activity %s	Хеш. Бан при активності хешу %s
+Actions for ban by hash activity	Бан при активності хешу
+Jid's per stanza for affiliations in backup is %s	Кількість Jid'ів в станзі зміни аффіляції при відновленні копії конференції %s
+Count of jid's per stanza for affiliations change in backup	Количество Jid'ов в станзе смены аффиляции при восстановлении копии конференции. Рекомендації: ejabberd - 200, prosody - 1
+Karma. Reason for actions by karma change is %s	Karma. Різон для дії при зміні карми: %s
+Reason for change role/affiliation by karma change	Різон для дії при зміні карми
+Censor muc filter is %s	Muc-цензор: %s
+Censor filter	Muc-цензор
+Blacklist %s	Чорний список %s
+Blacklist for caps	Чорний список для капсів
+Type of list %s	Тип списку %s
+Type of list for caps	Тип списку для капсів
+Bomb. Action for bomb explode %s	Bomb. Дія при вибуху: %s
+Type of action for bomb explode	Дія при вибуху
+Blacklist rules for nick's %s	Чорный список. Правила для ніків: %s
+Nick's rules for blacklist via muc filter.	Правила для ніків для чорного списку через muc-фільтр
+Repeat presence muc filter is %s	Презенс-флуд: %s
+Repeat presence muc filter	Фільтр презенс-флуду
+Mute all private messages %s	Придушення всих приватних повідомленнь %s
+Mute all private messages	Придушення всих приватних повідомленнь
+Validate resource %s	Перевірка ресурсу %s
+Validate resource	Перевірка ресурсу
+Bomb. Allow random bombs only in active room %s	Bomb. Випадкові бомби тільки в активній конференції: %s
+Allow random bombs only in active room	Випадкові бомби тільки в активній конференції
+Karma. Revoke voice when karma is lower than %s	Позбавляти голосу при зниженні карми до %s
+Revoke voice when karma is lower than defined value	Позбавляти голосу при зниженні карми менше вказаного значення
+Adblock muc filter for presence is %s	Блокування реклами в презенсах: %s
+Adblock filter for presence	Фільтр блокування реклами в презенсах
+Raw adblock muc filter for presence is %s	Блокування прихованої реклами в презенсах: %s
+Raw adblock filter for presence	Блокування прихованої реклами в презенсах
+Persent of short words for raw actions is %s	Процент коротких слів для увімкнення перевірки прихованих дій: %s
+Persent of short words for raw actions	Процент коротких слів для увімкнення перевірки прихованих дій
+Censor muc filter for presence is %s	Цензор для презенсів: %s
+Censor muc filter for presence	Цензор для презенсів
+Reduce spaces in message %s	Блокувати численні проміжки в повідомленнях: %s
+Reduce duplicates of spaces in message	Блокувати численні проміжки в повідомленнях
+Adblock muc filter is %s	Блокування реклами: %s
+Adblock filter	Фільтр блокування реклами
+Karma. Moderator role when karma is higher than %s	Надавати повноваження модератора при підвищенні карми до %s
+Give a moderator role when karma is higher than defined value	Надавати повноваження модератора при підвищенні карми вище вказаного значення
+Custom rules for censor is %s	Правила для користувацького цензора %s
+Custom rules for censor	Правила для користувацького цензора
+Bomb. Reason %s	Bomb. Причина з якою буде дія: %s
+Reason for bomb explode	Причина з якою буде дія
+Raw censor muc filter is %s	Блокування цензором прихованого мата: %s
+Raw censor filter	Блокування цензором прихованого мата
+Mute newbie %s	Блокувати повідомлення від новачків: %s
+Mute all messages from newbie	Блокувати всі повідомлення від новачків в конференції
+Karma. Kick when karma is lower than %s	Karma. Виганяти при зниженні карми до %s
+Kick when karma is lower than defined value	Виганяти вхід при зниженні карми менше вказаного значення
+Ban joins without history %s	Банити заблоковані входи без історії %s
+Additional ban joins without history	Дрдатково банити заблоковані входи без історії
+Count of messages for action %s	Кількість повідомленнь для дії %s
+Count of messages for action	Кількість повідомленнь для дії
+Raw censor muc filter for presence is %s	Блокування цензором прихованого мата в презенсах: %s
+Raw censor muc filter for presence	Блокування цензором прихованого мата в презенсах
+Jid's for servers ban notify %s	Jid'и для нотифікацій про бан серверів
+Jid's for servers ban notify	Jid'и для нотифікацій про бан серверів
+New line in message muc filter is %s	Блокування повідомленнь з новими рядками: %s
+New line muc filter	Блокування статусів з новими рядками
+Match muc filter is %s	Повтори всередині повідомлень: %s
+Repeat text in message filter	Фільтр повторів всередині повідомлень
+Deny by hash %s	Заборона на вхід по хешу: %s
+Lock joins via hash	Блокування входу по хешу клієнту
+Validate caps node %s	Перевірка ноди в капсі %s
+Validate caps node	Перевірка ноди в капсі
+Karma. Actions for karma change is %s	Karma. Дії при зміні карми: %s
+Allow change role/affiliation by karma change	Дозволити зміну статусу учасника в залежності від карми
+Whitelist %s	Білий список %s
+Whitelist for caps	Білий список для капсів
+Time period for autoflood's start: %s	Період часу для початку автофлуду: %s
+Time period for autoflood's start	Період часу для початку автофлуду
+Censor warning is %s	Цензор-нотифікатор: %s
+Warning for moderators and higher	Попередження для модераторів і вище
+Hash. Timeout for clean hash activity %s	Хеш. Таймаут між підключеннями для бана по хешу %s
+Time period for clean hash activity	Таймаут між підключеннями для бана по хешу
+Large status muc filter is %s	Довгі статуси: %s
+Large status muc filter	Фільтр довгих статусів
+Autophrases is %s	Автофрази: %s
+Autophrases	Автофрази
+Bomb. Allow bot take a bomb to random user %s	Bomb. Видавати бомбу випадковому користувачеві: %s
+Allow bot take a bomb to random user	Видавати бомбу випадковому користувачеві
+Large nick muc filter is %s	Довгі ніки: %s
+Large nick muc filter	Фільтр довгих ніків
+ACL multiaction is %s	Мультидії в ACL %s
+Execute more than one action per pass in ACL.	Виконувати більше однієї дії за один прохід в ACL.
+Repeat join muc filter is %s	Багаторазові входи: %s
+Repeat join muc filter	Фільтр багаторазові входів
+Hash. Action for already joined %s	Хеш. Дія для вже підключених: %s
+Action for already joined	Дія для вже підключених клієнтів
+Bomb. Allow random unexplosive bombs %s	Bomb. Іноді не підривати бомби: %s
+Allow some times take unexplosive bombs	Іноді не підривати бомби
+Hash. Time to disable action %s	Хеш. Час відключення дії: %s
+Time to disable action	Час відключення дії при підвищеній активності хешу
+Action for invalid items %s	Дія для некоректних елементів %s
+Action for invalid items	Дія для некоректних елементів
+Mute all public messages %s	Придушення всих публічних повідомленнь %s
+Mute all public messages	Придушення всих публічних повідомленнь
+Value of limits for karma change %s	Значення обмеженнь карми %s
+Value of limitation of karma's change. Depends of access level	Значення обмеженнь зміни карми в залежності від рівня доступу
+Exception for ban servers %s	Виключення серверів для бану %s
+Exception for ban servers	Вийнятки для бана серверів
+Large muc filter is %s	Великі повідомлення: %s
+Large message filter	Фільтр великих повідомлень
+Custom censor is %s	Користувацький цензор %s
+Custom censor	Користувацький цензор
+Whitelist is %s	Білий список: %s
+Whitelist via muc filter	Білий список через muc-фільтр
+Count of messages for newbie %s	Кількість повідомленнь для новачка %s
+Count of messages for newbie for action	Кількість повідомленнь для новачка для дій
+New line in presence muc filter is %s	Блокування статусів з новими рядками: %s
+Bomb. Idle for unable get the bomb %s	Bomb. Час мовчання учасника, після якого йому неможна давати бомбу %s
+Idle for unable get the bomb	Час мовчання учасника, після якого йому неможна давати бомбу
+Bomb. Time for detect room as unactive %s	Bomb. Час протягом якого конференція вважається активною: %s
+Time for detect room as unactive	Час протягом якого конференція вважається активною
+Hash. Jid's for servers ban notify %s	Хеш. Jid'и для нотифікацій про бан серверів %s
+Bomb. Persent of fault bombs %s	Bomb. Процент неробочих бомб: %s
+Persent of fault bombs	Процент неробочих бомб
+Censor action for member is %s	Дія цензора на постійних учасників: %s
+Censor action for member	Дія цензора на постійних учасників
+Mute newbie time %s	Вік новачків: %s
+Time of mute all messages from newbie	Час, на протязі якого учасник вважається новачком
+New line count in message muc filter is %s	Кількість нових рядків в повідомленні для блокування: %s
+Count of new line muc filter	Кількість нових рядків для блокування
+Karma. Participant affiliation when karma is higher than %s	Надавати повноважень при підвищенні карми до %s
+Give a participant affiliation when karma is higher than defined value	Надавати повноважень при підвищенні карми вище вказаного значення
+Hash. Exception for ban servers %s	Хеш. Вийнятки для бана серверів %s
+Count of fast joins %s	Кількість швидких входів %s
+Count of fast joins	Кількість швидких входів
+Lock fast joins %s	Блокування швидких входів %s
+Lock fast joins	Блокування швидких входів
+Action for messages overflow for newbie %s	Дія при перевищенні кількості повідомленнь від новачка %s
+Action for messages overflow for newbie	Дія при перевищенні кількості повідомленнь від новачка
+Raw adblock muc filter is %s	Блокування прихованої реклами: %s
+Raw adblock filter	Блокування прихованої реклами
+Repeat muc filter is %s	Повтор повідомлень: %s
+Repeat same messages filter	Фільтр повторів схожих повідомлень
+Censor is %s	Цензор: %s
+Censor	Ввімкнення вимкнення цензора
+Bomb. Time between random bombs %s	Bomb. Час між випадковими бомбами: %s
+Time between random bombs	Час між випадковими бомбами
+Block joins without history %s	Блокувати входи без історії %s
+Block joins without history	Блокувати входи без історії
+New line count in presence muc filter is %s	Кількість нових рядків для блокування: %s
+Hash. Count of rejoins from server for ban %s	Хеш. Кількість підключеннь для бана сервера %s
+Count of rejoins from server for ban	Кількість підключеннь для бана сервера
+Url title is %s	Показ заголовків посилань: %s
+Automatic show title of urls in conference	Автоматичний показ заголовків посилань
+Karma. Ban when karma is lower than %s	Karma. Забороняти вхід при зниженні карми до %s
+Ban when karma is lower than defined value	Забороняти вхід при зниженні карми менше вказаного значення
+Autoturn layout of text is %s	Автозміна розкладки тексту: %s
+Store Users URL %s	Зберігати посилання користувачів %s
+Store Users URL	Зберігати посилання користувачів
+Clear notification by %s	Сповіщення при очищенні %s
+Clear notification by presence or message	Тип сповіщень при очищенні: повідомлення чи презенси
+Hash. Time for events %s	Хеш. Період перевірки: %s
+Time period for events	Період часу для перевірки активності хешів
+Censor action for non member is %s	Дія цензора на не постійних учасників: %s
+Censor action for non member	Дія цензора на не постійних учасників
+Flood is %s	Флуд: %s
+Autoanswer	Ввімкнення/вимкнення самонавчального відповідача
+Bomb. Wire count is %s	Bomb. Кількість проводів у бомби: %s
+Wire count for bomb	Кількість проводів у бомби
+Bomb. Persent of skiped random bombs %s	Bomb. Процент не установки випадкових бомб: %s
+Persent of mistakes skiped random bombs	Процент не установки випадкових бомб
+Reduce spaces in presence %s	Блокувати численні проміжки в презенсах: %s
+Reduce duplicates of spaces in presence	Блокувати численні проміжки в презенсах
+Smiles in logs is %s	Смайли в логах: %s
+Smiles in logs	Смайли в логах
+Limits for karma change is %s	Обмеження зміни карми %s
+Limitation of karma's change. Depends of access level	Обмеження зміни карми в залежності від рівня доступу
+Count of invalid items %s	Кількість некоректних елементів %s
+Count of invalid items for action	Кількість некоректних елементів для дії
+Number of message for autoflood's start: %s	Кількість повідомленнь для початку автофлуду: %s
+Number of message for autoflood's start	Кількість повідомленнь для початку автофлуду
+Action for messages overflow %s	Дія при перевищенні кількість повідомленнь %s
+Action for messages overflow	Дія при перевищенні кількості повідомленнь
+Use default locale %s	Використовувати локалізацію за замовчуванням: %s
+Ignore locale settings and use default bot locale	Ігнорувати локалізації та використовувати локалізацію бота за замовчуванням
+Validate nick %s	Перевірка ніку %s
+Validate nick	Перевірка ніку
+Parse define is %s	Пошук визначень %s
+Automatic parse definition via google	Автоматичний пошук визначень через Google
+Bomb. Don't use action when access level lower than or equal %s	Не використовувати дію, якщо доступ нижче чи рівний %s
+Ignore bomb action depends from access level	Ігнорування дії бомби в залежності від доступу
+Hash. Action type %s	Хеш. Тип дії при активності: %s
+Type of action	Тип дії при підвищеній активності хешу
+Blacklist rules for jid's %s	Чорный список. Правила для jid'ів: %s
+Jid's rules for blacklist via muc filter.	Правила для jid'ів для чорного списку через muc-фільтр
+Hash. Events count %s	Хеш. Кількість подій: %s
+Events count per time period	Кількість подій за заданий проміжок часу
+Muc filter is %s	Muc-фільтр: %s
+Message filter for participants	Фільтр повідомлень для учасників
+Blacklist is %s	Чорний список %s
+Blacklist via muc filter	Чорний список через muc-фільтр
+Time for count of fast joins %s	Інтервал між швидкими входами %s
+Time for count of fast joins	Інтервал між швидкими входами
+Hash. Ban server by hash activity %s	Хеш. Банити сервери при активності хешу %s
+Ban server by hash activity	Банити сервери при активності хешу
+Validate login %s	Перевірка логіну %s
+Validate login	Перевірка логіну
+Autoflood is %s	Автофлуд: %s
+Autoflood	Автофлуд
+Deny hashes list %s	Список заборонених хешів: %s
+Hashes list for lock joins	Список хешів для блокування входу
+Hash. Timeout of rejoins from server for ban %s	Хеш. Таймаут на підключення з сервера для бана %s
+Timeout of rejoins from server for ban	Таймаут на підключення з сервера для бана
+General Muc-filter settings	Основні налаштування для Muc-фільтру
+Muc-filter settings for newbie	Muc-фільтр для новачків
+Muc-filter settings for hash	Muc-фільтр для дій по хешу
+Muc-filter settings by content	Muc-фільтр для дій по вмісту
+Muc-filter settings for raw-actions	Muc-фільтр для підозрілих дій
+Muc-filter settings for censor/ad-block	Muc-фільтр для цензора/блокування реклами
+Muc-filter settings for while/black lists	Muc-фільтр для білого/чорного списків
+Muc-filter settings for while/black lists by caps	Muc-фільтр для списків по капсам
+Muc-filter settings for validate items	Muc-фільтр для перевірки коректності елементів
+Muc-filter settings for fast action	Muc-фільтр для швидких операцій
+Other settings	Інші налаштування
+Settings for bomb-joke	Налаштування бомби-жарту
+Actions for karma change	Дії при зміні карми
+Censor settings	Налаштування цензора
+Flood settings	Налаштування флуду
+Muc-filter. Message limit	Muc-filter. Ліміт розміру повідомлень
+Backup. Requests delay for backup command	Backup. Затримка при запитах команди backup
+Karma. Difference between two action in karma	Karma. Різниця між двома діями карми
+Iq. Allow answer to time request	Iq. Дозвіл відповідати на запит часу бота
+Logger. Enable system logs	Logger. Ввімкнення системних логів
+Muc-filter. Time for reconnect count	Muc-filter. Проміжок часу на перез'єднання
+Logger. Enable status change logging	Logger. Запис в логи зміни статусів
+Troll. Default message number for troll command	Troll. Кількість повідомлень для команди troll
+Troll. Delay between messages for troll command	Troll. Затримка відправки повідомлень для команди troll
+Karma. Minimal karma for allow krama change for participants	Karma. Мінімальна карма з якою зміна карми доступна не постійним учасникам
+Iq. Allow answer to service discovery	Iq. Дозвіл відповідати на запит огляду сервісів бота
+Msgtoadmin. Time limit for next message for msgtoadmin	Ліміт часу наступної відправки повідомлення для команди msgtoadmin
+Muc-filter. A kind words count	Muc-filter. Лічильник однакових символів
+Whereis. Frequency for answer check for whereis command	Whereis. Частота перевірки відповіді для команди whereis
+Kernel. Bot status. Show different status for bot loading	Kernel. Bot status. Особливий статус при завантаженні
+Kernel. Time of ignore for anti-ddos	Kernel. Час ігнору при ddos'і в залежності від рівня доступу
+Karma. Time for karma change from access level	Karma. Час через який дозволено міняти карму в залежності від рівня доступу
+Clear. Delay between massages in clear command	Clear. Затримка між повідомленнями при команді clear
+Muc-filter. Number of reconnects for monitoring	Muc-filter. Кількість перез'єднань для моніторингу
+Iq. Timeout for iq queries	Iq. Таймаут в секундах на iq запити
+Karma. Lower value of karma for control action	Нижня межа карми при перевірці правильності значень
+Youtube. Page size limit	Youtube. Ліміт розміру сторінки при завантаженні
+Logger. Additional text for logs	Logger. Додатковий текст в кінці html лога
+Sayto. Timeout for sayto base cleanup	Sayto. Час через який проводяться зачистки sayto-бази
+Age. Default number of users for age commands	Age. Кількість учасників за замовчуванням для плагіна age
+Sayto. Age of message in sayto before delete it from base with undelivered	Sayto. Час життя повідомлень, які бот не зміг передати за командою sayto
+Kernel. Bot status. Message while loading	Kernel. Bot status. Статус-повідомлення при завантаженні
+Disco. Maximus andwers count for disco command	Disco. Максимальна кількість відповідей для команди disco
+Spy. Time for reaction on spy scan	Spy. Інтервал реакції на сканування для команди spy
+Iq. Allow answer to version request	Iq. Дозвіл відповідати на запит версії бота
+Watcher. Frequency of requests in watcher	Watcher. Період запитів в секундах для плагіна watcher
+Logger. Use GMT time in MUC logs	Logger. Використовувати GMT-час в логах конференцій
+Iq. Allow answer to ping	Iq. Дозвіл відповідати на запит пінгу бота
+Muc-filter. Number of kind parts in message	Muc-filter. Кількість однакових слів в повідомленні
+Rss. Maximum rss count	RSS. Максимальна кількість новин
+Clear. Maximal message number for clear command	Clear. Максимальна кількість повідомлень при команді clear
+Kernel. Iq anti-ddos. Requests number	Kernel. Iq anti-ddos. Кількість запитів
+Kernel. Bot status. Show percent of loading	Kernel. Bot status. Показувати процент завантаження
+Logger. Enable role and affiliation logging	Logger. Запис в логи зміни афіляцій і ролей
+Disco. Exclude from disco by regexps	Disco. Видаляти з обзору по регекспу
+Kernel. Restart timeout for error at bot initial (no connection, auth error)	Kernel. Таймаут рестартів бота на стадії підключення (немає iнету, помилка авторизації)
+Msgtoadmin. Size limit for msgtoadmin	Msgtoadmin. Ліміт розміру повідомлення для команди msgtoadmin
+LastFM. Number of answers for lastfm plugin	LastFM. Кількість відповідей для команди плагіна lastfm
+Www. User-agent for web queries	Www. User-agent для більшості web-запитів
+Kernel. Iq anti-ddos. Time limits for requests	Kernel. Iq anti-ddos. Ліміт часу на запити
+Karma. Upper value of karma for control action	Karma. Верхня межа карми при перевірці правильності значень
+Watcher. Timeout for no actions in room for rejoin	Watcher. Таймаут неактивності конференцій для перезаходу
+Kernel. Notify when bot is kicked or banned	Kernel. Notify. Повідомляти про те, що бота вигнали чи забанили
+Muc-filter. Maximux status-message size	Muc-filter. Максимальний розмір статус-повідомлення
+Watcher. Try rejoin in rooms with low activity	Watcher. Намагатися перезаходити в малоактивні кімнати
+City. Yandex.Map API-key	City. Yandex.Map API-ключ
+Paste. Paste as html. Otherwize as text	Paste. Html розмічення, інакше в вигляді тексту
+Kernel. Notify jid for bot kick or ban	Kernel. Notify. Список jid'ів для повідомлень про кік чи бан бота
+Karma. Default length of list karma top+/-	Karma. Кількість учасників за замовчуванням при показі результатів команди karma top+/-
+Muc-filter. Timeout for repeat message	Muc-filter. Таймаут повторів схожих повідомлень
+Kernel. Bot status. Show join to room while loading	Kernel. Bot status. Показувати конференції, в які бот заходить при завантаженні
+Rss. Timeout for rss request from server in seconds	Rss. Таймаут запиту новини з сервера в секунду
+Karma. Maximal length of list karma top+/-	Karma. Максимальна кількість учасників для показу результатів команди karma top+/-
+Muc-filter. Message size for filter	Muc-filter. Розмір повідомлення для фільтра
+Calendar. Default splitter for calendar	Calendar. Типовий розділювач для календаря
+LastFM. Api for lastfm plugin	LastFM. API для роботи плагіна lastfm
+Anek. Anekdote size for private send	Anek. Розмір понад який анекдот буде відправлено до привату
+Muc-filter. Maximum nick size	Muc-filter. Максимальний розмір ніка
+Kernel. Text for hide censore	Kernel. Текст для закриття мату
+Youtube. Default links number	Youtube. Кількість посилань за замовчуванням
+Logger. Html logs. Otherwize in text	Logger. Ведення логів в html, інакше у вигляді звичайного тексту
+Juick. Number of posts	Juick. Кількість постів
+Iq. Allow answer to uptime request	Iq. Дозвіл відповідати на запит аптайму бота
+Bing. Translator API-key	Bing. Api-ключ перекладача
+Clear. Default message number for clear command	Clear. Кількість повідомлень при команді clear
+Kernel. Send new hash into rooms after soft update	Kernel. Надсилати новий хеш до конференції після м'якого поновлення
+Youtube. Default language	Youtube. Мова за замовчуванням
+Juick. Number of answers	Juick. Кількість відповідей
+Muc-filter. Number of empty parts in message	Muc-filter. Кількість пустих частин в повідомленні
+Rss. Minimal time for rss check in minutes	RSS. мінімальний час для перевірки новин
+Spy. Time for spy scan	Spy. Інтервал сканування для команди scan
+Iq. Show bot rooms in service discovery	Iq. Показувати конференції бота при огляді сервісів
+Juick. Number of symbols in post	Juick. Кількість символів в пості
+Kernel. Bot status. Status while loading	Kernel. Bot status. Статус при завантаженні
+Muc-filter. Repeat count	Muc-filter. Кількість повторів схожих повідомлень
+Youtube. Maximal links number	Youtube. Максимальна кількість посилань при показі
+Watcher. Allow self ping	Watcher. Пінгувати самого себе
+Troll. Maximal message number for troll command	Troll. Максимальна кількість повідомлень для команди troll
+Iq. Number after point in ping	Iq. Кількість знаків після коми при пінгу
+Muc-filter. Time between presences	Muc-filter. Проміжок часу на статус-презенси
+Muc-filter. Number of empty new lines	Muc-filter. Кількість пустих переводів рядків
+Kernel. Anti-ddos time delay between messages	Kernel. Проміжок між повідомленнями для вмикання анти-ddos
+Muc-filter. Number of precences per time	Muc-filter. Кількість статус-презенсів за час
+Kernel. Exclude symbols from bot's messages	Kernel. Видалити символи із повідомленнь бота
+Kernel. 1st April joke	Kernel. Першотравневий жарт
+Kernel. Schedule time	Час перевірки розкладу
+Kernel. Paranoic mode. Disable all execute possibles on bot	Kernel. Режим для параноїків. Заборона виконання будь-якого зовнішнього коду
+Www. Limit of page in bytes for www command	Www. Ліміт розміру сторінки в байтах для команди www
+Age. Maximal number of users for age commands	Age. Максимальна кількість учасників для плагіну age
+Juick. Number of tags	Juick. Кількість тегів
+Message for admin settings	Налаштування повідомлень адміну
+RSS settings	Налаштування RSS
+Clear settings	Налаштування clear
+Kernel settings	Налаштування ядра
+LastFM settings	Налаштування LastFM
+Whereis settings	Налаштування whereis
+Watcher settings	Налаштування watcher
+Antitroll settings	Налаштування антитроля
+WWW settings	Налаштування WWW
+Karma settings	Налаштування карми
+Sayto settings	Налаштування sayto
+Age settings	Налаштування age
+Muc-filter settings	Налаштування muc-фільтру
+Iq requests settings	Налаштування iq запитів
+Juick settings	Налаштування Juick
+Logs settings	Налаштування логів
+Youtube settings	Налаштування Youtube
+
+# write locale file: ua.txt
+# total: 1460
+# missed translations: 3

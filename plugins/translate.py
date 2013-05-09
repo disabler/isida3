@@ -85,5 +85,5 @@ def translate_ru(type, jid, nick, text):
 
 global execute
 
-execute = [(3, 'translate', translate_ru, 2, L('Translator from translate.ru\ntranslate [from_language] to_language text - translate text\ntranslate list - list for available languages for translate\ntranslate info <reduction> - get info about language reduction\ntranslate lang <expression> - get languages by expression'))]
+execute = [(3, 'translate', translate_ru, 2, 'Translator from translate.ru\ntranslate [from_language] to_language text - translate text\ntranslate list - list for available languages for translate\ntranslate info <reduction> - get info about language reduction\ntranslate lang <expression> - get languages by expression')]
 

@@ -73,6 +73,6 @@ def afor(type, jid, nick): quote(type, jid, nick, 'afor')
 
 global execute
 
-execute = [(3, 'quote', quote, 2, L('Quote from Internet. Exaples:\nquote list - list of resources\nquote [<key> [number|text]]')),
-		(3, 'ithap', ithap, 2, L('Quote from ithappens.ru\nithap [number]')),
-		(3, 'afor', afor, 1, L('Show random aphorism from skio.ru'))]
+execute = [(3, 'quote', quote, 2, 'Quote from Internet. Exaples:\nquote list - list of resources\nquote [<key> [number|text]]'),
+		(3, 'ithap', ithap, 2, 'Quote from ithappens.ru\nithap [number]'),
+		(3, 'afor', afor, 1, 'Show random aphorism from skio.ru')]

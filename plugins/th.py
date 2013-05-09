@@ -32,4 +32,4 @@ def thread_info(type, jid, nick):
 
 global execute
 
-execute = [(7, 'th', thread_info, 1, L('Threads statistic'))]
+execute = [(7, 'th', thread_info, 1, 'Threads statistic')]

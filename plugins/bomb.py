@@ -174,4 +174,4 @@ global execute, presence_control, message_control
 presence_control = [bomb_presence]
 message_act_control = [bomb_message,bomb_message_active]
 
-execute = [(4, 'bomb', bomb_joke, 2, L('Take a bomb joke!'))]
+execute = [(4, 'bomb', bomb_joke, 2, 'Take a bomb joke!')]

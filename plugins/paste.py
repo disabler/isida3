@@ -33,5 +33,5 @@ def public_paste(type, jid, nick, text):
 
 global execute
 
-execute = [(4, 'paste', public_paste, 2, L('Paste some text to server')),
-		   (5, 'ppaste', private_paste, 2, L('Paste some text to server'))]
+execute = [(4, 'paste', public_paste, 2, 'Paste some text to server'),
+		   (5, 'ppaste', private_paste, 2, 'Paste some text to server')]

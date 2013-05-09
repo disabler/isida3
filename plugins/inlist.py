@@ -59,7 +59,7 @@ def inlist_raw_async(type, jid, nick, text, message, iq_stanza):
 
 global execute
 
-execute = [(7, 'inban', inban, 2, L('Search in outcast list of conference.')),
-	 (7, 'inmember', inmember, 2, L('Search in members list of conference.')),
-	 (7, 'inadmin', inadmin, 2, L('Search in admins list of conference.')),
-	 (7, 'inowner', inowner, 2, L('Search in owners list of conference.'))]
+execute = [(7, 'inban', inban, 2, 'Search in outcast list of conference.'),
+	 (7, 'inmember', inmember, 2, 'Search in members list of conference.'),
+	 (7, 'inadmin', inadmin, 2, 'Search in admins list of conference.'),
+	 (7, 'inowner', inowner, 2, 'Search in owners list of conference.')]

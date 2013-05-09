@@ -33,5 +33,5 @@ def sysshell(type, jid, nick, text, mode):
 
 global execute
 
-if not GT('paranoia_mode'): execute = [(9, 'sh', shell, 2, L('Execute shell command.')),
-	   (9, 'sh_silent', shell_silent, 2, L('Execute shell command without output result.'))]
+if not GT('paranoia_mode'): execute = [(9, 'sh', shell, 2, 'Execute shell command.'),
+	   (9, 'sh_silent', shell_silent, 2, 'Execute shell command without output result.')]

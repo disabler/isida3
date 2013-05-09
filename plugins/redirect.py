@@ -31,5 +31,5 @@ def raw_redirect(type, room, nick, text):
 
 global execute
 
-execute = [(3, 'private', to_private, 2, L('Redirect command output in private.')),
-		   (3, 'public', to_public, 2, L('Redirect command output in groupchat.'))]
+execute = [(3, 'private', to_private, 2, 'Redirect command output in private.'),
+		   (3, 'public', to_public, 2, 'Redirect command output in groupchat.')]

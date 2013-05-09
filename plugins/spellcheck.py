@@ -41,4 +41,4 @@ def spell(type, jid, nick, text):
 
 global execute
 
-execute = [(0, 'spell', spell, 2, L('Spellchecker. Example: spell [uk|ru|en] sentence'))]
+execute = [(0, 'spell', spell, 2, 'Spellchecker. Example: spell [uk|ru|en] sentence')]

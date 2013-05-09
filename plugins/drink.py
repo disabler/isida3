@@ -106,5 +106,5 @@ def calend(type, jid, nick, text):
 
 global execute
 
-execute = [(3, 'drink', to_drink, 2, L('Find holiday\ndrink [name_holiday/date]')),
-		(3, 'calend', calend, 2, L('Find holiday\ncalend [name_holiday/date]'))]
+execute = [(3, 'drink', to_drink, 2, 'Find holiday\ndrink [name_holiday/date]'),
+		(3, 'calend', calend, 2, 'Find holiday\ncalend [name_holiday/date]')]

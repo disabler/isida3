@@ -196,4 +196,4 @@ def issue_done(s,acclvl,room,jid,nick):
 
 global execute
 
-execute = [(3, 'issue', issue, 2, L('Issues\nissue [[[show|pending|accept|reject|delete|done] id] reason] - actions with issue\nissue *tag1 *tag2 some text - add issue `some text` with tags tag1 and tag2'))]
+execute = [(3, 'issue', issue, 2, 'Issues\nissue [[[show|pending|accept|reject|delete|done] id] reason] - actions with issue\nissue *tag1 *tag2 some text - add issue `some text` with tags tag1 and tag2')]

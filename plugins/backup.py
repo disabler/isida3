@@ -163,4 +163,4 @@ def conf_backup(type, jid, nick, text):
 
 global execute
 
-execute = [(8, 'backup', conf_backup, 2, L('Backup/restore conference settings.\nbackup show|now|restore\nshow - show available copies\nnow - backup current conference\nrestore name_conference - restore settings name_conference in current conference'))]
+execute = [(8, 'backup', conf_backup, 2, 'Backup/restore conference settings.\nbackup show|now|restore\nshow - show available copies\nnow - backup current conference\nrestore name_conference - restore settings name_conference in current conference')]

@@ -180,29 +180,29 @@ def tasteometer(type, jid, nick, text):
 
 def no_api(type, jid, nick): send_msg(type, jid, nick, L('Not found LastFM api','%s/%s'%(jid,nick)))
 
-exec_yes = [(3, 'lasttracks', lasttracks, 2, L('Last scrobled tracks')),
-		(3, 'last', lastonetrack, 2, L('Last scrobled track')),
-		(3, 'lastfriends', lastfriends, 2, L('Last friends')),
-		(3, 'lastloved', lastloved, 2, L('Last loved tracks')),
-		(3, 'lastneighbours', lastneighbours, 2, L('Last neighbours')),
-		(3, 'lastplaylist', lastplaylist, 2, L('Last playlist')),
-		(3, 'topalbums', topalbums, 2, L('Top albums')),
-		(3, 'topartists', topartists, 2, L('Top artists')),
-		(3, 'toptags', toptags, 2, L('Top tags')),
-		(3, 'toptracks', toptracks, 2, L('Top tracks')),
-		(3, 'tasteometer', tasteometer, 2, L('Music tastes'))]
+exec_yes = [(3, 'lasttracks', lasttracks, 2, 'Last scrobled tracks'),
+		(3, 'last', lastonetrack, 2, 'Last scrobled track'),
+		(3, 'lastfriends', lastfriends, 2, 'Last friends'),
+		(3, 'lastloved', lastloved, 2, 'Last loved tracks'),
+		(3, 'lastneighbours', lastneighbours, 2, 'Last neighbours'),
+		(3, 'lastplaylist', lastplaylist, 2, 'Last playlist'),
+		(3, 'topalbums', topalbums, 2, 'Top albums'),
+		(3, 'topartists', topartists, 2, 'Top artists'),
+		(3, 'toptags', toptags, 2, 'Top tags'),
+		(3, 'toptracks', toptracks, 2, 'Top tracks'),
+		(3, 'tasteometer', tasteometer, 2, 'Music tastes')]
 
-exec_no = [(3, 'lasttracks', no_api, 1, L('Not found LastFM api')),
-	   (3, 'last', no_api, 1, L('Not found LastFM api')),
-	   (3, 'lastfriends', no_api, 1, L('Not found LastFM api')),
-	   (3, 'lastloved', no_api, 1, L('Not found LastFM api')),
-	   (3, 'lastneighbours', no_api, 1, L('Not found LastFM api')),
-	   (3, 'lastplaylist', no_api, 1, L('Not found LastFM api')),
-	   (3, 'topalbums', no_api, 1, L('Not found LastFM api')),
-	   (3, 'topartists', no_api, 1, L('Not found LastFM api')),
-	   (3, 'toptags', no_api, 1, L('Not found LastFM api')),
-	   (3, 'toptracks', no_api, 1, L('Not found LastFM api')),
-	   (3, 'tasteometer', no_api, 1, L('Not found LastFM api'))]
+exec_no = [(3, 'lasttracks', no_api, 1, 'Not found LastFM api'),
+	   (3, 'last', no_api, 1, 'Not found LastFM api'),
+	   (3, 'lastfriends', no_api, 1, 'Not found LastFM api'),
+	   (3, 'lastloved', no_api, 1, 'Not found LastFM api'),
+	   (3, 'lastneighbours', no_api, 1, 'Not found LastFM api'),
+	   (3, 'lastplaylist', no_api, 1, 'Not found LastFM api'),
+	   (3, 'topalbums', no_api, 1, 'Not found LastFM api'),
+	   (3, 'topartists', no_api, 1, 'Not found LastFM api'),
+	   (3, 'toptags', no_api, 1, 'Not found LastFM api'),
+	   (3, 'toptracks', no_api, 1, 'Not found LastFM api'),
+	   (3, 'tasteometer', no_api, 1, 'Not found LastFM api')]
 
 execute = [exec_no,exec_yes][len(GT('lfm_api')) >= 30]
 

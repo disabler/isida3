@@ -161,5 +161,5 @@ def juick_post(type, jid, nick, text):
 
 global execute
 
-execute = [(3, 'juick', juick, 2, L('Miniblogs http://juick.com\njuick [msg][#]post - show post\njuick tags [user] - show popular tags\njuick search [text] - search text\njuick [user] @username - show messages of user')),
-		   (9, 'juick_post', juick_post, 2, L('Send message to blog at juick.com'))]
+execute = [(3, 'juick', juick, 2, 'Miniblogs http://juick.com\njuick [msg][#]post - show post\njuick tags [user] - show popular tags\njuick search [text] - search text\njuick [user] @username - show messages of user'),
+		   (9, 'juick_post', juick_post, 2, 'Send message to blog at juick.com')]

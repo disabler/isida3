@@ -21,7 +21,7 @@
 #                                                                             #
 # --------------------------------------------------------------------------- #
 
-# translate: verb,noun,preposition,adverb,adjective,phrase,conjunction,abbreviation
+# translate: verb,noun,preposition,adverb,adjective,phrase,conjunction,abbreviation,Google URL Shortener/Unshortener,Google QR-code generator
 
 def gcalc(type, jid, nick, text):
 	if not text.strip(): msg = L('What?','%s/%s'%(jid,nick))
@@ -113,8 +113,8 @@ global execute, message_control
 
 message_act_control = [define_message]
 
-execute = [(3, 'gcalc', gcalc, 2, L('Google Calculator')),
-	(3, 'define', define, 2, L('Definition for a word or phrase.\ndefine word - random define of word or phrase\ndefine N word - N-th define of word or phrase\ndefine a-b word - from a to b defines of word or phrase')),
-	#(3, 'ggl', goo_gl, 2, L('Google URL Shortener/Unshortener')),
-	#(3, 'qr', goo_gl_qr, 2, L('Google QR-code generator')),
-	(3, 'gdict', gdict, 2, L('Google Dictionary\ngdict [from_language] to_language word'))]
+execute = [(3, 'gcalc', gcalc, 2, 'Google Calculator'),
+	(3, 'define', define, 2, 'Definition for a word or phrase.\ndefine word - random define of word or phrase\ndefine N word - N-th define of word or phrase\ndefine a-b word - from a to b defines of word or phrase'),
+	#(3, 'ggl', goo_gl, 2, 'Google URL Shortener/Unshortener'),
+	#(3, 'qr', goo_gl_qr, 2, 'Google QR-code generator'),
+	(3, 'gdict', gdict, 2, 'Google Dictionary\ngdict [from_language] to_language word')]

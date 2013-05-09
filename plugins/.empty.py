@@ -89,7 +89,7 @@ message_control = [empty_message] # пассивная реакция на со�
 message_act_control = [empty_act_message] # активная реакция на сообщение
 
 # описание команд
-execute = [(0, 'empty', empty_command, 1, L('command decription'))]
+execute = [(0, 'empty', empty_command, 1, 'command decription')]
 # 1. уровень доступа:
 #		0 - без ограничений
 #		1 - не ниже visitor|none

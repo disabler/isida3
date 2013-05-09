@@ -59,7 +59,8 @@ def append_to_turner(room,jid,nick,type,text):
 	global turn_base
 	for tmp in turn_base:
 		if tmp[0] == room and tmp[1] == nick:
-			turn_base.remove(tmp)
+			try: turn_base.remove(tmp)
+			except: pass
 			break
 	turn_base.append((room,nick,text))
 
@@ -68,7 +69,8 @@ def remove_from_turner(room,jid,nick,type,text):
 	if type == 'unavailable':
 		for tmp in turn_base:
 			if tmp[0] == room and tmp[1] == nick:
-				turn_base.remove(tmp)
+				try: turn_base.remove(tmp)
+				except: pass
 				break
 
 def autoturn(room,jid,nick,type,text):
@@ -96,4 +98,4 @@ message_control = [append_to_turner]
 presence_control = [remove_from_turner]
 message_act_control = [autoturn]
 
-execute = [(3, 'turn', turner, 2, L('Turn text from one layout to another.'))]
+execute = [(3, 'turn', turner, 2, 'Turn text from one layout to another.')]

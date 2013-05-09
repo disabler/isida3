@@ -45,5 +45,5 @@ def talkers(type, jid, nick, text):
 
 global execute
 
-execute = [(3, 'talkers', talkers, 2, L('Show local talkers')),
-	   (4, 'gtalkers', gtalkers, 2, L('Show global talkers'))]
+execute = [(3, 'talkers', talkers, 2, 'Show local talkers'),
+	   (4, 'gtalkers', gtalkers, 2, 'Show global talkers')]

@@ -51,4 +51,4 @@ def svn_get(type, jid, nick,text):
 
 global execute
 
-execute = [(3, 'svn', svn_get, 2, L('Show svn log.\nsvn [http://]url [limit] - show last revision(s) limit\nsvn [http://]url rXXX - show XXX revision'))]
+execute = [(3, 'svn', svn_get, 2, 'Show svn log.\nsvn [http://]url [limit] - show last revision(s) limit\nsvn [http://]url rXXX - show XXX revision')]

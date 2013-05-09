@@ -48,4 +48,4 @@ def handler_horoscope(type, jid, nick, text):
 
 global execute
 
-execute = [(3, 'horo', handler_horoscope, 2, L('Horoscope.\nhoro list - show all zodiacs.\nhoro date - show dates for zodiacs. | Author: ferym'))]
+execute = [(3, 'horo', handler_horoscope, 2, 'Horoscope.\nhoro list - show all zodiacs.\nhoro date - show dates for zodiacs. | Author: ferym')]

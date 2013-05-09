@@ -144,6 +144,6 @@ global execute, timer, presence_control
 
 timer = [cleanup_sayto_base]
 presence_control = [sayto_presence]
-execute = [(3, 'sayto', sayto, 2, L('"Say to" command.\nsayto jid|nick message - if jid or nick join in conference, bot send "message". Messages saves 14 days, after if message didn\'t be send this message remove.')),
-			(7, 'sayjid', sayjid, 2, L('Send message to jid\n sayjid jid message.')),
-			(3, 'memo', say_memo, 2, L('Send a message to yourself at next join'))]
+execute = [(3, 'sayto', sayto, 2, '"Say to" command.\nsayto jid|nick message - if jid or nick join in conference, bot send "message". Messages saves 14 days, after if message didn\'t be send this message remove.'),
+			(7, 'sayjid', sayjid, 2, 'Send message to jid\n sayjid jid message.'),
+			(3, 'memo', say_memo, 2, 'Send a message to yourself at next join')]

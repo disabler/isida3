@@ -320,8 +320,10 @@ def disco_iq_get(iq,id,room,acclvl,query,towh,al):
 				#i.getTag('query').setTag('feature',attrs={'var':xmpp.NS_MUC_ROOMS})
 				return i
 			elif node.split('#')[0] == disco_config_node or node == xmpp.NS_COMMANDS:
-				#i.getTag('query').setTag('feature',attrs={'var':xmpp.NS_COMMANDS})
-				#i.getTag('query').setTag('feature',attrs={'var':disco_config_node})
+				if node != xmpp.NS_COMMANDS:
+					i.getTag('query').setTag('feature',attrs={'var':xmpp.NS_COMMANDS})
+					#i.getTag('query').setTag('feature',attrs={'var':disco_config_node})
+					#i.getTag('query').setTag('feature',attrs={'var':xmpp.NS_DATA})
 				try: tn = '#' + node.split('#')[1]
 				except: tn = ''
 				if tn:
@@ -392,8 +394,10 @@ def disco_iq_set(iq,id,room,acclvl,query,towh,al):
 				i.getTag('query',namespace=xmpp.NS_DISCO_ITEMS).setPayload(trooms)
 				return i
 			elif node.split('#')[0] == disco_config_node or node == xmpp.NS_COMMANDS:
-				#i.getTag('query').setTag('feature',attrs={'var':xmpp.NS_COMMANDS})
-				#i.getTag('query').setTag('feature',attrs={'var':disco_config_node})
+				if node != xmpp.NS_COMMANDS:
+					i.getTag('query').setTag('feature',attrs={'var':xmpp.NS_COMMANDS})
+					#i.getTag('query').setTag('feature',attrs={'var':xmpp.NS_DATA})
+					#i.getTag('query').setTag('feature',attrs={'var':disco_config_node})
 				try: tn = '#' + node.split('#')[1]
 				except: tn = ''
 				try: tmpn = tn.split('-',1)[1]
@@ -423,7 +427,7 @@ def disco_iq_set(iq,id,room,acclvl,query,towh,al):
 										elif tp[0] == 'd' and tm not in owner_prefs[t][3]: tm = owner_prefs[t][2]
 									except:
 										tm,sucess_label = GT(t),False
-										unsucess.append(owner_prefs[t][0])
+										unsucess.append(L(owner_prefs[t][0],room))
 									PT(t,tm)
 									if tp[-1] == 'e' and old_tm != tm: eval(owner_prefs[t][-1])
 								except: pass
@@ -452,7 +456,7 @@ def disco_iq_set(iq,id,room,acclvl,query,towh,al):
 								for tmp in c_prefs: cnf_prefs[tmp] = owner_prefs[tmp]
 								tmp = cnf_prefs.keys()
 								tt = []
-								for t in tmp: tt.append((owner_prefs[t][0],t))
+								for t in tmp: tt.append((L(owner_prefs[t][0],room),t))
 								tt.sort()
 								tmp = []
 								for t in tt: tmp.append(t[1])
@@ -589,7 +593,7 @@ def disco_iq_set(iq,id,room,acclvl,query,towh,al):
 									elif tp[0] == 'd' and tm not in owner_prefs[t][3]: tm = owner_prefs[t][2]
 								except:
 									tm,sucess_label = GT(t),False
-									unsucess.append(owner_prefs[t][0])
+									unsucess.append(L(owner_prefs[t][0],room))
 								PT(t,tm)
 								if tp[-1] == 'e' and old_tm != tm: eval(owner_prefs[t][-1])
 							except: pass
@@ -618,7 +622,7 @@ def disco_iq_set(iq,id,room,acclvl,query,towh,al):
 							for tmp in c_prefs: cnf_prefs[tmp] = owner_prefs[tmp]
 							tmp = cnf_prefs.keys()
 							tt = []
-							for t in tmp: tt.append((owner_prefs[t][0],t))
+							for t in tmp: tt.append((L(owner_prefs[t][0],room),t))
 							tt.sort()
 							tmp = []
 							for t in tt: tmp.append(t[1])
@@ -959,7 +963,7 @@ iq_hook = [[100,'get',disco_iq_get],[100,'set',disco_iq_set]]
 
 disco_exclude_update()
 
-execute = [(3, 'disco', disco, 2, L('Service discovery.\ndisco server.tld - request information about server\ndisco conference.server.tld [body [size]] - find body string in conference list and show size results\ndisco room@conference.server.tld [body [size]] - find body string in disco room conference and show size results.')),
-	 (3, 'disco_raw', disco_raw, 2, L('Service discovery.\ndisco_raw server.tld - request information about server\ndisco_raw conference.server.tld [body [size]] - find body string in conference list and show size results\ndisco_raw room@conference.server.tld [body [size]] - find body string in disco room conference and show size results.')),
-	 (4, 'features', features, 2, L('Show features of object')),
-	 (7, 'whereis', whereis, 2, L('Find nick on conference server\nwhereis - find your nick on current conference server\nwhereis nick - find nick on current conference server\nwhereis nick\n[conference.]server.tld - find nick on server server.tld'))]
+execute = [(3, 'disco', disco, 2, 'Service discovery.\ndisco server.tld - request information about server\ndisco conference.server.tld [body [size]] - find body string in conference list and show size results\ndisco room@conference.server.tld [body [size]] - find body string in disco room conference and show size results.'),
+	 (3, 'disco_raw', disco_raw, 2, 'Service discovery.\ndisco_raw server.tld - request information about server\ndisco_raw conference.server.tld [body [size]] - find body string in conference list and show size results\ndisco_raw room@conference.server.tld [body [size]] - find body string in disco room conference and show size results.'),
+	 (4, 'features', features, 2, 'Show features of object'),
+	 (7, 'whereis', whereis, 2, 'Find nick on conference server\nwhereis - find your nick on current conference server\nwhereis nick - find nick on current conference server\nwhereis nick\n[conference.]server.tld - find nick on server server.tld')]

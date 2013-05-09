@@ -94,4 +94,4 @@ def flibusta(type, jid, nick, text):
 
 global execute
 
-execute = [(3, 'flibusta', flibusta, 2, L('Search books and authors on flibusta.net.\nflibusta [-a author] [-t title] [-n number of result]'))]
+execute = [(3, 'flibusta', flibusta, 2, 'Search books and authors on flibusta.net.\nflibusta [-a author] [-t title] [-n number of result]')]

@@ -104,5 +104,5 @@ if GT('iq_version_enable'): timer = [connect_watch,watch_room_activity]
 presence_control = [connect_watch_uni]
 message_control = [connect_watch_uni]
 
-execute = [(6,'watcher',c_watcher,1,L('Connection activity control.')),
-		   (9,'activity',activity_watch,1,L('Show activity of conferences.'))]
+execute = [(6,'watcher',c_watcher,1,'Connection activity control.'),
+		   (9,'activity',activity_watch,1,'Show activity of conferences.')]

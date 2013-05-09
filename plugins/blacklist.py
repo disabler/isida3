@@ -64,4 +64,4 @@ def blacklist(type, jid, nick, text):
 
 global execute
 
-execute = [(9, 'blacklist', blacklist, 2, L('Manage of conferences blacklist.\nblacklist add|del|show|clear\nblacklist add|del room@conference.server.tld - add|remove address from blacklist\nblacklist show - show blacklist\nblacklist clear - clear blacklist'))]
+execute = [(9, 'blacklist', blacklist, 2, 'Manage of conferences blacklist.\nblacklist add|del|show|clear\nblacklist add|del room@conference.server.tld - add|remove address from blacklist\nblacklist show - show blacklist\nblacklist clear - clear blacklist')]

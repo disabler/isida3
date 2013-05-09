@@ -85,8 +85,8 @@ global execute, presence_control
 
 presence_control = [calc_clear]
 
-if not GT('paranoia_mode'): execute = [(3, 'calc', calc, 2, L('Calculator.')),
-	(9, 'exec', exec_ute, 2, L('Execution of external code.'))]
+if not GT('paranoia_mode'): execute = [(3, 'calc', calc, 2, 'Calculator.'),
+	(9, 'exec', exec_ute, 2, 'Execution of external code.')]
 else: execute = []
 
-execute.append((3, 'dpi', dpi_calc, 2, L('DPI calculator.\ndpi <width height size>')))
+execute.append((3, 'dpi', dpi_calc, 2, 'DPI calculator.\ndpi <width height size>'))

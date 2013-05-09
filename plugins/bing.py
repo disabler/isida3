@@ -71,5 +71,5 @@ def bing_translate(type, jid, nick, text):
 
 global execute
 
-execute = [(3, 'bt', bing_translate, 2, L('Bing translator.\nbt [from_language] to_language text - translate text\nbt list - list for available languages for translate\nbt info <reduction> - get info about language reduction\nbt lang <expression> - get languages by expression'))]
+execute = [(3, 'bt', bing_translate, 2, 'Bing translator.\nbt [from_language] to_language text - translate text\nbt list - list for available languages for translate\nbt info <reduction> - get info about language reduction\nbt lang <expression> - get languages by expression')]
 

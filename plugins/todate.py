@@ -113,5 +113,5 @@ def todate(type, jid, nick, text):
 
 global execute
 
-execute = [(3, 'to_date', to_date, 2, L('Calculate count of days for requested date, if the date is holiday, that returned title of holiday.\nSupported date formats: dd.mm.yyyy, dd.mm, dd.mm.yy, yyyy.mm.dd\nSupported splitters: ,-.:/\\\ntodate 05.09\ntodate 5/9/2010')),
-	(3, 'todate', todate, 2, L('Calculate count of days for requested date.\nSupported date formats: dd.mm.yyyy, dd.mm, dd.mm.yy, yyyy.mm.dd\nSupported splitter: ,-.:/\\\ntodate 05.09 before New year remained\ntodate 5/9/2010 before New year remained'))]
+execute = [(3, 'to_date', to_date, 2, 'Calculate count of days for requested date, if the date is holiday, that returned title of holiday.\nSupported date formats: dd.mm.yyyy, dd.mm, dd.mm.yy, yyyy.mm.dd\nSupported splitters: ,-.:/\\\ntodate 05.09\ntodate 5/9/2010'),
+	(3, 'todate', todate, 2, 'Calculate count of days for requested date.\nSupported date formats: dd.mm.yyyy, dd.mm, dd.mm.yy, yyyy.mm.dd\nSupported splitter: ,-.:/\\\ntodate 05.09 before New year remained\ntodate 5/9/2010 before New year remained')]

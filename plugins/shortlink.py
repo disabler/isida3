@@ -39,6 +39,6 @@ def short_qr(type, jid, nick, text): shorter_raw(type, jid, nick, text, SHORT_TI
 
 global execute
 
-execute = [(3, 'clck', short_clck, 2, L('URL Shortener')),
-		   (3, 'tinyurl', short_tinyurl, 2, L('URL Shortener')),
-		   (3, 'qr', short_qr, 2, L('QR-code generator'))]
+execute = [(3, 'clck', short_clck, 2, 'URL Shortener'),
+		   (3, 'tinyurl', short_tinyurl, 2, 'URL Shortener'),
+		   (3, 'qr', short_qr, 2, 'QR-code generator')]

@@ -52,4 +52,4 @@ def sokr(type, jid, nick, text):
 
 global execute
 
-execute = [(3, 'sokr', sokr, 2, L('Abbreviations.\nExamples: sokr abbr, sokr 6 abbr, sokr 3-7 abbr'))]
+execute = [(3, 'sokr', sokr, 2, 'Abbreviations.\nExamples: sokr abbr, sokr 6 abbr, sokr 3-7 abbr')]

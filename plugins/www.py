@@ -201,7 +201,7 @@ global execute
 
 message_act_control = [parse_url_in_message]
 
-execute = [(3, 'www', netwww, 2, L('Show web page.\nwww regexp\n[http://]url - page after regexp\nwww [http://]url - without html tags')),
-		   (3, 'header', netheader, 2, L('Show net header')),
-		   (3, 'isdown', www_isdown, 2, L('Check works site')),
-		   (4, 'rss_search', rss_search, 2, L('Search RSS/ATOM feeds'))]
+execute = [(3, 'www', netwww, 2, 'Show web page.\nwww regexp\n[http://]url - page after regexp\nwww [http://]url - without html tags'),
+		   (3, 'header', netheader, 2, 'Show net header'),
+		   (3, 'isdown', www_isdown, 2, 'Check works site'),
+		   (4, 'rss_search', rss_search, 2, 'Search RSS/ATOM feeds')]

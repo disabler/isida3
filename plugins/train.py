@@ -36,4 +36,4 @@ def train(type, jid, nick, text):
 
 global execute
 
-execute = [(3, 'train', train, 2, L('Train schedules by Yandex. Example: train city1 - city2'))]
+execute = [(3, 'train', train, 2, 'Train schedules by Yandex. Example: train city1 - city2')]

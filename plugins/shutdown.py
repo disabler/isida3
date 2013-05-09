@@ -55,7 +55,7 @@ def bot_soft_update(type, jid, nick, text):
 
 global execute
 
-execute = [(9, 'quit', bot_exit, 2, L('Shutting down the bot. You can set reason.')),
-	 (9, 'restart', bot_restart, 2, L('Restart the bot. You can set reason.')),
-	 (9, 'update', bot_update, 2, L('Update from VCS. You can set reason.')),
-	 (9, 'soft_update', bot_soft_update, 2, L('Soft update from VCS.'))]
+execute = [(9, 'quit', bot_exit, 2, 'Shutting down the bot. You can set reason.'),
+	 (9, 'restart', bot_restart, 2, 'Restart the bot. You can set reason.'),
+	 (9, 'update', bot_update, 2, 'Update from VCS. You can set reason.'),
+	 (9, 'soft_update', bot_soft_update, 2, 'Soft update from VCS.')]

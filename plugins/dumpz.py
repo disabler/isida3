@@ -44,5 +44,5 @@ def dumpz(type, jid, nick, text):
 
 global execute
 
-execute = [(3, 'dumpz', dumpz, 2, L('Posting text&code on dedicated server for easy sharing.\ndumpz text - posting plain text,\ndumpz [sh|c|html|py|php|css|sql|cpp] - posting text with highlighting'))]
+execute = [(3, 'dumpz', dumpz, 2, 'Posting text&code on dedicated server for easy sharing.\ndumpz text - posting plain text,\ndumpz [sh|c|html|py|php|css|sql|cpp] - posting text with highlighting')]
 

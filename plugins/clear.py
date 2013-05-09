@@ -39,4 +39,4 @@ def hidden_clear(type, jid, nick, text):
 
 global execute
 
-execute = [(7, 'clear', hidden_clear, 2, L('Hidden cleaning of conference history.'))]
+execute = [(7, 'clear', hidden_clear, 2, 'Hidden cleaning of conference history.')]

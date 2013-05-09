@@ -33,4 +33,4 @@ def set_nickname(type, jid, nick, text):
 
 global execute
 
-execute = [(8, 'setnick', set_nickname, 2, L('Change bot nick. Available only for conference owner.'))]
+execute = [(8, 'setnick', set_nickname, 2, 'Change bot nick. Available only for conference owner.')]
