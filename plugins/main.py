@@ -667,7 +667,8 @@ def helpme(type, jid, nick, text):
 	elif len(text) > 1:
 		tm,cm = [],[]
 		for tmp in comms:
-			help_descr = L(tmp[4],'%s/%s'%(jid,nick))
+			if '\r' in tmp[4]: help_descr = L('Plugin %s. %s','%s/%s'%(jid,nick)) % (tmp[4].split('\r')[0],L(tmp[4].split('\r',1)[1],'%s/%s'%(jid,nick)))
+			else: help_descr = L(tmp[4],'%s/%s'%(jid,nick))
 			if tmp[1] == text:
 				cm = (tmp[1],tmp[0],help_descr)
 				break

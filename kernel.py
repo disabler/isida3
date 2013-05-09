@@ -1839,7 +1839,7 @@ for pl in plugins:
 		presence_control,message_control,message_act_control,iq_control,timer,execute,iq_hook = [],[],[],[],[],[],[]
 		pprint('Append plugin: %s' % pl,'cyan')
 		execfile(pl_folder % pl)
-		for cm in execute: comms.append((cm[0],cm[1],cm[2],cm[3],L('Plugin %s. %s') % (pl[:-3],cm[4]))+cm[5:])
+		for cm in execute: comms.append((cm[0],cm[1],cm[2],cm[3],'%s\r%s' % (pl[:-3],cm[4]))+cm[5:])
 		for tmr in timer: gtimer.append(tmr)
 		for tmp in presence_control: gpresence.append(tmp)
 		for tmp in message_control: gmessage.append(tmp)
