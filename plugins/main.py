@@ -299,6 +299,7 @@ def show_syslogs_search(type, jid, nick, text):
 	send_msg(type, jid, nick, msg)
 
 def set_locale(type, jid, nick, text):
+	global CURRENT_LOCALE
 	if len(text) >= 2:
 		text = text.lower()
 		lf = loc_folder % text
