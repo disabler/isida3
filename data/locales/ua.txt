@@ -40,7 +40,6 @@ leave	вийшов
 banned in	забанено в
 kicked from	вигнали з
 Bot was %s %s with reason: %s	Бота %s %s з приводу: %s
-Plugin %s. %s	Плагін %s. %s
 Turn on/off commands, access %s	Команди, рівень %s
 Error while join in to %s - %s	Помилка при вході в %s - %s
 Shutdown by CTRL+C...	Якийсь розумник натиснув CTRL+C у консолі...
@@ -673,6 +672,7 @@ pending	розглядається
 accepted	прийнято
 rejected	відхилено
 removed	видалено
+done	виконано
 Pending by	Прийнято до розгляду
 Accepted by	Прийнято
 Rejected by	Відхилено
@@ -862,6 +862,25 @@ without highlight	без підсвічування
 all	всі
 ban server	банити сервер
 Loading...	Завантажуюсь...
+Mon	Пн
+Tue	Вт
+Wed	Ср
+Thu	Чт
+Fri	Пт
+Sat	Сб
+Sun	Нд
+Jan	Січ
+Fed	Лют
+Mar	Бер
+Apr	Кві
+May	Трав
+Jun	Чер
+Jul	Лип
+Aug	Сер
+Sep	Вер
+Oct	Жов
+Nov	Лис
+Dec	Гру
 no limit	без обмежень
 visitor/none	гість без повноважень
 visitor/member	гість і постійний учасник
@@ -897,26 +916,6 @@ Undefined condition	Невизначений стан
 Unexpected request	Несподіваний запит
 Password required	Потрібен пароль
 Members-only	Тільки для постійних учасників
-Mon	Пн
-Tue	Вт
-Wed	Ср
-Thu	Чт
-Fri	Пт
-Sat	Сб
-Sun	Нд
-Winter time	Зимовий час
-Summer time	Літній час
-Jan	Січ
-Fed	Лют
-Mar	Бер
-Apr	Кві
-Jun	Чер
-Jul	Лип
-Aug	Сер
-Sep	Вер
-Oct	Жов
-Nov	Лис
-Dec	Гру
 Ignore list: %s	Я не приймаю команди від %s
 Not found: %s	Не знайдено: %s
 Last syslogs: %s	Останні системні логи: %s
@@ -954,7 +953,6 @@ Aliases not found!	Скорочення не знайдені!
 %s years, %s	%s років, %s
 %s Years, %s	%s року, %s
 %s year, %s	%s рік, %s
-absent	відсутній
 Command prefix: %s	Префікс команд: %s
 Uptime: %s, Last session: %s	Час роботи: %s, Остання сесія: %s
 Total Error(s): %s\n	Помилки: %s\n
@@ -982,6 +980,7 @@ Total commands: %s | Prefix: %s | Your access level: %s | Available commands: %s
 Send donation to: %sBest regards, %s	Реквізити для подяк/допомоги:%sЗ повагою, %s
 access	доступ
 Bot has next access levels:\n-1 - ignored\n0 - minimal access\n1 - at least visitor and none\n2 - at least visitor and member\n3 - at least participant and none\n4 - at least participant and member\n5 - at least moderator and none\n6 - at least moderator and member\n7 - at least moderator and admin\n8 - at least moderator and owner\n9 - bot owner	У бота наступні рівні доступу:\n-1 - ігнорований\n0 - мінімальний доступ\n1 - не нижче гостя без повноважень\n2 - не нижче гостя і постійного учасника\n3 - не нижче учасника без повноважень\n4 - не нижче постійного учасника\n5 - не нижче модератора без повноважень\n6 - не нижче модератора і постійного учасника\n7 - не нижче адміністратора\n8 - не нижче власника конференції\n9 - власник бота
+Plugin %s. %s	Плагін %s. %s
 Access level: %s. %s	Рівень доступу: %s. %s
 Prefix: %s, Available help for commands:\n	Префікс команд: %s, Доступна довідка з команд:\n
 %s Help for command: help command | Commands list: commands	%s Довідка по командам: help команда | Перелік доступних команд: commands
@@ -1669,7 +1668,7 @@ Kernel. Restart timeout for error at bot initial (no connection, auth error)	Ker
 Msgtoadmin. Size limit for msgtoadmin	Msgtoadmin. Ліміт розміру повідомлення для команди msgtoadmin
 LastFM. Number of answers for lastfm plugin	LastFM. Кількість відповідей для команди плагіна lastfm
 Www. User-agent for web queries	Www. User-agent для більшості web-запитів
-Kernel. Iq anti-ddos. Time limits for requests	Kernel. Iq anti-ddos. Ліміт часу на запити
+Muc-filter. Number of empty new lines	Muc-filter. Кількість пустих переводів рядків
 Karma. Upper value of karma for control action	Karma. Верхня межа карми при перевірці правильності значень
 Watcher. Timeout for no actions in room for rejoin	Watcher. Таймаут неактивності конференцій для перезаходу
 Kernel. Notify when bot is kicked or banned	Kernel. Notify. Повідомляти про те, що бота вигнали чи забанили
@@ -1708,9 +1707,9 @@ Muc-filter. Repeat count	Muc-filter. Кількість повторів схо�
 Youtube. Maximal links number	Youtube. Максимальна кількість посилань при показі
 Watcher. Allow self ping	Watcher. Пінгувати самого себе
 Troll. Maximal message number for troll command	Troll. Максимальна кількість повідомлень для команди troll
+Kernel. Iq anti-ddos. Time limits for requests	Kernel. Iq anti-ddos. Ліміт часу на запити
 Iq. Number after point in ping	Iq. Кількість знаків після коми при пінгу
 Muc-filter. Time between presences	Muc-filter. Проміжок часу на статус-презенси
-Muc-filter. Number of empty new lines	Muc-filter. Кількість пустих переводів рядків
 Kernel. Anti-ddos time delay between messages	Kernel. Проміжок між повідомленнями для вмикання анти-ddos
 Muc-filter. Number of precences per time	Muc-filter. Кількість статус-презенсів за час
 Kernel. Exclude symbols from bot's messages	Kernel. Видалити символи із повідомленнь бота
@@ -1739,5 +1738,5 @@ Logs settings	Налаштування логів
 Youtube settings	Налаштування Youtube
 
 # write locale file: ua.txt
-# total: 1460
-# missed translations: 3
+# total: 1422
+# missed translations: 7

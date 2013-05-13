@@ -41,7 +41,6 @@ leave	вышел
 banned in	забанили в
 kicked from	выгнали из
 Bot was %s %s with reason: %s	Бота %s %s по причине: %s
-Plugin %s. %s	Плагин %s. %s
 Turn on/off commands, access %s	Команды, уровень %s
 Error while join in to %s - %s	Ошибка при входе в %s - %s
 Shutdown by CTRL+C...	Какой-то умник нажал CTRL+C в консоли...
@@ -674,6 +673,7 @@ pending	рассматривается
 accepted	принято
 rejected	отклонено
 removed	удалено
+done	выполнено
 Pending by	Принято к рассмотрению
 Accepted by	Принято
 Rejected by	Отклонено
@@ -863,6 +863,25 @@ without highlight	без подсветки
 all	все
 ban server	банить сервер
 Loading...	Загружаюсь...
+Mon	Пн
+Tue	Вт
+Wed	Ср
+Thu	Чт
+Fri	Пт
+Sat	Сб
+Sun	Вс
+Jan	Янв
+Fed	Фев
+Mar	Мар
+Apr	Апр
+May	мая
+Jun	Июн
+Jul	Июл
+Aug	Авг
+Sep	Сен
+Oct	Окт
+Nov	Ноя
+Dec	Дек
 no limit	без ограничений
 visitor/none	гость без полномочий
 visitor/member	гость и постоянный участник
@@ -898,26 +917,6 @@ Undefined condition	Неопределенное состояние
 Unexpected request	Неожиданный запрос
 Password required	Требуется пароль
 Members-only	Только для постоянных участников
-Mon	Пн
-Tue	Вт
-Wed	Ср
-Thu	Чт
-Fri	Пт
-Sat	Сб
-Sun	Вс
-Winter time	Зимнее время
-Summer time	Летнее время
-Jan	Янв
-Fed	Фев
-Mar	Мар
-Apr	Апр
-Jun	Июн
-Jul	Июл
-Aug	Авг
-Sep	Сен
-Oct	Окт
-Nov	Ноя
-Dec	Дек
 Ignore list: %s	Я не принимаю команды от: %s
 Not found: %s	Не найдено: %s
 Last syslogs: %s	Последние системные логи: %s
@@ -955,7 +954,6 @@ Aliases not found!	Сокращения не найдены!
 %s years, %s	%s лет, %s
 %s Years, %s	%s года, %s
 %s year, %s	%s год, %s
-absent	отсутствует
 Command prefix: %s	Префикс команд: %s
 Uptime: %s, Last session: %s	Время работы: %s, Последняя сессия: %s
 Total Error(s): %s\n	Ошибки: %s\n
@@ -983,6 +981,7 @@ Total commands: %s | Prefix: %s | Your access level: %s | Available commands: %s
 Send donation to: %sBest regards, %s	Реквизиты для благодарностей/помощи:%sС Уважением, %s
 access	доступ
 Bot has next access levels:\n-1 - ignored\n0 - minimal access\n1 - at least visitor and none\n2 - at least visitor and member\n3 - at least participant and none\n4 - at least participant and member\n5 - at least moderator and none\n6 - at least moderator and member\n7 - at least moderator and admin\n8 - at least moderator and owner\n9 - bot owner	У бота следующие уровни доступа:\n-1 - игнорируемый\n0 - минимальный доступ\n1 - не ниже гостя без полномочий\n2 - не ниже гостя и постоянного участника\n3 - не ниже участника без полномочий\n4 - не ниже постоянного участника\n5 - не ниже модератора без полномочий\n6 - не ниже модератора и постоянного участника\n7 - не ниже администратора\n8 - не ниже владельца конференции\n9 - владелец бота
+Plugin %s. %s	Плагин %s. %s
 Access level: %s. %s	Уровень доступа: %s. %s
 Prefix: %s, Available help for commands:\n	Префикс команд: %s, Доступна справка по командам:\n
 %s Help for command: help command | Commands list: commands	%s Справка по командам: help команда | Список доступных команд: commands
@@ -1633,6 +1632,7 @@ Iq. Allow answer to time request	Iq. Разрешение отвечать на 
 Logger. Enable system logs	Logger. Включение системных логов
 Muc-filter. Time for reconnect count	Muc-filter. Промежуток времени на переподключения
 Logger. Enable status change logging	Logger. Запись в логи смены статусов
+Muc-filter. Notify about abnormal activity	Muc-filter. Уведомления. Уведомления о ненормальной активности
 Troll. Default message number for troll command	Troll. Количество сообщений для команды troll
 Troll. Delay between messages for troll command	Troll. Задержка отправки сообщений для команды troll
 Karma. Minimal karma for allow krama change for participants	Karma. Минимальная карма при которой изменение кармы доступно не постоянным участникам
@@ -1646,6 +1646,7 @@ Karma. Time for karma change from access level	Karma. Время, через к�
 Clear. Delay between massages in clear command	Clear. Задержка между сообщениями при команде clear
 Muc-filter. Number of reconnects for monitoring	Muc-filter. Количество переподключений для мониторинга
 Iq. Timeout for iq queries	Iq. Таймаут в секундах на iq запросы
+Muc-filter. Jid's for notify	Muc-filter. Уведомления. Jid'ы для уведомлений
 Karma. Lower value of karma for control action	Karma. Нижний предел кармы при проверки правильности значений
 Youtube. Page size limit	Youtube. Лимит размера страницы при загрузке
 Logger. Additional text for logs	Logger. Дополнительный текст в конце html лога
@@ -1656,6 +1657,7 @@ Kernel. Bot status. Message while loading	Kernel. Bot status. Статус-со�
 Disco. Maximus andwers count for disco command	Disco. Максимальное количество ответов для команды disco
 Spy. Time for reaction on spy scan	Spy. Интервал реакции на сканирование для команды spy
 Iq. Allow answer to version request	Iq. Разрешение отвечать на запрос версии бота
+Muc-filter. Time between notifies	Muc-filter. Уведомления. Время между уведомлениями
 Watcher. Frequency of requests in watcher	Watcher. Период запросов в секундах для плагина watcher
 Logger. Use GMT time in MUC logs	Logger. Использовать GMT время в логах конференций
 Iq. Allow answer to ping	Iq. Разрешение отвечать на запрос пинга
@@ -1668,9 +1670,10 @@ Logger. Enable role and affiliation logging	Logger. Запись в логи с�
 Disco. Exclude from disco by regexps	Disco. Исключать из обзора по регекспу
 Kernel. Restart timeout for error at bot initial (no connection, auth error)	Kernel. Таймаут рестарта бота при ошибке не стадии подключения (нет инета, ошибка авторизации)
 Msgtoadmin. Size limit for msgtoadmin	Msgtoadmin. Лимит размера сообщения для команды msgtoadmin
+Muc-filter. Time peroid for notify	Muc-filter. Уведомления. Период времени для уведомления
 LastFM. Number of answers for lastfm plugin	LastFM. Количество ответов для команд плагина lastfm
 Www. User-agent for web queries	Www. User-agent для большинства web-запросов
-Kernel. Iq anti-ddos. Time limits for requests	Kernel. Iq anti-ddos. Лимит времени на запросы
+Muc-filter. Number of empty new lines	Muc-filter. Количество пустых переводов строк
 Karma. Upper value of karma for control action	Karma. Верхний предел кармы при проверки правильности значений
 Watcher. Timeout for no actions in room for rejoin	Watcher. Таймаут неактивности конференции для перезахода
 Kernel. Notify when bot is kicked or banned	Kernel. Notify. Уведомлять о том, что бота выгнали или забанили
@@ -1709,9 +1712,10 @@ Muc-filter. Repeat count	Muc-filter. Количество повторов по�
 Youtube. Maximal links number	Youtube. Максимальное количество ссылок при показе
 Watcher. Allow self ping	Watcher. Пинговать самого себя
 Troll. Maximal message number for troll command	Troll. Максимальное количество сообщений для команды troll
+Kernel. Iq anti-ddos. Time limits for requests	Kernel. Iq anti-ddos. Лимит времени на запросы
+Muc-filter. Count of events for notify	Muc-filter. Уведомления. Количество событий для уведомления
 Iq. Number after point in ping	Iq. Количество знаков после запятой при пинге
 Muc-filter. Time between presences	Muc-filter. Промежуток времени на статус-презенсы
-Muc-filter. Number of empty new lines	Muc-filter. Количество пустых переводов строк
 Notepad	Блокнот
 Kernel. Anti-ddos time delay between messages	Kernel. Промежуток между сообщениями для включения анти-ddos
 Muc-filter. Number of precences per time	Muc-filter. Количество статус-презенсов за время
@@ -1741,5 +1745,5 @@ Logs settings	Настройки логов
 Youtube settings	Настройки youtube
 
 # write locale file: ru.txt
-# total: 1460
-# missed translations: 2
+# total: 1422
+# regenarated without mistakes!
