@@ -137,33 +137,37 @@ def parse_url_in_message(room,jid,nick,type,text):
 	if get_level(room,nick)[0] < 4: return
 	content_title = None
 	if get_config(getRoom(room),'store_users_url'):
-			rjid = getRoom(jid)
-			for t in text.split():
-				link = re.findall(r'(http[s]?://.*)',t)
-				if link:
-					link = link[0].split(' ')[0].split('"')[0].split('\'')[0]
-					if not cur_execute_fetchone('select * from url where room=%s and jid=%s and url=%s',(room,rjid,link)):
-						ttext = get_content_title(link)
-						if ttext:
-							ttext = to_censore(rss_del_html(rss_replace(ttext)),room)
-							content_title = [link,ttext]
-						else:						
-							is_file,ttext = False,''
-							ll = link.lower()
-							for t in url_watch_ignore:
-								if ll.endswith('.%s' % t):
-									is_file = True
-									break
-							if is_file:
-								body, result = get_opener(enidna(link))
-								if result:
-									body = unicode(body.headers)
-									try: mt = float(re.findall('Content-Length.*?([0-9]+)', body, re.S+re.U+re.I)[0])
-									except: mt = None
-									if mt: ttext = L('Content length %s','%s/%s'%(jid,nick)) % get_size_human(mt)
-									else: ttext = ''
-						pprint('Store url: %s in %s/%s' % (link,room,nick),'white')
-						cur_execute('insert into url values (%s,%s,%s,%s,%s,%s);',(room,rjid,nick,int(time.time()),link,ttext))
+		rjid = getRoom(jid)
+		for t in text.split():
+			link = re.findall(r'(http[s]?://.*)',t)
+			if link:
+				link = link[0].split(' ')[0].split('"')[0].split('\'')[0]
+				if not cur_execute_fetchone('select * from url where room=%s and jid=%s and url=%s',(room,rjid,link)):
+					ttext = get_content_title(link)
+					if ttext:
+						ttext = to_censore(rss_del_html(rss_replace(ttext)),room)
+						content_title = [link,ttext]
+					else:						
+						is_file,ttext = False,''
+						ll = link.lower()
+						for t in url_watch_ignore:
+							if ll.endswith('.%s' % t):
+								is_file = True
+								break
+						if is_file:
+							body, result = get_opener(enidna(link))
+							if result:
+								try: body = unicode(body.headers)
+								except:
+									pprint('!!! Broken http header at %s' % link,'red')
+									logging.exception(' [%s] ' % timeadd(tuple(time.localtime())))
+									body = ''
+								try: mt = float(re.findall('Content-Length.*?([0-9]+)', body, re.S+re.U+re.I)[0])
+								except: mt = None
+								if mt: ttext = L('Content length %s','%s/%s'%(jid,nick)) % get_size_human(mt)
+								else: ttext = ''
+					pprint('Store url: %s in %s/%s' % (link,room,nick),'white')
+					cur_execute('insert into url values (%s,%s,%s,%s,%s,%s);',(room,rjid,nick,int(time.time()),link,ttext))
 	was_shown = False
 	if get_config(getRoom(room),'url_title'):
 		try:
