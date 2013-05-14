@@ -351,7 +351,7 @@ def comm_on_off(type, jid, nick, text):
 		cmd = text[0]
 		cmds = text[1:]
 		if cmd == 'on':
-			if not cmds: msg = L('What disable?','%s/%s'%(jid,nick))
+			if not cmds: msg = L('What enable?','%s/%s'%(jid,nick))
 			else:
 				not_found,enabled,already = [],[],[]
 				for t in cmds:
@@ -366,7 +366,7 @@ def comm_on_off(type, jid, nick, text):
 				if not_found: msg.append(L('Commands not found: %s','%s/%s'%(jid,nick)) % ', '.join(not_found))
 				msg = '\n'.join(msg)
 		elif cmd == 'off':
-			if not cmds: msg = L('What enable?','%s/%s'%(jid,nick))
+			if not cmds: msg = L('What disable?','%s/%s'%(jid,nick))
 			else:
 				not_found,disabled,already = [],[],[]
 				for t in cmds:
