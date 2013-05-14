@@ -1420,9 +1420,9 @@ def configure(type, jid, nick, text):
 			tmp = config_prefs.keys()
 			tmp.sort()
 			msg = ''
-			for t in tmp: msg += '\n[%s] - ' % t + config_prefs[t][0] % onoff(get_config(getRoom(jid),t))
+			for t in tmp: msg += '\n[%s] - ' % t + L(config_prefs[t][0],'%s/%s'%(jid,nick)) % onoff(get_config(getRoom(jid),t))
 			msg = L('Current status: %s','%s/%s'%(jid,nick)) % msg
-		elif param in config_prefs: msg = config_prefs[param][0] % onoff(get_config(getRoom(jid),param))
+		elif param in config_prefs: msg = L(config_prefs[param][0],'%s/%s'%(jid,nick)) % onoff(get_config(getRoom(jid),param))
 		else:
 			tmp = config_prefs.keys()
 			tmp.sort()
@@ -1448,7 +1448,7 @@ def configure(type, jid, nick, text):
 				for tmp in config_prefs[to_conf][2]: msg += ['%s (%s), ' % (onoff_no_tr(tmp),onoff(tmp)),'%s, ' % onoff_no_tr(tmp)][onoff_no_tr(tmp) == onoff(tmp)]
 			else: msg += L('text field','%s/%s'%(jid,nick)) + '  '
 			msg = L('Available items: %s','%s/%s'%(jid,nick)) % msg[:-2]
-		elif param == '': msg = config_prefs[to_conf][0] % onoff(get_config(getRoom(jid),to_conf))
+		elif param == '': msg = L(config_prefs[to_conf][0],'%s/%s'%(jid,nick)) % onoff(get_config(getRoom(jid),to_conf))
 		else:
 			if not config_prefs[to_conf][2]: ssta = param
 			else:
@@ -1460,7 +1460,7 @@ def configure(type, jid, nick, text):
 				else: ssta = ''
 			if len(str(ssta)):
 				put_config(getRoom(jid),to_conf,ssta)
-				msg = config_prefs[to_conf][0] % onoff(ssta)
+				msg = L(config_prefs[to_conf][0],'%s/%s'%(jid,nick)) % onoff(ssta)
 			else: msg = L('Unknown item!','%s/%s'%(jid,nick))
 	else: msg = L('Unknown item!','%s/%s'%(jid,nick))
 	send_msg(type, jid, nick, msg)
