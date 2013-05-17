@@ -1037,7 +1037,7 @@ def info(type, jid, nick):
 	msg += L('Server: %s | Nick: %s\n','%s/%s'%(jid,nick)) % (lastserver,lastnick)
 	msg += L('Message size limit: %s\n','%s/%s'%(jid,nick)) % msg_limit
 	msg += L('Local time: %s\n','%s/%s'%(jid,nick)) % timeadd(tuple(time.localtime()))
-	msg += L('Uptime: %s, Last session: %s','%s/%s'%(jid,nick)) % (un_unix(int(time.time()-starttime),'%s/%s'%(jid,nick)), un_unix(int(time.time())-sesstime),'%s/%s'%(jid,nick))
+	msg += L('Uptime: %s, Last session: %s','%s/%s'%(jid,nick)) % (un_unix(int(time.time()-starttime),'%s/%s'%(jid,nick)), un_unix(int(time.time())-sesstime,'%s/%s'%(jid,nick)))
 	floods = get_config(getRoom(jid),'flood')
 	censors = get_config(getRoom(jid),'censor')
 	msg += L('\nFlood: %s | Censor: %s | Prefix: %s','%s/%s'%(jid,nick)) % (onoff(floods),onoff(censors),L(get_prefix(get_local_prefix(jid)),'%s/%s'%(jid,nick)))
