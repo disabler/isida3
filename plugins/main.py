@@ -1048,13 +1048,22 @@ def info(type, jid, nick):
 	msg += L('\nUnknown out: %s','%s/%s'%(jid,nick)) % unknown_out
 	msg += L('\nCycles used: %s | unused: %s','%s/%s'%(jid,nick)) % (cycles_used,cycles_unused)
 	if not GT('paranoia_mode'):
-		try: memstat = tuple([get_size_human(int(t)*1024.0) for t in shell_execute('ps -o vsz,rss -p %s' % os.getpid(),'%s/%s'%(jid,nick)).split()[2:]])
+		try:
+			memstat = tuple([get_size_human(int(t)*1024.0) for t in shell_execute('ps -o vsz,rss -p %s' % os.getpid(),'%s/%s'%(jid,nick)).split()[2:]])
+			if not memstat or len(memstat) != 2: raise
 		except: memstat = (L('Unknown','%s/%s'%(jid,nick)),L('Unknown','%s/%s'%(jid,nick)))
 		msg += L('\nRAM for bot: %s (virtual), %s (real)','%s/%s'%(jid,nick)) % memstat
 		if base_type == 'pgsql':
-			try: memstat = tuple([get_size_human(int(t)*1024.0) for t in shell_execute('ps u -U postgres | grep "%s %s %s"' % (base_name,base_user,base_host)).split()[4:6]])
+			try:
+				memstat = tuple([get_size_human(int(t)*1024.0) for t in shell_execute('ps u -U postgres | grep "%s %s %s"' % (base_name,base_user,base_host)).split()[4:6]])
+				if not memstat or len(memstat) != 2: raise
 			except: memstat = (L('Unknown','%s/%s'%(jid,nick)),L('Unknown','%s/%s'%(jid,nick)))
 			msg += L('\nRAM for database: %s (virtual), %s (real)','%s/%s'%(jid,nick)) % memstat
+		elif base_type == 'mysql':
+			# TODO: add detect ram usage for mysql base!
+			memstat = (L('Unknown','%s/%s'%(jid,nick)),L('Unknown','%s/%s'%(jid,nick)))
+			msg += L('\nRAM for database: %s (virtual), %s (real)','%s/%s'%(jid,nick)) % memstat
+		elif base_type == 'sqlite3': msg += L('\nDatabase size: %s','%s/%s'%(jid,nick)) % get_size_human(os.path.getsize(sqlite_base))
 	send_msg(type, jid, nick, msg)
 
 def info_base(type, jid, nick):
