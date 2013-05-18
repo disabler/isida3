@@ -924,11 +924,11 @@ Locale not found!	Локалізація не знайдена!
 Current locale: %s	Поточна локалізація: %s
 Command temporary blocked!	Команда тимчасово блокована
 ok	ок
-What disable?	Що вимкнути?
+What enable?	Що ввімкнути?
 Enabled commands: %s	Увімкнені команди: %s
 Not disabled commands: %s	Не відключені команди: %s
 Commands not found: %s	Не знайдені команди: %s
-What enable?	Що ввімкнути?
+What disable?	Що вимкнути?
 Disabled commands: %s	Вимкнені команди: %s
 Commands disabled before: %s	Вимкнені раніше команди: %s
 Disabled commands not found!	Для даної конференції немає вимкнених команд!
@@ -1019,7 +1019,6 @@ Local time: %s\n	Місцевий час: %s\n
 \nIq in: %s | out: %s	\nIq вх: %s | вих: %s
 \nUnknown out: %s	\nПомилок вих: %s
 \nCycles used: %s | unused: %s	\nРобочих циклів: %s | холостих: %s
-\nUsed virtual ram: %s, Used real ram: %s	\nПам'ять віртуальна: %s, реальна: %s
 What need find?	Що знайти?
 I see you as %s/%s	Я бачу тебе як %s/%s
 What do you need to find?	Що ж будемо шукати?
@@ -1738,5 +1737,5 @@ Logs settings	Налаштування логів
 Youtube settings	Налаштування Youtube
 
 # write locale file: ua.txt
-# total: 1422
-# missed translations: 7
+# total: 1423
+# missed translations: 9

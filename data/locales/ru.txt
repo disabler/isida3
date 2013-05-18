@@ -925,11 +925,11 @@ Locale not found!	Локализация не найдена!
 Current locale: %s	Текущая локализация: %s
 Command temporary blocked!	Команда временно блокирована!
 ok	ок
-What disable?	Что отключить?
+What enable?	Что включить?
 Enabled commands: %s	Включены команды: %s
 Not disabled commands: %s	Не отключены команды: %s
 Commands not found: %s	Не найдены команды: %s
-What enable?	Что включить?
+What disable?	Что отключить?
 Disabled commands: %s	Отключены команды: %s
 Commands disabled before: %s	Отключенные ранее команды: %s
 Disabled commands not found!	Для данной конференции нет отключенных команд!
@@ -1020,7 +1020,8 @@ Local time: %s\n	Локальное время: %s\n
 \nIq in: %s | out: %s	\nIq запросов вх: %s | исх: %s
 \nUnknown out: %s	\nОшибок исх: %s
 \nCycles used: %s | unused: %s	\nРабочих циклов: %s | холостых: %s
-\nUsed virtual ram: %s, Used real ram: %s	\nПамять виртуальная: %s, реальная: %s
+\nRAM for bot: %s (virtual), %s (real)	\nПамять под бота: %s (виртуальная), %s (реальная)
+\nRAM for database: %s (virtual), %s (real)	\nПамять под базу данных: %s (виртуальная), %s (реальная)
 What need find?	Что найти?
 I see you as %s/%s	Ты виден мне как %s/%s
 What do you need to find?	Чего искать то будем?
@@ -1745,5 +1746,5 @@ Logs settings	Настройки логов
 Youtube settings	Настройки youtube
 
 # write locale file: ru.txt
-# total: 1422
-# regenarated without mistakes!
+# total: 1423
+# missed translations: 2
