@@ -1826,7 +1826,7 @@ execfile(pl_folder % 'main.py')
 
 GTIMER_DEF  = [check_rss,check_hash_actions,clean_user_and_server_hash]
 pliname		= data_folder % 'ignored.txt'
-gtimer		= GTIMER_DEF
+gtimer		= list(GTIMER_DEF)
 gpresence	= []
 gmessage	= []
 gactmessage	= []
@@ -2027,7 +2027,7 @@ while 1:
 				id_category,id_type,id_lang,id_name,capsHash = init_hash()
 				pprint('*** Reload main plugin','white')
 				execfile(pl_folder % 'main.py')
-				gtimer,gpresence,gmessage,gactmessage,giq_hook = GTIMER_DEF,[],[],[],[]
+				gtimer,gpresence,gmessage,gactmessage,giq_hook = list(GTIMER_DEF),[],[],[],[]
 				pprint('*** Reload other plugins','white')
 				pl,pl_ignore,plugins = os.listdir(pl_folder % ''),getFile(pliname,[]),[]
 				for tmp in pl:
