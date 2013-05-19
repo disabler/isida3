@@ -17,6 +17,7 @@ data/paste/*.gif
 data/paste/*.png
 data/paste/*.
 data/poke.txt
+data/stats/*
 data/sqlite3.db
 data/url/config.py
 lib/DNS/*.pyc
