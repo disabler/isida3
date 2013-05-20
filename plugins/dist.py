@@ -58,7 +58,8 @@ def city(type, jid, nick, text):
 				if abs(float(coords[0])) < 90 and abs(float(coords[1])) < 180:
 					if not cur_execute_fetchone('select * from dist_user where point ilike %s',(place,)):
 						cur_execute('insert into dist_user values (%s,%s,%s)',(place,coords[1],coords[0]))
-						conn.commit()
+						if base_type not in ['sqlite3','mysql']:
+							conn.commit()
 						msg = L('Added!','%s/%s'%(jid,nick))
 					else: msg = L('This point is in database!','%s/%s'%(jid,nick))
 			elif len(GT('yandex_api_key')) > 60:
@@ -69,7 +70,8 @@ def city(type, jid, nick, text):
 				coords = j['response']['GeoObjectCollection']['featureMember'][0]['GeoObject']['Point']['pos'].split()
 				if not cur_execute_fetchone('select * from dist_user where point ilike %s',(place,)):
 					cur_execute('insert into dist_user values (%s,%s,%s)',(place,coords[1],coords[0]))
-					conn.commit()
+					if base_type not in ['sqlite3','mysql']:
+						conn.commit()
 					msg = L('Added: ','%s/%s'%(jid,nick)) + place_ext + L(' as ','%s/%s'%(jid,nick)) + '"%s"' % place
 				else: msg = L('This point is in database!','%s/%s'%(jid,nick))
 			else: msg = L('Not found Yandex.Map API. Get API-key on http://api.yandex.ru/maps/form.xml','%s/%s'%(jid,nick))
@@ -77,7 +79,8 @@ def city(type, jid, nick, text):
 	elif parameters[0] == 'del' and get_level(jid,nick)[0] == 9:
 		if cur_execute_fetchone('select * from dist_user where point ilike %s',(parameters[1].lower(),)):
 			cur_execute('delete from dist_user where point=%s',(parameters[1].lower(),))
-			conn.commit()
+			if base_type not in ['sqlite3','mysql']:
+				conn.commit()
 			msg = L('Deleted!','%s/%s'%(jid,nick))
 		else: msg = L('This point isn\'t in database!','%s/%s'%(jid,nick))
 	elif parameters[0] == 'map':

@@ -59,9 +59,9 @@ def bugmenot(type, jid, nick,text):
 	result = ''
 	text = text.strip()
 	if text:
-		conn = httplib.HTTPConnection('www.bugmenot.com')
-		conn.request('GET', '/view/' + text.encode("utf-8"))
-		r = conn.getresponse().read()
+		connct = httplib.HTTPConnection('www.bugmenot.com')
+		connct.request('GET', '/view/' + text.encode("utf-8"))
+		r = connct.getresponse().read()
 		try: key = int(re.findall('var key = (\d+)',r)[0])
 		except: key = ''
 		blocked = '<h2>Site Blocked</h2>' in r

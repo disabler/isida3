@@ -77,7 +77,8 @@ def addAnswerToBase(tx):
 	if not len(tx) or tx.count(' ') == len(tx): return
 	lent = len(cur_execute_fetchall('select ind from answer'))+1
 	cur_execute('insert into answer values (%s,%s)', (lent,tx))
-	conn.commit()
+	if base_type not in ['sqlite3','mysql']:
+		conn.commit()
 
 def getRandomAnswer(tx,room):
 	if not tx.strip(): return None
