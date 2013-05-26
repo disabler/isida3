@@ -46,14 +46,23 @@ def reban_async(type, jid, nick, lim, iq_stanza):
 		_servers = [t for t in _jids if '@' not in t]
 		_new_servers = [t for t in _srv_count.keys() if _srv_count[t] >= lim and t not in _servers]
 		_need_remove = [t for t in _jids if '@' in t and t.split('@',1)[1] in _servers + _new_servers]
+		
+		_limit = get_config_int(getRoom(jid),'make_stanza_jid_count')
 		nodes = []
 		for t in _new_servers:
 			reason = [xmpp.Node('reason',{},'Rebanned as dangerous! Found jids: %s' % _srv_count[t])]
 			nodes.append(xmpp.Node('item',{'affiliation':'outcast', 'jid':t},reason))
-		sender(xmpp.Node('iq', {'id': get_id(), 'type': 'set', 'to':jid}, payload = [xmpp.Node('query', {'xmlns': xmpp.NS_MUC_ADMIN},nodes)]))
+			if len(nodes) >= _limit:
+				sender(xmpp.Node('iq', {'id': get_id(), 'type': 'set', 'to':jid}, payload = [xmpp.Node('query', {'xmlns': xmpp.NS_MUC_ADMIN},nodes)]))
+				nodes = []
+		if nodes: sender(xmpp.Node('iq', {'id': get_id(), 'type': 'set', 'to':jid}, payload = [xmpp.Node('query', {'xmlns': xmpp.NS_MUC_ADMIN},nodes)]))
 		nodes = []
-		for t in _need_remove: nodes.append(xmpp.Node('item',{'affiliation':'none', 'jid':t},[]))
-		sender(xmpp.Node('iq', {'id': get_id(), 'type': 'set', 'to':jid}, payload = [xmpp.Node('query', {'xmlns': xmpp.NS_MUC_ADMIN},nodes)]))
+		for t in _need_remove:
+			nodes.append(xmpp.Node('item',{'affiliation':'none', 'jid':t},[]))
+			if len(nodes) >= _limit:
+				sender(xmpp.Node('iq', {'id': get_id(), 'type': 'set', 'to':jid}, payload = [xmpp.Node('query', {'xmlns': xmpp.NS_MUC_ADMIN},nodes)]))
+				nodes = []
+		if nodes: sender(xmpp.Node('iq', {'id': get_id(), 'type': 'set', 'to':jid}, payload = [xmpp.Node('query', {'xmlns': xmpp.NS_MUC_ADMIN},nodes)]))
 		msg = L('Unbaned jids: %s\nBanned servers: %s .. %s','%s/%s'%(jid,nick)) % (len(_need_remove), len(_new_servers), ', '.join(_new_servers))
 	send_msg(type, jid, nick, msg)
 
