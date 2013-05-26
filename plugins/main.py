@@ -1531,6 +1531,7 @@ config_prefs = {'url_title': ['Url title is %s', 'Automatic show title of urls i
 				'paste_xhtml_images': ['Paste xhtml images %s', 'Detect and paste xhtml images in messages', [True,False], True],
 				'use_default_locale': ['Use default locale %s', 'Ignore locale settings and use default bot locale', [True,False], False],
 				'store_users_url': ['Store Users URL %s', 'Store Users URL', [True,False], True],
+				'trusted_servers': ['Trusted servers %s', 'Servers list marked as trusted. They are excluded from any actions with servers', None, ''],
 
 				# MUC-Filter messages
 
@@ -1655,7 +1656,7 @@ config_prefs = {'url_title': ['Url title is %s', 'Automatic show title of urls i
 
 config_group_other = ['Other settings','#room-other',
 				['url_title','parse_define','clear_answer','smiles','autoturn','make_stanza_jid_count','content_length','acl_multiaction',
-				'paste_xhtml_images','use_default_locale','store_users_url'],None]
+				'paste_xhtml_images','use_default_locale','store_users_url','trusted_servers'],None]
 
 config_group_censor = ['Censor settings','#room-censor',
 				['censor','censor_warning','censor_action_member','censor_action_non_member',

@@ -60,7 +60,7 @@ def cur_execute_sqlite3(*params):
 	par = True
 	try:
 		params = list(params)
-		params[0] = params[0].replace(' ilike ',' like ').replace('%s','?')
+		params[0] = params[0].replace('%s','?').replace(' ilike ',' like ').replace(' update ',' `update` ').replace(' repeat ',' `repeat` ').replace(' option ',' `option` ').replace(' count ',' `count` ').replace(' match ',' `match` ')
 		params = tuple(params)
 		cur.execute(*params)
 		prm = params[0].split()[0].lower()
@@ -122,7 +122,7 @@ def cur_execute_fetchone_sqlite3(*params):
 	par = None
 	try:
 		params = list(params)
-		params[0] = params[0].replace(' ilike ',' like ').replace('%s','?')
+		params[0] = params[0].replace('%s','?').replace(' ilike ',' like ').replace(' update ',' `update` ').replace(' repeat ',' `repeat` ').replace(' option ',' `option` ').replace(' count ',' `count` ').replace(' match ',' `match` ')
 		params = tuple(params)
 		cur.execute(*params)
 		try: par = cur.fetchone()
@@ -191,7 +191,7 @@ def cur_execute_fetchall_sqlite3(*params):
 	par = None
 	try:
 		params = list(params)
-		params[0] = params[0].replace(' ilike ',' like ').replace('%s','?')
+		params[0] = params[0].replace('%s','?').replace(' ilike ',' like ').replace(' update ',' `update` ').replace(' repeat ',' `repeat` ').replace(' option ',' `option` ').replace(' count ',' `count` ').replace(' match ',' `match` ')
 		params = tuple(params)
 		cur.execute(*params)
 		try: par = cur.fetchall()
@@ -261,7 +261,7 @@ def cur_execute_fetchmany_sqlite3(*params):
 	except: return None
 	try:
 		params = list(params)
-		params[0] = params[0].replace(' ilike ',' like ').replace('%s','?')
+		params[0] = params[0].replace('%s','?').replace(' ilike ',' like ').replace(' update ',' `update` ').replace(' repeat ',' `repeat` ').replace(' option ',' `option` ').replace(' count ',' `count` ').replace(' match ',' `match` ')
 		params = tuple(params)
 		cur.execute(params[0],params[1])
 		try: par = cur.fetchmany(params[-1])

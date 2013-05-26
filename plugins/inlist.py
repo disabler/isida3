@@ -21,6 +21,42 @@
 #                                                                             #
 # --------------------------------------------------------------------------- #
 
+def reban(type, jid, nick, text):
+	try: lim = int(text)
+	except:
+		send_msg(type, jid, nick, L('Error in parameters. Read the help about command.','%s/%s'%(jid,nick)))
+		return
+	global banbase,iq_request
+	iqid = get_id()
+	i = xmpp.Node('iq', {'id': iqid, 'type': 'get', 'to':getRoom(jid)}, payload = [xmpp.Node('query', {'xmlns': xmpp.NS_MUC_ADMIN},[xmpp.Node('item',{'affiliation':'outcast'})])])
+	iq_request[iqid]=(time.time(),reban_async,[type, jid, nick, lim],xmpp.NS_MUC_ADMIN)
+	sender(i)
+
+def reban_async(type, jid, nick, lim, iq_stanza):
+	is_answ = unicode(iq_stanza[1][0])
+	if is_answ.startswith(L('Error!','%s/%s'%(jid,nick))): msg = is_answ
+	else:
+		_trusted = get_config(getRoom(jid),'trusted_servers').split()
+		_jids = [tmp.getAttr('jid') for tmp in iq_stanza[1][0].getTag('query',namespace=xmpp.NS_MUC_ADMIN).getTags('item')]
+		_srv_count = {}
+		for t in _jids:
+			if '@' in t:
+				_t = t.split('@',1)[1]
+				if _t not in _trusted: _srv_count[_t] = _srv_count[_t] + 1 if _srv_count.has_key(_t) else 1
+		_servers = [t for t in _jids if '@' not in t]
+		_new_servers = [t for t in _srv_count.keys() if _srv_count[t] >= lim and t not in _servers]
+		_need_remove = [t for t in _jids if '@' in t and t.split('@',1)[1] in _servers + _new_servers]
+		nodes = []
+		for t in _new_servers:
+			reason = [xmpp.Node('reason',{},'Rebanned as dangerous! Found jids: %s' % _srv_count[t])]
+			nodes.append(xmpp.Node('item',{'affiliation':'outcast', 'jid':t},reason))
+		sender(xmpp.Node('iq', {'id': get_id(), 'type': 'set', 'to':jid}, payload = [xmpp.Node('query', {'xmlns': xmpp.NS_MUC_ADMIN},nodes)]))
+		nodes = []
+		for t in _need_remove: nodes.append(xmpp.Node('item',{'affiliation':'none', 'jid':t},[]))
+		sender(xmpp.Node('iq', {'id': get_id(), 'type': 'set', 'to':jid}, payload = [xmpp.Node('query', {'xmlns': xmpp.NS_MUC_ADMIN},nodes)]))
+		msg = L('Unbaned jids: %s\nBanned servers: %s .. %s','%s/%s'%(jid,nick)) % (len(_need_remove), len(_new_servers), ', '.join(_new_servers))
+	send_msg(type, jid, nick, msg)
+
 def inban(type, jid, nick, text): inlist_raw(type, jid, nick, text, 'outcast', L('Total banned: %s','%s/%s'%(jid,nick)))
 def inowner(type, jid, nick, text): inlist_raw(type, jid, nick, text, 'owner', L('Total owners: %s','%s/%s'%(jid,nick)))
 def inadmin(type, jid, nick, text): inlist_raw(type, jid, nick, text, 'admin', L('Total admins: %s','%s/%s'%(jid,nick)))
@@ -62,4 +98,5 @@ global execute
 execute = [(7, 'inban', inban, 2, 'Search in outcast list of conference.'),
 	 (7, 'inmember', inmember, 2, 'Search in members list of conference.'),
 	 (7, 'inadmin', inadmin, 2, 'Search in admins list of conference.'),
-	 (7, 'inowner', inowner, 2, 'Search in owners list of conference.')]
+	 (7, 'inowner', inowner, 2, 'Search in owners list of conference.'),
+	 (8, 'reban', reban, 2, 'Cleen up outcast list. Replace different jids from same server by one server jid\nreban <count>')]

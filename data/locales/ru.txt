@@ -583,6 +583,7 @@ presence	презенс
 Idle time	Время с момента последней активности
 
 # file: plugins/inlist.py
+Unbaned jids: %s\nBanned servers: %s .. %s	Разбанено jid'ов: %s\nЗабанено серверов: %s .. %s
 Total banned: %s	Всего в бане: %s
 Total owners: %s	Всего владельцев: %s
 Total admins: %s	Всего администраторов: %s
@@ -592,6 +593,7 @@ Search in outcast list of conference.	Поиск по outcast списку ко�
 Search in members list of conference.	Поиск по members списку конференции.
 Search in admins list of conference.	Поиск по admins списку конференции.
 Search in owners list of conference.	Поиск по owners списку конференции.
+Cleen up outcast list. Replace different jids from same server by one server jid\nreban <count>	Очистка бани. Заменяет несколько jid'ов с одного сервера на бан сервера
 
 # file: plugins/invite.py
 %s ishere!	%s находится тут!
@@ -1566,6 +1568,8 @@ Censor action for non member is %s	Действие цензора на не п�
 Censor action for non member	Действие цензора на не постоянных участников
 Flood is %s	Флуд: %s
 Autoanswer	Включение/выключение самообучающегося автоответчика
+Trusted servers %s	Доверенные сервера %s
+Servers list marked as trusted. They are excluded from any actions with servers	Сервера, отмеченные как доверенные. Данные сервера исключаются из любый действий с серверами.
 Bomb. Wire count is %s	Bomb. Количество проводов у бомбы: %s
 Wire count for bomb	Количество проводов у бомбы
 Bomb. Persent of skiped random bombs %s	Bomb. Процент не установки случайных бомб: %s
@@ -1747,5 +1751,5 @@ Logs settings	Настройки логов
 Youtube settings	Настройки youtube
 
 # write locale file: ru.txt
-# total: 1424
-# missed translations: 1
+# total: 1428
+# missed translations: 4
