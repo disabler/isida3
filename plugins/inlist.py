@@ -46,7 +46,8 @@ def reban_async(type, jid, nick, lim, iq_stanza):
 		_servers = [t for t in _jids if '@' not in t]
 		_new_servers = [t for t in _srv_count.keys() if _srv_count[t] >= lim and t not in _servers]
 		_need_remove = [t for t in _jids if '@' in t and t.split('@',1)[1] in _servers + _new_servers]
-		
+		_new_servers.sort()
+
 		_limit = get_config_int(getRoom(jid),'make_stanza_jid_count')
 		nodes = []
 		for t in _new_servers:
