@@ -73,7 +73,7 @@ def dpi_calc(type, jid, nick, text):
 				dpi_name = 'unknown'
 				for t in dpi_type:
 					if dpi > t[0]: dpi_name = '%sDPI' % t[1]
-				msg = '%s %sx%sx%s\" - %sdpi [%s]' % (L('Screen','%s/%s'%(jid,nick)),tupl[0],tupl[1],tupl[2],dpi,dpi_name)
+				msg = u'%s %s×%s×%s\" - %sdpi [%s]' % (L('Screen','%s/%s'%(jid,nick)),tupl[0],tupl[1],tupl[2],dpi,dpi_name)
 		else: msg = L('Not enough parameters!','%s/%s'%(jid,nick))
 	else: msg = L('What?','%s/%s'%(jid,nick))
 	send_msg(type, jid, nick, msg)
