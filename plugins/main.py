@@ -1508,6 +1508,11 @@ def get_opener(page_name, parameters=None):
 		data, result = L('Error! %s') % SM.replace('>','').replace('<','').capitalize(), False
 	return data, result
 
+def load_page_size(page_name, page_size, parameters=None):
+	data, result = get_opener(page_name, parameters)
+	if result: return data.read(page_size)
+	else: return data
+
 def load_page(page_name, parameters=None):
 	data, result = get_opener(page_name, parameters)
 	if result: return data.read(GT('size_overflow'))
