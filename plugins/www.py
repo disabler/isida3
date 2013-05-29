@@ -157,13 +157,11 @@ def parse_url_in_message(room,jid,nick,type,text):
 						if is_file:
 							body, result = get_opener(enidna(link))
 							if result:
-								try: body = unicode(body.headers)
+								try: _ = unicode(body.headers)
 								except:
 									pprint('!!! Broken http header at %s' % link,'red')
 									logging.exception(' [%s] ' % timeadd(tuple(time.localtime())))
-									body = ''
-								try: mt = float(re.findall('Content-Length.*?([0-9]+)', body, re.S+re.U+re.I)[0])
-								except: mt = None
+								mt = float(body.headers.get('Content-Length',None))
 								if mt: ttext = L('Content length %s','%s/%s'%(jid,nick)) % get_size_human(mt)
 								else: ttext = ''
 					pprint('Store url: %s in %s/%s' % (link,room,nick),'white')
@@ -196,8 +194,7 @@ def parse_url_in_message(room,jid,nick,type,text):
 					body, result = get_opener(last_url_watch)
 					pprint('Show content length: %s in %s' % (link,room),'white')
 					if result:
-						body = unicode(body.headers)
-						mt = float(re.findall('Content-Length.*?([0-9]+)', body, re.S+re.U+re.I)[0])
+						mt = float(body.headers.get('Content-Length',None))
 						if mt: send_msg(type, room, '', L('Length of %s is %s','%s/%s'%(jid,nick)) % (u'…/%s' % to_censore(urllib2.unquote(last_url_watch.rsplit('/',1)[-1]).decode('utf-8'),room),get_size_human(mt)))
 		except: pass
 
