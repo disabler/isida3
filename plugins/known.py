@@ -33,9 +33,10 @@ def known(type, jid, nick, text):
 	if not text.strip(): text = nick
 	real_jid = cur_execute_fetchone('select jid from age where room=%s and (nick=%s or jid=%s) order by status,-time',(jid,text,text.lower()))
 	if real_jid:
-		if count: lst = cur_execute_fetchmany('select nick from age where room=%s and jid=%s order by status,-time',(jid,real_jid[0]),count)
-		else: lst = cur_execute_fetchall('select nick from age where room=%s and jid=%s order by status,-time',(jid,real_jid[0]))
-		nicks = ', '.join([t[0] for t in lst])
+		if count: lst = cur_execute_fetchmany('select nick from age where room=%s and jid=%s and nick!=%s order by status,-time',(jid,real_jid[0],text),count)
+		else: lst = cur_execute_fetchall('select nick from age where room=%s and jid=%s and nick!=%s order by status,-time',(jid,real_jid[0],text))
+		if lst: nicks = ', '.join([t[0] for t in lst])
+		else: nicks = text
 		if text == nick: msg = '%s %s' % (L('I know you as:','%s/%s'%(jid,nick)),nicks)
 		else: msg = '%s %s' % (L('I know %s as:','%s/%s'%(jid,nick)) % text,nicks)
 	else: msg = L('Not found!','%s/%s'%(jid,nick))
