@@ -103,6 +103,14 @@ presence_error = {'401':L('Password required'),
 				  '403':L('Forbidden'),
 				  '407':L('Members-only')}
 
+msg_status_codes = {'102':L('Room now shows unavailable members.'),
+					'103':L('Room now does not show unavailable members.'),
+					'104':L('Room\'s configuration changed.'),
+					'171':L('Logs at server side are enabled.'),
+					'172':L('Room now is non-anonymous.'),
+					'173':L('Room now is semi-anonymous.'),
+					'174':L('Room now is fully-anonymous.')}
+
 wday = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun']
 wmonth = ['Jan','Fed','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']
 

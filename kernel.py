@@ -1046,8 +1046,8 @@ def messageCB(sess,mess):
 					break
 	try:
 		code = mess.getTag('x',namespace=xmpp.NS_MUC_USER).getTagAttr('status','code')
-		if code == '104':
-			append_message_to_log(room,'','',type,L('Room\'s configuration changed.'))
+		if code in msg_status_codes:
+			append_message_to_log(room,'','',type,msg_status_codes[code])
 			return
 	except: pass
 	if (text == 'None' or text == '') and not mess.getSubject(): return
