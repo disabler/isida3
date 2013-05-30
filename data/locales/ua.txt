@@ -23,7 +23,6 @@ Unknown error!	Невідома помилка!
 Error!	Помилка!
 Got a fake iq answer!	Отримано підроблену відповідь на запит!
 Warning! Exceeded the limit of sending the same commands. You to ignore for %s.	Увага! Перевищено ліміт відправлення однакових команд. Ви в ігнорі %s.
-Room's configuration changed.	Змінено конфігурацію конференції.
 Censored!	Фільтруємо балачки!
 *** Topic: %s	*** Тема: %s
 Fetched xhtml image: %s%s	Отримано xhtml-зображення: %s%s
@@ -916,6 +915,7 @@ Undefined condition	Невизначений стан
 Unexpected request	Несподіваний запит
 Password required	Потрібен пароль
 Members-only	Тільки для постійних учасників
+Room's configuration changed.	Змінено конфігурацію конференції.
 Ignore list: %s	Я не приймаю команди від %s
 Not found: %s	Не знайдено: %s
 Last syslogs: %s	Останні системні логи: %s
@@ -1737,5 +1737,5 @@ Logs settings	Налаштування логів
 Youtube settings	Налаштування Youtube
 
 # write locale file: ua.txt
-# total: 1428
-# missed translations: 14
+# total: 1434
+# missed translations: 20

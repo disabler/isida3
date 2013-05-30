@@ -23,7 +23,6 @@ Unknown error!	Неизвестная ошибка!
 Error!	Ошибка!
 Got a fake iq answer!	Получен фальшивый ответ на запрос!
 Warning! Exceeded the limit of sending the same commands. You to ignore for %s.	Внимание! Превышен лимит отправки одинаковых команд. Вы в игноре %s.
-Room's configuration changed.	Изменена конфигурация конференции.
 Censored!	Фильтруем базар!
 *** Topic: %s	*** Тема: %s
 Fetched xhtml image: %s%s	Получено xhtml изображение: %s%s
@@ -919,6 +918,13 @@ Undefined condition	Неопределенное состояние
 Unexpected request	Неожиданный запрос
 Password required	Требуется пароль
 Members-only	Только для постоянных участников
+Room now shows unavailable members.	Комната показывает недоступных участников.
+Room now does not show unavailable members.	Комната не показывает недоступных участников.
+Room's configuration changed.	Изменена конфигурация конференции.
+Logs at server side are enabled.	Включены логи на стороне сервера.
+Room now is non-anonymous.	Комната не анонимная.
+Room now is semi-anonymous.	Комната полуанонимная.
+Room now is fully-anonymous.	Комната полностью анонимная.
 Ignore list: %s	Я не принимаю команды от: %s
 Not found: %s	Не найдено: %s
 Last syslogs: %s	Последние системные логи: %s
@@ -1751,5 +1757,5 @@ Logs settings	Настройки логов
 Youtube settings	Настройки youtube
 
 # write locale file: ru.txt
-# total: 1428
-# missed translations: 4
+# total: 1434
+# missed translations: 6
