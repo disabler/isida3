@@ -32,7 +32,7 @@ def join_time_stat(type, jid, nick, text):
 		try: llim = GT('age_default_limit')
 		except: llim = AGE_DEFAULT_LIMIT
 	if llim not in range(1,AGE_MAX_LIMIT): llim = AGE_DEFAULT_LIMIT
-	t_age_tmp = cur_execute_fetchmany(' select jid,time from first_join where room=%s and jid in (select jid from age where room=%s and status=0 order by time) order by time;',(jid,jid),llim)
+	t_age_tmp = cur_execute_fetchall(' select jid,time from first_join where room=%s and jid in (select jid from age where room=%s and status=0 order by time) order by time limit %s;',(jid,jid,llim))
 	t_age = []
 	for t in t_age_tmp:
 		tmp = cur_execute_fetchone('select nick from age where room=%s and jid=%s order by status,-time',(jid,t[0]))
@@ -56,7 +56,7 @@ def true_age_stat(type, jid, nick, text):
 		try: llim = GT('age_default_limit')
 		except: llim = AGE_DEFAULT_LIMIT
 	if llim not in range(1,AGE_MAX_LIMIT): llim = AGE_DEFAULT_LIMIT
-	t_age_tmp = cur_execute_fetchmany('select jid,sum(age+(status = 0)::boolean::int*(%s-time)) as sum_age from age where room=%s group by jid order by sum_age desc;',(int(time.time()),jid),llim)
+	t_age_tmp = cur_execute_fetchall('select jid,sum(age+(status = 0)::boolean::int*(%s-time)) as sum_age from age where room=%s group by jid order by sum_age desc limit %s;',(int(time.time()),jid,llim))
 	t_age = []
 	for t in t_age_tmp:
 		tmp = cur_execute_fetchone('select nick from age where room=%s and jid=%s order by status,-time',(jid,t[0]))
@@ -84,7 +84,7 @@ def true_age_raw(type, jid, nick, text, xtype):
 		text = '%%%s%%' % text.lower()
 		real_jid = cur_execute_fetchone('select jid from age where room=%s and (no_case_nick ilike %s or jid ilike %s) order by -time,status',(jid,text,text))
 	try:
-		if xtype: sbody = cur_execute_fetchmany('select * from age where room=%s and jid=%s order by -time,status',(jid,real_jid[0]),llim)
+		if xtype: sbody = cur_execute_fetchall('select * from age where room=%s and jid=%s order by -time,status limit %s',(jid,real_jid[0],llim))
 		else:
 			t_age = cur_execute_fetchone('select sum(age) from age where room=%s and jid=%s',(jid,real_jid[0]))
 			sbody = cur_execute_fetchone('select * from age where room=%s and jid=%s order by -time,status',(jid,real_jid[0]))
@@ -132,7 +132,7 @@ def seen_raw(type, jid, nick, text, xtype):
 		textt = '%%%s%%' % text.lower()
 		real_jid = cur_execute_fetchone('select jid from age where room=%s and (no_case_nick ilike %s or jid ilike %s) order by status,-time',(jid,textt,textt))
 	if real_jid:
-		if xtype: sbody = cur_execute_fetchmany('select * from age where room=%s and jid=%s order by status,-time',(jid,real_jid[0]),llim)
+		if xtype: sbody = cur_execute_fetchall('select * from age where room=%s and jid=%s order by status,-time limit %s',(jid,real_jid[0],llim))
 		else: sbody = [cur_execute_fetchone('select * from age where room=%s and jid=%s order by status,-time',(jid,real_jid[0]))]
 	else: sbody = None
 	if sbody:
@@ -178,7 +178,7 @@ def seenjid_raw(type, jid, nick, text, xtype):
 	sbody = []
 	if real_jid:
 		for rj in real_jid:
-			if xtype: tmpbody = cur_execute_fetchmany('select * from age where room=%s and jid=%s order by status, jid',(jid,rj[0]),llim)
+			if xtype: tmpbody = cur_execute_fetchall('select * from age where room=%s and jid=%s order by status, jid limit %s',(jid,rj[0],llim))
 			else: tmpbody = [cur_execute_fetchone('select * from age where room=%s and jid=%s order by status',(jid,rj[0]))]
 			if tmpbody:
 				for t in tmpbody:

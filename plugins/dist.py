@@ -130,8 +130,8 @@ def dist(type, jid, nick, text):
 			dist_count = int(text.split(' ',2)[2])
 			dist_count = 1 if dist_count < 1 else dist_max_search_limit if dist_count > dist_max_search_limit else dist_count
 		except: dist_count = dist_default_search_count
-		tmp = cur_execute_fetchmany('select point from dist_user where point ilike %s order by point',('%%%s%%' % text.split(' ',2)[1].lower(),),dist_count)
-		if not tmp: tmp = cur_execute_fetchmany('select point from dist where point ilike %s order by point',('%%%s%%' % text.split(' ',2)[1].lower(),),dist_count)
+		tmp = cur_execute_fetchall('select point from dist_user where point ilike %s order by point limit %s',('%%%s%%' % text.split(' ',2)[1].lower(),dist_count))
+		if not tmp: tmp = cur_execute_fetchall('select point from dist where point ilike %s order by point limit %s',('%%%s%%' % text.split(' ',2)[1].lower(),dist_count))
 		if tmp: msg = L('Found: %s','%s/%s'%(jid,nick)) % ', '.join(map(city_capitalize, [t[0] for t in tmp]))
 		else: msg = L('City %s not found','%s/%s'%(jid,nick)) % city_capitalize(text.split(' ',2)[1])
 	else:
