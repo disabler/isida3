@@ -56,7 +56,10 @@ def true_age_stat(type, jid, nick, text):
 		try: llim = GT('age_default_limit')
 		except: llim = AGE_DEFAULT_LIMIT
 	if llim not in range(1,AGE_MAX_LIMIT): llim = AGE_DEFAULT_LIMIT
-	t_age_tmp = cur_execute_fetchall('select jid,sum(age+(status = 0)::boolean::int*(%s-time)) as sum_age from age where room=%s group by jid order by sum_age desc limit %s;',(int(time.time()),jid,llim))
+	if base_type == 'pgsql': reqv = 'select jid,sum(age+(status = 0)::boolean::int*(%s-time)) as sum_age from age where room=%s group by jid order by sum_age desc limit %s;'
+	elif base_type in ['sqlite3','mysql']: reqv = 'select jid,sum(age+(status = 0)*(%s-time)) as sum_age from age where room=%s group by jid order by sum_age desc limit %s;'
+	else: return
+	t_age_tmp = cur_execute_fetchall(reqv,(int(time.time()),jid,llim))
 	t_age = []
 	for t in t_age_tmp:
 		tmp = cur_execute_fetchone('select nick from age where room=%s and jid=%s order by status,-time',(jid,t[0]))
