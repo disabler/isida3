@@ -287,7 +287,8 @@ disco_features_list =  {'dnssrv':'Support for DNS SRV lookups of XMPP services.,
 						'jabber:iq:filexfer':'jabber:iq:filexfer',
 						'jabber:iq:ibb':'jabber:iq:ibb',
 						'jabber:iq:inband':'jabber:iq:inband',
-						'jabber:iq:jidlink':'jabber:iq:jidlink'}
+						'jabber:iq:jidlink':'jabber:iq:jidlink',
+						'urn:xmpp:message-correct:0':'Last Message Correction (XEP-0308)'}
 
 def disco_features_add(i):
 	for t in bot_features: i.getTag('query').setTag('feature',attrs={'var':t})
