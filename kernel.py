@@ -53,9 +53,19 @@ def sqlite3_split_part(txt, spltr, cnt):
 	if txt: return (txt.split(spltr) + [''] * (cnt-1))[cnt-1]
 	else: return txt
 
+sqlite3_row_number_last_x = 0
+def sqlite3_row_number():
+	global sqlite3_row_number_last_x
+	sqlite3_row_number_last_x += 1
+	return sqlite3_row_number_last_x
+
 def cur_execute_sqlite3(*params):
 	conn = sqlite3.connect(sqlite_base)	
 	if 'split_part' in list(params)[0]: conn.create_function('split_part', 3, sqlite3_split_part)
+	if 'row_number' in list(params)[0]:
+		global sqlite3_row_number_last_x
+		sqlite3_row_number_last_x = 0
+		conn.create_function('row_number', 0, sqlite3_row_number)
 	cur = conn.cursor()
 	par = True
 	try:
@@ -117,6 +127,10 @@ def cur_execute(*params):
 def cur_execute_fetchone_sqlite3(*params):
 	conn = sqlite3.connect(sqlite_base)
 	if 'split_part' in list(params)[0]: conn.create_function('split_part', 3, sqlite3_split_part)
+	if 'row_number' in list(params)[0]:
+		global sqlite3_row_number_last_x
+		sqlite3_row_number_last_x = 0
+		conn.create_function('row_number', 0, sqlite3_row_number)
 	try: cur = conn.cursor()
 	except: return None
 	par = None
@@ -186,6 +200,10 @@ def cur_execute_fetchone(*params):
 def cur_execute_fetchall_sqlite3(*params):
 	conn = sqlite3.connect(sqlite_base)
 	if 'split_part' in list(params)[0]: conn.create_function('split_part', 3, sqlite3_split_part)
+	if 'row_number' in list(params)[0]:
+		global sqlite3_row_number_last_x
+		sqlite3_row_number_last_x = 0
+		conn.create_function('row_number', 0, sqlite3_row_number)
 	try: cur = conn.cursor()
 	except: return None
 	par = None

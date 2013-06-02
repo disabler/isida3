@@ -72,14 +72,19 @@ def info_serv(type, jid, nick, text):
 		text,jidbase = '',''
 	else:
 		text1 = '%%%s%%' % text
-		jidbase = cur_execute_fetchall('select * from (select row_number() over(order by -count(*)),server,count(*) from jid group by server order by -count(*),server) tmp where tmp.server ilike %s order by tmp.row_number;',(text1,))
+		if base_type == 'pgsql': reqv = 'select * from (select row_number() over(order by -count(*)),server,count(*) from jid group by server order by -count(*),server) tmp where tmp.server ilike %s order by tmp.row_number;'
+		elif base_type == 'mysql': reqv = 'select * from (select @i:=@i+1 as itr,sr,cn from (select server as sr,count(*) as cn from jid group by server order by -count(*)) as t1,(select @i:=0) as t2) as t3 where sr like %s'
+		elif base_type == 'sqlite3':
+			# TODO: It's works not properly. Need fix record's numbers!
+			reqv = 'select row_number(),sr,cn from (select server as sr,count(*) as cn from jid group by server order by -cn) where sr like %s order by -cn'
+		jidbase = cur_execute_fetchall(reqv,(text1,))
 		tlen = len(jidbase)
 		jidbase = jidbase[:lim]
 	if not tlen: msg = L('\'%s\' not found!','%s/%s'%(jid,nick)) % text
 	else:
 		if text: msg = L('Found servers: %s','%s/%s'%(jid,nick)) % tlen
 		else: msg = L('Total servers: %s','%s/%s'%(jid,nick)) % tlen
-		if jidbase: msg = '%s\n%s' %(msg,'\n'.join(['%s. %s [%s]' % jj for jj in jidbase]))
+		if jidbase: msg = '%s\n%s' %(msg,'\n'.join(['%s. %s [%s]' % (int(jj[0]),jj[1],jj[2]) for jj in jidbase]))
 	send_msg(type, jid, nick, msg)
 
 #room number date
