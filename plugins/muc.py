@@ -62,16 +62,14 @@ def global_ban(type, jid, nick, text):
 def muc_tempo_ban(type, jid, nick, text):
 	text,mute = text.strip().split('\n'),False
 	if text:
-		cmd = text[0].lower()
+		cmd, par = text[0].lower().split(' ',1) if ' ' in text[0] else (text[0].lower().split(' ',1),'')
 		if cmd == 'show':
-			par = ' '.join(text[1:])
 			if not par: par = '%'
 			tb = cur_execute_fetchall('select jid,time from tmp_ban where room=%s and jid ilike %s',(jid,par))
 			if tb: msg = L('Found: %s','%s/%s'%(jid,nick)) % '\n%s' % '\n'.join([['%s\t%s' % (ub[0],un_unix(ub[1]-int(time.time()),'%s/%s'%(jid,nick))),'%s\t< %s' % (ub[0],un_unix(GT('schedule_time'),'%s/%s'%(jid,nick)))][ub[1] < int(time.time())] for ub in tb])
 			else: msg = L('Not found.','%s/%s'%(jid,nick))
 
 		elif cmd == 'del':
-			par = ' '.join(text[1:])
 			if par:
 				tb = cur_execute_fetchall('select jid,time from tmp_ban where room=%s and jid ilike %s',(jid,par))
 				if tb:
