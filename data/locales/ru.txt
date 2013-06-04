@@ -895,6 +895,7 @@ moderator/owner	владелец конференции
 bot owner	владелец бота
 You should be at least %s to do it.	Для этого действия ты должен иметь статус не ниже: %s
 You must be a %s to do it.	Для этого надо иметь статус: %s
+absent	отсутствует
 Bad request	Кривой запрос
 Conflict	Конфликт
 Feature not implemented	Фича не реализована
@@ -1758,4 +1759,4 @@ Youtube settings	Настройки youtube
 
 # write locale file: ru.txt
 # total: 1434
-# missed translations: 6
+# missed translations: 1
