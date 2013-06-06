@@ -145,6 +145,7 @@ if url:
 		if t[4]: text = t[4].strip()
 		else: text = '-'
 		if len(text) >= max_link_size: text = '%s...' % text[:max_link_size]
+		text = cgi.escape(text).encode('ascii', 'xmlcharrefreplace')
 		tmp = '<tr bgcolor="#%s">\n<td align="center">&nbsp;%s&nbsp;</td>\n<td align="center">&nbsp;%s&nbsp;</td>\n<td>&nbsp;<a href="%s" target="_blank">%s</a></td>\n<td>&nbsp;%s</td>\n</tr>\n' % (hex(color)[2:],'%04d.%02d.%02d&nbsp;%02d:%02d:%02d' % time.localtime(t[2])[:6],t[1],t[3],lnk,text)
 		tm.append(tmp.encode('utf-8'))
 		color = color ^ mask
