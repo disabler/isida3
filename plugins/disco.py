@@ -338,7 +338,7 @@ def disco_iq_get(iq,id,room,acclvl,query,towh,al):
 								break
 				return i
 
-	elif iq.getTag(name='query', namespace=xmpp.NS_DISCO_ITEMS) and acclvl:
+	elif iq.getTag(name='query', namespace=xmpp.NS_DISCO_ITEMS):
 		node=get_tag_item(unicode(query),'query','node')
 		pprint('*** iq:disco_items from %s node "%s"' % (unicode(room),node),'magenta')
 		if node == xmpp.NS_MUC_ROOMS and GT('iq_show_rooms_disco'):
@@ -352,7 +352,7 @@ def disco_iq_get(iq,id,room,acclvl,query,towh,al):
 				trooms = [xmpp.Node('item',attrs={'jid':t}) for t in trooms]
 				i.getTag('query',namespace=xmpp.NS_DISCO_ITEMS).setPayload(trooms)
 				return i
-		elif node.split('#')[0] in [disco_config_node, xmpp.NS_COMMANDS]:
+		elif node.split('#')[0] in [disco_config_node, xmpp.NS_COMMANDS] and acclvl:
 			try: tn = '#' + node.split('#')[1]
 			except: tn = ''
 			i=xmpp.Iq(to=room, typ='result')
@@ -364,11 +364,11 @@ def disco_iq_get(iq,id,room,acclvl,query,towh,al):
 				else: settings_set = config_groups
 				for tmp in settings_set: i.getTag('query').setTag('item',attrs={'node':disco_config_node+tmp[1], 'name':L(tmp[0],room),'jid':towh})
 			return i
-		elif node == '':
+		elif node == '' and al > 3:
 			i=xmpp.Iq(to=room, typ='result')
 			i.setAttr(key='id', val=id)
 			i.setQueryNS(namespace=xmpp.NS_DISCO_ITEMS)
-			i.getTag('query').setTag('item',attrs={'node':xmpp.NS_COMMANDS, 'name':L('AD-Hoc commands'),'jid':towh})
+			if acclvl: i.getTag('query').setTag('item',attrs={'node':xmpp.NS_COMMANDS, 'name':L('AD-Hoc commands'),'jid':towh})
 			i.getTag('query').setTag('item',attrs={'node':xmpp.NS_MUC_ROOMS, 'name':L('Current bot rooms'),'jid':towh})
 			return i
 	return None
