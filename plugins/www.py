@@ -77,14 +77,19 @@ def netheader(type, jid, nick, text):
 		except: regex = None
 		if not re.findall('^http(s?)://',text[:10]): text = 'http://%s' % text
 		body, result = get_opener(enidna(text))
-		if result: body = '%s\n%s' % (text,unicode(body.headers))
-		if regex:
-			try:
-				mt = re.findall(regex, body, re.S+re.U+re.I)
-				if mt != []: body = ''.join(mt[0])
-				else: body = L('RegExp not found!','%s/%s'%(jid,nick))
-			except: body = L('Error in RegExp!','%s/%s'%(jid,nick))
-		body = deidna(body)
+		if result:
+			k = body.headers.keys()
+			res = []
+			for t in k:
+				for tt in body.headers.getheaders(t): res.append('%s: %s' % (t,''.join([[r,'?'][r>'~'] for r in str(tt)])))
+			body = '%s\n%s' % (text,'\n'.join(res))
+			if regex:
+				try:
+					mt = re.findall(regex, body, re.S+re.U+re.I)
+					if mt != []: body = ''.join(mt[0])
+					else: body = L('RegExp not found!','%s/%s'%(jid,nick))
+				except: body = L('Error in RegExp!','%s/%s'%(jid,nick))
+			body = deidna(body)
 	else: body = L('What?','%s/%s'%(jid,nick))
 	send_msg(type, jid, nick, body)
 
