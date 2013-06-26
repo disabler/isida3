@@ -130,6 +130,11 @@ two_en = ['aa', 'aq', 'bc', 'bd', 'bf', 'bg', 'bh', 'bk', 'bn', 'bp', 'bq', 'bw'
 		  'yn', 'yq', 'yu', 'yv', 'yx', 'yy', 'yz', 'zb', 'zc', 'zd', 'zf', 'zg', 'zh', 'zi', 'zj', 'zk', 'zm', 'zn', 'zp', \
 		  'zq', 'zr', 'zs', 'zt', 'zu', 'zv', 'zw', 'zx']
 
+def non_case_sort(arr):
+	tmp = [[t.lower(),t] for t in arr]
+	tmp.sort()
+	return [t[1] for t in tmp]
+		  
 def get_size_human(mt):
 	if mt < 1024: return '%sb' % int(mt)
 	for t in ['Kb','Mb','Gb']:

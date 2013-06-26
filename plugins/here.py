@@ -22,7 +22,7 @@
 # --------------------------------------------------------------------------- #
 
 def muc_here(type, jid, nick):
-	users = [t[1] for t in megabase if t[0]==jid]
+	users = non_case_sort([t[1] for t in megabase if t[0]==jid])
 	msg = L('I see %s participant(s): %s','%s/%s'%(jid,nick)) % (len(users), ', '.join(users))
 	send_msg(type, jid, nick, msg)
 
