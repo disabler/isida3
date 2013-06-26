@@ -709,8 +709,7 @@ def helpme(type, jid, nick, text):
 def bot_rejoin(type, jid, nick, text):
 	global lastserver, lastnick
 	text=unicode(text)
-	if len(text): text=unicode(text)
-	else: text=jid
+	if not text: text = jid
 	if '\n' in text: text, passwd = text.split('\n', 1)
 	else: passwd = ''
 	if '@' not in text: text = '%s@%s' % (text,lastserver)
@@ -838,7 +837,7 @@ def bot_join(type, jid, nick, text):
 					#send_msg(type, jid, nick, L('Changed nick in %s to %s','%s/%s'%(jid,nick)) % (lroom,getResourse(text)))
 
 def bot_leave(type, jid, nick, text):
-	global lastserver, lastnick
+	global lastserver
 	domain = getServer(Settings['jid'])
 	cnf = cur_execute_fetchall('select * from conference;')
 	if len(cnf) == 1: send_msg(type, jid, nick, L('I can\'t leave last room!','%s/%s'%(jid,nick)))
@@ -847,7 +846,6 @@ def bot_leave(type, jid, nick, text):
 		if '@' not in text: text = '%s@%s' % (text,lastserver)
 		if '\n' in text: text, _ = text.split('\n', 1)
 		lastserver = getServer(text)
-		lastnick = getResourse(text)
 		text=unicode(text)
 		lroom = text
 		if is_owner(jid): nick = getName(jid)

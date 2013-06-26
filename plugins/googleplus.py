@@ -63,14 +63,16 @@ def define_message(room, jid, nick, type, text):
 	s = get_config(room, 'parse_define')
 	if s != 'off':
 		if cur_execute_fetchone('select * from commonoff where room=%s and cmd=%s',(room,'define')): return
-		nowname = getResourse(cur_execute_fetchone('select room from conference where room ilike %s',('%s/%%'%room,))[0])
-		text = re.sub('^%s[,:]\ ' % re.escape(nowname), '', text.strip())
-		what = re.search([u'^(?:(?:что такое)|(?:кто такой)|(?:кто такая)) ([^?]+?)\?$', u'(?:(?:что такое)|(?:кто такой)) ([^?]+?)\?'][s == 'partial'], text, re.I + re.U + re.S)
-		if what:
-			access_mode = get_level(room, nick)[0]
-			text = 'define 0 %s' % what.group(1)
-			com_parser(access_mode, nowname, type, room, nick, text, jid)
-			return True
+		troom = cur_execute_fetchone('select room from conference where room ilike %s',('%s/%%'%room,))
+		if troom:
+			nowname = getResourse(troom[0])
+			text = re.sub('^%s[,:]\ ' % re.escape(nowname), '', text.strip())
+			what = re.search([u'^(?:(?:что такое)|(?:кто такой)|(?:кто такая)) ([^?]+?)\?$', u'(?:(?:что такое)|(?:кто такой)) ([^?]+?)\?'][s == 'partial'], text, re.I + re.U + re.S)
+			if what:
+				access_mode = get_level(room, nick)[0]
+				text = 'define 0 %s' % what.group(1)
+				com_parser(access_mode, nowname, type, room, nick, text, jid)
+				return True
 
 def gdict(type, jid, nick, text):
 	text = reduce_spaces_all(text.encode('utf-8')).split(' ')

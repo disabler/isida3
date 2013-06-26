@@ -101,7 +101,7 @@ def clients_stats(type, jid, nick, text):
 		for t in st:
 			if is_os:
 				k = t[2]
-				if k and is_short:
+				if k.strip() and is_short:
 					if '/' in k: k = k.split('/')[0]
 					elif k.lower().startswith('microsoft') or k.lower().startswith('(c)') or k.startswith(u'©'): k = k.split()[1]
 					else: k = k.split()[0]
