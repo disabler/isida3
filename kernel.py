@@ -1366,7 +1366,7 @@ def presenceCB(sess,mess):
 			caps_and_send(xmpp.Presence(room, 'unsubscribed'))
 			pprint('Unsubscribtion accepted %s' % room,'light_gray')
 		else: pprint('Unsubscribtion rejected %s' % room,'red')
-	if nick != '' and nick != 'None' and nick != nowname and len(text)>1 and text != 'None' and al >= 0 and get_config(getRoom(room),'censor'):
+	if reason in ['','None',None] and nick != '' and (nick != 'None' or (text != 'None' and len(text)>1)) and nick != nowname and al >= 0 and get_config(getRoom(room),'censor'):
 		nt = '%s %s' % (nick,text)
 		if nt != to_censore(nt,room):
 			cens_text = L('Censored!','%s/%s'%(room,nick))
