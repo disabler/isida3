@@ -29,7 +29,6 @@
     "number": ["http://www.lorquotes.ru/view-quote.php?id=%s", "<div class=&quot;q-text&quot;>((?:.|\\s)+?)</div>\\s+?<div class=&quot;q-sign&quot;>"]},  
 "wotq":
     {"title": "Цитатник Мира Танков",
-    "random": ["http://wotq.ru/?q=rnd", "<blockquote>((?:.|\\s)+?)</blockquote>"],
     "number": ["http://wotq.ru/?q=id&id=%s", "<blockquote>((?:.|\\s)+?)</blockquote>"]},
 "short":
     {"title": "Shortики - короткие и смешные",
@@ -42,4 +41,8 @@
     "search": ["http://det.org.ru/?page=find&query=%s", "<div class=&quot;history&quot;>((?:.|\\s)+?)</div>", "cp1251"]},
 "afor":
     {"title": "Юмор: афоризмы о юморе и юмористические высказывания",
-    "random": ["http://skio.ru/quotes/humour_quotes.php", "<form id=&quot;qForm&quot; method=&quot;post&quot;><div align=&quot;center&quot;>((?:.|\\s)+?)</div>"]}}
+    "random": ["http://skio.ru/quotes/humour_quotes.php", "<form id=&quot;qForm&quot; method=&quot;post&quot;><div align=&quot;center&quot;>((?:.|\\s)+?)</div>"]},
+"nya":
+    {"title": "nya.sh - НЯШ",
+    "number": ["http://nya.sh/post/%s", "<div class=\"content\">((?:.|\\s)*?)</div>"]}
+}
