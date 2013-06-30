@@ -1341,7 +1341,7 @@ Use more characters in the name of the tank	Используйте больше 
 \nAv. destroyed: %s	\nВ ср. уничтожено: %s
 \nAv. spotted: %s	\nВ ср. обнаружено: %s
 \nAv. captured points: %s	\nВ ср. очков захвата: %s
-\nAv. defense points: %s	\nВ ср. очков захвата: %s
+\nAv. defense points: %s	\nВ ср. очков защиты: %s
 \nAv. tank lvl: %s	\nСр. уровень танков: %s
 \nEfficiency rating: %s (XVM: %s)	\nРейтинг эффективности: %s (XVM: %s)
  - bad player	 - плохой игрок
