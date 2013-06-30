@@ -1334,6 +1334,28 @@ For a last day i see: %s	За последние сутки я видела: %s
 All who i see for a last day now is here.	Все, кого я видела за сутки, находятся тут.
 Show list of users for last day	Показ списка участников за сутки
 
+# file: plugins/wot.py
+Use more characters in the name of the tank	Используйте больше символов в названии танка
+ not founded tank	 танк не найден
+\nAv. damage: %s	\nСр. дамаг: %s
+\nAv. destroyed: %s	\nВ ср. уничтожено: %s
+\nAv. spotted: %s	\nВ ср. обнаружено: %s
+\nAv. captured points: %s	\nВ ср. очков захвата: %s
+\nAv. defense points: %s	\nВ ср. очков захвата: %s
+\nAv. tank lvl: %s	\nСр. уровень танков: %s
+\nEfficiency rating: %s (XVM: %s)	\nРейтинг эффективности: %s (XVM: %s)
+ - bad player	 - плохой игрок
+ - player below average	 - игрок ниже среднего
+ - average player	 - средний игрок
+ - good player	 - хороший игрок
+ - great player	 - превосходный игрок
+ - unicum	 - унікум
+\nWN6 rating: %s (XVM: %s)	\nРейтинг WN6: %s (XVM: %s)
+\nArmor-rating: %s	\nРейтинг Бронесайта: %s
+Query error	Ошибка запроса
+Player not found	Игрок не найден
+World of Tanks - info about user. Usage: wot nick [tank]	World of Tanks - информация о пользователе. Использование: wot ник [танк]
+
 # file: plugins/wtf.py
 I know that %s is %s	Я знаю, что %s - %s
 from %s: %s	от %s: %s
@@ -1576,7 +1598,7 @@ Censor action for non member	Действие цензора на не пост�
 Flood is %s	Флуд: %s
 Autoanswer	Включение/выключение самообучающегося автоответчика
 Trusted servers %s	Доверенные сервера %s
-Servers list marked as trusted. They are excluded from any actions with servers	Сервера, отмеченные как доверенные. Данные сервера исключаются из любый действий с серверами.
+Servers list marked as trusted. They are excluded from any actions with servers	Сервера, отмеченные как доверенные. Данные сервера исключаются из любых действий с серверами.
 Bomb. Wire count is %s	Bomb. Количество проводов у бомбы: %s
 Wire count for bomb	Количество проводов у бомбы
 Bomb. Persent of skiped random bombs %s	Bomb. Процент не установки случайных бомб: %s
@@ -1758,5 +1780,5 @@ Logs settings	Настройки логов
 Youtube settings	Настройки youtube
 
 # write locale file: ru.txt
-# total: 1434
+# total: 1454
 # missed translations: 1

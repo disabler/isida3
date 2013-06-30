@@ -33,6 +33,7 @@ off	вимк
 Deny by hash lock!	Обмеження по хешу клієнта!
 /me detect bad stanza from %s	/me дивиться на %s і гадає: "Факін розумник детектед!"
 kicked	вигнали
+revoke member affiliation in members-only room	позбавлення статусу постійного учасника в конференції лише для постійних учасників
 banned	забанили
 change nick to %s	змінив(ла) нік на %s
 leave	вийшов
@@ -581,6 +582,7 @@ presence	презенс
 Idle time	Час з моменту останньої активності
 
 # file: plugins/inlist.py
+Unbaned jids: %s\nBanned servers: %s .. %s	Розбанено jid'ів: %s\nЗабанено серверів: %s .. %s
 Total banned: %s	Усього в бані: %s
 Total owners: %s	Усього власників: %s
 Total admins: %s	Усього адміністраторів: %s
@@ -590,6 +592,7 @@ Search in outcast list of conference.	Пошук по outcast списку ко�
 Search in members list of conference.	Пошук по members списку конференції.
 Search in admins list of conference.	Пошук по admins списку конференції.
 Search in owners list of conference.	Пошук по owners списку конференції.
+Cleen up outcast list. Replace different jids from same server by one server jid\nreban <count>	Очистка бані. Заміняє кілька jid'ів з одного серверу на бан сервера
 
 # file: plugins/invite.py
 %s ishere!	%s знаходиться тут!
@@ -892,6 +895,7 @@ moderator/owner	власник конференції
 bot owner	власник бота
 You should be at least %s to do it.	Для цієї дії ти повинен мати статус не нижче: %s
 You must be a %s to do it.	Для цього треба мати статус: %s
+absent	відсутньо
 Bad request	Невірний запит
 Conflict	Конфлікт
 Feature not implemented	Фіча не реалізована
@@ -915,7 +919,13 @@ Undefined condition	Невизначений стан
 Unexpected request	Несподіваний запит
 Password required	Потрібен пароль
 Members-only	Тільки для постійних учасників
+Room now shows unavailable members.	Кімната показує недоступних учасників.
+Room now does not show unavailable members.	Кімната не показує недоступних учасників.
 Room's configuration changed.	Змінено конфігурацію конференції.
+Logs at server side are enabled.	Увімкнені логи на стороні серверу.
+Room now is non-anonymous.	Кімната не анонімна.
+Room now is semi-anonymous.	Кімната напіванонімна.
+Room now is fully-anonymous.	Кімната повністю анонімна.
 Ignore list: %s	Я не приймаю команди від %s
 Not found: %s	Не знайдено: %s
 Last syslogs: %s	Останні системні логи: %s
@@ -1019,6 +1029,9 @@ Local time: %s\n	Місцевий час: %s\n
 \nIq in: %s | out: %s	\nIq вх: %s | вих: %s
 \nUnknown out: %s	\nПомилок вих: %s
 \nCycles used: %s | unused: %s	\nРобочих циклів: %s | холостих: %s
+\nRAM for bot: %s (virtual), %s (real)	\nПам'ять під бота: %s (віртуальна), %s (реальна)
+\nRAM for database: %s (virtual), %s (real)	\nПам'ять під базу даних: %s (віртуальна), %s (реальна)
+\nDatabase size: %s	\nРозмір бази даних: %s
 What need find?	Що знайти?
 I see you as %s/%s	Я бачу тебе як %s/%s
 What do you need to find?	Що ж будемо шукати?
@@ -1321,6 +1334,28 @@ For a last day i see: %s	Протягом останньої доби я бач�
 All who i see for a last day now is here.	Всі, кого я бачила протягом доби, знаходяться тут.
 Show list of users for last day	Показ списку учасників за добу
 
+# file: plugins/wot.py
+Use more characters in the name of the tank	Використовуйте більше символів в назві танку
+ not founded tank	 танк не знайдено
+\nAv. damage: %s	\nСер. дамаг: %s
+\nAv. destroyed: %s	\nВ сер. знищено: %s
+\nAv. spotted: %s	\nВ сер. знайдено: %s
+\nAv. captured points: %s	\nВ сер. очків захвату: %s
+\nAv. defense points: %s	\nВ сер. очків захвату: %s
+\nAv. tank lvl: %s	\nСер. рівень танків: %s
+\nEfficiency rating: %s (XVM: %s)	\nРейтинг ефективності: %s (XVM: %s)
+ - bad player	 - поганий гравець
+ - player below average	 - гравець нижче середнього
+ - average player	 - середній гравець
+ - good player	 - хороший гравець
+ - great player	 - чудовий гравець
+ - unicum	 - унікум
+\nWN6 rating: %s (XVM: %s)	\nРейтинг WN6: %s (XVM: %s)
+\nArmor-rating: %s	\nРейтинг Бронесайту: %s
+Query error	Помилка запиту
+Player not found	Гравця не знайдено
+World of Tanks - info about user. Usage: wot nick [tank]	World of Tanks - інформація про користувача. Використання: wot нік [танк]
+
 # file: plugins/wtf.py
 I know that %s is %s	Я знаю, що %s - %s
 from %s: %s	від %s: %s
@@ -1562,6 +1597,8 @@ Censor action for non member is %s	Дія цензора на не постій�
 Censor action for non member	Дія цензора на не постійних учасників
 Flood is %s	Флуд: %s
 Autoanswer	Ввімкнення/вимкнення самонавчального відповідача
+Trusted servers %s	Довірені сервера %s
+Servers list marked as trusted. They are excluded from any actions with servers	Сервера, відмічені як довірені. Дані сервера виключаються із будь-яких дій з серверами.
 Bomb. Wire count is %s	Bomb. Кількість проводів у бомби: %s
 Wire count for bomb	Кількість проводів у бомби
 Bomb. Persent of skiped random bombs %s	Bomb. Процент не установки випадкових бомб: %s
@@ -1630,6 +1667,7 @@ Iq. Allow answer to time request	Iq. Дозвіл відповідати на з
 Logger. Enable system logs	Logger. Ввімкнення системних логів
 Muc-filter. Time for reconnect count	Muc-filter. Проміжок часу на перез'єднання
 Logger. Enable status change logging	Logger. Запис в логи зміни статусів
+Muc-filter. Notify about abnormal activity	Muc-filter. Повідомлення. Повідомлення про ненормальну активність
 Troll. Default message number for troll command	Troll. Кількість повідомлень для команди troll
 Troll. Delay between messages for troll command	Troll. Затримка відправки повідомлень для команди troll
 Karma. Minimal karma for allow krama change for participants	Karma. Мінімальна карма з якою зміна карми доступна не постійним учасникам
@@ -1643,6 +1681,7 @@ Karma. Time for karma change from access level	Karma. Час через який
 Clear. Delay between massages in clear command	Clear. Затримка між повідомленнями при команді clear
 Muc-filter. Number of reconnects for monitoring	Muc-filter. Кількість перез'єднань для моніторингу
 Iq. Timeout for iq queries	Iq. Таймаут в секундах на iq запити
+Muc-filter. Jid's for notify	Muc-filter. Повідомлення. Jid'и для повідомленнь
 Karma. Lower value of karma for control action	Нижня межа карми при перевірці правильності значень
 Youtube. Page size limit	Youtube. Ліміт розміру сторінки при завантаженні
 Logger. Additional text for logs	Logger. Додатковий текст в кінці html лога
@@ -1653,6 +1692,7 @@ Kernel. Bot status. Message while loading	Kernel. Bot status. Статус-по�
 Disco. Maximus andwers count for disco command	Disco. Максимальна кількість відповідей для команди disco
 Spy. Time for reaction on spy scan	Spy. Інтервал реакції на сканування для команди spy
 Iq. Allow answer to version request	Iq. Дозвіл відповідати на запит версії бота
+Muc-filter. Time between notifies	Muc-filter. Повідомлення.Час між повідомленнями
 Watcher. Frequency of requests in watcher	Watcher. Період запитів в секундах для плагіна watcher
 Logger. Use GMT time in MUC logs	Logger. Використовувати GMT-час в логах конференцій
 Iq. Allow answer to ping	Iq. Дозвіл відповідати на запит пінгу бота
@@ -1665,6 +1705,7 @@ Logger. Enable role and affiliation logging	Logger. Запис в логи зм�
 Disco. Exclude from disco by regexps	Disco. Видаляти з обзору по регекспу
 Kernel. Restart timeout for error at bot initial (no connection, auth error)	Kernel. Таймаут рестартів бота на стадії підключення (немає iнету, помилка авторизації)
 Msgtoadmin. Size limit for msgtoadmin	Msgtoadmin. Ліміт розміру повідомлення для команди msgtoadmin
+Muc-filter. Time peroid for notify	Muc-filter. Повідомлення. Період часу для повідомленнь
 LastFM. Number of answers for lastfm plugin	LastFM. Кількість відповідей для команди плагіна lastfm
 Www. User-agent for web queries	Www. User-agent для більшості web-запитів
 Muc-filter. Number of empty new lines	Muc-filter. Кількість пустих переводів рядків
@@ -1707,8 +1748,10 @@ Youtube. Maximal links number	Youtube. Максимальна кількість
 Watcher. Allow self ping	Watcher. Пінгувати самого себе
 Troll. Maximal message number for troll command	Troll. Максимальна кількість повідомлень для команди troll
 Kernel. Iq anti-ddos. Time limits for requests	Kernel. Iq anti-ddos. Ліміт часу на запити
+Muc-filter. Count of events for notify	Muc-filter. Повідомлення. Кількість подій для повідомлення
 Iq. Number after point in ping	Iq. Кількість знаків після коми при пінгу
 Muc-filter. Time between presences	Muc-filter. Проміжок часу на статус-презенси
+Notepad	Блокнот
 Kernel. Anti-ddos time delay between messages	Kernel. Проміжок між повідомленнями для вмикання анти-ddos
 Muc-filter. Number of precences per time	Muc-filter. Кількість статус-презенсів за час
 Kernel. Exclude symbols from bot's messages	Kernel. Видалити символи із повідомленнь бота
@@ -1737,5 +1780,5 @@ Logs settings	Налаштування логів
 Youtube settings	Налаштування Youtube
 
 # write locale file: ua.txt
-# total: 1434
-# missed translations: 21
+# total: 1454
+# missed translations: 1
