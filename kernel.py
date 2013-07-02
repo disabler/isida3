@@ -725,7 +725,9 @@ def muc_filter_action(act,jid,room,reason):
 
 def paste_text(text,room,jid):
 	nick = get_nick_by_jid_res(room,jid)
-	if GT('html_paste_enable'): text = html_escape(text)
+	if GT('html_paste_enable'):
+		text = html_escape(text)
+		nick = html_escape(nick)
 	paste_header = ['','<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml" xml:lang="ru" lang="ru"><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><link href="%s" rel="stylesheet" type="text/css" /><title>\n' % paste_css_path][GT('html_paste_enable')]
 	url = '%s%s' % (str(hex(int(time.time()*100)))[2:-1],['.txt','.html'][GT('html_paste_enable')])
 	lt = tuple(time.localtime())
