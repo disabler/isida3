@@ -162,10 +162,6 @@ def parse_url_in_message(room,jid,nick,type,text):
 						if is_file:
 							body, result = get_opener(enidna(link))
 							if result:
-								try: _ = unicode(body.headers)
-								except:
-									pprint('!!! Broken http header at %s' % link,'red')
-									logging.exception(' [%s] ' % timeadd(tuple(time.localtime())))
 								mt = float(body.headers.get('Content-Length',0))
 								if mt: ttext = L('Content length %s','%s/%s'%(jid,nick)) % get_size_human(mt)
 								else: ttext = ''
