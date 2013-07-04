@@ -36,9 +36,10 @@ issue_done_id    = 5
 issue_number_format = '#%04d'
 
 def issue(type, room, nick, text):
-	subc = reduce_spaces_all(text).split()
+	ttext = reduce_spaces_all(text)
+	subc = ttext.split()
 	acclvl,jid = get_level(room,nick)
-	if not subc or subc[0] == 'show' or (acclvl <= 3 and type == 'chat'): msg,type = issue_show(subc,room,type,nick)
+	if ttext.isdigit() or (ttext and ttext[0] == '#' and ttext[1:].isdigit()) or not subc or len(subc) == 1 or subc[0] == 'show' or (acclvl <= 3 and type == 'chat'): msg,type = issue_show(subc,room,type,nick)
 	elif subc[0] in ['del','delete','rm','remove']: msg = issue_remove(subc,acclvl,room,jid,nick)
 	elif subc[0] == 'pending': msg = issue_pending(subc,acclvl,room,jid,nick)
 	elif subc[0] == 'accept': msg = issue_accept(subc,acclvl,room,jid,nick)
@@ -67,10 +68,16 @@ def issue_new(s,acclvl,room,jid,nick,text):
 	else: return str(stts)
 
 def issue_show(s,room,type,nick):
-	if len(s) > 1: s = s[1]
+	if len(s) > 1 and s[0] == 'show': s = s[1]
+	elif s[0] == 'show': s = '%'
+	elif s: s = s[0]
 	else: s = '%'
+	
+	if s.isdigit() or (s[0] == '#' and s[1:].isdigit()): s = s.replace('#','')	
+
 	s_original = s
-	if s.isdigit() or s[0] == '#': iss = cur_execute_fetchall('select id,nick,tags,body,status,comment,accept_by,accept_date from issues where room=%s and id=%s order by id;',(room,int(s.replace('#',''))))
+	
+	if s.isdigit(): iss = cur_execute_fetchall('select id,nick,tags,body,status,comment,accept_by,accept_date from issues where room=%s and id=%s order by id;',(room,int(s)))
 	elif s[0] == '*': iss = cur_execute_fetchall('select id,nick,tags,body,status,comment,accept_by,accept_date from issues where room=%s and tags ilike %s and status<%s order by id;',(room,'%%%s%%' % s[1:],issue_reject_id))
 	else:
 		if s != '%': s = '%%%s%%' % s
