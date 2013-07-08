@@ -56,7 +56,7 @@ def initial_log_users(room,ott):
 	txt = []
 	for tmp in megabase:
 		if tmp[0] == room: txt.append(tmp[1])
-	txt.sort()
+	txt = non_case_sort(txt)
 	log_body = ['[%s] ' % ott,'<p><a id="%s" name="%s" href="#%s" class="time">%s</a> ' % (ott,ott,ott,ott)][GT('html_logs_enable')]
 	log_body += ['*** ','<span class="status">'][GT('html_logs_enable')]
 	log_body += L('Users: %s (%s)') % (', '.join(txt),len(txt))
