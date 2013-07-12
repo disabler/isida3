@@ -1137,14 +1137,14 @@ def unescape(text):
 def html_escape(text):
 	def link(text): return '<a href="%s">%s</a>' % (text.group(0),text.group(0))
 	#def email(text): return '<a href="mailto:%s">%s</a>' % (text.group(0),text.group(0))
-	def brnbsp(text): return '<br>' + '&nbsp;' * len(text.group(0))
+	def brnbsp(text): return '<br/>' + '&nbsp;' * len(text.group(0))
 	def nbsp(text): return '&nbsp;' * len(text.group(0))
 	for tmp in (('&','&amp;'),('<','&lt;'),('>','&gt;'),('~','&tilde;'),('\t','&nbsp;'*8)): text = text.replace(tmp[0],tmp[1])
 	text = re.sub(u'^(\ +)',nbsp,text)
 	text = re.sub(u'http[s]?://[-a-zA-Z0-9а-яА-Я._/?&#=;@%:()+]+',link,text)
 	#text = re.sub(u'[-a-zA-Z._0-9?:а-яА-Я]+@[-a-zA-Z._0-9а-яА-Я/?:]+',email,text)
-	text = text.replace('\n','<br>')
-	text = re.sub('<br>\ +',brnbsp,text)
+	text = text.replace('\n','<br/>')
+	text = re.sub('<br/>\ +',brnbsp,text)
 	#for tmp in (('\"','&quot;'),('\'','&apos;')): text = text.replace(tmp[0],tmp[1])
 	return text
 

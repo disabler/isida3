@@ -44,13 +44,13 @@ for smilepack in smiles_dirs_case:
 def smile_replace(room, text):
 	global smile_dictionary
 	smilepack = smiles_dirs_case[smiles_dirs.index(get_config(getRoom(room),'smiles'))]
-	newtext = ' %s ' % text.replace('<br>',' <br> ').replace('&nbsp;', ' ')
+	newtext = ' %s ' % text.replace('<br/>',' <br/> ').replace('&nbsp;', ' ')
 	for smile in sorted(smile_dictionary[smilepack], key = lambda x: len(x))[::-1]:
 		tmp_smile = ' %s ' % html_escape(smile.decode('utf-8')).replace('&amp;', '&')
 		while tmp_smile in newtext:
 			sm_tag = ' <img src="%s" alt="%s"> ' % ('../../../%s/%s/%s' % (smile_folder, smilepack, smile_dictionary[smilepack][smile]),smile.decode('utf-8'))
 			newtext = newtext.replace(tmp_smile, sm_tag)
-	return newtext.replace(' <br>','<br>').replace('<br> ','<br>')[1:-1]
+	return newtext.replace(' <br/>','<br/>').replace('<br/> ','<br/>')[1:-1]
 
 def initial_log_users(room,ott):
 	txt = []
@@ -67,7 +67,7 @@ def append_message_to_log(room,jid,nick,type,text):
 	global public_log, system_log
 	lr = cur_execute_fetchone('select * from log_rooms where room=%s;',(room,))
 	if lr:
-		if GT('html_logs_enable'): text,jid,nick = html_escape(text).replace('\n','<br>'), html_escape(jid), html_escape(nick)
+		if GT('html_logs_enable'): text,jid,nick = html_escape(text).replace('\n','<br/>'), html_escape(jid), html_escape(nick)
 		if type == 'groupchat' and text != 'None':
 			if get_config(getRoom(room),'smiles') != 'off': ptext = smile_replace(room, text)
 			else: ptext = text
@@ -84,7 +84,7 @@ def write_log_with_end(curr_path,curr_file,log_body,log_he):
 		try:
 			ll = last_log_file[curr_path]
 			if os.path.isfile(ll):
-				ender = ['\n','</div></div><br>%s</body></html>' % GT('html_logs_end_text')][GT('html_logs_enable')]
+				ender = ['\n','</div></div><br/>%s</body></html>' % GT('html_logs_end_text')][GT('html_logs_enable')]
 				fle = open(ll, 'a')
 				fle.write(ender.encode('utf-8'))
 				fle.close()
@@ -110,10 +110,33 @@ def msg_logger(room,jid,nick,type,text,logfile):
 	if nick == '': log_body += ['*** %s\n','<span class="topic">%s</span></p>'][GT('html_logs_enable')] % text
 	else:
 		if text[:4] == '/me ': log_body += ['*%s %s\n','<span class="me">%s %s</span></p>\n'][GT('html_logs_enable')] % (nick,text[4:])
-		else: log_body += ['%s: %s\n','<span class="nick">%s:&nbsp;</span><span class="text">%s</span></p>\n'][GT('html_logs_enable')] % (nick,text)
+		else:
+			if '<br/>' + '&nbsp;'*8 in text:
+				msg_type = '<span class="nick">%s:&nbsp;</span><span class="paste">%s</span></p>\n'
+				if not text.startswith('<br/>'): text = '<br/>%s' % text
+				text = text.replace('&nbsp;'*8,'<span style="padding: 0px 16px;">&nbsp;</span>')
+			elif '&nbsp;'*8 in text:
+				no_tab_text,cnt = [],0
+				for t in text.split('<br/>'):
+					if not '&nbsp;'*8 in t:
+						no_tab_text.append(t)
+						cnt += 1
+					else: break
+				text = '<br/>'.join(text.split('<br/>')[cnt:])
+				no_tab_text = '<br/>'.join(no_tab_text)
+				
+				msg_type = '<span class="nick">%s:&nbsp;</span><span class="text">' + no_tab_text + '%s</span></p>\n'
+
+				text = '<table border="0" class="text" cellpadding="0" cellspacing="0"><tr><td>&nbsp;%s' % text
+				text = text.replace('&nbsp;'*8,'</td><td>&nbsp;')
+				text = '%s</tr></table>' % text
+				text = text.replace('<br/>','</td></tr><tr><td>&nbsp;')
+								
+			else: msg_type = '<span class="nick">%s:&nbsp;</span><span class="text">%s</span></p>\n'
+			log_body += ['%s: %s\n',msg_type][GT('html_logs_enable')] % (nick,text)
 	lht =  '%s - %02d/%02d/%02d' % (room,lt[0],lt[1],lt[2])
 	log_he = ['%s\t\thttp://isida-bot.com\n\n' % lht,log_header+lht+'</title></head><body><div class="main"><div class="top"><div class="heart"><a href="http://isida-bot.com">http://isida-bot.com</a></div><div class="conference">'+lht+'</div></div><div class="container">\n'][GT('html_logs_enable')]
-	try: log_he += initial_log_users(room,ott) + ['[%s] ' % ott,'<p><a id="%s" name="%s" href="#%s" class="time">%s</a> ' % (ott,ott,ott,ott)][GT('html_logs_enable')] + ['*** %s\n','<span class="topic">%s</span></p>'][GT('html_logs_enable')] % [topics[room],html_escape(topics[room]).replace('\n','<br>')][GT('html_logs_enable')]
+	try: log_he += initial_log_users(room,ott) + ['[%s] ' % ott,'<p><a id="%s" name="%s" href="#%s" class="time">%s</a> ' % (ott,ott,ott,ott)][GT('html_logs_enable')] + ['*** %s\n','<span class="topic">%s</span></p>'][GT('html_logs_enable')] % [topics[room],html_escape(topics[room]).replace('\n','<br/>')][GT('html_logs_enable')]
 	except: pass
 	write_log_with_end(logfile+room,curr_file,log_body,log_he)
 
@@ -180,7 +203,7 @@ def presence_logger(room,jid,nick,type,mass,mode,logfile):
 			log_body += '%s\n' % ['','</span></p>'][GT('html_logs_enable')]
 		lht = '%s - %02d/%02d/%02d' % (room,lt[0],lt[1],lt[2])
 		log_he = ['%s\t\thttp://isida-bot.com\n\n' % lht,log_header+lht+'</title></head><body><div class="main"><div class="top"><div class="heart"><a href="http://isida-bot.com">http://isida-bot.com</a></div><div class="conference">'+lht+'</div></div><div class="container">\n'][GT('html_logs_enable')]
-		try: log_he += initial_log_users(room,ott) + ['[%s] ' % ott,'<p><a id="%s" name="%s" href="#%s" class="time">%s</a> ' % (ott,ott,ott,ott)][GT('html_logs_enable')] + ['*** %s\n','<span class="topic">%s</span></p>'][GT('html_logs_enable')] % [topics[room],html_escape(topics[room]).replace('\n','<br>')][GT('html_logs_enable')]
+		try: log_he += initial_log_users(room,ott) + ['[%s] ' % ott,'<p><a id="%s" name="%s" href="#%s" class="time">%s</a> ' % (ott,ott,ott,ott)][GT('html_logs_enable')] + ['*** %s\n','<span class="topic">%s</span></p>'][GT('html_logs_enable')] % [topics[room],html_escape(topics[room]).replace('\n','<br/>')][GT('html_logs_enable')]
 		except: pass
 		write_log_with_end(logfile+room,curr_file,log_body,log_he)
 
