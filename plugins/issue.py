@@ -69,7 +69,7 @@ def issue_new(s,acclvl,room,jid,nick,text):
 
 def issue_show(s,room,type,nick):
 	if len(s) > 1 and s[0] == 'show': s = s[1]
-	elif s[0] == 'show': s = '%'
+	elif len(s) == 1 and s[0] == 'show': s = '%'
 	elif s: s = s[0]
 	else: s = '%'
 	
