@@ -21,6 +21,16 @@
 #                                                                             #
 # --------------------------------------------------------------------------- #
 
+def vendor_by_mac(type, jid, nick, text):
+	text = text.strip().replace('-','').replace(':','').replace(' ','')[:6].upper()
+	if text and len(text) == 6:
+		result = html_encode(load_page('http://standards.ieee.org/cgi-bin/ouisearch?%s' % text))
+		r = re.findall('\(hex\)(.*?)\n',result,re.S+re.I)
+		if 'Sorry!' in result and not r: msg = L('Not found!','%s/%s'%(jid,nick))
+		else: msg = r[0].strip().upper()
+	else: msg = L('What?','%s/%s'%(jid,nick))
+	send_msg(type, jid, nick, msg)
+
 def net_ping(type, jid, nick, text):
 	text = text.strip().lower().encode('idna')
 	if '.' in text and len(text) > 4 and re.match(r'[-0-9a-z.]+\Z', text, re.U+re.I): msg = deidna(shell_execute('ping -c4 %s' % text,'%s/%s'%(jid,nick)))
@@ -112,4 +122,5 @@ execute = [(6, 'nslookup', srv_nslookup, 2, 'Command nslookup'),
 		   (4, 'port', chkserver, 2, 'Check port activity\nport server port1 [port2 ...]'),
 		   (4, 'net_ping', net_ping, 2, 'Net Ping.\nnet_ping ip|domain'),
 		   (3, 'dns', get_dns, 2, 'DNS resolver.'),
-		   (3, 'tld', get_tld, 2, 'Search domain zones TLD.')]
+		   (3, 'tld', get_tld, 2, 'Search domain zones TLD.'),
+		   (3, 'mac', vendor_by_mac, 2, 'Show vendor of device by mac')]

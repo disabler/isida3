@@ -1780,5 +1780,5 @@ Logs settings	Налаштування логів
 Youtube settings	Налаштування Youtube
 
 # write locale file: ua.txt
-# total: 1454
+# total: 1455
 # missed translations: 1

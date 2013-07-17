@@ -1166,6 +1166,7 @@ Check port activity\nport server port1 [port2 ...]	Проверка активн
 Net Ping.\nnet_ping ip|domain	Сетевой пинг.\nnet_ping ip-адрес|домен
 DNS resolver.	DNS резолвер.
 Search domain zones TLD.	Поиск доменных зон TLD.
+Show vendor of device by mac	Показ производителя устройства по mac
 
 # file: plugins/oboobs.py
 Show random picture from oboobs.ru	Показ случайной картинки с oboobs.ru
@@ -1780,5 +1781,5 @@ Logs settings	Настройки логов
 Youtube settings	Настройки youtube
 
 # write locale file: ru.txt
-# total: 1454
+# total: 1455
 # missed translations: 1
