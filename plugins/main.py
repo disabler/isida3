@@ -277,8 +277,11 @@ def show_syslogs(type, jid, nick, text):
 		except: txt = text
 	lsz += 1
 	lsz = 1 if lsz <= 0 else (last_logs_size if lsz > last_logs_size else lsz)
-	msg = '\n'.join([tmp for tmp in last_logs_store if txt in tmp][1:lsz][::-1])
-	send_msg(type, jid, nick, L('Last syslogs: %s','%s/%s'%(jid,nick)) % '\n%s' % msg)
+	msg = '\n'.join([tmp for tmp in last_logs_store if txt in tmp.lower() or txt in tmp][1:lsz][::-1])
+	if msg:
+		send_msg(type, jid, nick, L('Last syslogs:\n%s','%s/%s'%(jid,nick)) % msg)
+	else:
+		send_msg(type, jid, nick, L('Syslogs not found','%s/%s'%(jid,nick)))
 
 def show_syslogs_search(type, jid, nick, text):
 	if '\n' in text: text,value = text.lower().split('\n',1)

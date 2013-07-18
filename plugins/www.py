@@ -97,6 +97,12 @@ def netwww(type, jid, nick, text):
 	if text:
 		try:
 			regex = text.split('\n')[0].replace('*','*?')
+			tmp = regex.split(' ', 1)
+			if tmp[0].strip().isdigit():
+				n = int(tmp[0])
+				regex = tmp[1]
+			else:
+				n = 1
 			text = text.split('\n')[1]
 		except: regex = None
 		if not re.findall('^http(s?)://',text[:10]): text = 'http://%s' % text
@@ -107,7 +113,11 @@ def netwww(type, jid, nick, text):
 			if regex:
 				try:
 					mt = re.findall(regex, page, re.S+re.U+re.I)
-					if mt != []: msg = unhtml_hard(''.join(mt[0]))
+					if mt != []:
+						if n:
+							msg = unhtml_hard('\n'.join([''.join(t) for t in mt[:n]]))
+						else:
+							msg = unhtml_hard('\n'.join([''.join(t) for t in mt]))
 					else: msg = L('RegExp not found!','%s/%s'%(jid,nick))
 				except: msg = L('Error in RegExp!','%s/%s'%(jid,nick))
 			else:
@@ -203,7 +213,7 @@ global execute
 
 message_act_control = [parse_url_in_message]
 
-execute = [(3, 'www', netwww, 2, 'Show web page.\nwww regexp\n[http://]url - page after regexp\nwww [http://]url - without html tags'),
+execute = [(3, 'www', netwww, 2, 'Show web page.\nwww [count (0 for all)] regexp\n[http://]url - page after regexp\nwww [http://]url - without html tags'),
 		   (3, 'header', netheader, 2, 'Show net header'),
 		   (3, 'isdown', www_isdown, 2, 'Check works site'),
 		   (4, 'rss_search', rss_search, 2, 'Search RSS/ATOM feeds')]

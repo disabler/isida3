@@ -928,6 +928,8 @@ Room now is semi-anonymous.	Кімната напіванонімна.
 Room now is fully-anonymous.	Кімната повністю анонімна.
 Ignore list: %s	Я не приймаю команди від %s
 Not found: %s	Не знайдено: %s
+Last syslogs:\n%s	Останні системні логи:\n%s
+Syslogs not found	Системні логи відсутні
 Last syslogs: %s	Останні системні логи: %s
 Locale set to: %s	Встановлена локалізація: %s
 Locale not found!	Локалізація не знайдена!
@@ -1166,6 +1168,7 @@ Check port activity\nport server port1 [port2 ...]	Перевірка актив
 Net Ping.\nnet_ping ip|domain	Сітьовий пінг.\nnet_ping ip-адреса|домен
 DNS resolver.	DNS-ресолвер.
 Search domain zones TLD.	Пошук доменних зон TLD.
+Show vendor of device by mac	Відображення виробника пристрою по mac
 
 # file: plugins/oboobs.py
 Show random picture from oboobs.ru	Показ випадковго зображення з oboobs.ru
@@ -1337,6 +1340,9 @@ Show list of users for last day	Показ списку учасників за 
 # file: plugins/wot.py
 Use more characters in the name of the tank	Використовуйте більше символів в назві танку
  not founded tank	 танк не знайдено
+Impossible to get tanks' statistics	Неможливо отримати статистику танків
+\nTo next win percent: %s battles	\nДо наступного проценту перемог: %s битв
+\nTo next win percent (rounding): %s battles	\nДо наступного проценту перемог (з округл.): %s битв
 \nAv. damage: %s	\nСер. дамаг: %s
 \nAv. destroyed: %s	\nВ сер. знищено: %s
 \nAv. spotted: %s	\nВ сер. знайдено: %s
@@ -1352,6 +1358,8 @@ Use more characters in the name of the tank	Використовуйте біл�
  - unicum	 - унікум
 \nWN6 rating: %s (XVM: %s)	\nРейтинг WN6: %s (XVM: %s)
 \nArmor-rating: %s	\nРейтинг Бронесайту: %s
+\nTrue Win Rate (TWR): %s%%	\nПриведений процент перемог (TWR): %s%%
+Impossible to get statistics	Неможливо отримати статистику
 Query error	Помилка запиту
 Player not found	Гравця не знайдено
 World of Tanks - info about user. Usage: wot nick [tank]	World of Tanks - інформація про користувача. Використання: wot нік [танк]
@@ -1397,7 +1405,7 @@ RegExp not found!	RegExp не знайдений!
 Content length %s	Розмір вмісту %s
 Title: %s	Заголовок: %s
 Length of %s is %s	Розмір %s - %s
-Show web page.\nwww regexp\n[http://]url - page after regexp\nwww [http://]url - without html tags	Показує зміст веб-сторінки.\nwww regexp\n[http://]url - сторінка, оброблена regexp\nwww [http://]url - сторінка з прибраними html-тегами
+Show web page.\nwww [count (0 for all)] regexp\n[http://]url - page after regexp\nwww [http://]url - without html tags	Показує вміст веб-сторінки.\nwww [кількість результатів (0 для всих)] regexp\n[http://]url - сторінка, оброблена regexp\nwww [http://]url - сторінка з видаленими html-тегами
 Show net header	Показує заголовок файлу
 Check works site	Перевіока роботи сайту
 Search RSS/ATOM feeds	Пошук RSS/ATOM каналу
@@ -1780,5 +1788,5 @@ Logs settings	Налаштування логів
 Youtube settings	Налаштування Youtube
 
 # write locale file: ua.txt
-# total: 1455
-# missed translations: 1
+# total: 1462
+# missed translations: 9
