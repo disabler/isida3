@@ -168,4 +168,4 @@ def wot(type, jid, nick, text):
 
 global execute
 
-execute = [(3, 'wot', wot, 2, L('World of Tanks - info about user. Usage: wot nick [tank]'))]
+execute = [(3, 'wot', wot, 2, 'World of Tanks - info about user. Usage: wot nick [tank]')]
