@@ -39,8 +39,8 @@ def turner_raw(text,jid,nick):
 		if to_turn[:3] == '/me': msg, to_turn = '*%s' % nick, to_turn[3:]
 		elif ': ' in to_turn: msg, to_turn = '%s:' % to_turn.split(': ',1)[0], to_turn.split(': ',1)[1]
 		else: msg = ''
-		for tt in re.findall('\s+[^\s]*', ' ' + to_turn):
-			if re.findall('\s+(svn|http[s]?|ftp)(://)',tt,re.I+re.S+re.U) or re.findall(u'\s+[A-ZА-Я\d\']{2,}$',tt,re.U): msg += tt
+		for tt in re.findall('\s+[^\s]*', ' ' + to_turn,re.I+re.U):
+			if re.findall('\s+(svn|http[s]?|ftp)(://)',tt,re.I+re.S+re.U): msg += tt
 			else: msg += ''.join([ltab[rtab.find(x)] if x in rtab else x for x in tt])
 		msg = msg.strip()
 		if get_config(getRoom(jid),'censor'): msg = to_censore(msg,jid)
