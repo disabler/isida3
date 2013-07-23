@@ -1485,9 +1485,12 @@ def disconnecter():
 	time.sleep(2)
 
 def get_L_(jid):
-	try: loc = users_locale[jid] if jid and not get_config(getRoom(jid),'use_default_locale') else CURRENT_LOCALE
-	except: loc = CURRENT_LOCALE
-	if not locales.has_key(loc): loc = CURRENT_LOCALE
+	if jid: _CURRENT_LOCALE = get_config(getRoom(jid),'set_default_locale')
+	else: _CURRENT_LOCALE = CURRENT_LOCALE
+	#if _CURRENT_LOCALE == 'off': _CURRENT_LOCALE = CURRENT_LOCALE
+	try: loc = users_locale[jid] if _CURRENT_LOCALE == 'off' else _CURRENT_LOCALE
+	except: loc = _CURRENT_LOCALE
+	if not locales.has_key(loc): loc = _CURRENT_LOCALE
 	return loc
 
 def L(*par):

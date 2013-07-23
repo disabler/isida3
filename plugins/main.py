@@ -638,7 +638,7 @@ def get_nick_by_jid_res(room, jid):
 	return None
 
 def info_lang(type, jid, nick, text):
-	if get_config(getRoom(jid),'use_default_locale'): msg = L('In current MUC used default locale for all users.','%s/%s'%(jid,nick))
+	if get_config(getRoom(jid),'set_default_locale') != 'off': msg = L('In current MUC used %s locale for all users.','%s/%s'%(jid,nick)) % get_config(getRoom(jid),'set_default_locale').upper()
 	else:
 		if not text: text = nick
 		if users_locale.has_key('%s/%s'%(jid,text)):
@@ -1548,7 +1548,8 @@ config_prefs = {'url_title': ['Url title is %s', 'Automatic show title of urls i
 				'make_stanza_jid_count':['Jid\'s per stanza for affiliations in backup is %s','Count of jid\'s per stanza for affiliations change in backup',None,'100'],
 				'acl_multiaction': ['ACL multiaction is %s', 'Execute more than one action per pass in ACL.', [True,False], False],
 				'paste_xhtml_images': ['Paste xhtml images %s', 'Detect and paste xhtml images in messages', [True,False], True],
-				'use_default_locale': ['Use default locale %s', 'Ignore locale settings and use default bot locale', [True,False], False],
+				#'use_default_locale': ['Use default locale %s', 'Ignore locale settings and use default bot locale', [True,False], False],
+				'set_default_locale': ['Set default locale %s', 'Ignore users locale and use one locale for all users in room', ['off','en'] + [tmp[:-4] for tmp in os.listdir(loc_folder[:-6]) if tmp[-4:]=='.txt'], 'off'],
 				'store_users_url': ['Store Users URL %s', 'Store Users URL', [True,False], True],
 				'trusted_servers': ['Trusted servers %s', 'Servers list marked as trusted. They are excluded from any actions with servers', None, ''],
 
@@ -1675,7 +1676,7 @@ config_prefs = {'url_title': ['Url title is %s', 'Automatic show title of urls i
 
 config_group_other = ['Other settings','#room-other',
 				['url_title','parse_define','clear_answer','smiles','autoturn','make_stanza_jid_count','content_length','acl_multiaction',
-				'paste_xhtml_images','use_default_locale','store_users_url','trusted_servers'],None]
+				'paste_xhtml_images','set_default_locale','store_users_url','trusted_servers'],None]
 
 config_group_censor = ['Censor settings','#room-censor',
 				['censor','censor_warning','censor_action_member','censor_action_non_member',
