@@ -144,7 +144,7 @@ def get_content_title(link):
 			for tmp in text: cnt += int(ord(tmp) in [1056,1057])
 			if cnt >= len(text)/3: text = remove_sub_space(html_encode(get_tag(original_page,tag)).replace('\n',' ').replace('\r',' ').replace('\t',' '))	
 	except: text = ''
-	return text
+	return text.strip()
 
 def parse_url_in_message(room,jid,nick,type,text):
 	global last_url_watch
