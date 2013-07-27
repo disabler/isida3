@@ -148,10 +148,10 @@ def vcard_async(type, jid, nick, text, args, is_answ):
 				args,dd = args.split('|'),[]
 				for t in args:
 					if ':' in t: val,loc = t.split(':',1)
-					else: val,loc = t,t
+					else: val,loc = t,t.upper()
 					val = val.upper()
 					dv = get_array_from_array2(data,(val))
-					if dv: dd += dv
+					if dv: dd += [[loc,dv[0][1]]]
 				if dd: msg = '%s\n%s' % (L('vCard:','%s/%s'%(jid,nick)),'\n'.join(['%s: %s' % ([L(t[0]),t[0].capitalize()][L(t[0])==t[0]],[u'%s…' % t[1][:VCARD_LIMIT_LONG],t[1]][len(t[1])<VCARD_LIMIT_LONG]) for t in dd]))
 				else: msg = '%s %s' % (L('vCard:','%s/%s'%(jid,nick)),L('Not found!','%s/%s'%(jid,nick)))
 		else: msg = '%s %s' % (L('vCard:','%s/%s'%(jid,nick)),L('Empty!','%s/%s'%(jid,nick)))
