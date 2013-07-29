@@ -21,8 +21,6 @@
 #                                                                             #
 # --------------------------------------------------------------------------- #
 
-re.split(r'(?<!\\)\|', r'1|2|3\\|$')
-
 def say(type, jid, nick, text):
 	text = random.choice(re.split(r'(?<!\\)\|', text)).replace('\\|', '|')
 	send_msg('groupchat', jid, '', to_censore(text,jid))
@@ -42,7 +40,7 @@ def set_topic(type, jid, nick, text):
 
 global execute
 
-execute = [(6, 'say', say, 2, '"Say" command. Bot say in conference text after command. Example:\nsay text1[|text2[!text3[...]]]'),
+execute = [(6, 'say', say, 2, '"Say" command. Bot say in conference text after command. Example:\nsay text1[|text2[|text3[...]]]'),
 	 (6, 'psay', psay, 2, '"Say" command. Bot say in private all text after command.\npsay <nick>\ntext'),
 	 (9, 'gsay', gsay, 2, 'Global message in all conferences, where bot is present.'),
 	 (7, 'topic', set_topic, 2, 'Set conference topic.')]

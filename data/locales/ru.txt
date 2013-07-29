@@ -1209,7 +1209,7 @@ Redirect command output in private.	Перенаправляет вывод ко
 Redirect command output in groupchat.	Перенаправляет вывод команды в конференцию.
 
 # file: plugins/say.py
-"Say" command. Bot say in conference text after command. Example:\nsay text1[|text2[!text3[...]]]	Команда "Сказать". Бот выдаст в текущую конференцию то, что будет после команды say. Пример:\nsay текст1[|текст2[!текст3[...]]]
+"Say" command. Bot say in conference text after command. Example:\nsay text1[|text2[|text3[...]]]	Команда "Сказать". Бот выдаст в текущую конференцию то, что будет после команды say. Пример:\nsay текст1[|текст2[|текст3[...]]]
 "Say" command. Bot say in private all text after command.\npsay <nick>\ntext	Команда "Сказать в приват". Бот скажет заданный текст участнику в приват.\npsay <nick>\ntext
 Global message in all conferences, where bot is present.	Глобальное объявление во всех конференциях, где находится бот.
 Set conference topic.	Установка топика конференции
