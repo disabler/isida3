@@ -105,46 +105,46 @@ def wot(type, jid, nick, text):
 						
 						er = DAMAGE * (10 / (TIER + 2)) * (0.23 + 2 * TIER / 100) + FRAGS * 250 + SPOT * 150 + math.log(CAP + 1) / math.log(1.732) * 150 + DEF * 150
 						
-						if er < 400:
+						if er < 420:
 							er_xvm = 0
 						else:
-							er_xvm = max(min(4.787e-17 * er**6 - 3.5544e-13 * er**5 + 1.02606e-9 * er**4 - 1.4665e-6 * er**3 + 1.0827e-3 * er**2 - 0.3133 * er + 20.49, 100), 0)
+							er_xvm = max(min(er*(er*(er*(er*(er*(4.5254e-17*er - 3.3131e-13) + 9.4164e-10) - 1.3227e-6) + 9.5664e-4) - 0.2598) + 13.23, 100), 0)
 						
 						msg += L('\nEfficiency rating: %s (XVM: %s)','%s/%s'%(jid,nick)) % (int(round(er)), round(er_xvm, 1))
 						
-						if er < 645:
+						if er < 630:
 							msg += L(' - bad player','%s/%s'%(jid,nick))
-						elif er < 875:
+						elif er < 860:
 							msg += L(' - player below average','%s/%s'%(jid,nick))
-						elif er < 1155:
+						elif er < 1140:
 							msg += L(' - average player','%s/%s'%(jid,nick))
-						elif er < 1470:
+						elif er < 1460:
 							msg += L(' - good player','%s/%s'%(jid,nick))
-						elif er < 1740:
+						elif er < 1735:
 							msg += L(' - great player','%s/%s'%(jid,nick))
-						elif er >= 1740:
+						elif er >= 1735:
 							msg += L(' - unicum','%s/%s'%(jid,nick))
 						
 						wn6 = (1240 - 1040 / math.pow((min(TIER, 6)), 0.164)) * FRAGS + DAMAGE * 530 / (184 * math.exp(0.24 * TIER) + 130) + SPOT * 125 + min(DEF, 2.2) * 100 + ((185 / (0.17 + math.exp((WINRATE * 100 - 35) * -0.134))) - 500) * 0.45 + (6 - min(TIER, 6)) * (-60)
-						
-						if wn6 > 2200:
+
+						if wn6 > 2160:
 							wn6_xvm = 100
 						else:
-							wn6_xvm = max(min(-1.334e-11 * wn6**4 + 5.673e-8 * wn6**3 - 7.575e-5 * wn6**2 + 0.08392 * wn6 - 9.362, 100), 0)
+							wn6_xvm = max(min(wn6*(wn6*(wn6*(-1.268e-11*wn6 + 5.147e-8) - 6.418e-5) + 7.576e-2) - 7.25, 100), 0)
 						
 						msg += L('\nWN6 rating: %s (XVM: %s)','%s/%s'%(jid,nick)) % (int(round(wn6)), round(wn6_xvm, 1))
 						
-						if er < 435:
+						if er < 425:
 							msg += L(' - bad player','%s/%s'%(jid,nick))
-						elif er < 805:
+						elif er < 795:
 							msg += L(' - player below average','%s/%s'%(jid,nick))
-						elif er < 1200:
+						elif er < 1175:
 							msg += L(' - average player','%s/%s'%(jid,nick))
-						elif er < 1595:
+						elif er < 1570:
 							msg += L(' - good player','%s/%s'%(jid,nick))
-						elif er < 1900:
+						elif er < 1885:
 							msg += L(' - great player','%s/%s'%(jid,nick))
-						elif er >= 1900:
+						elif er >= 1885:
 							msg += L(' - unicum','%s/%s'%(jid,nick))
 						
 						armor = math.log(battles) / 10 * (avg_exp + DAMAGE * (WINRATE * 2 + FRAGS * 0.9 + (SPOT + CAP + DEF) * 0.5))
