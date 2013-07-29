@@ -1789,4 +1789,4 @@ Youtube settings	Налаштування Youtube
 
 # write locale file: ua.txt
 # total: 1462
-# missed translations: 3
+# regenarated without mistakes!

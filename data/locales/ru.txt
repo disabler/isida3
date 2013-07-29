@@ -1789,4 +1789,4 @@ Youtube settings	Настройки youtube
 
 # write locale file: ru.txt
 # total: 1462
-# missed translations: 3
+# regenarated without mistakes!
