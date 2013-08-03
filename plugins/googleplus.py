@@ -28,10 +28,10 @@ def gcalc(type, jid, nick, text):
 	else:
 		try:
 			data = load_page('http://www.google.ru/search?', {'q': text.encode('utf-8'), 'hl': GT('youtube_default_lang')})
-			msg = re.search('<h2 class=["]?r["]?.+?>(.+?)</h2>', data).group(1)
-			for t in [['</b>',''],['<b>',''],['<font size=-2> </font>',','],['</sup>', ''],['<sup>', '^'],[' &#215; 10<sup>','E']]: msg = msg.replace(*t)
-			msg = msg.decode('utf-8', 'ignore')
-		except: msg = L('Google Calculator results not found','%s/%s'%(jid,nick))
+			msg = ' '.join(re.findall('<div class="vk_gy vk_sh" style="margin-bottom:5px">(.*?)</div><div class="vk_ans vk_bk" style="margin-bottom:0">(.*?)</div>',data)[0]).decode('utf-8', 'ignore')
+		except:
+			try: msg = reduce_spaces_all(' '.join(re.findall('<span class="cwclet" id="cwles">(.*?)</span>.*?<span class="cwcot" id="cwos">(.*?)</span>',data,re.S)[0])).strip()
+			except: msg = L('Google Calculator results not found','%s/%s'%(jid,nick))
 	send_msg(type, jid, nick, msg)
 
 def define(type, jid, nick, text):
