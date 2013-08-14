@@ -1341,8 +1341,7 @@ Show list of users for last day	Показ списку учасників за 
 Use more characters in the name of the tank	Використовуйте більше символів в назві танку
  not founded tank	 танк не знайдено
 Impossible to get tanks' statistics	Неможливо отримати статистику танків
-\nTo next win percent: %s battles	\nДо наступного проценту перемог: %s битв
-\nTo next win percent (rounding): %s battles	\nДо наступного проценту перемог (з округл.): %s битв
+\nUp to %s%% win left: %s battles	\nДо %s%% перемог залишилося: %s битв
 \nAv. damage: %s	\nСер. дамаг: %s
 \nAv. destroyed: %s	\nВ сер. знищено: %s
 \nAv. spotted: %s	\nВ сер. знайдено: %s
@@ -1788,5 +1787,5 @@ Logs settings	Налаштування логів
 Youtube settings	Налаштування Youtube
 
 # write locale file: ua.txt
-# total: 1462
-# regenarated without mistakes!
+# total: 1461
+# missed translations: 1
