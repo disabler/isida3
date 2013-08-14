@@ -79,8 +79,8 @@ def wot(type, jid, nick, text):
 						np05 = int(win_percent + 0.5) + 0.5
 						np_round = int((np05 * battles - 100 * wins) / (100 - np05) + 1)
 						
-						msg += L('\nTo next win percent: %s battles', '%s/%s'%(jid,nick)) % np_int
-						msg += L('\nTo next win percent (rounding): %s battles', '%s/%s'%(jid,nick)) % np_round
+						msg += L('\nUp to %s%% win left: %s battles', '%s/%s'%(jid,nick)) % (np, np_int)
+						msg += L('\nUp to %s%% win left: %s battles', '%s/%s'%(jid,nick)) % (np05, np_round)
 
 						avg_exp = data2['data']['ratings']['battle_avg_xp']['value']
 						
@@ -134,17 +134,17 @@ def wot(type, jid, nick, text):
 						
 						msg += L('\nWN6 rating: %s (XVM: %s)','%s/%s'%(jid,nick)) % (int(round(wn6)), round(wn6_xvm, 1))
 						
-						if er < 425:
+						if wn6 < 425:
 							msg += L(' - bad player','%s/%s'%(jid,nick))
-						elif er < 795:
+						elif wn6 < 795:
 							msg += L(' - player below average','%s/%s'%(jid,nick))
-						elif er < 1175:
+						elif wn6 < 1175:
 							msg += L(' - average player','%s/%s'%(jid,nick))
-						elif er < 1570:
+						elif wn6 < 1570:
 							msg += L(' - good player','%s/%s'%(jid,nick))
-						elif er < 1885:
+						elif wn6 < 1885:
 							msg += L(' - great player','%s/%s'%(jid,nick))
-						elif er >= 1885:
+						elif wn6 >= 1885:
 							msg += L(' - unicum','%s/%s'%(jid,nick))
 						
 						armor = math.log(battles) / 10 * (avg_exp + DAMAGE * (WINRATE * 2 + FRAGS * 0.9 + (SPOT + CAP + DEF) * 0.5))
