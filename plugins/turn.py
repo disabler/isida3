@@ -40,7 +40,7 @@ def turner_raw(text,jid,nick):
 		elif ': ' in to_turn: msg, to_turn = '%s:' % to_turn.split(': ',1)[0], to_turn.split(': ',1)[1]
 		else: msg = ''
 		for tt in re.findall('\s+[^\s]*', ' ' + to_turn,re.I+re.U):
-			if re.findall('\s+(svn|http[s]?|ftp)(://)',tt,re.I+re.S+re.U): msg += tt
+			if re.findall('\s+(((svn|http[s]?|ftp)(://))|(magnet:\?))',tt,re.I+re.S+re.U): msg += tt
 			else: msg += ''.join([ltab[rtab.find(x)] if x in rtab else x for x in tt])
 		msg = msg.strip()
 		if get_config(getRoom(jid),'censor'): msg = to_censore(msg,jid)

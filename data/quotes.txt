@@ -44,5 +44,8 @@
     "random": ["http://skio.ru/quotes/humour_quotes.php", "<form id=&quot;qForm&quot; method=&quot;post&quot;><div align=&quot;center&quot;>((?:.|\\s)+?)</div>"]},
 "nya":
     {"title": "nya.sh - НЯШ",
-    "number": ["http://nya.sh/post/%s", "<div class=\"content\">((?:.|\\s)*?)</div>"]}
+    "number": ["http://nya.sh/post/%s", "<div class=\"content\">((?:.|\\s)*?)</div>"]},
+"dev":
+    {"title": "devanswers.ru - Девелопер ответит",
+    "random": ["http://devanswers.ru/", "<a href=\"/\" id=\"lnkReload\"><span>(.*?)</span>"]}
 }

@@ -35,7 +35,7 @@ def quote(type, jid, nick, text):
     if len(tmp) == 1 and tmp[0] == 'list':
         msg = (L('Quotes:\n','%s/%s'%(jid,nick)) + '\n'.join(['%s - %s (%s)' % (q, quotes_list[q]['title'],
         ', '.join(k for k  in quotes_list[q].keys() if k != 'title').replace('random', L('rand','%s/%s'%(jid,nick))).replace('number', L('by number','%s/%s'%(jid,nick))).replace('search', L('search','%s/%s'%(jid,nick))))
-        for q in quotes_list.keys()]))
+        for q in sorted(quotes_list.keys())]))
     elif len(tmp) == 1 and quotes_list.has_key(tmp[0]) and quotes_list[tmp[0]].has_key('random'):
         try:
             url = quotes_list[tmp[0]]['random'][0]
