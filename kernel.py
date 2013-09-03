@@ -1027,9 +1027,8 @@ def messageCB(sess,mess):
 	if text != 'None' and text and access_mode >= 0 and not mess.getSubject():
 		no_comm = True
 		is_par = False
-		len_nowname = len(nowname)
-		if text.startswith(nowname) and text[len_nowname+1:len_nowname+2] == ' ':
-			text = text[len_nowname+2:]
+		if text.startswith('%s: ' % nowname) or text.startswith('%s, ' % nowname):
+			text = text[len(nowname)+2:]
 			is_par = True
 		btext = text
 		if text.startswith(lprefix):
