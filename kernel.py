@@ -1024,14 +1024,15 @@ def messageCB(sess,mess):
 			act = get_config(getRoom(room),'censor_action_non_member')
 			muc_filter_action(act,jid,room,cens_text)
 	no_comm = True
-	if (text != 'None') and (len(text)>=1) and access_mode >= 0 and not mess.getSubject():
+	if text != 'None' and text and access_mode >= 0 and not mess.getSubject():
 		no_comm = True
 		is_par = False
-		if text[:len(nowname)] == nowname:
-			text = text[len(nowname)+2:]
+		len_nowname = len(nowname)
+		if text.startswith(nowname) and text[len_nowname+1:len_nowname+2] == ' ':
+			text = text[len_nowname+2:]
 			is_par = True
 		btext = text
-		if text[:len(lprefix)] == lprefix:
+		if text.startswith(lprefix):
 			text = text[len(lprefix):]
 			is_par = True
 		if type == 'chat': is_par = True
