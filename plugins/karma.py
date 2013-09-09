@@ -21,6 +21,8 @@
 #                                                                             #
 # --------------------------------------------------------------------------- #
 
+last_karma = {}
+
 def karma(type, jid, nick, text):
 	arg = text.split(' ',1)
 	try: arg1 = arg[1]
@@ -174,8 +176,15 @@ def karma_action_do(room,text,action):
 	act[action]('chat',room,nick,'%s\n%s' % (text,get_config(room,'karma_action_reason')),action.replace('kick','none'),0)
 
 def karma_change(room,jid,nick,type,text,value):
+	global last_karma
 	if type == 'chat': msg = L('You can\'t change karma in private!','%s/%s'%(room,nick))
 	else:
+		last_karma_text = last_karma.pop('%s/%s' % (room,jid), None)
+		if last_karma_text:
+			karma_text, karma_count = last_karma_text
+			last_karma['%s/%s' % (room,jid)] = (karma_text, karma_count + 1)
+			if karma_text == text and karma_count >= 2: return
+		else: last_karma['%s/%s' % (room,jid)] = (text, 1)
 		if cur_execute_fetchone('select * from commonoff where room=%s and cmd=%s',(room,'karma')): return
 		if ': ' in text: (text,other) = text.split(': ',1)
 		elif ', ' in text: (text,other) = text.split(', ',1)
@@ -249,7 +258,13 @@ def karma_check(room,jid,nick,type,text):
 		karma_change(room,jid,nick,type,text,-1)
 		return True
 
-global execute, message_control
+def karma_clear_log(room,jid,nick,type,arr):
+	global last_karma
+	if type == 'unavailable': last_karma.pop('%s/%s' % (room,jid), None)
+
+global execute, message_control,presence_control
+
+presence_control = [karma_clear_log]
 
 message_act_control = [karma_check]
 
