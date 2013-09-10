@@ -166,6 +166,34 @@ def wot(type, jid, nick, text):
 		msg = L('What?','%s/%s'%(jid,nick))
 	send_msg(type,jid,nick,msg)
 
+def wotclan(type, jid, nick, text):
+	text = text.strip().upper()
+	try:
+		data = load_page('http://api.worldoftanks.ru/2.0/clan/list/?application_id=171745d21f7f98fd8878771da1000a31&search=%s' % text)	
+		data = json.loads(data)
+		claninfo = [i for i in data['data'] if i['abbreviation'] == text]
+		if claninfo:
+			claninfo = claninfo[0]
+			clid = claninfo['clan_id']
+			owner = claninfo['owner_name']
+			created_at = claninfo['created_at']
+			abbrev = claninfo['abbreviation']
+			data = load_page('http://api.worldoftanks.ru/2.0/clan/info/?application_id=171745d21f7f98fd8878771da1000a31&clan_id=%s' % clid)	
+			data = json.loads(data)
+			claninfo2 = data['data'][str(clid)]
+			msg = L('Name: %s [%s]','%s/%s'%(jid,nick)) % (claninfo2['name'], abbrev)
+			msg += L('\nOwner: %s','%s/%s'%(jid,nick)) % owner
+			msg += L('\nCreated at: %s','%s/%s'%(jid,nick)) % time.ctime(created_at)
+			msg += L('\nCount of members: %s','%s/%s'%(jid,nick)) % claninfo2['members_count']
+			msg += L('\nMotto: %s','%s/%s'%(jid,nick)) % claninfo2['motto']
+			msg += '\n%s' % claninfo2['description']
+		else:
+			msg = L('Clan not found','%s/%s'%(jid,nick))
+	except:
+		msg = L('Impossible to get info','%s/%s'%(jid,nick))
+	send_msg(type,jid,nick,msg)
+		
 global execute
 
-execute = [(3, 'wot', wot, 2, 'World of Tanks - info about user. Usage: wot nick [tank]')]
+execute = [(3, 'wot', wot, 2, 'World of Tanks - info about user. Usage: wot nick [tank]'),
+			(3, 'wotclan', wotclan, 2, 'World of Tanks - info about clan. Usage: wotclan clan')]

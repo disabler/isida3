@@ -1361,7 +1361,15 @@ Impossible to get tanks' statistics	Невозможно получить ста
 Impossible to get statistics	Невозможно получить статистику
 Query error	Ошибка запроса
 Player not found	Игрок не найден
+Name: %s [%s]	Название: %s [%s]
+\nOwner: %s	\nВладелец: %s
+\nCreated at: %s	\nДата создания: %s
+\nCount of members: %s	\nКоличество учасников: %s
+\nMotto: %s	\nДевиз: %s
+Clan not found	Клан не найден
+Impossible to get info	Невозможно получить информацию
 World of Tanks - info about user. Usage: wot nick [tank]	World of Tanks - информация о пользователе. Использование: wot ник [танк]
+World of Tanks - info about clan. Usage: wotclan clan	World of Tanks - информация о клане. Пример: wotclan клан
 
 # file: plugins/wtf.py
 I know that %s is %s	Я знаю, что %s - %s
@@ -1787,5 +1795,5 @@ Logs settings	Настройки логов
 Youtube settings	Настройки youtube
 
 # write locale file: ru.txt
-# total: 1461
-# missed translations: 1
+# total: 1469
+# regenarated without mistakes!
