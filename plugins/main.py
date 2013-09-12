@@ -632,6 +632,11 @@ def get_nick_by_jid(room, jid):
 		if tmp[0] == room and getRoom(tmp[4]) == jid: return tmp[1]
 	return None
 
+def get_jid_by_nick(room, nick):
+	for tmp in megabase:
+		if tmp[0] == room and tmp[1] == nick: return getRoom(tmp[4])
+	return ''
+
 def get_nick_by_jid_res(room, jid):
 	for tmp in megabase:
 		if tmp[0] == room and tmp[4] == jid: return tmp[1]

@@ -1045,6 +1045,7 @@ def messageCB(sess,mess):
 				argz = btext[len(alias[0])+1:]
 				if not argz:
 					ppr = alias[1].replace('%*', '').replace('%{reduce}*', '').replace('%{reduceall}*', '').replace('%{unused}*', '')
+					ppr = re.sub('\%\{nick2jid\}[0-9\*]','',ppr,flags=re.S+re.I+re.U)
 					cpar = re.findall('%([0-9]+)', ppr, re.S)
 					if len(cpar):
 						for tmp in cpar:
@@ -1054,11 +1055,26 @@ def messageCB(sess,mess):
 					if '%' not in alias[1]: ppr = '%s %%*' % alias[1]
 					else: ppr = alias[1]
 					ppr = ppr.replace('%*', argz).replace('%{reduce}*', argz.strip()).replace('%{reduceall}*', reduce_spaces_all(argz))
+					argz = argz.split()
+					n2j = re.findall('\%\{nick2jid\}([0-9])',ppr,flags=re.S+re.I+re.U)
+					if n2j:
+						argzbk = argz
+						for t in n2j:
+							it = int(t)
+							try: curr_nick = get_jid_by_nick(room, argz[it])
+							except: curr_nick = ''
+							ppr = re.sub('\%%\{nick2jid\}%s' % t,curr_nick,ppr,flags=re.S+re.I+re.U)
+							argzbk = argzbk[:it]+argzbk[it+1:]
+						argz = list(argzbk)
+					n2j = re.findall('\%\{nick2jid\}(\*)',ppr,flags=re.S+re.I+re.U)
+					if n2j:
+						curr_nick = get_jid_by_nick(room, ' '.join(argz))
+						ppr = re.sub('\%\{nick2jid\}[0-9\*]',curr_nick,ppr,flags=re.S+re.I+re.U)
+						argz = []
 					if '%' in ppr:
 						cpar = re.findall('%([0-9]+)', ppr, re.S)
-						if len(cpar):
-							argz = argz.split()
-							argzbk = argz
+						if cpar:
+							argzbk = list(argz)
 							for tmp in cpar:
 								try:
 									it = int(tmp)
