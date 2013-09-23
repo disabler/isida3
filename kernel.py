@@ -1238,12 +1238,19 @@ def presenceCB(sess,mess):
 		except: id_node,hash_error = get_eval_item(mess,'getTag("c",namespace=xmpp.NS_CAPS).getAttr("node")'),True
 		try: id_ver = get_eval_item(mess,'getTag("c",namespace=xmpp.NS_CAPS).getAttr("ver")').decode('utf-8')
 		except: id_ver,hash_error = get_eval_item(mess,'getTag("c",namespace=xmpp.NS_CAPS).getAttr("ver")'),True
+		try: id_hash = get_eval_item(mess,'getTag("c",namespace=xmpp.NS_CAPS).getAttr("hash")').decode('utf-8')
+		except: id_hash,hash_error = get_eval_item(mess,'getTag("c",namespace=xmpp.NS_CAPS).getAttr("hash")'),True
+		try: id_ext = get_eval_item(mess,'getTag("c",namespace=xmpp.NS_CAPS).getAttr("ext")').decode('utf-8')
+		except: id_ext,hash_error = get_eval_item(mess,'getTag("c",namespace=xmpp.NS_CAPS).getAttr("ext")'),True
 		try:
 			id_bmver = mess.getAttr('ver').decode('utf-8')
 			if id_bmver or id_bmver == '': id_bmver = '%s_' % id_bmver
 			else: id_bmver = ''
 		except: id_bmver = ''
-		capses['%s/%s' % (room,nick)] = '%s\n%s\n%s' % (id_node,id_ver,id_bmver)
+		if id_ext and id_hash: id_hash = '%s|%s' % (id_hash,id_ext)
+		elif id_ext: id_hash = id_ext
+		if id_hash: capses['%s/%s' % (room,nick)] = '%s\n%s [%s]\n%s' % (id_node,id_ver,id_hash,id_bmver)
+		else: capses['%s/%s' % (room,nick)] = '%s\n%s\n%s' % (id_node,id_ver,id_bmver)
 
 	# Hash control
 	if '%s|%s' % (role,affiliation) in levl and levl['%s|%s' % (role,affiliation)] <= 3:
