@@ -817,10 +817,11 @@ def features_async(type, jid, nick, what, where, is_answ):
 			_hash = '%s<' % '/'.join([t.replace('/','//') for t in [id_category,id_type,id_lang,id_name]])
 			client_features.sort()
 			_hash += ''.join(['%s<' % t for t in client_features])
-			_hash += '%s<' % xmpp.NS_SOFTWAREINFO
-			tmp = ['%s<%s' % (t,client_softwareinfo[t]) for t in client_softwareinfo.keys()]
-			tmp.sort()
-			_hash += ''.join(['%s<' % t for t in tmp])
+			if client_softwareinfo:
+				_hash += '%s<' % xmpp.NS_SOFTWAREINFO
+				tmp = ['%s<%s' % (t,client_softwareinfo[t]) for t in client_softwareinfo.keys()]
+				tmp.sort()
+				_hash += ''.join(['%s<' % t for t in tmp])
 			_hash = _hash.encode('utf-8')
 			_hash_sha1 = 'SHA1: %s' % hashlib.sha1(_hash).digest().encode('base64').replace('\n','')
 			_hash_md5 = 'MD5: %s' % hashlib.md5(_hash).digest().encode('base64').replace('\n','')
