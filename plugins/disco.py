@@ -765,15 +765,19 @@ def features_async(type, jid, nick, what, where, is_answ):
 	isa = is_answ[1]
 	if isa[0].startswith(L('Error! %s','%s/%s'%(jid,nick))%''): msg = isa[0]
 	else:
-		isa, ftr = isa[1], []
+		isa, ftr, client_features = isa[1], [], []
 		for f in [t.getAttr('var') for t in isa.getTag('query',namespace=xmpp.NS_DISCO_INFO).getTags('feature')]:
+			client_features.append(f)
 			if disco_features_list.has_key(f): ft = '- %s' % disco_features_list[f]
 			else: ft = L('- Unknown feature: %s','%s/%s'%(jid,nick)) % f
 			if (what and (what.lower() in ft.lower() or what.lower() in f.lower())) or not what: ftr.append(ft)
 
 		ftrs,erc,q_features = {},0,['os_version','os','software_version','software']
+		client_softwareinfo = {}
 		for t in q_features:
-			try: res = isa.getTag('query').getTag('x',namespace=xmpp.NS_DATA).getTag('field',attrs={'var':t}).getTagData('value')
+			try:
+				res = isa.getTag('query').getTag('x',namespace=xmpp.NS_DATA).getTag('field',attrs={'var':t}).getTagData('value')
+				client_softwareinfo[t] = res
 			except:
 				res = 'N/A'
 				erc += 1
@@ -782,6 +786,10 @@ def features_async(type, jid, nick, what, where, is_answ):
 		if erc != len(q_features):
 			f = L('Software: %s | Version: %s\nOS: %s | Version: %s','%s/%s'%(jid,nick)) % (ftrs['software'],ftrs['software_version'],ftrs['os'],ftrs['os_version'])
 			if (what and what.lower() in f.lower()) or not what: ftr.append(f)
+		id_category = ''
+		id_type = ''
+		id_name = ''
+		id_lang = ''
 		try:
 			ids_t = isa.getTag('query').getTags('identity')
 			idk = {'type':L('Type: %s','%s/%s'%(jid,nick)), 'name':L('Name: %s','%s/%s'%(jid,nick)), 'category':L('Category: %s','%s/%s'%(jid,nick)), 'xml:lang':L('Language: %s','%s/%s'%(jid,nick))}
@@ -789,7 +797,12 @@ def features_async(type, jid, nick, what, where, is_answ):
 				ids = tg.getAttrs()
 				idf = []
 				for t in idk.keys():
-					if ids.has_key(t): idf.append(idk[t] % ids[t])
+					if ids.has_key(t):
+						idf.append(idk[t] % ids[t])
+						if t == 'type': id_type = ids[t]
+						elif t == 'name': id_name = ids[t]
+						elif t == 'category': id_category = ids[t]
+						elif t == 'xml:lang': id_lang = ids[t]
 				if idf:
 					f = ' | '.join(idf)
 					if (what and what.lower() in f.lower()) or not what: ftr.append(f)
@@ -801,6 +814,18 @@ def features_async(type, jid, nick, what, where, is_answ):
 				if tmp not in f: f.append(tmp)
 			f.sort()
 			msg = L('Features list:\n%s','%s/%s'%(jid,nick)) % '\n'.join(f)
+			_hash = '%s<' % '/'.join([t.replace('/','//') for t in [id_category,id_type,id_lang,id_name]])
+			client_features.sort()
+			_hash += ''.join(['%s<' % t for t in client_features])
+			_hash += '%s<' % xmpp.NS_SOFTWAREINFO
+			tmp = ['%s<%s' % (t,client_softwareinfo[t]) for t in client_softwareinfo.keys()]
+			tmp.sort()
+			_hash += ''.join(['%s<' % t for t in tmp])
+			_hash = _hash.encode('utf-8')
+			_hash_sha1 = 'SHA1: %s' % hashlib.sha1(_hash).digest().encode('base64').replace('\n','')
+			_hash_md5 = 'MD5: %s' % hashlib.md5(_hash).digest().encode('base64').replace('\n','')
+			_hashes = '%s | %s' % (_hash_sha1,_hash_md5)
+			if (what and what.lower() in _hashes.lower()) or not what: msg = '%s\n%s' % (msg, _hashes)
 		else: msg = L('Unable to get features list','%s/%s'%(jid,nick))
 	send_msg(type, jid, nick, msg)
 
