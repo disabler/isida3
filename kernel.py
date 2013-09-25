@@ -1722,8 +1722,8 @@ if base_type in ['mysql','sqlite3']:
 if thread_type:
 	import threading
 	sema = threading.BoundedSemaphore(value=30)
-	try: threading.stack_size(65536)
-	except ValueError: pass
+	#try: threading.stack_size(65536)
+	#except ValueError: pass
 
 	class KThread(threading.Thread):
 		def __init__(self, *args, **keywords):
