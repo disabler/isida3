@@ -431,7 +431,7 @@ def muc_filter_set(iq,id,room,acclvl,query,towh,al):
 						except: bl_nick = None
 						is_bl = None
 						if bl_jid and re.findall(bl_jid,jid,re.S+re.U+re.I): is_bl = True
-						if not is_bl and bl_nick and re.findall(bl_nick,nick,re.S+re.U+re.I): is_bl = True
+						if not nick or (not is_bl and bl_nick and re.findall(bl_nick,nick,re.S+re.U+re.I)): is_bl = True
 						if is_bl:
 							muc_pprint('MUC-Filter blacklist: %s/%s %s' % (gr,nick,jid),'brown')
 							msg,mute = unicode(xmpp.Node('presence', {'from': tojid, 'type': 'error', 'to':jid}, payload = ['replace_it',xmpp.Node('error', {'type': 'auth','code':'403'}, payload=[xmpp.Node('forbidden',{'xmlns':'urn:ietf:params:xml:ns:xmpp-stanzas'},[]),xmpp.Node('text',{'xmlns':'urn:ietf:params:xml:ns:xmpp-stanzas'},[L('Deny by blacklist!',rn)])])])).replace('replace_it',get_tag(msg,'presence')),True
