@@ -1460,7 +1460,7 @@ def configure(type, jid, nick, text):
 			tmp.sort()
 			msg = L('Available items: %s','%s/%s'%(jid,nick)) % ', '.join(tmp)
 	elif to_conf == 'help' or not to_conf:
-		if param in config_prefs: msg = config_prefs[param][1]
+		if param in config_prefs: msg = L(config_prefs[param][1],'%s/%s'%(jid,nick))
 		elif not param:
 			tmp = config_prefs.keys()
 			tmp.sort()
