@@ -700,7 +700,7 @@ def helpme(type, jid, nick, text):
 				cm = (tmp[1],tmp[0],help_descr)
 				break
 			elif text in tmp[1].lower() or text in help_descr.lower(): tm.append((tmp[0], tmp[1], help_descr))
-		if cm: msg = '%s. ' % cm[0].capitalize() + L('Access level: %s. %s','%s/%s'%(jid,nick)) % (cm[1],cm[2])
+		if cm: msg = '%s. ' % cm[0].capitalize() + L('Access level: %s. %s','%s/%s'%(jid,nick)) % ('%s [%s]' % (cm[1],L(unlevl[int(cm[1])],'%s/%s'%(jid,nick))),cm[2])
 		elif len(tm) == 1: msg = '%s. ' % tm[0][1].capitalize() + L('Access level: %s. %s','%s/%s'%(jid,nick)) % (tm[0][0],tm[0][2])
 		elif not len(tm+cm): msg = L('"%s" not found','%s/%s'%(jid,nick)) % text
 		else:
@@ -711,7 +711,7 @@ def helpme(type, jid, nick, text):
 				for tmp in tm:
 					if tmp[0] == i and tmp[2] != '': tmsg.append(unicode(tmp[1]))
 				if len(tmsg): msg += u'[%s]…%s\n' % (i,', '.join(tmsg))
-	else: msg = L('%s Help for command: help command | Commands list: commands','%s/%s'%(jid,nick)) % (u'Isida Jabber Bot | http://isida-bot.com | © 2oo9-'+str(time.localtime()[0]).replace('0','o')+' Disabler Production Lab. | ')
+	else: msg = L('%s Help for command: help command | Commands list: commands','%s/%s'%(jid,nick)) % (u'Isida Jabber Bot | http://isida-bot.com | © 2oo9-'+str(time.localtime()[0]).replace('0','o')+' Disabler Production Lab. |')
 	send_msg(type, jid, nick, msg)
 
 def bot_rejoin(type, jid, nick, text):
