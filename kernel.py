@@ -957,7 +957,8 @@ def com_parser(access_mode, nowname, type, room, nick, text, jid):
 					if co[0]==room and co[1]==text.lower()[:len(co[1])]:
 						not_offed = None
 						break
-			if not_offed and (text.lower() == parse[1].lower() or text[:len(parse[1])+1].lower() == parse[1].lower()+' '):
+			p1l = parse[1].lower()
+			if not_offed and (text.lower() == p1l or text[:len(parse[1])+1].lower() in ['%s '%p1l,'%s\n'%p1l]):
 				pprint('%s %s/%s [%s] %s' % (jid,room,nick,access_mode,text),'bright_cyan')
 				no_comm = None
 				if not parse[3]: thr(parse[2],(type, room, nick, parse[4:]),parse[1])
