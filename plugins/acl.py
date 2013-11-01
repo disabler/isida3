@@ -83,6 +83,7 @@ def acl_add_del(jid,nick,text,flag):
 		if acl_cmd != 'age' and acl_sub_act in ['<','>','<=','>=']: return L('Error in parameters. Read the help about command.','%s/%s'%(jid,nick))
 		if acl_sub_act in ['=','!=','sub','!sub']: text[0] = text[0].replace('%20',' ')
 		else: text[0] = text[0].replace('%20','\ ')
+		if acl_cmd == 'age' and not text[0].isdigit(): return L('Error in parameters. Read the help about command.','%s/%s'%(jid,nick))
 		if acl_sub_act in ['exp','!exp','cexp','!cexp']:
 			try: re.compile(text[0].replace('*','*?'))
 			except: return L('Error in RegExp!','%s/%s'%(jid,nick))
