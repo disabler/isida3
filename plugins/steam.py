@@ -37,32 +37,34 @@ def steam(type, jid, nick, text):
 	if text.isdigit():
 		STEAM_API = GT('steam_api_key')
 		if len(STEAM_API) == 32:
-			data = load_page(steam_summary, {'key': STEAM_API, 'steamids': text})
-			data = json.loads(data)['response']['players'][0]
-			_PERSONANAME = data.get('personaname','')
-			_REALNAME = data.get('realname','')
-			_LOCCOUNTRYCODE = data.get('loccountrycode','')
-			_TIMECREATED = data.get('timecreated','')
-			_LASTLOGOFF = data.get('lastlogoff','')
-			data = load_page(steam_friends, {'key': STEAM_API, 'steamid': text, 'relationship': 'friend'})
-			data = json.loads(data)['friendslist']['friends']			
-			_FRIENDS = ','.join(t['steamid'] for t in data)
-			data = load_page(steam_summary, {'key': STEAM_API, 'steamids': _FRIENDS})
-			data = json.loads(data)['response']['players']
-			_FRIENDS = [(t.get('personaname','-'),t['steamid']) for t in data]
-			_LEN_FRIENDS = len(_FRIENDS)
-			if need_id: _FRIENDS = ' | '.join('%s %s' % t for t in _FRIENDS)
-			else: _FRIENDS = ', '.join(t[0] for t in _FRIENDS)
-
-			msg = L('Nick: %s\nName: %s\nCountry: %s\nCreated: %s\nLast logoff: %s\nTotal friends: %s\nFriends: %s','%s/%s'%(jid,nick)) %\
-				(_PERSONANAME,_REALNAME,_LOCCOUNTRYCODE,time_str(_TIMECREATED),time_str(_LASTLOGOFF),_LEN_FRIENDS,_FRIENDS)
-
-			if need_id and type == 'groupchat':
-				send_msg(type, jid, nick, L('Send for you in private','%s/%s'%(jid,nick)))
-				type = 'chat'
-
+			try:
+				data = load_page(steam_summary, {'key': STEAM_API, 'steamids': text})
+				data = json.loads(data)['response']['players']
+				if data:
+					data = data[0]
+					_PERSONANAME = data.get('personaname','')
+					_REALNAME = data.get('realname','')
+					_LOCCOUNTRYCODE = data.get('loccountrycode','')
+					_TIMECREATED = data.get('timecreated','')
+					_LASTLOGOFF = data.get('lastlogoff','')
+					data = load_page(steam_friends, {'key': STEAM_API, 'steamid': text, 'relationship': 'friend'})
+					data = json.loads(data)['friendslist']['friends']
+					_FRIENDS = ','.join(t['steamid'] for t in data)
+					data = load_page(steam_summary, {'key': STEAM_API, 'steamids': _FRIENDS})
+					data = json.loads(data)['response']['players']
+					_FRIENDS = [(t.get('personaname','-'),t['steamid']) for t in data]
+					_LEN_FRIENDS = len(_FRIENDS)
+					if need_id: _FRIENDS = ' | '.join('%s %s' % t for t in _FRIENDS)
+					else: _FRIENDS = ', '.join(t[0] for t in _FRIENDS)
+					msg = L('Nick: %s\nName: %s\nCountry: %s\nCreated: %s\nLast logoff: %s\nTotal friends: %s\nFriends: %s','%s/%s'%(jid,nick)) %\
+						(_PERSONANAME,_REALNAME,_LOCCOUNTRYCODE,time_str(_TIMECREATED),time_str(_LASTLOGOFF),_LEN_FRIENDS,_FRIENDS)
+					if need_id and type == 'groupchat':
+						send_msg(type, jid, nick, L('Send for you in private','%s/%s'%(jid,nick)))
+						type = 'chat'
+				else: msg = L('Steam user not found!','%s/%s'%(jid,nick))
+			except: msg = L('Steam API is broken!','%s/%s'%(jid,nick))
 		else: msg = L('Steam API key is wrong!','%s/%s'%(jid,nick))
-	else: msg = L('Steam ID shald be digital!','%s/%s'%(jid,nick))
+	else: msg = L('Steam ID should be digital!','%s/%s'%(jid,nick))
 	send_msg(type, jid, nick, msg)
 
 global execute

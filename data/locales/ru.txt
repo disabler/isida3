@@ -1282,8 +1282,10 @@ Check conference activity\nspy add <conference>[ u<number>][ m<number>] - add co
 
 # file: plugins/steam.py
 Nick: %s\nName: %s\nCountry: %s\nCreated: %s\nLast logoff: %s\nTotal friends: %s\nFriends: %s	Ник: %s\nИмя: %s\nСтрана: %s\nСоздан: %s\nПоследний выход: %s\nВсего друзей: %s\nДрузья: %s
+Steam user not found!	Пользователь Steam не найден!
+Steam API is broken!	Steam API сломано!
 Steam API key is wrong!	Неверный Steam API ключ!
-Steam ID shald be digital!	Steam ID должен быть цифровым!
+Steam ID should be digital!	Steam ID должен быть цифровым!
 Show information about Steam profile	Показ информации о профиле Steam
 
 # file: plugins/svn.py
@@ -1803,5 +1805,5 @@ Youtube settings	Настройки youtube
 API settings	Настройки API
 
 # write locale file: ru.txt
-# total: 1475
-# missed translations: 6
+# total: 1477
+# missed translations: 3
