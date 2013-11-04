@@ -748,7 +748,7 @@ def disp_time(*t):
 	else: rn = ''
 	t = t[0]
 	lt=tuple(time.localtime(t))
-	return '%02d:%02d:%02d, %02d.%s\'%s, %s' % (lt[3],lt[4],lt[5],lt[2],L(wmonth[lt[1]-1],rn),lt[0],L(wday[lt[6]],rn))
+	return '%02d:%02d:%02d, %02d.%s\'%s, %s' % (lt[3],lt[4],lt[5],lt[2],L(wmonth[lt[1]-1],rn).replace('_',''),lt[0],L(wday[lt[6]],rn))
 
 def nice_time(*ttim):
 	if len(ttim) == 2: rn = ttim[1]
@@ -761,7 +761,7 @@ def nice_time(*ttim):
 	else: t_gmt = 'GMT+%s' % int(timeofset)
 	if timeofset%1: t_gmt += ':%02d' % int((timeofset%1*60/100) * 100)
 	t_utc='%s%02d%02dT%02d:%02d:%02d' % gt[:6]
-	t_display = '%02d:%02d:%02d, %02d.%s\'%s, %s, ' % (lt[3],lt[4],lt[5],lt[2],L(wmonth[lt[1]-1],rn),lt[0],L(wday[lt[6]],rn))
+	t_display = '%02d:%02d:%02d, %02d.%s\'%s, %s, ' % (lt[3],lt[4],lt[5],lt[2],L(wmonth[lt[1]-1],rn).replace('_',''),lt[0],L(wday[lt[6]],rn))
 	#t_tz = time.tzname[time.localtime()[8]]
 	#enc = chardet.detect(t_tz)['encoding']
 	#if t_tz == None: body = ''

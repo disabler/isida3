@@ -871,18 +871,18 @@ Thu	Чт
 Fri	Пт
 Sat	Сб
 Sun	Нд
-Jan	Січ
-Fed	Лют
-Mar	Бер
-Apr	Кві
-May	Трав
-Jun	Чер
-Jul	Лип
-Aug	Сер
-Sep	Вер
-Oct	Жов
-Nov	Лис
-Dec	Гру
+_Jan	Січ
+_Fed	Лют
+_Mar	Бер
+_Apr	Кві
+_May	Тра
+_Jun	Чер
+_Jul	Лип
+_Aug	Сер
+_Sep	Вер
+_Oct	Жов
+_Nov	Лис
+_Dec	Гру
 no limit	без обмежень
 visitor/none	гість без повноважень
 visitor/member	гість і постійний учасник
@@ -1795,5 +1795,6 @@ Logs settings	Налаштування логів
 Youtube settings	Налаштування Youtube
 
 # write locale file: ua.txt
-# total: 1469
-# regenarated without mistakes!
+# total: 1475
+# missed translations: 6
+

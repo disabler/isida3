@@ -21,7 +21,7 @@
 #                                                                             #
 # --------------------------------------------------------------------------- #
 
-# translate: random,smart,full,partial,on,off,kick,ban,replace,mute,visitor,truncate,paste,chat,online,away,xa,dnd,on start,on shutdown,by time,black,white,without highlight,all,ban server,Loading...,Mon,Tue,Wed,Thu,Fri,Sat,Sun,Jan,Fed,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec,no limit,visitor/none,visitor/member,participant/none,participant/member,moderator/none,moderator/member,moderator/admin,moderator/owner,bot owner,You should be at least %s to do it.,You must be a %s to do it.,absent
+# translate: random,smart,full,partial,on,off,kick,ban,replace,mute,visitor,truncate,paste,chat,online,away,xa,dnd,on start,on shutdown,by time,black,white,without highlight,all,ban server,Loading...,Mon,Tue,Wed,Thu,Fri,Sat,Sun,_Jan,_Fed,_Mar,_Apr,_May,_Jun,_Jul,_Aug,_Sep,_Oct,_Nov,_Dec,no limit,visitor/none,visitor/member,participant/none,participant/member,moderator/none,moderator/member,moderator/admin,moderator/owner,bot owner,You should be at least %s to do it.,You must be a %s to do it.,absent
 
 rlmas_min = (('&','&amp;'),('\"','&quot;'),('\'','&apos;'),('<','&lt;'),('>','&gt;'))
 
@@ -112,7 +112,7 @@ msg_status_codes = {'102':L('Room now shows unavailable members.'),
 					'174':L('Room now is fully-anonymous.')}
 
 wday = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun']
-wmonth = ['Jan','Fed','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']
+wmonth = ['_Jan','_Fed','_Mar','_Apr','_May','_Jun','_Jul','_Aug','_Sep','_Oct','_Nov','_Dec']
 
 two_en = ['aa', 'aq', 'bc', 'bd', 'bf', 'bg', 'bh', 'bk', 'bn', 'bp', 'bq', 'bw', 'bx', 'bz', 'cb', 'cd', 'cf', 'cg', 'cj', \
 		  'cm', 'cn', 'cp', 'cs', 'cv', 'cw', 'cx', 'cz', 'db', 'dc', 'dh', 'dj', 'dp', 'dq', 'dt', 'dx', 'dz', 'ej', 'fb', \
@@ -1843,6 +1843,7 @@ owner_prefs = {'syslogs_enable': ['Logger. Enable system logs','b',True],
 				'html_paste_enable':['Paste. Paste as html. Otherwize as text','b',True],
 				'yandex_api_key':['City. Yandex.Map API-key','t128','no api'],
 				'bing_api_key':['Bing. Translator API-key','t128','no api'],
+				'steam_api_key':['Steam. API-key','t128','no api'],
 				'censor_text':['Kernel. Text for hide censore','t32','[censored]'],
 				'ddos_limit':['Kernel. Time of ignore for anti-ddos','l10','[1800,1800,1800,1800,1800,600,300,150,60,0]'],
 				'ddos_diff':['Kernel. Anti-ddos time delay between messages','l10','[30,30,30,30,20,20,15,10,5,0]'],
@@ -1884,7 +1885,10 @@ owner_group_youtube = ['Youtube settings','#owner-youtube',
 
 owner_group_other = ['Other settings','#owner-other',
 				['anek_private_limit','backup_sleep_time','calendar_default_splitter',
-				'disco_max_limit','disco_exclude','html_paste_enable','yandex_api_key','bing_api_key']]
+				'disco_max_limit','disco_exclude','html_paste_enable']]
+
+owner_group_api = ['API settings','#owner-api',
+				['yandex_api_key','bing_api_key','steam_api_key','lfm_api']]
 
 owner_group_karma = ['Karma settings','#owner-karma',
 				['karma_limit','karma_show_default_limit','karma_show_max_limit','karma_timeout','karma_discret','karma_discret_lim_up','karma_discret_lim_dn']]
@@ -1937,7 +1941,7 @@ owner_groups = [owner_group_amsg,owner_group_rss,owner_group_clear,
 				owner_group_karma,owner_group_sayto,owner_group_age,
 				owner_group_mucfilter,owner_group_iq,owner_group_juick,
 				owner_group_logs,owner_group_youtube,owner_group_other,
-				owner_group_notepad]
+				owner_group_api,owner_group_notepad]
 
 comms = [
 	 (0, 'help', helpme, 2, 'Help system. Helps without commands: about, donation, access'),

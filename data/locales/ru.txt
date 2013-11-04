@@ -871,18 +871,18 @@ Thu	Чт
 Fri	Пт
 Sat	Сб
 Sun	Вс
-Jan	Янв
-Fed	Фев
-Mar	Мар
-Apr	Апр
-May	мая
-Jun	Июн
-Jul	Июл
-Aug	Авг
-Sep	Сен
-Oct	Окт
-Nov	Ноя
-Dec	Дек
+_Jan	Янв
+_Fed	Фев
+_Mar	Мар
+_Apr	Апр
+_May	Мая
+_Jun	Июн
+_Jul	Июл
+_Aug	Авг
+_Sep	Сен
+_Oct	Окт
+_Nov	Ноя
+_Dec	Дек
 no limit	без ограничений
 visitor/none	гость без полномочий
 visitor/member	гость и постоянный участник
@@ -1279,6 +1279,12 @@ Monitoring conferences:	Слежение за конференциями:
 I leave your conference because low activity	Сваливаю из-за низкой активности конфы
 I leave conference %s by condition spy plugin: %s	Конференция %s покинута по условию spy плагина: %s
 Check conference activity\nspy add <conference>[ u<number>][ m<number>] - add conference to list. u - count users, m - count message per night. At default At least one condition - the bot will leave the conference\nspy del <conference> - remove conference from list\nspy show - show active monitoring.	Проверка активности конференции\nspy add <conference>[ u<number>][ m<number>] - добавить конференцию в список мониторинга активности. u - среднее число участников, m - количество сообщение за сутки. При невыполнении хотя бы одного условия - бот выйдет из конференции\nspy del <conference> - удалить конференцию из списка мониторинга\nspy show - показать активное слежение
+
+# file: plugins/steam.py
+Nick: %s\nName: %s\nCountry: %s\nCreated: %s\nLast logoff: %s\nTotal friends: %s\nFriends: %s	Ник: %s\nИмя: %s\nСтрана: %s\nСоздан: %s\nПоследний выход: %s\nВсего друзей: %s\nДрузья: %s
+Steam API key is wrong!	Неверный Steam API ключ!
+Steam ID shald be digital!	Steam ID должен быть цифровым!
+Show information about Steam profile	Показ информации о профиле Steam
 
 # file: plugins/svn.py
 en_EN.UTF8	ru_RU.UTF8
@@ -1765,6 +1771,7 @@ Troll. Maximal message number for troll command	Troll. Максимальное 
 Kernel. Iq anti-ddos. Time limits for requests	Kernel. Iq anti-ddos. Лимит времени на запросы
 Muc-filter. Count of events for notify	Muc-filter. Уведомления. Количество событий для уведомления
 Iq. Number after point in ping	Iq. Количество знаков после запятой при пинге
+Steam. API-key	Steam. API-ключ
 Muc-filter. Time between presences	Muc-filter. Промежуток времени на статус-презенсы
 Notepad	Блокнот
 Kernel. Anti-ddos time delay between messages	Kernel. Промежуток между сообщениями для включения анти-ddos
@@ -1793,7 +1800,8 @@ Iq requests settings	Настройки Iq запросов
 Juick settings	Настройки juick
 Logs settings	Настройки логов
 Youtube settings	Настройки youtube
+API settings	Настройки API
 
 # write locale file: ru.txt
-# total: 1469
-# regenarated without mistakes!
+# total: 1475
+# missed translations: 6
