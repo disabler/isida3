@@ -1281,7 +1281,8 @@ I leave conference %s by condition spy plugin: %s	Конференция %s по
 Check conference activity\nspy add <conference>[ u<number>][ m<number>] - add conference to list. u - count users, m - count message per night. At default At least one condition - the bot will leave the conference\nspy del <conference> - remove conference from list\nspy show - show active monitoring.	Проверка активности конференции\nspy add <conference>[ u<number>][ m<number>] - добавить конференцию в список мониторинга активности. u - среднее число участников, m - количество сообщение за сутки. При невыполнении хотя бы одного условия - бот выйдет из конференции\nspy del <conference> - удалить конференцию из списка мониторинга\nspy show - показать активное слежение
 
 # file: plugins/steam.py
-Nick: %s\nName: %s\nCountry: %s\nCreated: %s\nLast logoff: %s\nTotal friends: %s\nFriends: %s	Ник: %s\nИмя: %s\nСтрана: %s\nСоздан: %s\nПоследний выход: %s\nВсего друзей: %s\nДрузья: %s
+Hidden	Скрыто
+Nick: %s\nName: %s\nCountry: %s\nCreated: %s\nLast logoff: %s\nTotal friends: %s\nFriends: %s\nProfile: %s	Ник: %s\nИмя: %s\nСтрана: %s\nСоздан: %s\nПоследний выход: %s\nВсего друзей: %s\nДрузья: %s\nПрофиль: %s
 Steam user not found!	Пользователь Steam не найден!
 Steam API is broken!	Steam API сломано!
 Steam API key is wrong!	Неверный Steam API ключ!
@@ -1805,5 +1806,5 @@ Youtube settings	Настройки youtube
 API settings	Настройки API
 
 # write locale file: ru.txt
-# total: 1477
-# missed translations: 3
+# total: 1478
+# missed translations: 1

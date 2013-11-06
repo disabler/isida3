@@ -28,7 +28,9 @@ steam_api_url = 'http://api.steampowered.com/ISteamUser/%s'
 steam_summary = steam_api_url % 'GetPlayerSummaries/v0002/?'
 steam_friends = steam_api_url % 'GetFriendList/v0001/?'
 
-def time_str(t): return time.strftime('%Y.%m.%d %H:%M',time.localtime(t))
+def time_str(t):
+	try: return time.strftime('%Y.%m.%d %H:%M',time.localtime(t))
+	except: return t
 
 def steam(type, jid, nick, text):
 	text = text.strip().split()
@@ -42,22 +44,27 @@ def steam(type, jid, nick, text):
 				data = json.loads(data)['response']['players']
 				if data:
 					data = data[0]
-					_PERSONANAME = data.get('personaname','')
-					_REALNAME = data.get('realname','')
-					_LOCCOUNTRYCODE = data.get('loccountrycode','')
-					_TIMECREATED = data.get('timecreated','')
-					_LASTLOGOFF = data.get('lastlogoff','')
+					_PERSONANAME = data.get('personaname',L('Unknown','%s/%s'%(jid,nick)))
+					_REALNAME = data.get('realname',L('Unknown','%s/%s'%(jid,nick)))
+					_LOCCOUNTRYCODE = data.get('loccountrycode',L('Unknown','%s/%s'%(jid,nick)))
+					_TIMECREATED = data.get('timecreated',L('Hidden','%s/%s'%(jid,nick)))
+					_LASTLOGOFF = data.get('lastlogoff',L('Hidden','%s/%s'%(jid,nick)))
+					_PROFILEURL = data.get('profileurl',L('Unknown','%s/%s'%(jid,nick)))
 					data = load_page(steam_friends, {'key': STEAM_API, 'steamid': text, 'relationship': 'friend'})
-					data = json.loads(data)['friendslist']['friends']
-					_FRIENDS = ','.join(t['steamid'] for t in data)
-					data = load_page(steam_summary, {'key': STEAM_API, 'steamids': _FRIENDS})
-					data = json.loads(data)['response']['players']
-					_FRIENDS = [(t.get('personaname','-'),t['steamid']) for t in data]
-					_LEN_FRIENDS = len(_FRIENDS)
-					if need_id: _FRIENDS = ' | '.join('%s %s' % t for t in _FRIENDS)
-					else: _FRIENDS = ', '.join(t[0] for t in _FRIENDS)
-					msg = L('Nick: %s\nName: %s\nCountry: %s\nCreated: %s\nLast logoff: %s\nTotal friends: %s\nFriends: %s','%s/%s'%(jid,nick)) %\
-						(_PERSONANAME,_REALNAME,_LOCCOUNTRYCODE,time_str(_TIMECREATED),time_str(_LASTLOGOFF),_LEN_FRIENDS,_FRIENDS)
+					if data.startswith(L('Error! %s')%''):
+						_FRIENDS = L('Hidden','%s/%s'%(jid,nick))
+						_LEN_FRIENDS = L('Unknown','%s/%s'%(jid,nick))
+					else:
+						data = json.loads(data)['friendslist']['friends']
+						_FRIENDS = ','.join(t['steamid'] for t in data)
+						data = load_page(steam_summary, {'key': STEAM_API, 'steamids': _FRIENDS})
+						data = json.loads(data)['response']['players']
+						_FRIENDS = [(t.get('personaname','-'),t['steamid']) for t in data]
+						_LEN_FRIENDS = len(_FRIENDS)
+						if need_id: _FRIENDS = ' | '.join('%s %s' % t for t in _FRIENDS)
+						else: _FRIENDS = ', '.join(t[0] for t in _FRIENDS)
+					msg = L('Nick: %s\nName: %s\nCountry: %s\nCreated: %s\nLast logoff: %s\nTotal friends: %s\nFriends: %s\nProfile: %s','%s/%s'%(jid,nick)) %\
+						(_PERSONANAME,_REALNAME,_LOCCOUNTRYCODE,time_str(_TIMECREATED),time_str(_LASTLOGOFF),_LEN_FRIENDS,_FRIENDS,_PROFILEURL)
 					if need_id and type == 'groupchat':
 						send_msg(type, jid, nick, L('Send for you in private','%s/%s'%(jid,nick)))
 						type = 'chat'
