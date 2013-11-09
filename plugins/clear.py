@@ -32,7 +32,9 @@ def hidden_clear(type, jid, nick, text):
 	else: send_msg(type, jid, nick, clear_msg)
 	time.sleep(cdel)
 	for tmp in range(0,cntr):
-		sender(xmpp.Message(jid, '', "groupchat"))
+		msg = xmpp.Message(jid, '', "groupchat")
+		msg.setTag('body')
+		sender(msg)
 		time.sleep(cdel)
 	if cmode: caps_and_send(xmpp.Presence(jid,show=Settings['status'], status=Settings['message'], priority=Settings['priority']))
 	else: send_msg(type, jid, nick, L('Cleaned!','%s/%s'%(jid,nick)))
