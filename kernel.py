@@ -725,20 +725,21 @@ def muc_filter_action(act,jid,room,reason):
 
 def paste_text(text,room,jid):
 	nick = get_nick_by_jid_res(room,jid)
-	if GT('html_paste_enable'):
-		text = html_escape(text)
+	_html_paste = GT('html_paste_enable')
+	if _html_paste:
+		text = html_escape(text).replace(' ','&nbsp;')
 		nick = html_escape(nick)
-	paste_header = ['','<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml" xml:lang="ru" lang="ru"><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><link href="%s" rel="stylesheet" type="text/css" /><title>\n' % paste_css_path][GT('html_paste_enable')]
-	url = '%s%s' % (str(hex(int(time.time()*100)))[2:-1],['.txt','.html'][GT('html_paste_enable')])
+	paste_header = ['','<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml" xml:lang="ru" lang="ru"><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><link href="%s" rel="stylesheet" type="text/css" /><title>\n' % paste_css_path][_html_paste]
+	url = '%s%s' % (str(hex(int(time.time()*100)))[2:-1],['.txt','.html'][_html_paste])
 	lt = tuple(time.localtime())
 	ott = onlytimeadd(tuple(time.localtime()))
-	paste_body = ['%s','<p><span class="paste">%s</span></p>\n'][GT('html_paste_enable')] % (text)
+	paste_body = ['%s','<p><span class="paste">%s</span></p>\n'][_html_paste] % (text)
 	lht = '%s [%s] - %02d/%02d/%02d %02d:%02d:%02d' % (nick,room,lt[0],lt[1],lt[2],lt[3],lt[4],lt[5])
-	paste_he = ['%s\t\thttp://isida-bot.com\n\n' % lht,'%s%s</title></head><body><div class="main"><div class="top"><div class="heart"><a href="http://isida-bot.com">http://isida-bot.com</a></div><div class="conference">%s</div></div><div class="container">\n' % (paste_header,lht,lht)][GT('html_paste_enable')]
+	paste_he = ['%s\t\thttp://isida-bot.com\n\n' % lht,'%s%s</title></head><body><div class="main"><div class="top"><div class="heart"><a href="http://isida-bot.com">http://isida-bot.com</a></div><div class="conference">%s</div></div><div class="container">\n' % (paste_header,lht,lht)][_html_paste]
 	fl = open(pastepath+url, 'a')
 	fl.write(paste_he.encode('utf-8'))
 	fl.write(paste_body.encode('utf-8'))
-	paste_ender = ['','</div></div></body></html>'][GT('html_paste_enable')]
+	paste_ender = ['','</div></div></body></html>'][_html_paste]
 	fl.write(paste_ender.encode('utf-8'))
 	fl.close()
 	return pasteurl+url
