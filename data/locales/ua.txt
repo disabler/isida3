@@ -1280,6 +1280,15 @@ I leave your conference because low activity	Виходжу через низь�
 I leave conference %s by condition spy plugin: %s	Конференція %s залишена за умовою spy-плагіна: %s
 Check conference activity\nspy add <conference>[ u<number>][ m<number>] - add conference to list. u - count users, m - count message per night. At default At least one condition - the bot will leave the conference\nspy del <conference> - remove conference from list\nspy show - show active monitoring.	Перевірка активності конференції\nspy add <conference>[ u<number>][ m<number>] - додати конференцію в список моніторингу активності. u - середня кількість учасників, m - кількість повідомлень за добу. За невиконанням хоча б однієї умови бот залишить конференцію\nspy del <conference> - видалити конференцію зі списку моніторингу\nspy show - показати активне спостереження
 
+# file: plugins/steam.py
+Hidden	Приховано
+Nick: %s\nName: %s\nCountry: %s\nCreated: %s\nLast logoff: %s\nTotal friends: %s\nFriends: %s\nProfile: %s	Нік: %s\nІм'я: %s\nКраїна: %s\nСтворений: %s\nОстанній вихід: %s\nВсього друзів: %s\nДрузі: %s\nПрофіль: %s
+Steam user not found!	Користувача Steam не знайдено!
+Steam API is broken!	Steam API поламане!
+Steam API key is wrong!	Невірний Steam API ключ!
+Steam ID should be digital!	Steam ID повинен бути цифровим!
+Show information about Steam profile	Показ інформації про профіль Steam
+
 # file: plugins/svn.py
 en_EN.UTF8	ru_RU.UTF8
 Read user manual for commands...	Вивчаємо інструкції до команд...
@@ -1357,7 +1366,6 @@ Impossible to get tanks' statistics	Неможливо отримати стат
  - unicum	 - унікум
 \nWN6 rating: %s (XVM: %s)	\nРейтинг WN6: %s (XVM: %s)
 \nArmor-rating: %s	\nРейтинг Бронесайту: %s
-\nTrue Win Rate (TWR): %s%%	\nПриведений процент перемог (TWR): %s%%
 Impossible to get statistics	Неможливо отримати статистику
 Query error	Помилка запиту
 Player not found	Гравця не знайдено
@@ -1765,6 +1773,7 @@ Troll. Maximal message number for troll command	Troll. Максимальна к
 Kernel. Iq anti-ddos. Time limits for requests	Kernel. Iq anti-ddos. Ліміт часу на запити
 Muc-filter. Count of events for notify	Muc-filter. Повідомлення. Кількість подій для повідомлення
 Iq. Number after point in ping	Iq. Кількість знаків після коми при пінгу
+Steam. API-key	Steam. API-ключ
 Muc-filter. Time between presences	Muc-filter. Проміжок часу на статус-презенси
 Notepad	Блокнот
 Kernel. Anti-ddos time delay between messages	Kernel. Проміжок між повідомленнями для вмикання анти-ddos
@@ -1793,8 +1802,8 @@ Iq requests settings	Налаштування iq запитів
 Juick settings	Налаштування Juick
 Logs settings	Налаштування логів
 Youtube settings	Налаштування Youtube
+API settings	Налаштування API
 
 # write locale file: ua.txt
-# total: 1478
+# total: 1477
 # missed translations: 9
-
