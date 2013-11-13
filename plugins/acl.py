@@ -171,7 +171,7 @@ def acl_message(room,jid,nick,type,text):
 	lvl = get_level(room,nick)[0]
 	if lvl < 0: return
 	if getRoom(jid) == getRoom(Settings['jid']): return
-	a = cur_execute_fetchall('select action,type,text,command,time,level from acl where jid=%s and (action=%s or action=%s) order by level',(room,'msg','all%'))
+	a = cur_execute_fetchall('select action,type,text,command,time,level from acl where jid=%s and (action=%s or action ilike %s) order by level',(room,'msg','all%'))
 	no_comm = True
 	if a:
 		acl_ma = get_config(room,'acl_multiaction')
@@ -278,22 +278,26 @@ def acl_selector(a,room,jid,nick,mass,was_joined):
 				acl_action(tmp[3],nick,jid,room,None)
 				if not acl_ma: break
 			if itm:
-				was_match = False
-				if tmp[1] in ['exp','!exp']:
-					if tmp[1][0] == '!' and not re.findall(tmp[2].replace('*','*?'),itm,re.I+re.S+re.U): was_match = True
-					elif re.findall(tmp[2].replace('*','*?'),itm,re.I+re.S+re.U): was_match = True
-				elif tmp[1] in ['cexp','!cexp']:
-					if tmp[1][0] == '!' and not re.findall(tmp[2].replace('*','*?'),itm,re.S+re.U): was_match = True
-					elif re.findall(tmp[2].replace('*','*?'),itm,re.S+re.U): was_match = True
-				elif tmp[1] in ['sub','!sub']:
-					if tmp[1][0] == '!' and tmp[2].lower() not in itm.lower(): was_match = True
-					elif tmp[2].lower() in itm.lower(): was_match = True
-				elif tmp[1] in ['=','!=']:
-					if tmp[1][0] == '!' and not (itm.lower() == tmp[2].lower() or (tmp[0] == 'all' and tmp[2].lower() in (jid.lower(),nick.lower(),mass[0].lower()))): was_match = True
-					elif itm.lower() == tmp[2].lower() or (tmp[0] == 'all' and tmp[2].lower() in (jid.lower(),nick.lower(),mass[0].lower())): was_match = True
-				if was_match:
-					acl_action(tmp[3],nick,jid,room,None)
-					if not acl_ma: break
+				try:
+					was_match = False
+					if tmp[1] in ['exp','!exp']:
+						if tmp[1][0] == '!' and not re.findall(tmp[2].replace('*','*?'),itm,re.I+re.S+re.U): was_match = True
+						elif re.findall(tmp[2].replace('*','*?'),itm,re.I+re.S+re.U): was_match = True
+					elif tmp[1] in ['cexp','!cexp']:
+						if tmp[1][0] == '!' and not re.findall(tmp[2].replace('*','*?'),itm,re.S+re.U): was_match = True
+						elif re.findall(tmp[2].replace('*','*?'),itm,re.S+re.U): was_match = True
+					elif tmp[1] in ['sub','!sub']:
+						if tmp[1][0] == '!' and tmp[2].lower() not in itm.lower(): was_match = True
+						elif tmp[2].lower() in itm.lower(): was_match = True
+					elif tmp[1] in ['=','!=']:
+						if tmp[1][0] == '!' and not (itm.lower() == tmp[2].lower() or (tmp[0] == 'all' and tmp[2].lower() in (jid.lower(),nick.lower(),mass[0].lower()))): was_match = True
+						elif itm.lower() == tmp[2].lower() or (tmp[0] == 'all' and tmp[2].lower() in (jid.lower(),nick.lower(),mass[0].lower())): was_match = True
+					if was_match:
+						acl_action(tmp[3],nick,jid,room,None)
+						if not acl_ma: break
+				except:
+					writefile(slog_folder % 'bad_stanza_itm_%s.txt' % int(time.time()),unicode(itm).encode('utf-8'))
+					writefile(slog_folder % 'bad_stanza_reg_%s.txt' % int(time.time()),unicode(tmp[2]).encode('utf-8'))
 
 def acl_version_async(a, nick, jid, room, mass, lvl, is_answ):
 	global acl_ver_tmp
