@@ -1782,7 +1782,7 @@ else: smiles_dirs, smiles_dirs_case = [], []
 
 logging.basicConfig(filename=LOG_FILENAME,level=logging.DEBUG,)	# включение логгирования
 capsNode = 'http://isida-bot.com'
-god = SuperAdmin
+god = SuperAdmin.lower()
 
 pprint('-'*50,'blue')
 if os.path.basename(sys.argv[0]) != 'isida.py': errorHandler('Ugly launch detect! Read wiki!')
@@ -1793,7 +1793,7 @@ elif base_type == 'sqlite3': pass
 else: errorHandler('Can\'t connect to `%s` base type!' % base_type)
 
 own = cur_execute_fetchall('select * from bot_owner;')
-if not own: cur_execute('insert into bot_owner values (%s)',(SuperAdmin,))
+if not own: cur_execute('insert into bot_owner values (%s)',(SuperAdmin.lower(),))
 
 pprint('*** Loading localization','white')
 locales,CURRENT_LOCALE = update_locale()
