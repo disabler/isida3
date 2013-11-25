@@ -57,7 +57,7 @@ def wot(type, jid, nick, text):
 			v = json.loads(data)
 			player_id = str(v['data'][0]['id'])
 			
-			data = load_page('%s/2.0/account/tanks/?application_id=%s&account_id=%s&fields=statistics,tank_id' % (API_ADDR, APP_ID, player_id))
+			data = load_page('%s/2.0/account/tanks/?application_id=%s&account_id=%s&fields=statistics,tank_id,mark_of_mastery' % (API_ADDR, APP_ID, player_id))
 			vdata = json.loads(data)
 			
 			data = load_page('%s/2.0/account/info/?application_id=%s&account_id=%s&fields=clan,nickname,statistics.all' % (API_ADDR, APP_ID, player_id))
@@ -86,8 +86,9 @@ def wot(type, jid, nick, text):
 							if str(t['tank_id']) in tids:
 								tank_win = t['statistics']['wins']
 								tank_battle = t['statistics']['battles']
+								mom = [L('none','%s/%s'%(jid,nick)), L('1 class','%s/%s'%(jid,nick)), L('2 class','%s/%s'%(jid,nick)), L('3 class','%s/%s'%(jid,nick)), L('master','%s/%s'%(jid,nick))][t['mark_of_mastery']]
 								if tank_battle:
-									msg += '\n%s (%s/%s - %s%%)' % (tanks_data[str(t['tank_id'])]['name_i18n'], tank_win, tank_battle, round(100.0*tank_win/tank_battle, 2))
+									msg += L('\n%s (%s/%s - %s%%), mastery: %s','%s/%s'%(jid,nick)) % (tanks_data[str(t['tank_id'])]['name_i18n'], tank_win, tank_battle, round(100.0*tank_win/tank_battle, 2), mom)
 								else:
 									msg += '\n%s (%s/%s)' % (tanks_data[str(t['tank_id'])]['name_i18n'], tank_win, tank_battle)
 						if not msg.count('\n'):

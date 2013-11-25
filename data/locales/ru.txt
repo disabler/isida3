@@ -1348,6 +1348,12 @@ Show list of users for last day	Показ списка участников з�
 
 # file: plugins/wot.py
 Use more characters in the name of the tank	Используйте больше символов в названии танка
+none	отсутствует
+1 class	1 степень
+2 class	2 степень
+3 class	3 степень
+master	мастер
+\n%s (%s/%s - %s%%), mastery: %s	\n%s (%s/%s - %s%%), классность: %s
  not founded tank	 танк не найден
 Impossible to get tanks' statistics	Невозможно получить статистику танков
 \nUp to %s%% win left: %s battles	\nДо %s%% побед осталось: %s битв
@@ -1366,7 +1372,6 @@ Impossible to get tanks' statistics	Невозможно получить ста
  - unicum	 - уникум
 \nWN6 rating: %s (XVM: %s)	\nРейтинг WN6: %s (XVM: %s)
 \nArmor-rating: %s	\nРейтинг Бронесайта: %s
-\nTrue Win Rate (TWR): %s%%	\nПриведенный процент побед (TWR): %s%%
 Impossible to get statistics	Невозможно получить статистику
 Query error	Ошибка запроса
 Player not found	Игрок не найден
@@ -1806,5 +1811,5 @@ Youtube settings	Настройки youtube
 API settings	Настройки API
 
 # write locale file: ru.txt
-# total: 1478
-# missed translations: 1
+# total: 1483
+# missed translations: 6

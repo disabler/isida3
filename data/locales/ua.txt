@@ -1348,6 +1348,12 @@ Show list of users for last day	Показ списку учасників за 
 
 # file: plugins/wot.py
 Use more characters in the name of the tank	Використовуйте більше символів в назві танку
+none	відсутня
+1 class	1 степінь
+2 class	2 степінь
+3 class	3 степінь
+master	майстер
+\n%s (%s/%s - %s%%), mastery: %s	\n%s (%s/%s - %s%%), класність: %s
  not founded tank	 танк не знайдено
 Impossible to get tanks' statistics	Неможливо отримати статистику танків
 \nUp to %s%% win left: %s battles	\nДо %s%% перемог залишилося: %s битв
@@ -1805,5 +1811,5 @@ Youtube settings	Налаштування Youtube
 API settings	Налаштування API
 
 # write locale file: ua.txt
-# total: 1477
-# missed translations: 9
+# total: 1483
+# missed translations: 6
