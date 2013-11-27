@@ -60,8 +60,9 @@ def wot(type, jid, nick, text):
 			data = load_page('%s/2.0/account/tanks/?application_id=%s&account_id=%s&fields=statistics,tank_id,mark_of_mastery' % (API_ADDR, APP_ID, player_id))
 			vdata = json.loads(data)
 			
-			data = load_page('%s/2.0/account/info/?application_id=%s&account_id=%s&fields=clan,nickname,statistics.all' % (API_ADDR, APP_ID, player_id))
+			data = load_page('%s/2.0/account/info/?application_id=%s&account_id=%s&fields=clan,nickname,statistics' % (API_ADDR, APP_ID, player_id))
 			pdata = json.loads(data)
+			stat = pdata['data'][player_id]['statistics']
 			
 			if pdata['data'][player_id]['clan']:
 				clan_id = str(pdata['data'][player_id]['clan']['clan_id'])
@@ -97,8 +98,8 @@ def wot(type, jid, nick, text):
 						msg = L('Impossible to get tanks\' statistics','%s/%s'%(jid,nick))
 			else:
 				
-				wins = pdata['data'][player_id]['statistics']['all']['wins']
-				battles = pdata['data'][player_id]['statistics']['all']['battles']
+				wins = stat['all']['wins']
+				battles = stat['all']['battles']
 				
 				if not battles:
 					msg = '%s: %s/%s' % (wotname, wins, battles)
@@ -115,18 +116,18 @@ def wot(type, jid, nick, text):
 						
 						msg += L('\nUp to %s%% win left: %s battles', '%s/%s'%(jid,nick)) % (np, np_int)
 						msg += L('\nUp to %s%% win left: %s battles', '%s/%s'%(jid,nick)) % (np05, np_round)
-
-						avg_exp = pdata['data'][player_id]['statistics']['all']['battle_avg_xp']
 						
-						DAMAGE = pdata['data'][player_id]['statistics']['all']['damage_dealt'] / float(battles)
+						avg_exp = stat['all']['battle_avg_xp']
+						
+						DAMAGE = stat['all']['damage_dealt'] / float(battles)
 						msg += L('\nAv. damage: %s','%s/%s'%(jid,nick)) % int(round(DAMAGE))
-						FRAGS = pdata['data'][player_id]['statistics']['all']['frags'] / float(battles)
+						FRAGS = stat['all']['frags'] / float(battles)
 						msg += L('\nAv. destroyed: %s','%s/%s'%(jid,nick)) % round(FRAGS, 2)
-						SPOT = pdata['data'][player_id]['statistics']['all']['spotted'] / float(battles)
+						SPOT = stat['all']['spotted'] / float(battles)
 						msg += L('\nAv. spotted: %s','%s/%s'%(jid,nick)) % round(SPOT, 2)
-						CAP = pdata['data'][player_id]['statistics']['all']['capture_points'] / float(battles)
+						CAP = stat['all']['capture_points'] / float(battles)
 						msg += L('\nAv. captured points: %s','%s/%s'%(jid,nick)) % round(CAP, 2)
-						DEF = pdata['data'][player_id]['statistics']['all']['dropped_capture_points'] / float(battles)
+						DEF = stat['all']['dropped_capture_points'] / float(battles)
 						msg += L('\nAv. defense points: %s','%s/%s'%(jid,nick)) % round(DEF, 2)
 						
 						
@@ -182,9 +183,37 @@ def wot(type, jid, nick, text):
 						elif wn6 >= 1885:
 							msg += L(' - unicum','%s/%s'%(jid,nick))
 						
-						armor = math.log(battles) / 10 * (avg_exp + DAMAGE * (WINRATE * 2 + FRAGS * 0.9 + (SPOT + CAP + DEF) * 0.5))
+						stat_rnd = lambda x: stat['all'][x] - stat['clan'][x] - stat['company'][x]
 						
+						armor = math.log(stat_rnd('battles')) / 10 * (stat_rnd('xp')/float(stat_rnd('battles')) + stat_rnd('damage_dealt')/float(stat_rnd('battles')) * (stat_rnd('wins') * 2 + stat_rnd('frags') * 0.9 + (stat_rnd('spotted') + stat_rnd('capture_points') + stat_rnd('dropped_capture_points')) * 0.5)/float(stat_rnd('battles')))
+
 						msg += L('\nArmor-rating: %s','%s/%s'%(jid,nick)) % int(round(armor))
+
+						try:
+							data = load_page('http://armor.kiev.ua/wot/api.php?version=iSida3')
+							armor_limits = json.loads(data)
+							
+							if armor > armor_limits['classRatings']['cv']:
+								msg += L(' - virtuoso','%s/%s'%(jid,nick))
+							elif armor > armor_limits['classRatings']['cm']:
+								msg += L(' - master tanker','%s/%s'%(jid,nick))
+							elif armor > armor_limits['classRatings']['c1']:
+								msg += L(' - tanker 1st class','%s/%s'%(jid,nick))
+							elif armor > armor_limits['classRatings']['c2']:
+								msg += L(' - tanker 2nd class','%s/%s'%(jid,nick))
+							elif armor > armor_limits['classRatings']['c3']:
+								msg += L(' - tanker 3rd class','%s/%s'%(jid,nick))
+							elif armor > armor_limits['classRatings']['d3']:
+								msg += L(' - deerhead 3rd class','%s/%s'%(jid,nick))
+							elif armor > armor_limits['classRatings']['d2']:
+								msg += L(' - deerhead 2nd class','%s/%s'%(jid,nick))
+							elif armor > armor_limits['classRatings']['d1']:
+								msg += L(' - deerhead 1st class','%s/%s'%(jid,nick))
+							else: #['dm']
+								msg += L(' - master deerhead','%s/%s'%(jid,nick))
+						except:
+							pass
+
 					except:
 						msg = L('Impossible to get statistics','%s/%s'%(jid,nick))
 		elif not pdata['status']:

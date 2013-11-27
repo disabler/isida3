@@ -1372,6 +1372,15 @@ Impossible to get tanks' statistics	Неможливо отримати стат
  - unicum	 - унікум
 \nWN6 rating: %s (XVM: %s)	\nРейтинг WN6: %s (XVM: %s)
 \nArmor-rating: %s	\nРейтинг Бронесайту: %s
+ - virtuoso	 - віртуоз
+ - master tanker	 - майстер-танкіст
+ - tanker 1st class	 - танкіст 1-го класу
+ - tanker 2nd class	 - танкіст 2-го класу
+ - tanker 3rd class	 - танкіст 3-го класу
+ - deerhead 3rd class	 - оленевід 3-го класу
+ - deerhead 2nd class	 - оленевід 2-го класу
+ - deerhead 1st class	 - оленевід 1-го класу
+ - master deerhead	 - майстер-оленевід
 Impossible to get statistics	Неможливо отримати статистику
 Query error	Помилка запиту
 Player not found	Гравця не знайдено
@@ -1811,5 +1820,5 @@ Youtube settings	Налаштування Youtube
 API settings	Налаштування API
 
 # write locale file: ua.txt
-# total: 1483
-# missed translations: 6
+# total: 1492
+# missed translations: 9
