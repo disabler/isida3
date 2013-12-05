@@ -80,7 +80,7 @@ def srv_host(type, jid, nick, text):
 
 def srv_raw_check(type, jid, nick, text):
 	text = enidna_raw(text)
-	text = ''.join(re.findall(u'[-a-z0-9._?#=@% ]+',text,re.S+re.I)[0])
+	text = ''.join(re.findall(u'[-a-z0-9\.\_\?\#\=\@\%\ \+]+',text,re.S+re.I)[0])
 	send_msg(type, jid, nick, deidna(shell_execute(text,'%s/%s'%(jid,nick))))
 
 def chkserver(type, jid, nick, text):
