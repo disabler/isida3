@@ -21,7 +21,7 @@
 #                                                                             #
 # --------------------------------------------------------------------------- #
 
-# translate: random,smart,full,partial,on,off,kick,ban,replace,mute,visitor,truncate,paste,chat,online,away,xa,dnd,on start,on shutdown,by time,black,white,without highlight,all,ban server,Loading...,Mon,Tue,Wed,Thu,Fri,Sat,Sun,_Jan,_Fed,_Mar,_Apr,_May,_Jun,_Jul,_Aug,_Sep,_Oct,_Nov,_Dec,no limit,visitor/none,visitor/member,participant/none,participant/member,moderator/none,moderator/member,moderator/admin,moderator/owner,bot owner,You should be at least %s to do it.,You must be a %s to do it.,absent
+# translate: random,smart,full,partial,on,off,kick,ban,replace,mute,visitor,truncate,paste,chat,online,away,xa,dnd,on start,on shutdown,by time,black,white,without highlight,all,ban server,Loading...,Mon,Tue,Wed,Thu,Fri,Sat,Sun,_Jan,_Feb,_Mar,_Apr,_May,_Jun,_Jul,_Aug,_Sep,_Oct,_Nov,_Dec,no limit,visitor/none,visitor/member,participant/none,participant/member,moderator/none,moderator/member,moderator/admin,moderator/owner,bot owner,You should be at least %s to do it.,You must be a %s to do it.,absent
 
 rlmas_min = (('&','&amp;'),('\"','&quot;'),('\'','&apos;'),('<','&lt;'),('>','&gt;'))
 
@@ -112,7 +112,7 @@ msg_status_codes = {'102':L('Room now shows unavailable members.'),
 					'174':L('Room now is fully-anonymous.')}
 
 wday = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun']
-wmonth = ['_Jan','_Fed','_Mar','_Apr','_May','_Jun','_Jul','_Aug','_Sep','_Oct','_Nov','_Dec']
+wmonth = ['_Jan','_Feb','_Mar','_Apr','_May','_Jun','_Jul','_Aug','_Sep','_Oct','_Nov','_Dec']
 
 two_en = ['aa', 'aq', 'bc', 'bd', 'bf', 'bg', 'bh', 'bk', 'bn', 'bp', 'bq', 'bw', 'bx', 'bz', 'cb', 'cd', 'cf', 'cg', 'cj', \
 		  'cm', 'cn', 'cp', 'cs', 'cv', 'cw', 'cx', 'cz', 'db', 'dc', 'dh', 'dj', 'dp', 'dq', 'dt', 'dx', 'dz', 'ej', 'fb', \

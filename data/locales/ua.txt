@@ -872,7 +872,7 @@ Fri	Пт
 Sat	Сб
 Sun	Нд
 _Jan	Січ
-_Fed	Лют
+_Feb	Лют
 _Mar	Бер
 _Apr	Кві
 _May	Тра
