@@ -1450,12 +1450,10 @@ def getRoom(jid):
 def now_schedule():
 	while not game_over:
 		to = GT('schedule_time')
-		while to > 0 and not game_over:
-			to -= 1
-			time.sleep(1)
-		if not game_over:
-			for tmp in gtimer:
-				if not game_over: thr(tmp,(),('time_thread_%s' % tmp).split(' ',2)[1])
+		while int(time.time()) % to and not game_over: time.sleep(0.5)
+		for tmp in gtimer:
+			if not game_over: thr(tmp,(),('time_thread_%s' % tmp).split(' ',2)[1])
+			else: break
 
 def check_rss():
 	global rss_processed
