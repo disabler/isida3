@@ -150,7 +150,7 @@ def bomb_random():
 		bt -= 1
 	while not game_over:
 		ntime = time.time()
-		cb = [t[0] for t in cur_execute_fetchall("select split_part(room,'/',1) from conference;")]
+		cb = [t[0] for t in cur_execute_fetchall("select split_part(room,'/',1) from conference;") if t]
 		for tmp in cb:
 			try: bla = get_config(tmp,'bomb_random_active') and (ntime - bomb_last_activity[tmp]) < get_config_int(tmp,'bomb_random_active_timer')
 			except: bla = True
