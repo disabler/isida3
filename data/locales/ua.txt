@@ -1514,6 +1514,8 @@ Adblock muc filter is %s	Блокування реклами: %s
 Adblock filter	Фільтр блокування реклами
 Karma. Moderator role when karma is higher than %s	Надавати повноваження модератора при підвищенні карми до %s
 Give a moderator role when karma is higher than defined value	Надавати повноваження модератора при підвищенні карми вище вказаного значення
+Hash. Time to disable action %s	Хеш. Час відключення дії: %s
+Time to disable action	Час відключення дії при підвищеній активності хешу
 Custom rules for censor is %s	Правила для користувацького цензора %s
 Custom rules for censor	Правила для користувацького цензора
 Bomb. Reason %s	Bomb. Причина з якою буде дія: %s
@@ -1568,8 +1570,6 @@ Hash. Action for already joined %s	Хеш. Дія для вже підключе
 Action for already joined	Дія для вже підключених клієнтів
 Bomb. Allow random unexplosive bombs %s	Bomb. Іноді не підривати бомби: %s
 Allow some times take unexplosive bombs	Іноді не підривати бомби
-Hash. Time to disable action %s	Хеш. Час відключення дії: %s
-Time to disable action	Час відключення дії при підвищеній активності хешу
 Action for invalid items %s	Дія для некоректних елементів %s
 Action for invalid items	Дія для некоректних елементів
 Mute all public messages %s	Придушення всих публічних повідомленнь %s
@@ -1820,5 +1820,5 @@ Youtube settings	Налаштування Youtube
 API settings	Налаштування API
 
 # write locale file: ua.txt
-# total: 1492
-# missed translations: 9
+# total: 1497
+# missed translations: 5

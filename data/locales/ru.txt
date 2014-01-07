@@ -1115,6 +1115,7 @@ just passed!	только прошло!
 Updated: %s	Обновлено: %s
 Command is locked!	Команда заблокирована!
 I don't know %s	Я не знаю кто такой %s
+Too long was without voice!	Слишком долго был без голоса!
 Ban user.	Забанить участника.
 Ban user by jid.	Забанить участника по jid.
 Unban user.	Разбанить участника
@@ -1484,6 +1485,8 @@ Censor muc filter is %s	Действия muc-цензора: %s
 Censor filter	Muc-цензор
 Blacklist %s	Чёрный список %s
 Blacklist for caps	Чёрный список для капсов
+Time for visitors action %s	Время для действия над гостем %s
+Time for visitors action	Время для действия над гостем
 Type of list %s	Тип списка %s
 Type of list for caps	Тип списка для капсов
 Bomb. Action for bomb explode %s	Bomb. Действие при взрыве: %s
@@ -1514,6 +1517,8 @@ Adblock muc filter is %s	Блокировка рекламы: %s
 Adblock filter	Фильтр блокировки рекламы
 Karma. Moderator role when karma is higher than %s	Наделять полномочиями модератора при повышении кармы до %s
 Give a moderator role when karma is higher than defined value	Наделять полномочиями модератора при повышении кармы выше заданного значения
+Hash. Time to disable action %s	Хеш. Время отключения действия: %s
+Time to disable action	Время отключения действия при повышенной активности хеша
 Custom rules for censor is %s	Правила для пользовательского цензора %s
 Custom rules for censor	Правила для пользовательского цензора
 Bomb. Reason %s	Bomb. Причина с которой будет действие: %s
@@ -1568,8 +1573,8 @@ Hash. Action for already joined %s	Хеш. Действие для уже под
 Action for already joined	Действие для уже подключенных клиентов
 Bomb. Allow random unexplosive bombs %s	Bomb. Иногда не взрывать бомбы %s
 Allow some times take unexplosive bombs	Иногда не взрывать бомбы
-Hash. Time to disable action %s	Хеш. Время отключения действия: %s
-Time to disable action	Время отключения действия при повышенной активности хеша
+Action for visitors is %s	Действие над гостем %s
+Action for visitors	Действие над гостем
 Action for invalid items %s	Действие для некорректных элементов %s
 Action for invalid items	Действие для некорректных элементов
 Mute all public messages %s	Подавление всех публичных сообщений %s
@@ -1820,5 +1825,5 @@ Youtube settings	Настройки youtube
 API settings	Настройки API
 
 # write locale file: ru.txt
-# total: 1492
-# missed translations: 9
+# total: 1497
+# missed translations: 5

@@ -1557,6 +1557,8 @@ config_prefs = {'url_title': ['Url title is %s', 'Automatic show title of urls i
 				'set_default_locale': ['Set default locale %s', 'Ignore users locale and use one locale for all users in room', ['off','en'] + [tmp[:-4] for tmp in os.listdir(loc_folder[:-6]) if tmp[-4:]=='.txt'], 'off'],
 				'store_users_url': ['Store Users URL %s', 'Store Users URL', [True,False], True],
 				'trusted_servers': ['Trusted servers %s', 'Servers list marked as trusted. They are excluded from any actions with servers', None, ''],
+				'visitor_action': ['Action for visitors is %s', 'Action for visitors', ['off','kick','ban'], 'off'],
+				'visitor_action_time': ['Time for visitors action %s', 'Time for visitors action', None, '1800'],
 
 				# MUC-Filter messages
 
@@ -1681,7 +1683,7 @@ config_prefs = {'url_title': ['Url title is %s', 'Automatic show title of urls i
 
 config_group_other = ['Other settings','#room-other',
 				['url_title','parse_define','clear_answer','smiles','autoturn','make_stanza_jid_count','content_length','acl_multiaction',
-				'paste_xhtml_images','set_default_locale','store_users_url','trusted_servers'],None]
+				'paste_xhtml_images','set_default_locale','store_users_url','trusted_servers','visitor_action','visitor_action_time'],None]
 
 config_group_censor = ['Censor settings','#room-censor',
 				['censor','censor_warning','censor_action_member','censor_action_non_member',

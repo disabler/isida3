@@ -21,6 +21,8 @@
 #                                                                             #
 # --------------------------------------------------------------------------- #
 
+visitors_list = {}
+
 # -------------- affiliation -----------------
 
 def global_ban(type, jid, nick, text):
@@ -193,9 +195,31 @@ def check_unban():
 		for t in ul: sender(xmpp.Node('iq', {'id': get_id(), 'type': 'set', 'to':t[0]}, payload = [xmpp.Node('query', {'xmlns': xmpp.NS_MUC_ADMIN},[xmpp.Node('item',{'affiliation':'none', 'jid':getRoom(unicode(t[1]))},[])])]))
 		cur_execute('delete from tmp_ban where time<%s;',(tt,))
 
-global execute, timer
+def check_visitor():
+	global visitors_list
+	ITT = int(time.time())
+	for t in visitors_list:
+		room = t.split('/')[0]
+		VISITOR_ACT = get_config(getRoom(room),'visitor_action')
+		if VISITOR_ACT != 'off' and ITT > visitors_list[t]:
+			reason = [xmpp.Node('reason',{},L('Too long was without voice!',t))]
+			if VISITOR_ACT == 'kick': sender(xmpp.Node('iq', {'id': get_id(), 'type': 'set', 'to':room}, payload = [xmpp.Node('query', {'xmlns': xmpp.NS_MUC_ADMIN},[xmpp.Node('item',{'role':'none', 'nick':t.split('/',1)[1]},reason)])]))
+			else: sender(xmpp.Node('iq', {'id': get_id(), 'type': 'set', 'to':room}, payload = [xmpp.Node('query', {'xmlns': xmpp.NS_MUC_ADMIN},[xmpp.Node('item',{'affiliation':'outcast', 'jid':get_jid_by_nick(t.split('/',1))},reason)])]))
 
-timer = [check_unban]
+def visitor_presence(room,jid,nick,type,mass):
+	global visitors_list
+	if getRoom(jid) == getRoom(Settings['jid']): return
+	was_joined = not mass[7] or is_start
+	if type == 'error': return
+	elif type == 'unavailable':
+		try: visitors_list.pop('%s/%s' % (room,nick))
+		except: pass
+	if mass[1] == 'visitor': visitors_list['%s/%s' % (room,nick)] = int(time.time()) + get_config_int(getRoom(room),'visitor_action_time')	
+
+global execute, timer, presence_control
+
+timer = [check_unban,check_visitor]
+presence_control = [visitor_presence]
 
 execute = [(7, 'ban_past', muc_ban_past, 2, 'Ban user.'),
 	   (7, 'ban', muc_ban, 2, 'Ban user.'),
