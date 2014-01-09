@@ -87,7 +87,7 @@ def wot(type, jid, nick, text):
 							if str(t['tank_id']) in tids:
 								tank_win = t['statistics']['wins']
 								tank_battle = t['statistics']['battles']
-								mom = [L('none','%s/%s'%(jid,nick)), L('1 class','%s/%s'%(jid,nick)), L('2 class','%s/%s'%(jid,nick)), L('3 class','%s/%s'%(jid,nick)), L('master','%s/%s'%(jid,nick))][t['mark_of_mastery']]
+								mom = [L('none','%s/%s'%(jid,nick)), L('3 class','%s/%s'%(jid,nick)), L('2 class','%s/%s'%(jid,nick)), L('1 class','%s/%s'%(jid,nick)), L('master','%s/%s'%(jid,nick))][t['mark_of_mastery']]
 								if tank_battle:
 									msg += L('\n%s (%s/%s - %s%%), mastery: %s','%s/%s'%(jid,nick)) % (tanks_data[str(t['tank_id'])]['name_i18n'], tank_win, tank_battle, round(100.0*tank_win/tank_battle, 2), mom)
 								else:
@@ -250,8 +250,26 @@ def wotclan(type, jid, nick, text):
 	except:
 		msg = L('Impossible to get info','%s/%s'%(jid,nick))
 	send_msg(type,jid,nick,msg)
-		
+
+def wotoffers(type, jid, nick, text):
+	text = text.strip().split(' ', 1)
+	try:
+		url = 'http://jexp2.wotapi.ru/wotnews/get-news.php'
+		d = '?'
+		for opt in text:
+			if opt in ['active', 'all']:
+				url += '%sactivity=%s' % (d, opt)
+				d = '&'
+			if opt in ['real', 'prem', 'info']:
+				url += '%sdetailed=%s' % (d, opt)
+				d = '&'
+		msg = load_page(url).decode('utf-8')
+	except:
+		msg = L('Impossible to get info','%s/%s'%(jid,nick))
+	send_msg(type,jid,nick,msg)
+	
 global execute
 
 execute = [(3, 'wot', wot, 2, 'World of Tanks - info about user. Usage: wot nick [tank]'),
-			(3, 'wotclan', wotclan, 2, 'World of Tanks - info about clan. Usage: wotclan clan')]
+			(3, 'wotclan', wotclan, 2, 'World of Tanks - info about clan. Usage: wotclan clan'),
+			(3, 'wotoffers', wotoffers, 2, 'World of Tanks - info about offers. Usage: wotoffers [active|all] [real|prem|info]')]
