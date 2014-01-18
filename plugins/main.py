@@ -141,7 +141,7 @@ def get_size_human(mt):
 		mt = mt / 1024.0
 		if mt < 1024: break
 	return '%.2f%s' % (mt,t)
-		
+
 def is_owner(jid): return cur_execute_fetchone('select * from bot_owner where jid=%s',(getRoom(jid),)) != None
 
 def validate_nick(nick,count):
@@ -546,7 +546,6 @@ def un_unix(*val):
 	if len(val) == 2: rn = val[1]
 	else: rn = ''
 	val = val[0]
-	
 	tt = map(lambda q,a: q-a, time.gmtime(val), time.gmtime(0))[:6]
 	ret = '%02d:%02d:%02d' % tuple(tt[3:6])
 	if sum(tt[:3]):
@@ -1318,7 +1317,7 @@ def rss(type, jid, nick, text):
 		except: ofset = 4
 		if timetype == 'm' and ofset < GT('rss_min_time_limit'): timetype = '%sm' % GT('rss_min_time_limit')
 		else: timetype = str(ofset)+timetype
-		cur_execute('insert into feed values (%s,%s,%s,%s,%s,%s);',(link, timetype, text[3], int(time.time()), getRoom(jid),[] if base_type == 'pgsql' else '[]'))
+		cur_execute('insert into feed values (%s,%s,%s,%s,%s,%s,%s);',(link, timetype, text[3], int(time.time()), getRoom(jid),[] if base_type == 'pgsql' else '[]',''))
 		msg = L('Add feed to schedule: %s (%s) %s','%s/%s'%(jid,nick)) % (link,timetype,text[3])
 		rss(type, jid, nick, 'get %s 1 %s' % (link,text[3]))
 	elif mode == 'del':
@@ -1332,26 +1331,38 @@ def rss(type, jid, nick, text):
 	elif mode in ['new','get']:
 		link = text[1]
 		if not re.findall('^http(s?)://',link[:10]): link = 'http://%s' % link
-		try:
-			req = urllib2.Request(link.encode('utf-8'))
-			req.add_header('User-Agent',GT('user_agent'))
-			feed = urllib2.urlopen(url=req,timeout=GT('rss_get_timeout')).read(GT('size_overflow'))
-		except: feed = L('Unable to access server!','%s/%s'%(jid,nick))
-		is_rss_aton,fc = 0,feed[:256]
-		if '<?xml version=' in fc:
-			if '<feed' in fc:
-				is_rss_aton = 2
-				t_feed = feed.split('<title>')
-				feed = t_feed[0]
-				for tmp in t_feed[1:]:
-					tm = tmp.split('</title>',1)
-					if ord(tm[0][-1]) == 208: tm[0] = tm[0][:-1] + '...'
-					feed += '<title>%s</title>%s' % tuple(tm)
-			elif '<rss' in fc or '<rdf' in fc: is_rss_aton = 1
-			feed = html_encode(feed)
-			feed = re.sub('(<span.*?>.*?</span>)','',feed)
-			feed = re.sub('(<div.*?>)','',feed)
-			feed = re.sub('(</div>)','',feed)
+		body, result = get_opener(enidna(link))
+		modified,need_update_feed = '',True
+		if result:
+			modified = body.headers.get('last-modified',None)
+			if not modified: modified = get_tag(load_page_size(link, 1024),'updated')
+		if modified:
+			changed = cur_execute_fetchone('select changed from feed where room=%s and url=%s;',(jid,link))[0]
+			if modified == changed: need_update_feed = False
+			else: cur_execute('update feed set changed=%s where room=%s and url=%s',(modified,jid,link))
+		is_rss_aton = 0
+		if need_update_feed:
+			try:
+				req = urllib2.Request(link.encode('utf-8'))
+				req.add_header('User-Agent',GT('user_agent'))
+				feed = urllib2.urlopen(url=req,timeout=GT('rss_get_timeout')).read(GT('size_overflow'))
+			except: feed = L('Unable to access server!','%s/%s'%(jid,nick))
+			fc = feed[:256]
+			if '<?xml version=' in fc:
+				if '<feed' in fc:
+					is_rss_aton = 2
+					t_feed = feed.split('<title>')
+					feed = t_feed[0]
+					for tmp in t_feed[1:]:
+						tm = tmp.split('</title>',1)
+						if ord(tm[0][-1]) == 208: tm[0] = tm[0][:-1] + '...'
+						feed += '<title>%s</title>%s' % tuple(tm)
+				elif '<rss' in fc or '<rdf' in fc: is_rss_aton = 1
+				feed = html_encode(feed)
+				feed = re.sub('(<span.*?>.*?</span>)','',feed)
+				feed = re.sub('(<div.*?>)','',feed)
+				feed = re.sub('(</div>)','',feed)
+		else: feed = L('New feeds not found!','%s/%s'%(jid,nick))
 		if is_rss_aton and feed != L('Encoding error!','%s/%s'%(jid,nick)) and feed != L('Unable to access server!','%s/%s'%(jid,nick)):
 			if is_rss_aton == 1:
 				if '<item>' in feed: fd = feed.split('<item>')
@@ -1436,9 +1447,11 @@ def rss(type, jid, nick, text):
 			rss_flush(jid,link,None)
 			if text[4] == 'silent': nosend = True
 			else:
-				if feed in [L('Encoding error!','%s/%s'%(jid,nick)),L('Unable to access server!','%s/%s'%(jid,nick))]: title = feed
-				else: title = html_encode(get_tag(feed,'title'))
-				msg = L('Bad url or rss/atom not found at %s - %s','%s/%s'%(jid,nick)) % (link,title)
+				if need_update_feed:
+					if feed in [L('Encoding error!','%s/%s'%(jid,nick)),L('Unable to access server!','%s/%s'%(jid,nick))]: title = feed
+					else: title = html_encode(get_tag(feed,'title'))
+					msg = L('Bad url or rss/atom not found at %s - %s','%s/%s'%(jid,nick)) % (link,title)
+				else: msg = feed
 	if not nosend: send_msg(type, jid, nick, msg)
 
 def configure(type, jid, nick, text):

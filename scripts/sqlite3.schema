@@ -363,7 +363,8 @@ CREATE TABLE feed (
 	type text,
 	time integer,
 	room text,
-	hash text
+	hash text,
+	changed text
 );
 
 CREATE INDEX feed_r ON feed (room);
