@@ -29,6 +29,7 @@ def gcalc(type, jid, nick, text):
 		try:
 			data = load_page('http://www.google.ru/search?', {'q': text.encode('utf-8'), 'hl': GT('youtube_default_lang')})
 			msg = ' '.join(re.findall('<div class="vk_gy vk_sh" style="margin-bottom:5px">(.*?)</div><div class="vk_ans vk_bk" style="margin-bottom:0">(.*?)</div>',data)[0]).decode('utf-8', 'ignore')
+			msg = msg.replace('<sup>2</sup>',u'²').replace('<sup>3</sup>',u'³') 
 		except:
 			try: msg = reduce_spaces_all(' '.join(re.findall('<span class="cwclet" id="cwles">(.*?)</span>.*?<span class="cwcot" id="cwos">(.*?)</span>',data,re.S)[0])).strip()
 			except: msg = L('Google Calculator results not found','%s/%s'%(jid,nick))
