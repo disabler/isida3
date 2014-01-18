@@ -1115,6 +1115,7 @@ just passed!	тільки прошло!
 Updated: %s	Поновлено: %s
 Command is locked!	Команда заблокована!
 I don't know %s	Я не знаю, хто такий %s
+Too long was without voice!	Надто довго був без голосу!
 Ban user.	Забанити учасника.
 Ban user by jid.	Забанити учасника за jid'ом.
 Unban user.	Розбанити учасника
@@ -1349,9 +1350,9 @@ Show list of users for last day	Показ списку учасників за 
 # file: plugins/wot.py
 Use more characters in the name of the tank	Використовуйте більше символів в назві танку
 none	відсутня
-1 class	1 степінь
-2 class	2 степінь
 3 class	3 степінь
+2 class	2 степінь
+1 class	1 степінь
 master	майстер
 \n%s (%s/%s - %s%%), mastery: %s	\n%s (%s/%s - %s%%), класність: %s
  not founded tank	 танк не знайдено
@@ -1393,6 +1394,7 @@ Clan not found	Клан не знайдено
 Impossible to get info	Неможливо отримати інформацію
 World of Tanks - info about user. Usage: wot nick [tank]	World of Tanks - інформація про користувача. Використання: wot нік [танк]
 World of Tanks - info about clan. Usage: wotclan clan	World of Tanks - інформація про клан. Приклад: wotclan клан
+World of Tanks - info about offers. Usage: wotoffers [active|all] [real|prem|info]	World of Tanks - інформація про акції. Приклад: wotoffers [active|all] [real|prem|info]
 
 # file: plugins/wtf.py
 I know that %s is %s	Я знаю, що %s - %s
@@ -1484,6 +1486,8 @@ Censor muc filter is %s	Muc-цензор: %s
 Censor filter	Muc-цензор
 Blacklist %s	Чорний список %s
 Blacklist for caps	Чорний список для капсів
+Time for visitors action %s	Час для дії над гостем %s
+Time for visitors action	NOЧас для дії над гостем
 Type of list %s	Тип списку %s
 Type of list for caps	Тип списку для капсів
 Bomb. Action for bomb explode %s	Bomb. Дія при вибуху: %s
@@ -1570,6 +1574,8 @@ Hash. Action for already joined %s	Хеш. Дія для вже підключе
 Action for already joined	Дія для вже підключених клієнтів
 Bomb. Allow random unexplosive bombs %s	Bomb. Іноді не підривати бомби: %s
 Allow some times take unexplosive bombs	Іноді не підривати бомби
+Action for visitors is %s	Дія над гостем %s
+Action for visitors	Дія над гостем
 Action for invalid items %s	Дія для некоректних елементів %s
 Action for invalid items	Дія для некоректних елементів
 Mute all public messages %s	Придушення всих публічних повідомленнь %s
@@ -1820,5 +1826,5 @@ Youtube settings	Налаштування Youtube
 API settings	Налаштування API
 
 # write locale file: ua.txt
-# total: 1497
-# missed translations: 5
+# total: 1498
+# missed translations: 6
