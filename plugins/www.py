@@ -22,6 +22,7 @@
 #                                                                             #
 # --------------------------------------------------------------------------- #
 
+filename_chars_limit = 48
 last_url_watch = ''
 url_watch_ignore = ['pdf','sig','spl','class','ps','torrent','dvi','gz','pac','swf','tar','tgz','tar','zip','mp3','m3u','wma',\
 					'wax','ogg','wav','gif','jar','jpg','jpeg','png','xbm','xpm','xwd','css','asc','c','cpp','log','conf','text',\
@@ -206,7 +207,10 @@ def parse_url_in_message(room,jid,nick,type,text):
 					pprint('Show content length: %s in %s' % (link,room),'white')
 					if result:
 						mt = float(body.headers.get('Content-Length',0))
-						if mt: send_msg(type, room, '', L('Length of %s is %s','%s/%s'%(jid,nick)) % (u'…/%s' % to_censore(urllib2.unquote(last_url_watch.rsplit('/',1)[-1]).decode('utf-8'),room),get_size_human(mt)))
+						if mt:
+							link_end = urllib2.unquote(last_url_watch.rsplit('/',1)[-1]).decode('utf-8')
+							link_end = u'…%s%s' % (['/',''][len(link_end)>filename_chars_limit], link_end[-filename_chars_limit:])
+							send_msg(type, room, '', L('Length of %s is %s','%s/%s'%(jid,nick)) % (to_censore(link_end,room),get_size_human(mt)))
 		except: pass
 
 global execute
