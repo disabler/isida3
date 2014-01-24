@@ -1047,8 +1047,8 @@ Add feed to schedule: %s (%s) %s	Добавлена новость в распи
 Can't find in schedule: %s	Не могу найти в расписании: %s
 Delete feed from schedule: %s	Удалено из расписания: %s
 Unable to access server!	Нет доступа к серверу!
-Feeds for	Новости для
 New feeds not found!	Нет новых новостей!
+Feeds for	Новости для
 Bad url or rss/atom not found at %s - %s	Ошибка url или новости не найдены на %s - %s
 Current status: %s	Текущий статус: %s
 Available items: %s	Доступны элементы: %s
@@ -1265,6 +1265,10 @@ Soft update from VCS.	Мягкое обновление из VCS.
 
 # file: plugins/sokr.py
 Abbreviations.\nExamples: sokr abbr, sokr 6 abbr, sokr 3-7 abbr	Аббревиатуры. Примеры использования: sokr abbr, sokr 6 abbr, sokr 3-7 abbr
+
+# file: plugins/sovm.py
+Sign not found!	Знак не найден!
+Reconcilability between zodiac signs	Совместимость знаков зодиака
 
 # file: plugins/spellcheck.py
 Spellchecker. Example: spell [uk|ru|en] sentence	Проверка орфографии. Пример: spell [uk|ru|en] предложение
@@ -1826,5 +1830,5 @@ Youtube settings	Настройки youtube
 API settings	Настройки API
 
 # write locale file: ru.txt
-# total: 1498
+# total: 1500
 # missed translations: 1

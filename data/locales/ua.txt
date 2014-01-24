@@ -1047,8 +1047,8 @@ Add feed to schedule: %s (%s) %s	Додана новина в розклад: %s
 Can't find in schedule: %s	Не можу знайти в розкладі: %s
 Delete feed from schedule: %s	Видалено з розкладу: %s
 Unable to access server!	Нема доступу до сервера
-Feeds for	Новини для
 New feeds not found!	Немає новин!
+Feeds for	Новини для
 Bad url or rss/atom not found at %s - %s	Помилка url або новини не знайдені на %s - %s
 Current status: %s	Поточний статус: %s
 Available items: %s	Доступні елементи: %s
@@ -1826,5 +1826,6 @@ Youtube settings	Налаштування Youtube
 API settings	Налаштування API
 
 # write locale file: ua.txt
-# total: 1498
-# missed translations: 6
+# total: 1500
+# missed translations: 2
+
