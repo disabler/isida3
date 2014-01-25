@@ -237,16 +237,16 @@ def atempt_to_shutdown_with_reason(text,sleep_time,exit_type,critical):
 
 def deidna(text):
 	def repl(t): return t.group().lower().decode('idna')
-	return re.sub(r'(xn--[-0-9a-z_]*)',repl,text,flags=re.S+re.U+re.I)
+	return re.sub(r'(xn--[-0-9a-z_]*)',repl,text,flags=re.S|re.I|re.U)
 
 def enidna(text):
-	idn = re.findall(u'http[s]?://([-0-9a-zа-я._]*)',text,flags=re.S+re.U+re.I)
+	idn = re.findall(u'http[s]?://([-0-9a-zа-я._]*)',text,flags=re.S|re.I|re.U)
 	if idn: text = text.replace(idn[0],idn[0].lower().encode('idna'))
 	return text.encode('utf-8')
 
 def enidna_raw(text):
 	def repl(t): return t.group().lower().encode('idna')
-	return re.sub(u'([а-я][-0-9а-я_]*)',repl,text,flags=re.S+re.U+re.I)
+	return re.sub(u'([а-я][-0-9а-я_]*)',repl,text,flags=re.S|re.I|re.U)
 
 def get_level(cjid, cnick):
 	access_mode = -2
@@ -304,7 +304,7 @@ def show_syslogs_search(type, jid, nick, text):
 	matches = []
 	for t in files:
 		if not value or (value and re.findall(value,t.split('.')[0])):
-			m = [f for f in readfile(slog_folder % t).decode('utf-8').split('\n') if ' [9] syslogs_search' not in f and re.findall(text,f,re.S+re.I+re.U)]
+			m = [f for f in readfile(slog_folder % t).decode('utf-8').split('\n') if ' [9] syslogs_search' not in f and re.findall(text,f,re.S|re.I|re.U)]
 			if m:
 				if value: matches.append('*** %s%s%s%s-%s%s-%s%s ***' % tuple(t.split('.')[0]))
 				matches += m
@@ -436,9 +436,9 @@ def status(type, jid, nick, text):
 	send_msg(type, jid, nick, msg)
 
 def replacer(msg):
-	def repl(t): return '%s\n' % re.findall('<div.*?>(.*?)</div>',t.group(0),re.S+re.U+re.I)[0]
+	def repl(t): return '%s\n' % re.findall('<div.*?>(.*?)</div>',t.group(0),re.S|re.I|re.U)[0]
 	msg = rss_replace(msg)
-	msg = re.sub(r'(<div.*?>).*?(</div>)',repl,msg,flags=re.S+re.U+re.I)
+	msg = re.sub(r'(<div.*?>).*?(</div>)',repl,msg,flags=re.S|re.I|re.U)
 	for tmp in [['<br/>','\n'],['<br />','\n']]: msg = msg.replace(*tmp)
 	msg = rss_del_html(msg)
 	msg = rss_replace(msg)

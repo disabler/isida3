@@ -31,7 +31,7 @@ def sovm(type, jid, nick, text):
 			body = html_encode(load_page('http://astro-goroskop.ru/sovmestimosti/%s.html' % znak)).replace('\n',' ')
 			if '-' in znak: regexp = 'class="float_img" alt="(.*?)" />(.*?)<script'
 			else: regexp = 'class="float_img" alt="(.*?)" />(.*?)<br /><br />'
-			body = re.findall(regexp,body,re.S+re.I+re.U)
+			body = re.findall(regexp,body,re.S|re.I|re.U)
 			if body and len(body[0]) == 2: msg ='\n'.join(t.strip().replace('<br /> <br />','') for t in body[0])
 			else: msg = L('Error!','%s/%s'%(jid,nick))
 		else: msg = L('Sign not found!','%s/%s'%(jid,nick))

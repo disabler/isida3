@@ -22,7 +22,7 @@
 # --------------------------------------------------------------------------- #
 
 whereis_answers  = {}
-whereis_regx     = re.compile('<item .*?name=[\'"](.*?)[\'"]',re.S+re.U+re.I)
+whereis_regx     = re.compile('<item .*?name=[\'"](.*?)[\'"]',re.S|re.I|re.U)
 whereis_lock     = None
 disco_excl       = []
 
@@ -731,7 +731,7 @@ def disco_exclude_update():
 
 def disco_validate(item):
 	for c in disco_excl:
-		if re.findall(c,' %s ' % item,re.I+re.S+re.U): return None
+		if re.findall(c,' %s ' % item,re.S|re.I|re.U): return None
 	return item
 
 def smart_sort(item):

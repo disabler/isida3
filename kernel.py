@@ -574,7 +574,7 @@ def message_exclude_update():
 def message_validate(item):
 	if messages_excl:
 		for c in messages_excl:
-			cn = re.findall(c,' %s ' % item,re.I+re.S+re.U)
+			cn = re.findall(c,' %s ' % item,re.S|re.I|re.U)
 			for tmp in cn: item = item.replace(tmp,[GT('censor_text')*len(tmp),GT('censor_text')][len(GT('censor_text'))>1])
 	return item
 
@@ -781,7 +781,7 @@ def get_eval_item(mess,string):
 	return ''
 
 def match_for_raw(original,regexp,gr):
-	orig_drop = orig_reg = re.findall(regexp, original.replace('\n',' '), re.S+re.U+re.I)
+	orig_drop = orig_reg = re.findall(regexp, original.replace('\n',' '), re.S|re.I|re.U)
 	while '' in orig_drop: orig_drop.remove('')
 	orig_join = ''.join(orig_reg)
 	if orig_join:
@@ -1047,7 +1047,7 @@ def messageCB(sess,mess):
 				argz = btext[len(alias[0])+1:]
 				if not argz:
 					ppr = alias[1].replace('%*', '').replace('%{reduce}*', '').replace('%{reduceall}*', '').replace('%{unused}*', '')
-					ppr = re.sub('\%\{nick2jid\}[0-9\*]','',ppr,flags=re.S+re.I+re.U)
+					ppr = re.sub('\%\{nick2jid\}[0-9\*]','',ppr,flags=re.S|re.I|re.U)
 					cpar = re.findall('%([0-9]+)', ppr, re.S)
 					if len(cpar):
 						for tmp in cpar:
@@ -1059,18 +1059,18 @@ def messageCB(sess,mess):
 					ppr = ppr.replace('%*', argz).replace('%{reduce}*', argz.strip()).replace('%{reduceall}*', reduce_spaces_all(argz))
 					argz = argz.split()
 					argzbk = list(argz)
-					n2j = re.findall('\%\{nick2jid\}([0-9])',ppr,flags=re.S+re.I+re.U)
+					n2j = re.findall('\%\{nick2jid\}([0-9])',ppr,flags=re.S|re.I|re.U)
 					if n2j:
 						for t in n2j:
 							it = int(t)
 							try: curr_nick = get_jid_by_nick(room, argz[it])
 							except: curr_nick = ''
-							ppr = re.sub('\%%\{nick2jid\}%s' % t,curr_nick,ppr,flags=re.S+re.I+re.U)
+							ppr = re.sub('\%%\{nick2jid\}%s' % t,curr_nick,ppr,flags=re.S|re.I|re.U)
 							argzbk = argzbk[:it]+argzbk[it+1:]
-					n2j = re.findall('\%\{nick2jid\}(\*)',ppr,flags=re.S+re.I+re.U)
+					n2j = re.findall('\%\{nick2jid\}(\*)',ppr,flags=re.S|re.I|re.U)
 					if n2j:
 						curr_nick = get_jid_by_nick(room, ' '.join(argz))
-						ppr = re.sub('\%\{nick2jid\}[0-9\*]',curr_nick,ppr,flags=re.S+re.I+re.U)
+						ppr = re.sub('\%\{nick2jid\}[0-9\*]',curr_nick,ppr,flags=re.S|re.I|re.U)
 						argz = []
 					if '%' in ppr:
 						cpar = re.findall('%([0-9]+)', ppr, re.S)
@@ -1155,14 +1155,14 @@ def to_censore(text,room):
 				else: cc = ['#'.join(cc[:-1]),cc[-1]]
 			if cc[0]:
 				try:
-					_ = re.compile(cc[0])
+					_ = re.compile(cc[0],re.S|re.I|re.U)
 					ccn.append(cc[0])
 					if len(cc) > 1: custom_replace[cc[0]] = reduce_spaces_all(cc[1])
 				except: pass
 	wca = None
 	def_replacer = GT('censor_text')
 	for c in censor+ccn:
-		cn = re.findall(c,' %s ' % text,re.I+re.S+re.U)
+		cn = re.findall(c,' %s ' % text,re.S|re.I|re.U)
 		for tmp in cn:
 			t = ''.join(tmp)
 			try: replacer = custom_replace[c]

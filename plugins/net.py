@@ -25,7 +25,7 @@ def vendor_by_mac(type, jid, nick, text):
 	text = text.strip().replace('-','').replace(':','').replace(' ','')[:6].upper()
 	if text and len(text) == 6:
 		result = html_encode(load_page('http://standards.ieee.org/cgi-bin/ouisearch?%s' % text))
-		r = re.findall('\(hex\)(.*?)\n',result,re.S+re.I)
+		r = re.findall('\(hex\)(.*?)\n',result,re.S|re.I)
 		if 'Sorry!' in result and not r: msg = L('Not found!','%s/%s'%(jid,nick))
 		else: msg = r[0].strip().upper()
 	else: msg = L('What?','%s/%s'%(jid,nick))
@@ -80,12 +80,12 @@ def srv_host(type, jid, nick, text):
 
 def srv_raw_check(type, jid, nick, text):
 	text = enidna_raw(text)
-	text = ''.join(re.findall(u'[-a-z0-9\.\_\?\#\=\@\%\ \+]+',text,re.S+re.I)[0])
+	text = ''.join(re.findall(u'[-a-z0-9\.\_\?\#\=\@\%\ \+]+',text,re.S|re.I)[0])
 	send_msg(type, jid, nick, deidna(shell_execute(text,'%s/%s'%(jid,nick))))
 
 def chkserver(type, jid, nick, text):
 	for a in ':;&/|\\\n\t\r': text = text.replace(a,' ')
-	t = re.findall(u'[-a-zа-я0-9._?#=@%]+',text,re.S+re.I)
+	t = re.findall(u'[-a-zа-я0-9._?#=@%]+',text,re.S|re.I|re.U)
 	if len(t) >= 2:
 		port = []
 		for a in t:
@@ -95,7 +95,7 @@ def chkserver(type, jid, nick, text):
 			t = t[0]
 			port.sort()
 			msg = shell_execute('nmap %s -p%s -P0 -T5' % (t.encode('idna'),','.join(port)),'%s/%s'%(jid,nick))
-			try: msg = '%s\n%s' % (t.encode('idna'),reduce_spaces_all(re.findall('SERVICE(.*)Nmap',msg,re.S+re.U)[0][1:-2]))
+			try: msg = '%s\n%s' % (t.encode('idna'),reduce_spaces_all(re.findall('SERVICE(.*)Nmap',msg,re.S|re.U)[0][1:-2]))
 			except:
 				try:
 					msg = ''

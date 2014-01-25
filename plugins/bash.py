@@ -27,7 +27,7 @@ def bash_org_ru(type, jid, nick, text):
 	elif re.match('\d+$', text): url = 'http://bash.org.ru/quote/%s' % text
 	else: url = 'http://bash.org.ru/?text=%s' % urllib.quote(text.encode('cp1251'))
 	body = html_encode(load_page(url))
-	body = re.findall('<span class="date">(.*?)</span>.*?class="id">(.*?)</a>.*?<div class="text">(.*?)</div>',body,re.S+re.I+re.U)
+	body = re.findall('<span class="date">(.*?)</span>.*?class="id">(.*?)</a>.*?<div class="text">(.*?)</div>',body,re.S|re.I|re.U)
 	try: msg = rss_del_nn(rss_replace('%s %s\n%s' % body[0]))
 	except: msg = L('Quote not found!','%s/%s'%(jid,nick))
 	send_msg(type, jid, nick, msg)

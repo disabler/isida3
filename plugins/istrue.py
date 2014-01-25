@@ -45,7 +45,7 @@ def is_valid(type, jid, nick, text):
 		else: msg += L('Equally','%s/%s'%(jid,nick))
 		
 		def repl(t): return '[%s]' % t.group()
-		msg += ' - %s' % re.sub([u'([а-яё]+)','([a-z]+)'][hl==1],repl,text,flags=re.S+re.U+re.I)
+		msg += ' - %s' % re.sub([u'([а-яё]+)','([a-z]+)'][hl==1],repl,text,flags=re.S|re.I|re.U)
 
 
 	send_msg(type, jid, nick, msg)

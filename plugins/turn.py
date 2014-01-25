@@ -40,7 +40,7 @@ def turner_raw(text,jid,nick):
 		elif ': ' in to_turn: msg, to_turn = '%s:' % to_turn.split(': ',1)[0], to_turn.split(': ',1)[1]
 		else: msg = ''
 		for tt in re.findall('\s+[^\s]*', ' ' + to_turn,re.I+re.U):
-			if re.findall('\s+(((svn|http[s]?|ftp)(://))|(magnet:\?))',tt,re.I+re.S+re.U): msg += tt
+			if re.findall('\s+(((svn|http[s]?|ftp)(://))|(magnet:\?))',tt,re.S|re.I|re.U): msg += tt
 			else: msg += ''.join([ltab[rtab.find(x)] if x in rtab else x for x in tt])
 		msg = msg.strip()
 		if get_config(getRoom(jid),'censor'): msg = to_censore(msg,jid)
@@ -84,7 +84,7 @@ def autoturn(room,jid,nick,type,text):
 		count_two = 0
 		if not sum([int(ord(t)>127) for t in tmp]):
 			for tt in re.findall('\s+[^\s]*', ' ' + tmp):
-				if not re.findall('(svn|http[s]?|ftp)(://)',tt,re.S+re.U) and not re.findall(u'\s+[A-ZА-Я\d\']{2,}$',tt,re.U): count_two += sum([1 for k in two_en if k in tt])
+				if not re.findall('(svn|http[s]?|ftp)(://)',tt,re.S|re.U) and not re.findall(u'\s+[A-ZА-Я\d\']{2,}$',tt,re.U): count_two += sum([1 for k in two_en if k in tt])
 			if len(tmp.split()) < count_two - 1:
 				to_turn = turner_raw(text,room,nick)
 				if to_turn and to_turn != text:

@@ -39,7 +39,7 @@ def handler_horoscope(type, jid, nick, text):
 		if param in [L(t) for t in horodb] or param in horodb:
 			if param not in horodb: param = dict([[L(t),t] for t in horodb])[param]
 			body = html_encode(load_page('http://horo.mail.ru/prediction/%s/today' % param))
-			try: msg = unhtml_hard(re.findall('<div id="tm_today">(.+?)<div class="mb2">',body,re.S+re.I+re.U)[0].strip())
+			try: msg = unhtml_hard(re.findall('<div id="tm_today">(.+?)<div class="mb2">',body,re.S|re.I|re.U)[0].strip())
 			except: msg = L('Unknown error!','%s/%s'%(jid,nick))
 			if type=='groupchat':
 				send_msg('chat', jid, nick, msg)

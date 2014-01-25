@@ -53,7 +53,7 @@ def currency_converter(type, jid, nick, text):
 			body = html_encode(load_page(url))
 			try:
 				curr = body.split('<select name="tid_from" class="n">')[1].split('</select>')[0]
-				curr_list = dict(re.findall('<option value="(.*?)".*?>(.*?)</option>',curr,re.S+re.I+re.U))
+				curr_list = dict(re.findall('<option value="(.*?)".*?>(.*?)</option>',curr,re.S|re.I|re.U))
 			except: curr_list = {}
 			try: body = body.split('<table id="rTable" class="table">',1)[1]
 			except: body = ''

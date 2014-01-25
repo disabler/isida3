@@ -158,7 +158,7 @@ def acl_action(cmd,nick,jid,room,text):
 	cmd = cmd.replace('${NICK}',nick).replace('${JID}',jid).replace('${SERVER}',getServer(jid))
 	if text and '${EXP}' in cmd and '${/EXP}' in cmd:
 		regex = cmd.split('${EXP}',1)[1].split('${/EXP}',1)[0]
-		mt = re.findall(regex, text, re.S+re.U+re.I)
+		mt = re.findall(regex, text, re.S|re.I|re.U)
 		if mt != []: txt = ''.join(mt[0])
 		else: txt = ''
 		cmd = cmd.split('${EXP}',1)[0] + txt + cmd.split('${/EXP}',1)[1]
@@ -180,11 +180,11 @@ def acl_message(room,jid,nick,type,text):
 				if tmp[4] <= time.time() and tmp[4]: cur_execute('delete from acl where jid=%s and action=%s and type=%s and text=%s',(room,tmp[0],tmp[1],tmp[2]))
 				was_match = False
 				if tmp[1] in ['exp','!exp']:
-					if tmp[1][0] == '!' and not re.findall(tmp[2].replace('*','*?'),text,re.I+re.S+re.U): was_match = True
-					elif re.findall(tmp[2].replace('*','*?'),text,re.I+re.S+re.U): was_match = True
+					if tmp[1][0] == '!' and not re.findall(tmp[2].replace('*','*?'),text,re.S|re.I|re.U): was_match = True
+					elif re.findall(tmp[2].replace('*','*?'),text,re.S|re.I|re.U): was_match = True
 				elif tmp[1] in ['cexp','!cexp']:
-					if tmp[1][0] == '!' and not re.findall(tmp[2].replace('*','*?'),text,re.S+re.U): was_match = True
-					elif re.findall(tmp[2].replace('*','*?'),text,re.S+re.U): was_match = True
+					if tmp[1][0] == '!' and not re.findall(tmp[2].replace('*','*?'),text,re.S|re.U): was_match = True
+					elif re.findall(tmp[2].replace('*','*?'),text,re.S|re.U): was_match = True
 				elif tmp[1] in ['sub','!sub']:
 					if tmp[1][0] == '!' and not tmp[2].lower() in text.lower(): was_match = True
 					elif tmp[2].lower() in text.lower(): was_match = True
@@ -280,11 +280,11 @@ def acl_selector(a,room,jid,nick,mass,was_joined):
 			if itm:
 				was_match = False
 				if tmp[1] in ['exp','!exp']:
-					if tmp[1][0] == '!' and not re.findall(tmp[2].replace('*','*?'),itm,re.I+re.S+re.U): was_match = True
-					elif re.findall(tmp[2].replace('*','*?'),itm,re.I+re.S+re.U): was_match = True
+					if tmp[1][0] == '!' and not re.findall(tmp[2].replace('*','*?'),itm,re.S|re.I|re.U): was_match = True
+					elif re.findall(tmp[2].replace('*','*?'),itm,re.S|re.I|re.U): was_match = True
 				elif tmp[1] in ['cexp','!cexp']:
-					if tmp[1][0] == '!' and not re.findall(tmp[2].replace('*','*?'),itm,re.S+re.U): was_match = True
-					elif re.findall(tmp[2].replace('*','*?'),itm,re.S+re.U): was_match = True
+					if tmp[1][0] == '!' and not re.findall(tmp[2].replace('*','*?'),itm,re.S|re.U): was_match = True
+					elif re.findall(tmp[2].replace('*','*?'),itm,re.S|re.U): was_match = True
 				elif tmp[1] in ['sub','!sub']:
 					if tmp[1][0] == '!' and tmp[2].lower() not in itm.lower(): was_match = True
 					elif tmp[2].lower() in itm.lower(): was_match = True
@@ -303,11 +303,11 @@ def acl_version_async(a, nick, jid, room, mass, lvl, is_answ):
 		if tmp[0] == 'ver' and (tmp[5] == 9 or lvl == tmp[5]):
 			was_match = False
 			if tmp[1] in ['exp','!exp']:
-				if tmp[1][0] == '!' and not re.findall(tmp[2].replace('*','*?'),itm,re.I+re.S+re.U): was_match = True
-				elif re.findall(tmp[2].replace('*','*?'),itm,re.I+re.S+re.U): was_match = True
+				if tmp[1][0] == '!' and not re.findall(tmp[2].replace('*','*?'),itm,re.S|re.I|re.U): was_match = True
+				elif re.findall(tmp[2].replace('*','*?'),itm,re.S|re.I|re.U): was_match = True
 			elif tmp[1] in ['cexp','!cexp']:
-				if tmp[1][0] == '!' and not re.findall(tmp[2].replace('*','*?'),itm,re.S+re.U): was_match = True
-				elif re.findall(tmp[2].replace('*','*?'),itm,re.S+re.U): was_match = True
+				if tmp[1][0] == '!' and not re.findall(tmp[2].replace('*','*?'),itm,re.S|re.U): was_match = True
+				elif re.findall(tmp[2].replace('*','*?'),itm,re.S|re.U): was_match = True
 			elif tmp[1] in ['sub','!sub']:
 				if tmp[1][0] == '!' and tmp[2].lower() not in itm.lower(): was_match = True
 				elif tmp[2].lower() in itm.lower(): was_match = True
@@ -348,11 +348,11 @@ def acl_vcard_async(a, nick, jid, room, mass, lvl, is_answ):
 		if tmp[0] == 'vcard' and (tmp[5] == 9 or lvl == tmp[5]):
 			was_match = False
 			if tmp[1] in ['exp','!exp']:
-				if tmp[1][0] == '!' and not re.findall(tmp[2].replace('*','*?'),itm,re.I+re.S+re.U): was_match = True
-				elif re.findall(tmp[2].replace('*','*?'),itm,re.I+re.S+re.U): was_match = True
+				if tmp[1][0] == '!' and not re.findall(tmp[2].replace('*','*?'),itm,re.S|re.I|re.U): was_match = True
+				elif re.findall(tmp[2].replace('*','*?'),itm,re.S|re.I|re.U): was_match = True
 			elif tmp[1] in ['cexp','!cexp']:
-				if tmp[1][0] == '!' and not re.findall(tmp[2].replace('*','*?'),itm,re.S+re.U): was_match = True
-				elif re.findall(tmp[2].replace('*','*?'),itm,re.S+re.U): was_match = True
+				if tmp[1][0] == '!' and not re.findall(tmp[2].replace('*','*?'),itm,re.S|re.U): was_match = True
+				elif re.findall(tmp[2].replace('*','*?'),itm,re.S|re.U): was_match = True
 			elif tmp[1] in ['sub','!sub']:
 				if tmp[1][0] == '!' and tmp[2].lower() not in itm.lower(): was_match = True
 				elif tmp[2].lower() in itm.lower(): was_match = True

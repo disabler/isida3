@@ -49,7 +49,7 @@ def psto_catch(room,jid,nick,type,text):
 		try:
 			psto_idn, text = text.split(' ',1)[0][2:],text[1:]
 			(type,jid,nick,psto_comm) = psto_id.pop(psto_idn).split('\n')
-			splitter = re.findall('http\:\/\/[-a-z0-9]+?\.psto\.net\/%s' % psto_idn, text, re.S+re.I+re.U)[0]
+			splitter = re.findall('http\:\/\/[-a-z0-9]+?\.psto\.net\/%s' % psto_idn, text, re.S|re.I|re.U)[0]
 			while '\n\n' in text: text = text.replace('\n\n','\n')
 			while '\n ' in text: text = text.replace('\n ','\n')
 			if psto_comm:

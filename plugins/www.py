@@ -86,7 +86,7 @@ def netheader(type, jid, nick, text):
 			body = '%s\n%s' % (text,'\n'.join(res))
 			if regex:
 				try:
-					mt = re.findall(regex, body, re.S+re.U+re.I)
+					mt = re.findall(regex, body, re.S|re.I|re.U)
 					if mt != []: body = ''.join(mt[0])
 					else: body = L('RegExp not found!','%s/%s'%(jid,nick))
 				except: body = L('Error in RegExp!','%s/%s'%(jid,nick))
@@ -113,7 +113,7 @@ def netwww(type, jid, nick, text):
 			page = remove_sub_space(html_encode(load_page(text)))
 			if regex:
 				try:
-					mt = re.findall(regex, page, re.S+re.U+re.I)
+					mt = re.findall(regex, page, re.S|re.I|re.U)
 					if mt != []:
 						if n:
 							msg = unhtml_hard('\n'.join([''.join(t) for t in mt[:n]]))

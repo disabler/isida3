@@ -141,7 +141,7 @@ def muc_filter_set(iq,id,room,acclvl,query,towh,al):
 					if not mute and msg and get_config(gr,'muc_filter_adblock') != 'off':
 						f = []
 						for reg in adblock_regexp:
-							tmp = re.findall(reg,body,re.I+re.S+re.U)
+							tmp = re.findall(reg,body,re.S|re.I|re.U)
 							if tmp: f = f + tmp
 						if f:
 							act = get_config(gr,'muc_filter_adblock')
@@ -159,7 +159,7 @@ def muc_filter_set(iq,id,room,acclvl,query,towh,al):
 						if rawbody:
 							f = []
 							for reg in adblock_regexp:
-								tmp = re.findall(reg,rawbody,re.I+re.S+re.U)
+								tmp = re.findall(reg,rawbody,re.S|re.I|re.U)
 								if tmp: f = f + tmp
 							if f:
 								act = get_config(gr,'muc_filter_adblock_raw')
@@ -430,8 +430,8 @@ def muc_filter_set(iq,id,room,acclvl,query,towh,al):
 						try: re.compile(bl_nick)
 						except: bl_nick = None
 						is_bl = None
-						if bl_jid and re.findall(bl_jid,jid,re.S+re.U+re.I): is_bl = True
-						if not nick or (not is_bl and bl_nick and re.findall(bl_nick,nick,re.S+re.U+re.I)): is_bl = True
+						if bl_jid and re.findall(bl_jid,jid,re.S|re.I|re.U): is_bl = True
+						if not nick or (not is_bl and bl_nick and re.findall(bl_nick,nick,re.S|re.I|re.U)): is_bl = True
 						if is_bl:
 							muc_pprint('MUC-Filter blacklist: %s/%s %s' % (gr,nick,jid),'brown')
 							msg,mute = unicode(xmpp.Node('presence', {'from': tojid, 'type': 'error', 'to':jid}, payload = ['replace_it',xmpp.Node('error', {'type': 'auth','code':'403'}, payload=[xmpp.Node('forbidden',{'xmlns':'urn:ietf:params:xml:ns:xmpp-stanzas'},[]),xmpp.Node('text',{'xmlns':'urn:ietf:params:xml:ns:xmpp-stanzas'},[L('Deny by blacklist!',rn)])])])).replace('replace_it',get_tag(msg,'presence')),True
@@ -448,8 +448,8 @@ def muc_filter_set(iq,id,room,acclvl,query,towh,al):
 				if not mute and msg and get_config(gr,'muc_filter_adblock_prs') != 'off':
 					fs,fn = [],[]
 					for reg in adblock_regexp:
-						tmps = [None,re.findall(reg,status,re.I+re.S+re.U)][status != '']
-						tmpn = [None,re.findall(reg,nick,re.I+re.S+re.U)][nick != '']
+						tmps = [None,re.findall(reg,status,re.S|re.I|re.U)][status != '']
+						tmpn = [None,re.findall(reg,nick,re.S|re.I|re.U)][nick != '']
 						if tmps: fs = fs + tmps
 						if tmpn: fn = fn + tmpn
 					if fs:
@@ -479,8 +479,8 @@ def muc_filter_set(iq,id,room,acclvl,query,towh,al):
 					rawnick = match_for_raw(nick,u'[a-zа-я0-9@.]*',gr)
 					fs,fn = [],[]
 					for reg in adblock_regexp:
-						tmps = [None,re.findall(reg,rawstatus,re.I+re.S+re.U)][status != '']
-						tmpn = [None,re.findall(reg,rawnick,re.I+re.S+re.U)][nick != '']
+						tmps = [None,re.findall(reg,rawstatus,re.S|re.I|re.U)][status != '']
+						tmpn = [None,re.findall(reg,rawnick,re.S|re.I|re.U)][nick != '']
 						if tmps: fs = fs + tmps
 						if tmpn: fn = fn + tmpn
 					if rawstatus and fs:
