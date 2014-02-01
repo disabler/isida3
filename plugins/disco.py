@@ -762,8 +762,8 @@ def features(type, jid, nick, text):
 	sender(i)
 
 def features_async(type, jid, nick, what, where, is_answ):
-	isa = is_answ[1]
-	if isa[0].startswith(L('Error! %s','%s/%s'%(jid,nick))%''): msg = isa[0]
+	isa = is_answ[1]	
+	if len(isa) >= 2 and isa[1] == 'error': msg = L('Error! %s','%s/%s'%(jid,nick)) % L(isa[0].capitalize().replace('-',' '),'%s/%s'%(jid,nick))
 	else:
 		isa, ftr, client_features = isa[1], [], []
 		for f in [t.getAttr('var') for t in isa.getTag('query',namespace=xmpp.NS_DISCO_INFO).getTags('feature')]:
@@ -786,10 +786,7 @@ def features_async(type, jid, nick, what, where, is_answ):
 		if erc != len(q_features):
 			f = L('Software: %s | Version: %s\nOS: %s | Version: %s','%s/%s'%(jid,nick)) % (ftrs['software'],ftrs['software_version'],ftrs['os'],ftrs['os_version'])
 			if (what and what.lower() in f.lower()) or not what: ftr.append(f)
-		id_category = ''
-		id_type = ''
-		id_name = ''
-		id_lang = ''
+		id_category,id_type,id_name,id_lang = '','','',''
 		try:
 			ids_t = isa.getTag('query').getTags('identity')
 			idk = {'type':L('Type: %s','%s/%s'%(jid,nick)), 'name':L('Name: %s','%s/%s'%(jid,nick)), 'category':L('Category: %s','%s/%s'%(jid,nick)), 'xml:lang':L('Language: %s','%s/%s'%(jid,nick))}
@@ -851,8 +848,9 @@ def disco_r(type, jid, nick, text, raw_type):
 
 def disco_features_async(type, jid, nick, what, where, hm, raw_type, is_answ):
 	isa = is_answ[1]
-	if isa[0].startswith(L('Error! %s','%s/%s'%(jid,nick))%''):
-		send_msg(type, jid, nick, isa[0])
+	if len(isa) >= 2 and isa[1] == 'error':
+		msg = L('Error! %s','%s/%s'%(jid,nick)) % L(isa[0].capitalize().replace('-',' '),'%s/%s'%(jid,nick))
+		send_msg(type, jid, nick, msg)
 		return
 	else:
 		disco_type = xmpp.NS_MUC in [t.getAttr('var') for t in isa[1].getTag('query',namespace=xmpp.NS_DISCO_INFO).getTags('feature')]
@@ -862,7 +860,7 @@ def disco_features_async(type, jid, nick, what, where, hm, raw_type, is_answ):
 		sender(i)
 
 def disco_async(type, jid, nick, what, where, hm, disco_type, raw_type, isa_prev, is_answ):
-	if is_answ[1][0].startswith(L('Error! %s','%s/%s'%(jid,nick))%''): msg = is_answ[1][0]
+	if len(is_answ[1]) >= 2 and is_answ[1][1] == 'error': msg = L('Error! %s','%s/%s'%(jid,nick)) % L(is_answ[1][0].capitalize().replace('-',' '),'%s/%s'%(jid,nick))
 	else:
 		if disco_type and '@' not in where:
 			cm = []

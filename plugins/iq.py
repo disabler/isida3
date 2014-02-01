@@ -112,49 +112,52 @@ def iq_vcard(type, jid, nick, text):
 	sender(i)
 
 def vcard_async(type, jid, nick, text, args, is_answ):
-	try: vc,err = is_answ[1][1].getTag('vCard',namespace=xmpp.NS_VCARD),False
-	except: vc,err = is_answ[1][0],True
-	if not vc or unicode(vc) == '<vCard xmlns="vcard-temp" />': msg = '%s %s' % (L('vCard:','%s/%s'%(jid,nick)),L('Empty!','%s/%s'%(jid,nick)))
-	elif err: msg = '%s %s' % (L('vCard:','%s/%s'%(jid,nick)),vc[:VCARD_LIMIT_LONG])
+	isa = is_answ[1]
+	if len(isa) >= 2 and isa[1] == 'error': msg = L('Error! %s','%s/%s'%(jid,nick)) % L(isa[0].capitalize().replace('-',' '),'%s/%s'%(jid,nick))
 	else:
-		data = []
-		for t in vc.getChildren():
-			if t.getChildren():
-				cm = []
-				for r in t.getChildren():
-					if r.getData(): cm.append(('%s.%s' % (t.getName(),r.getName()),unicode(r.getData())))
-				data += cm
-			elif t.getData(): data.append((t.getName(),t.getData()))
-		if data:
-			try:
-				photo_size = sys.getsizeof(get_value_from_array2(data,'PHOTO.BINVAL').decode('base64'))
-				photo_type = get_value_from_array2(data,'PHOTO.TYPE')
-				data_photo = L('type %s, %s','%s/%s'%(jid,nick)) % (photo_type,get_size_human(photo_size))
-				data = [t for t in list(data) if t[0] not in ['PHOTO.BINVAL','PHOTO.TYPE']]
-				data.append(('PHOTO',data_photo))
-			except: pass
-			args = args.lower()
-			if not args:
-				dd = get_array_from_array2(data,['NICKNAME','FN','BDAY','URL','PHOTO','DESC'])
-				if dd: msg = '%s\n%s' % (L('vCard:','%s/%s'%(jid,nick)),'\n'.join(['%s: %s' % ([L(t[0]),t[0].capitalize()][L(t[0])==t[0]],[u'%s…' % t[1][:VCARD_LIMIT_LONG].strip(),t[1].strip()][len(t[1])<VCARD_LIMIT_LONG]) for t in dd]))
-				else: msg = '%s %s' % (L('vCard:','%s/%s'%(jid,nick)),L('Not found!','%s/%s'%(jid,nick)))
-			elif args == 'all': msg = '%s\n%s' % (L('vCard:','%s/%s'%(jid,nick)),'\n'.join(['%s: %s' % ([L(t[0]),t[0].capitalize()][L(t[0])==t[0]],[u'%s…' % t[1][:VCARD_LIMIT_SHORT].strip(),t[1].strip()][len(t[1])<VCARD_LIMIT_SHORT]) for t in data]))
-			elif args == 'show':
-				dd = []
-				for t in data:
-					if t[0] not in dd: dd.append(t[0])
-				msg = '%s %s' % (L('vCard:','%s/%s'%(jid,nick)),', '.join([[t.capitalize(),'%s (%s)' % (t.capitalize(),L(t))][L(t)!=t] for t in dd]))
-			else:
-				args,dd = args.split('|'),[]
-				for t in args:
-					if ':' in t: val,loc = t.split(':',1)
-					else: val,loc = t,t.upper()
-					val = val.upper()
-					dv = get_array_from_array2(data,(val))
-					if dv: dd += [[loc,dv[0][1]]]
-				if dd: msg = '%s\n%s' % (L('vCard:','%s/%s'%(jid,nick)),'\n'.join(['%s: %s' % ([L(t[0]),t[0].capitalize()][L(t[0])==t[0]],[u'%s…' % t[1][:VCARD_LIMIT_LONG],t[1]][len(t[1])<VCARD_LIMIT_LONG]) for t in dd]))
-				else: msg = '%s %s' % (L('vCard:','%s/%s'%(jid,nick)),L('Not found!','%s/%s'%(jid,nick)))
-		else: msg = '%s %s' % (L('vCard:','%s/%s'%(jid,nick)),L('Empty!','%s/%s'%(jid,nick)))
+		try: vc,err = isa[1].getTag('vCard',namespace=xmpp.NS_VCARD),False
+		except: vc,err = L('Error! %s','%s/%s'%(jid,nick)) % L(isa[0].capitalize().replace('-',' '),'%s/%s'%(jid,nick)),True
+		if not vc or unicode(vc) == '<vCard xmlns="vcard-temp" />': msg = '%s %s' % (L('vCard:','%s/%s'%(jid,nick)),L('Empty!','%s/%s'%(jid,nick)))
+		elif err: msg = '%s %s' % (L('vCard:','%s/%s'%(jid,nick)),vc[:VCARD_LIMIT_LONG])
+		else:
+			data = []
+			for t in vc.getChildren():
+				if t.getChildren():
+					cm = []
+					for r in t.getChildren():
+						if r.getData(): cm.append(('%s.%s' % (t.getName(),r.getName()),unicode(r.getData())))
+					data += cm
+				elif t.getData(): data.append((t.getName(),t.getData()))
+			if data:
+				try:
+					photo_size = sys.getsizeof(get_value_from_array2(data,'PHOTO.BINVAL').decode('base64'))
+					photo_type = get_value_from_array2(data,'PHOTO.TYPE')
+					data_photo = L('type %s, %s','%s/%s'%(jid,nick)) % (photo_type,get_size_human(photo_size))
+					data = [t for t in list(data) if t[0] not in ['PHOTO.BINVAL','PHOTO.TYPE']]
+					data.append(('PHOTO',data_photo))
+				except: pass
+				args = args.lower()
+				if not args:
+					dd = get_array_from_array2(data,['NICKNAME','FN','BDAY','URL','PHOTO','DESC'])
+					if dd: msg = '%s\n%s' % (L('vCard:','%s/%s'%(jid,nick)),'\n'.join(['%s: %s' % ([L(t[0]),t[0].capitalize()][L(t[0])==t[0]],[u'%s…' % t[1][:VCARD_LIMIT_LONG].strip(),t[1].strip()][len(t[1])<VCARD_LIMIT_LONG]) for t in dd]))
+					else: msg = '%s %s' % (L('vCard:','%s/%s'%(jid,nick)),L('Not found!','%s/%s'%(jid,nick)))
+				elif args == 'all': msg = '%s\n%s' % (L('vCard:','%s/%s'%(jid,nick)),'\n'.join(['%s: %s' % ([L(t[0]),t[0].capitalize()][L(t[0])==t[0]],[u'%s…' % t[1][:VCARD_LIMIT_SHORT].strip(),t[1].strip()][len(t[1])<VCARD_LIMIT_SHORT]) for t in data]))
+				elif args == 'show':
+					dd = []
+					for t in data:
+						if t[0] not in dd: dd.append(t[0])
+					msg = '%s %s' % (L('vCard:','%s/%s'%(jid,nick)),', '.join([[t.capitalize(),'%s (%s)' % (t.capitalize(),L(t))][L(t)!=t] for t in dd]))
+				else:
+					args,dd = args.split('|'),[]
+					for t in args:
+						if ':' in t: val,loc = t.split(':',1)
+						else: val,loc = t,t.upper()
+						val = val.upper()
+						dv = get_array_from_array2(data,(val))
+						if dv: dd += [[loc,dv[0][1]]]
+					if dd: msg = '%s\n%s' % (L('vCard:','%s/%s'%(jid,nick)),'\n'.join(['%s: %s' % ([L(t[0]),t[0].capitalize()][L(t[0])==t[0]],[u'%s…' % t[1][:VCARD_LIMIT_LONG],t[1]][len(t[1])<VCARD_LIMIT_LONG]) for t in dd]))
+					else: msg = '%s %s' % (L('vCard:','%s/%s'%(jid,nick)),L('Not found!','%s/%s'%(jid,nick)))
+			else: msg = '%s %s' % (L('vCard:','%s/%s'%(jid,nick)),L('Empty!','%s/%s'%(jid,nick)))
 	send_msg(type, jid, nick, msg)
 
 def iq_uptime(type, jid, nick, text):
@@ -189,7 +192,8 @@ def ping(type, jid, nick, text):
 
 def ping_async(type, jid, nick, text, is_answ):
 	global iq_ping_minimal
-	if '%s %s!' % (L('Error!','%s/%s'%(jid,nick)),L('Remote server not found','%s/%s'%(jid,nick))) == is_answ[1][0]: msg = is_answ[1][0]
+	isa = is_answ[1]
+	if len(isa) >= 2 and isa[1] == 'error' and isa[0] == 'remote-server-not-found': msg = L('Error! %s','%s/%s'%(jid,nick)) % L(isa[0].capitalize().replace('-',' '),'%s/%s'%(jid,nick))
 	else:
 		p_digits = GT('ping_digits')
 		original_ping = float(is_answ[0])
@@ -237,7 +241,7 @@ def iq_utime_get(type, jid, nick, text, mode):
 
 def utime_async(type, jid, nick, text, mode, is_answ):
 	isa = is_answ[1]
-	if isa[0].startswith(L('Error! %s','%s/%s'%(jid,nick))%''): msg = isa[0]
+	if len(isa) >= 2 and isa[1] == 'error': msg = L('Error! %s','%s/%s'%(jid,nick)) % L(isa[0].capitalize().replace('-',' '),'%s/%s'%(jid,nick))
 	else:
 		try:
 			ttup = isa[0].replace('T','-').replace('Z','').replace(':','-').split('-')+['0','0',str(tuple(time.localtime())[8])]
@@ -265,7 +269,9 @@ def iq_version_raw(type, jid, nick, text, with_caps):
 	sender(i)
 
 def version_async(type, jid, nick, text, with_caps, is_answ):
-	msg = is_answ[1][0]
+	isa = is_answ[1]
+	if len(isa) >= 2 and isa[1] == 'error': msg = L('Error! %s','%s/%s'%(jid,nick)) % L(isa[0].capitalize().replace('-',' '),'%s/%s'%(jid,nick))
+	else: msg = isa[0]
 	if with_caps:
 		caps = get_caps(jid,[text,nick][text == ''])
 		if caps: msg += ' || %s' % caps
@@ -283,7 +289,9 @@ def iq_stats(type, jid, nick, text):
 
 def stats_async_features(type, jid, nick, text, is_answ):
 	isa = is_answ[1]
-	if isa[0].startswith(L('Error! %s','%s/%s'%(jid,nick))%''): send_msg(type, jid, nick, isa[0])
+	if len(isa) >= 2 and isa[1] == 'error':
+		msg = L('Error! %s','%s/%s'%(jid,nick)) % L(isa[0].capitalize().replace('-',' '),'%s/%s'%(jid,nick))
+		send_msg(type, jid, nick, msg)
 	else:
 		try: stats_list = [t.getAttr('name') for t in isa[1].getTag('query',namespace=xmpp.NS_STATS).getTags('stat')]
 		except: stats_list = []
@@ -296,7 +304,7 @@ def stats_async_features(type, jid, nick, text, is_answ):
 
 def stats_async(type, jid, nick, text, is_answ):
 	isa = is_answ[1]
-	if isa[0].startswith(L('Error! %s','%s/%s'%(jid,nick))%''): msg = isa[0]
+	if len(isa) >= 2 and isa[1] == 'error': msg = L('Error! %s','%s/%s'%(jid,nick)) % L(isa[0].capitalize().replace('-',' '),'%s/%s'%(jid,nick))
 	else:
 		try: stats_list = [[L(t.getAttr('name')),L(t.getAttr('value')),L(t.getAttr('units'))] for t in isa[1].getTag('query',namespace=xmpp.NS_STATS).getTags('stat')]
 		except: stats_list = []

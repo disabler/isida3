@@ -562,7 +562,7 @@ def get_joke(text):
 	jokes = [joke_blond,no_joke,joke_upyachka]
 	return random.choice(jokes)(text)
 
-def msg_validator(t): return ''.join([[l,'?'][l<' ' and l not in '\n\t\r'] for l in unicode(t)])
+def msg_validator(t): return ''.join([[l,'?'][l<' ' and l not in '\n\t\r' or l>u'\uff00'] for l in unicode(t)])
 
 def message_exclude_update():
 	global messages_excl
@@ -833,16 +833,7 @@ def iqCB(sess,iq):
 	if getServer(Settings['jid']) == room: nnj = True
 
 	if iq.getType()=='error' and was_request:
-		iq_err,er_name = get_tag(unicode(iq),'error').replace('\n',''),L('Unknown error!',room)
-		detect_error = False
-		for tmp in iq_error.keys():
-			if tmp in iq_err:
-				er_name = '%s %s!' % (L('Error!',room),iq_error[tmp])
-				detect_error = True
-				break
-		if not detect_error:
-			if iq_err: er_name = '%s %s!' % (L('Error!',room),iq_err)
-			else: er_name = '%s %s!' % (L('Error!',room),er_name)
+		er_name = get_tag(unicode(iq),'error').replace('<','').split()[0]
 		iq_async(id,time.time(),er_name,'error')
 
 	elif iq.getType()=='result' and was_request:
@@ -915,7 +906,7 @@ def iq_async(*answ):
 	req = iq_request.pop(answ[0])
 	try: er_code = answ[3]
 	except: er_code = None
-	if er_code == 'error': is_answ = (answ[1]-req[0],(answ[2],))
+	if er_code == 'error': is_answ = (answ[1]-req[0],(answ[2],'error'))
 	elif req[3] == xmpp.NS_URN_PING or req[3] == answ[1]: is_answ = (answ[2]-req[0],answ[3:])
 	elif req[3] == xmpp.NS_VCARD and answ[1] == 'None':
 		answ[4].setTag('vCard',namespace=xmpp.NS_VCARD)

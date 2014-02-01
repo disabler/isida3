@@ -21,7 +21,7 @@
 #                                                                             #
 # --------------------------------------------------------------------------- #
 
-# translate: random,smart,full,partial,on,off,kick,ban,replace,mute,visitor,truncate,paste,chat,online,away,xa,dnd,on start,on shutdown,by time,black,white,without highlight,all,ban server,Loading...,Mon,Tue,Wed,Thu,Fri,Sat,Sun,_Jan,_Feb,_Mar,_Apr,_May,_Jun,_Jul,_Aug,_Sep,_Oct,_Nov,_Dec,no limit,visitor/none,visitor/member,participant/none,participant/member,moderator/none,moderator/member,moderator/admin,moderator/owner,bot owner,You should be at least %s to do it.,You must be a %s to do it.,absent
+# translate: random,smart,full,partial,on,off,kick,ban,replace,mute,visitor,truncate,paste,chat,online,away,xa,dnd,on start,on shutdown,by time,black,white,without highlight,all,ban server,Loading...,Mon,Tue,Wed,Thu,Fri,Sat,Sun,_Jan,_Feb,_Mar,_Apr,_May,_Jun,_Jul,_Aug,_Sep,_Oct,_Nov,_Dec,no limit,visitor/none,visitor/member,participant/none,participant/member,moderator/none,moderator/member,moderator/admin,moderator/owner,bot owner,You should be at least %s to do it.,You must be a %s to do it.,absent,Bad request,Conflict,Feature not implemented,Forbidden,Gone,Internal server error,Item not found,Jid malformed,Not acceptable,Not allowed,Not authorized,Payment required,Recipient unavailable,Redirect,Registration required,Remote server not found,Remote server timeout,Resource constraint,Service unavailable,Subscription required,Undefined condition,Unexpected request
 
 rlmas_min = (('&','&amp;'),('\"','&quot;'),('\'','&apos;'),('<','&lt;'),('>','&gt;'))
 
@@ -75,29 +75,6 @@ unlevl = ['no limit','visitor/none','visitor/member','participant/none','partici
 unlevltxt = ['You should be at least %s to do it.','You must be a %s to do it.']
 
 unlevlnum = [0,0,0,0,0,0,0,0,0,1]
-
-iq_error = {'bad-request':L('Bad request'),
-			'conflict':L('Conflict'),
-			'feature-not-implemented':L('Feature not implemented'),
-			'forbidden':L('Forbidden'),
-			'gone':L('Gone'),
-			'internal-server-error':L('Internal server error'),
-			'item-not-found':L('Item not found'),
-			'jid-malformed':L('Jid malformed'),
-			'not-acceptable':L('Not acceptable'),
-			'not-allowed':L('Not allowed'),
-			'not-authorized':L('Not authorized'),
-			'payment-required':L('Payment required'),
-			'recipient-unavailable':L('Recipient unavailable'),
-			'redirect':L('Redirect'),
-			'registration-required':L('Registration required'),
-			'remote-server-not-found':L('Remote server not found'),
-			'remote-server-timeout':L('Remote server timeout'),
-			'resource-constraint':L('Resource constraint'),
-			'service-unavailable':L('Service unavailable'),
-			'subscription-required':L('Subscription required'),
-			'undefined-condition':L('Undefined condition'),
-			'unexpected-request':L('Unexpected request')}
 
 presence_error = {'401':L('Password required'),
 				  '403':L('Forbidden'),

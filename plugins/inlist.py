@@ -33,8 +33,8 @@ def reban(type, jid, nick, text):
 	sender(i)
 
 def reban_async(type, jid, nick, lim, iq_stanza):
-	is_answ = unicode(iq_stanza[1][0])
-	if is_answ.startswith(L('Error!','%s/%s'%(jid,nick))): msg = is_answ
+	isa = iq_stanza[1]
+	if len(isa) >= 2 and isa[1] == 'error': msg = L('Error! %s','%s/%s'%(jid,nick)) % L(isa[0].capitalize().replace('-',' '),'%s/%s'%(jid,nick))
 	else:
 		_trusted = get_config(getRoom(jid),'trusted_servers').split()
 		_jids = [tmp.getAttr('jid') for tmp in iq_stanza[1][0].getTag('query',namespace=xmpp.NS_MUC_ADMIN).getTags('item')]
@@ -80,8 +80,8 @@ def inlist_raw(type, jid, nick, text, affil, message):
 	sender(i)
 
 def inlist_raw_async(type, jid, nick, text, message, iq_stanza):
-	is_answ = unicode(iq_stanza[1][0])
-	if is_answ.startswith(L('Error!','%s/%s'%(jid,nick))): msg = is_answ
+	isa = iq_stanza[1]
+	if len(isa) >= 2 and isa[1] == 'error': msg = L('Error! %s','%s/%s'%(jid,nick)) % L(isa[0].capitalize().replace('-',' '),'%s/%s'%(jid,nick))
 	else:
 		bb = [[tmp.getAttr('jid'),['',tmp.getTagData('reason')][tmp.getTagData('reason') != None]] for tmp in iq_stanza[1][0].getTag('query',namespace=xmpp.NS_MUC_ADMIN).getTags('item')]
 		bb.sort()
