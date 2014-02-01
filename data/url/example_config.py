@@ -21,14 +21,19 @@
 #                                                                             #
 # --------------------------------------------------------------------------- #
 
-# Path to iSida-bot config file
-configname = '/home/user/isida/settings/config.py'
-execfile(configname)
+# Path to iSida-bot
+BOT_FOLDER = '/home/user/isida/%s'
 
 # Maximal link and description size
 max_link_size = 64
 
 # Url per page
 url_count_limit = 100
+
+
+# Don't change it
+configname = BOT_FOLDER % 'settings/config.py'
+execfile(configname)
+if base_type == 'sqlite3': sqlite_base = BOT_FOLDER % sqlite_base
 
 # The end is near!
