@@ -23,22 +23,78 @@
 
 import psycopg2,time,cgi,urllib2
 
+def cur_execute_fetchall_sqlite3(*params):
+	conn = sqlite3.connect(sqlite_base)
+	if 'split_part' in list(params)[0]: conn.create_function('split_part', 3, sqlite3_split_part)
+	if 'row_number' in list(params)[0]:
+		global sqlite3_row_number_last_x
+		sqlite3_row_number_last_x = 0
+		conn.create_function('row_number', 0, sqlite3_row_number)
+	try: cur = conn.cursor()
+	except: return None
+	par = None
+	try:
+		params = list(params)
+		params[0] = params[0].replace('%s','?').replace(' ilike ',' like ').replace(' update ',' `update` ').replace(' repeat ',' `repeat` ').replace(' option ',' `option` ').replace(' count ',' `count` ').replace(' match ',' `match` ')
+		params = tuple(params)
+		cur.execute(*params)
+		try: par = cur.fetchall()
+		except Exception, par:
+			par = None
+			if halt_on_exception: raise
+	except Exception, par:
+		par = None
+		conn.rollback()
+		if halt_on_exception: raise
+	conn.close()
+	return par
+
+def cur_execute_fetchall_mysql(*params):
+	conn = mysqldb.connect(database=base_name, user=base_user, host=base_host, password=base_pass, port=base_port)
+	try: cur = conn.cursor()
+	except: return None
+	par = None
+	try:
+		params = list(params)
+		params[0] = params[0].replace(' ilike ',' like ').replace(' update ',' `update` ').replace(' repeat ',' `repeat` ').replace(' option ',' `option` ').replace(' count ',' `count` ').replace(' match ',' `match` ').replace('split_part(','substring_index(')
+		params = tuple(params)
+		cur.execute(*params)
+		try: par = cur.fetchall()
+		except Exception, par:
+			par = None
+			if halt_on_exception: raise
+	except Exception, par:
+		par = None
+		conn.rollback()
+		if halt_on_exception: raise
+	conn.close()
+	return par
+
 def cur_execute_fetchall(*params):
-	cur = conn.cursor()
-	psycopg2.extensions.register_type(psycopg2.extensions.UNICODE, cur)
+	if base_type == 'sqlite3': return cur_execute_fetchall_sqlite3(*params)
+	elif base_type == 'mysql': return cur_execute_fetchall_mysql(*params)
+	global conn
+	try: cur = conn.cursor()
+	except: return None
+	if base_type == 'pgsql': psycopg2.extensions.register_type(psycopg2.extensions.UNICODE, cur)
 	par = None
 	try:
 		cur.execute(*params)
 		try: par = cur.fetchall()
 		except Exception, par:
-			if pg_debug:
+			if database_debug:
 				try: par = str(par)
 				except: par = unicode(par)
+			else: par = None
+			if halt_on_exception: raise
 	except Exception, par:
-		if pg_debug:
+		if database_debug:
 			try: par = str(par)
 			except: par = unicode(par)
+			pprint(par,'red')
+		else: par = None
 		conn.rollback()
+		if halt_on_exception: raise
 	cur.close()
 	return par
 	
@@ -60,9 +116,22 @@ html_end = '''
 
 max_link_size = 64
 url_count_limit = 100
+database_debug = False
+halt_on_exception = False
 execfile('config.py')
 
-conn = psycopg2.connect(database=base_name, user=base_user, host=base_host, password=base_pass, port=base_port)
+if base_type == 'pgsql':
+	import psycopg2
+	import psycopg2.extensions
+	conn = psycopg2.connect(database=base_name, user=base_user, host=base_host, password=base_pass, port=base_port)
+elif base_type == 'mysql':
+	import mysql.connector as mysqldb
+elif base_type == 'sqlite3':
+	import sqlite3
+
+if base_type in ['mysql','sqlite3']:
+	class psycopg2():
+		def InterfaceError(): return None
 
 form = cgi.FieldStorage()
 
