@@ -21,7 +21,7 @@
 #                                                                             #
 # --------------------------------------------------------------------------- #
 
-import psycopg2,time,cgi,urllib2
+import time,cgi,urllib2
 
 def cur_execute_fetchall_sqlite3(*params):
 	conn = sqlite3.connect(sqlite_base)
