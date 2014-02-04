@@ -22,6 +22,7 @@
 # --------------------------------------------------------------------------- #
 
 visitors_list = {}
+visitors_list_lock = False
 
 # -------------- affiliation -----------------
 
@@ -195,8 +196,13 @@ def check_unban():
 		for t in ul: sender(xmpp.Node('iq', {'id': get_id(), 'type': 'set', 'to':t[0]}, payload = [xmpp.Node('query', {'xmlns': xmpp.NS_MUC_ADMIN},[xmpp.Node('item',{'affiliation':'none', 'jid':getRoom(unicode(t[1]))},[])])]))
 		cur_execute('delete from tmp_ban where time<%s;',(tt,))
 
+def visitors_list_lock_wait():
+	while visitors_list_lock: time.sleep(0.05)
+	return True
+
 def check_visitor():
-	global visitors_list
+	global visitors_list, visitors_list_lock
+	visitors_list_lock = visitors_list_lock_wait()
 	ITT = int(time.time())
 	for t in visitors_list:
 		room = t.split('/')[0]
@@ -205,16 +211,21 @@ def check_visitor():
 			reason = [xmpp.Node('reason',{},L('Too long was without voice!',t))]
 			if VISITOR_ACT == 'kick': sender(xmpp.Node('iq', {'id': get_id(), 'type': 'set', 'to':room}, payload = [xmpp.Node('query', {'xmlns': xmpp.NS_MUC_ADMIN},[xmpp.Node('item',{'role':'none', 'nick':t.split('/',1)[1]},reason)])]))
 			else: sender(xmpp.Node('iq', {'id': get_id(), 'type': 'set', 'to':room}, payload = [xmpp.Node('query', {'xmlns': xmpp.NS_MUC_ADMIN},[xmpp.Node('item',{'affiliation':'outcast', 'jid':get_jid_by_nick(t.split('/',1))},reason)])]))
+	visitors_list_lock = False
 
 def visitor_presence(room,jid,nick,type,mass):
-	global visitors_list
+	global visitors_list, visitors_list_lock
 	if getRoom(jid) == getRoom(Settings['jid']): return
-	was_joined = not mass[7] or is_start
 	if type == 'error': return
 	elif type == 'unavailable':
+		visitors_list_lock = visitors_list_lock_wait()
 		try: visitors_list.pop('%s/%s' % (room,nick))
 		except: pass
-	if mass[1] == 'visitor': visitors_list['%s/%s' % (room,nick)] = int(time.time()) + get_config_int(getRoom(room),'visitor_action_time')	
+		visitors_list_lock = False
+	if mass[1] == 'visitor':
+		visitors_list_lock = visitors_list_lock_wait()
+		visitors_list['%s/%s' % (room,nick)] = int(time.time()) + get_config_int(getRoom(room),'visitor_action_time')	
+		visitors_list_lock = False
 
 global execute, timer, presence_control
 
