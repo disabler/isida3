@@ -1,7 +1,22 @@
-#---------------------------------------------
-#	  Autogenerate for locales
-#	(c) Disabler Production Lab.
-#---------------------------------------------
+# --------------------------------------------------------------------------- #
+#                                                                             #
+#    Ukrainian locale (woman) for iSida Jabber Bot                            #
+#    Copyright (C) Vit@liy <vitaliy@root.ua>                                  #
+#                                                                             #
+#    This program is free software: you can redistribute it and/or modify     #
+#    it under the terms of the GNU General Public License as published by     #
+#    the Free Software Foundation, either version 3 of the License, or        #
+#    (at your option) any later version.                                      #
+#                                                                             #
+#    This program is distributed in the hope that it will be useful,          #
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of           #
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            #
+#    GNU General Public License for more details.                             #
+#                                                                             #
+#    You should have received a copy of the GNU General Public License        #
+#    along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
+#                                                                             #
+# --------------------------------------------------------------------------- #
 
 # file: kernel.py
 Error!	Помилка!
@@ -1382,7 +1397,7 @@ Name: %s [%s]	Назва: %s [%s]
 \nMotto: %s	\nДевіз: %s
 Clan not found	Клан не знайдено
 Impossible to get info	Неможливо отримати інформацію
-World of Tanks - info about user. Usage: wot nick [tank]	World of Tanks - інформація про користувача. Використання: wot нік [танк]
+World of Tanks - info about user. Usage: wot [nick [tank]]	World of Tanks - інформація про користувача. Використання: wot [нік [танк]]
 World of Tanks - info about clan. Usage: wotclan clan	World of Tanks - інформація про клан. Приклад: wotclan клан
 World of Tanks - info about offers. Usage: wotoffers [active|all] [real|prem|info]	World of Tanks - інформація про акції. Приклад: wotoffers [active|all] [real|prem|info]
 
@@ -1817,5 +1832,4 @@ API settings	Налаштування API
 
 # write locale file: ua.txt
 # total: 1479
-# missed translations: 3
-
+# missed translations: 1

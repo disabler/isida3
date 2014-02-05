@@ -25,6 +25,8 @@
 API_ADDR = 'http://api.worldoftanks.ru';
 APP_ID = '171745d21f7f98fd8878771da1000a31';
 
+clantags = re.compile('(\(.*?\))|(\[.*?\])')
+
 def get_tanks_data():
 	data = urllib.urlopen('%s/2.0/encyclopedia/tanks/?application_id=%s&fields=level,name_i18n,name' % (API_ADDR, APP_ID))
 	d = json.load(data)
@@ -46,6 +48,10 @@ except:
 
 def wot(type, jid, nick, text):
 	text = text.strip()
+	if not text:
+		tmp_text = clantags.sub('', nick).strip().split(' ', 1)[0]
+		if re.match('[\da-zA-Z_].*?', tmp_text):
+			text = tmp_text
 	if text:
 		text = text.split(' ', 1)
 		if len(text) == 1:
@@ -270,6 +276,6 @@ def wotoffers(type, jid, nick, text):
 	
 global execute
 
-execute = [(3, 'wot', wot, 2, 'World of Tanks - info about user. Usage: wot nick [tank]'),
+execute = [(3, 'wot', wot, 2, 'World of Tanks - info about user. Usage: wot [nick [tank]]'),
 			(3, 'wotclan', wotclan, 2, 'World of Tanks - info about clan. Usage: wotclan clan'),
 			(3, 'wotoffers', wotoffers, 2, 'World of Tanks - info about offers. Usage: wotoffers [active|all] [real|prem|info]')]
