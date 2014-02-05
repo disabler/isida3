@@ -1,25 +1,9 @@
-# --------------------------------------------------------------------------- #
-#                                                                             #
-#    Russian locale (woman) for iSida Jabber Bot                              #
-#    Copyright (C) diSabler <dsy@dsy.name>                                    #
-#                                                                             #
-#    This program is free software: you can redistribute it and/or modify     #
-#    it under the terms of the GNU General Public License as published by     #
-#    the Free Software Foundation, either version 3 of the License, or        #
-#    (at your option) any later version.                                      #
-#                                                                             #
-#    This program is distributed in the hope that it will be useful,          #
-#    but WITHOUT ANY WARRANTY; without even the implied warranty of           #
-#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            #
-#    GNU General Public License for more details.                             #
-#                                                                             #
-#    You should have received a copy of the GNU General Public License        #
-#    along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
-#                                                                             #
-# --------------------------------------------------------------------------- #
+#---------------------------------------------
+#	  Autogenerate for locales
+#	(c) Disabler Production Lab.
+#---------------------------------------------
 
 # file: kernel.py
-Unknown error!	Неизвестная ошибка!
 Error!	Ошибка!
 Got a fake iq answer!	Получен фальшивый ответ на запрос!
 Warning! Exceeded the limit of sending the same commands. You to ignore for %s.	Внимание! Превышен лимит отправки одинаковых команд. Вы в игноре %s.
@@ -29,6 +13,7 @@ Fetched xhtml image: %s%s	Получено xhtml изображение: %s%s
 Too many letters!	Слишком многа букаф!
 whitelist	белый список
 lock by hash	блок по хешу
+Unknown error!	Неизвестная ошибка!
 off	выкл
 Deny by hash lock!	Ограничение по хешу клиента!
 /me detect bad stanza from %s	/me смотрит на %s и думает: "Факин умник детектед!"
@@ -652,7 +637,6 @@ Empty!	Пусто!
 type %s, %s	тип %s, %s
 Uptime: %s	Аптайм: %s
 I can't do it	Не получается...
-Remote server not found	Удалённый сервер не найден
 Ping from you %s sec.	Пинг от тебя %s сек.
 Ping from %s %s sec.	Пинг от %s %s сек.
 Unknown server answer!	Неизвестный ответ сервера!
@@ -779,7 +763,7 @@ Time from last change %s's karma is very small. Please wait %s	Вы недавн
 Karma.\nkarma [show] nick\nkarma top+|- [count]\nFor change karma: nick: +1\nnick: -1	Карма участника.\nkarma [show] nick\nkarma top+|- [количество]\nДля изменения:\nnick: +1\nnick: -1
 
 # file: plugins/kinopoisk.py
-Search in www.kinopoisk.ru. Example:\nfilm [id] film_id\nfilm [search] film_name	Поиск по www.kinopoisk.ru. Пример:\nfilm [id] film_id\nfilm [search] film_name
+Search in www.kinopoisk.ru. Example:\nfilm film_name	Поиск по www.kinopoisk.ru. Пример:\nfilm название фильма
 
 # file: plugins/known.py
 I know you as:	Я видела тебя как:
@@ -911,6 +895,7 @@ Payment required	Запрещено внутренней политикой се
 Recipient unavailable	Получатель недоступен
 Redirect	Переадресация
 Registration required	Требуется регистрация
+Remote server not found	Удалённый сервер не найден
 Remote server timeout	Таймаут удалённого сервера
 Resource constraint	Ограничение ресурсов
 Service unavailable	Сервис недоступен
@@ -918,6 +903,7 @@ Subscription required	Требуется подписка
 Undefined condition	Неопределенное состояние
 Unexpected request	Неожиданный запрос
 Password required	Требуется пароль
+Forbidden	Запрещено
 Members-only	Только для постоянных участников
 Room now shows unavailable members.	Комната показывает недоступных участников.
 Room now does not show unavailable members.	Комната не показывает недоступных участников.
@@ -1830,5 +1816,6 @@ Youtube settings	Настройки youtube
 API settings	Настройки API
 
 # write locale file: ru.txt
-# total: 1500
+# total: 1479
 # missed translations: 1
+

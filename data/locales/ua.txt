@@ -1,25 +1,9 @@
-# --------------------------------------------------------------------------- #
-#                                                                             #
-#    Ukrainian locale (woman) for iSida Jabber Bot                            #
-#    Copyright (C) Vit@liy <vitaliy@root.ua>                                  #
-#                                                                             #
-#    This program is free software: you can redistribute it and/or modify     #
-#    it under the terms of the GNU General Public License as published by     #
-#    the Free Software Foundation, either version 3 of the License, or        #
-#    (at your option) any later version.                                      #
-#                                                                             #
-#    This program is distributed in the hope that it will be useful,          #
-#    but WITHOUT ANY WARRANTY; without even the implied warranty of           #
-#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            #
-#    GNU General Public License for more details.                             #
-#                                                                             #
-#    You should have received a copy of the GNU General Public License        #
-#    along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
-#                                                                             #
-# --------------------------------------------------------------------------- #
+#---------------------------------------------
+#	  Autogenerate for locales
+#	(c) Disabler Production Lab.
+#---------------------------------------------
 
 # file: kernel.py
-Unknown error!	Невідома помилка!
 Error!	Помилка!
 Got a fake iq answer!	Отримано підроблену відповідь на запит!
 Warning! Exceeded the limit of sending the same commands. You to ignore for %s.	Увага! Перевищено ліміт відправлення однакових команд. Ви в ігнорі %s.
@@ -29,6 +13,7 @@ Fetched xhtml image: %s%s	Отримано xhtml-зображення: %s%s
 Too many letters!	Забагато літер!
 whitelist	білий список
 lock by hash	блок по хешу
+Unknown error!	Невідома помилка!
 off	вимк
 Deny by hash lock!	Обмеження по хешу клієнта!
 /me detect bad stanza from %s	/me дивиться на %s і гадає: "Факін розумник детектед!"
@@ -652,7 +637,6 @@ Empty!	Пусто!
 type %s, %s	тип %s, %s
 Uptime: %s	Аптайм: %s
 I can't do it	Не виходить...
-Remote server not found	Віддалений сервер не знайдено
 Ping from you %s sec.	Пінг від тебе - %s сек.
 Ping from %s %s sec.	Пінг від %s - %s сек.
 Unknown server answer!	Невідома відповідь сервера
@@ -779,7 +763,7 @@ Time from last change %s's karma is very small. Please wait %s	Ви нещода
 Karma.\nkarma [show] nick\nkarma top+|- [count]\nFor change karma: nick: +1\nnick: -1	Карма учасника.\nkarma [show] nick\nkarma top+|- [кількість]\nДля зміни:\nnick: +1\nnick: -1
 
 # file: plugins/kinopoisk.py
-Search in www.kinopoisk.ru. Example:\nfilm [id] film_id\nfilm [search] film_name	Пошук по www.kinopoisk.ru. Приклад:\nfilm [id] film_id\nfilm [search] film_name
+Search in www.kinopoisk.ru. Example:\nfilm film_name	Пошук по www.kinopoisk.ru. Приклад:\nfilm назва фільму
 
 # file: plugins/known.py
 I know you as:	Я бачила тебе як:
@@ -911,6 +895,7 @@ Payment required	Заборонено внутрішньою політикою 
 Recipient unavailable	Отримувач не доступний
 Redirect	Переадресація
 Registration required	Потрібна реєстрація
+Remote server not found	Віддалений сервер не знайдено
 Remote server timeout	Таймаут віддаленого сервера
 Resource constraint	Обмеження ресурсів
 Service unavailable	Сервіс недоступний
@@ -918,6 +903,7 @@ Subscription required	Потрібна підписка
 Undefined condition	Невизначений стан
 Unexpected request	Несподіваний запит
 Password required	Потрібен пароль
+Forbidden	Заборонено
 Members-only	Тільки для постійних учасників
 Room now shows unavailable members.	Кімната показує недоступних учасників.
 Room now does not show unavailable members.	Кімната не показує недоступних учасників.
@@ -1265,6 +1251,10 @@ Soft update from VCS.	М'яке поновлення із VCS.
 
 # file: plugins/sokr.py
 Abbreviations.\nExamples: sokr abbr, sokr 6 abbr, sokr 3-7 abbr	Абревіатури. Приклади використання: sokr abbr, sokr 6 abbr, sokr 3-7 abbr
+
+# file: plugins/sovm.py
+Sign not found!	Знак не знайдено!
+Reconcilability between zodiac signs	Сумісність знаків зодіаку
 
 # file: plugins/spellcheck.py
 Spellchecker. Example: spell [uk|ru|en] sentence	Перевірка орфографії. Приклад: spell [uk|ru|en] речення
@@ -1826,6 +1816,6 @@ Youtube settings	Налаштування Youtube
 API settings	Налаштування API
 
 # write locale file: ua.txt
-# total: 1500
-# missed translations: 2
+# total: 1479
+# missed translations: 3
 
