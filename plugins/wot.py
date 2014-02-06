@@ -28,7 +28,7 @@ APP_ID = '171745d21f7f98fd8878771da1000a31';
 clantags = re.compile('(\(.*?\))|(\[.*?\])')
 
 def get_tanks_data():
-	data = urllib.urlopen('%s/2.0/encyclopedia/tanks/?application_id=%s&fields=level,name_i18n,name' % (API_ADDR, APP_ID))
+	data = urllib.urlopen('%s/wot/encyclopedia/tanks/?application_id=%s&fields=level,name_i18n,name' % (API_ADDR, APP_ID))
 	d = json.load(data)
 	res = {}
 	for i in d['data']:
@@ -63,15 +63,23 @@ def wot(type, jid, nick, text):
 			v = json.loads(data)
 			player_id = str(v['data'][0]['id'])
 			
-			data = load_page('%s/2.0/account/tanks/?application_id=%s&account_id=%s&fields=statistics,tank_id,mark_of_mastery' % (API_ADDR, APP_ID, player_id))
+			data = load_page('%s/2.0/tanks/stats/?application_id=%s&account_id=%s' % (API_ADDR, APP_ID, player_id))
 			vdata = json.loads(data)
 			
-			data = load_page('%s/2.0/account/info/?application_id=%s&account_id=%s&fields=clan,nickname,statistics' % (API_ADDR, APP_ID, player_id))
+			data = load_page('%s/2.0/account/tanks/?application_id=%s&account_id=%s&fields=mark_of_mastery,tank_id' % (API_ADDR, APP_ID, player_id))
+			vdata_old = json.loads(data)
+			vdata_old = dict([[i['tank_id'], i['mark_of_mastery']] for i in vdata_old['data'][player_id]])
+			
+			data = load_page('%s/2.0/account/info/?application_id=%s&account_id=%s&fields=nickname,statistics,global_rating' % (API_ADDR, APP_ID, player_id))
 			pdata = json.loads(data)
 			stat = pdata['data'][player_id]['statistics']
 			
-			if pdata['data'][player_id]['clan']:
-				clan_id = str(pdata['data'][player_id]['clan']['clan_id'])
+			
+			data = load_page('%s/wot/clan/membersinfo/?application_id=%s&member_id=%s' % (API_ADDR, APP_ID, player_id))
+			claninfo = json.loads(data)
+			
+			if claninfo['data'][player_id]:
+				clan_id = str(claninfo['data'][player_id]['clan_id'])
 				data = load_page('%s/2.0/clan/info//?application_id=%s&clan_id=%s&fields=abbreviation' % (API_ADDR, APP_ID, clan_id))
 				cdata = json.loads(data)
 				cname = cdata['data'][clan_id]['abbreviation']
@@ -79,7 +87,7 @@ def wot(type, jid, nick, text):
 			pdata = {'status': ''}
 		
 		if pdata['status'] == 'ok' and pdata['data'][player_id]:
-			wotname = pdata['data'][player_id]['nickname'] + ('[%s]' % cname if pdata['data'][player_id]['clan'] else '')
+			wotname = pdata['data'][player_id]['nickname'] + ('[%s]' % cname if claninfo['data'][player_id] else '')
 			
 			if tank:
 				if len(tank) == 1:
@@ -91,11 +99,12 @@ def wot(type, jid, nick, text):
 						
 						for t in vdata['data'][player_id]:
 							if str(t['tank_id']) in tids:
-								tank_win = t['statistics']['wins']
-								tank_battle = t['statistics']['battles']
-								mom = [L('none','%s/%s'%(jid,nick)), L('3 class','%s/%s'%(jid,nick)), L('2 class','%s/%s'%(jid,nick)), L('1 class','%s/%s'%(jid,nick)), L('master','%s/%s'%(jid,nick))][t['mark_of_mastery']]
+								tank_win = t['all']['wins']
+								tank_battle = t['all']['battles']
+								mom = [L('none','%s/%s'%(jid,nick)), L('3 class','%s/%s'%(jid,nick)), L('2 class','%s/%s'%(jid,nick)), L('1 class','%s/%s'%(jid,nick)), L('master','%s/%s'%(jid,nick))][vdata_old[t['tank_id']]]
+								ingrg = [L('not in garage','%s/%s'%(jid,nick)), L('in garage','%s/%s'%(jid,nick))][t['in_garage']]
 								if tank_battle:
-									msg += L('\n%s (%s/%s - %s%%), mastery: %s','%s/%s'%(jid,nick)) % (tanks_data[str(t['tank_id'])]['name_i18n'], tank_win, tank_battle, round(100.0*tank_win/tank_battle, 2), mom)
+									msg += L('\n%s (%s) - (%s/%s - %s%%), max.frags - %s, max.exp. - %s, mastery: %s','%s/%s'%(jid,nick)) % (tanks_data[str(t['tank_id'])]['name_i18n'], ingrg, tank_win, tank_battle, round(100.0*tank_win/tank_battle, 2), t['max_frags'], t['max_xp'], mom)
 								else:
 									msg += '\n%s (%s/%s)' % (tanks_data[str(t['tank_id'])]['name_i18n'], tank_win, tank_battle)
 						if not msg.count('\n'):
@@ -137,8 +146,8 @@ def wot(type, jid, nick, text):
 						msg += L('\nAv. defense points: %s','%s/%s'%(jid,nick)) % round(DEF, 2)
 						
 						
-						tanks = vdata['data'][player_id]
-						s = sum([t['statistics']['all']['battles'] * tanks_data[str(t['tank_id'])]['level'] for t in tanks])
+						tanks = [vh for vh in vdata['data'][player_id] if vh['all']['battles']]
+						s = sum([t['all']['battles'] * tanks_data[str(t['tank_id'])]['level'] for t in tanks])
 						TIER = s / float(battles)
 						
 						WINRATE = wins / float(battles)
@@ -188,6 +197,8 @@ def wot(type, jid, nick, text):
 							msg += L(' - great player','%s/%s'%(jid,nick))
 						elif wn6 >= 1885:
 							msg += L(' - unicum','%s/%s'%(jid,nick))
+						
+						msg += L('\nWG rating: %s','%s/%s'%(jid,nick)) % pdata['data'][player_id]['global_rating']
 						
 						stat_rnd = lambda x: stat['all'][x] - stat['clan'][x] - stat['company'][x]
 						

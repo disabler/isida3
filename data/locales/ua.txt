@@ -1359,7 +1359,9 @@ none	відсутня
 2 class	2 степінь
 1 class	1 степінь
 master	майстер
-\n%s (%s/%s - %s%%), mastery: %s	\n%s (%s/%s - %s%%), класність: %s
+not in garage	немає в ангарі
+in garage	в ангарі
+\n%s (%s) - (%s/%s - %s%%), max.frags - %s, max.exp. - %s, mastery: %s	\n%s (%s) - (%s/%s - %s%%), макс.фрагів - %s, макс.досв. - %s, знак класності: %s
  not founded tank	 танк не знайдено
 Impossible to get tanks' statistics	Неможливо отримати статистику танків
 \nUp to %s%% win left: %s battles	\nДо %s%% перемог залишилося: %s битв
@@ -1377,6 +1379,7 @@ Impossible to get tanks' statistics	Неможливо отримати стат
  - great player	 - чудовий гравець
  - unicum	 - унікум
 \nWN6 rating: %s (XVM: %s)	\nРейтинг WN6: %s (XVM: %s)
+\nWG rating: %s	\nРейтинг WG: %s
 \nArmor-rating: %s	\nРейтинг Бронесайту: %s
  - virtuoso	 - віртуоз
  - master tanker	 - майстер-танкіст
@@ -1831,5 +1834,5 @@ Youtube settings	Налаштування Youtube
 API settings	Налаштування API
 
 # write locale file: ua.txt
-# total: 1479
-# regenarated without mistakes!
+# total: 1482
+# missed translations: 4
