@@ -1832,4 +1832,4 @@ API settings	Налаштування API
 
 # write locale file: ua.txt
 # total: 1479
-# missed translations: 1
+# regenarated without mistakes!

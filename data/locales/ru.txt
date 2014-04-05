@@ -1832,4 +1832,4 @@ API settings	Настройки API
 
 # write locale file: ru.txt
 # total: 1479
-# missed translations: 1
+# regenarated without mistakes!

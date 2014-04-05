@@ -24,6 +24,7 @@ lib/DNS/*.pyc
 lib/chardet/*.pyc
 lib/xmpp/*.pyc
 plugins/_*.py
+plugins/.*.py
 settings/config.py
 settings/_*
 tmp/isida.pid
