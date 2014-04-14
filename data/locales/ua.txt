@@ -1393,6 +1393,9 @@ Impossible to get tanks' statistics	Неможливо отримати стат
 Impossible to get statistics	Неможливо отримати статистику
 Query error	Помилка запиту
 Player not found	Гравця не знайдено
+ founded %s tanks	 знайдено %s танків
+. Tanks that have the biggest amount of battles:	. Танки з найбільшою кількістю боїв:
+\n%s - %s/%s (%s%%), max.frags - %s, max.exp. - %s, mastery: %s	\n%s - %s/%s (%s%%), макс.фрагів - %s,макс.досв. - %s, знак класності: %s
 Name: %s [%s]	Назва: %s [%s]
 \nOwner: %s	\nВласник: %s
 \nCreated at: %s	\nДата створення: %s
@@ -1402,6 +1405,7 @@ Clan not found	Клан не знайдено
 Impossible to get info	Неможливо отримати інформацію
 World of Tanks - info about user. Usage: wot [nick [tank]]	World of Tanks - інформація про користувача. Використання: wot [нік [танк]]
 World of Tanks - info about clan. Usage: wotclan clan	World of Tanks - інформація про клан. Приклад: wotclan клан
+World of Tanks - info about user's tanks. Usage: tanks [nick [tank]]	World of Tanks - інформація про танки гравця. Приклад: tanks [нік [танк]]
 World of Tanks - info about offers. Usage: wotoffers [active|all] [real|prem|info]	World of Tanks - інформація про акції. Приклад: wotoffers [active|all] [real|prem|info]
 
 # file: plugins/wtf.py
@@ -1834,5 +1838,5 @@ Youtube settings	Налаштування Youtube
 API settings	Налаштування API
 
 # write locale file: ua.txt
-# total: 1482
-# missed translations: 4
+# total: 1486
+# missed translations: 2

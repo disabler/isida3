@@ -241,6 +241,72 @@ def wot(type, jid, nick, text):
 		msg = L('What?','%s/%s'%(jid,nick))
 	send_msg(type,jid,nick,msg)
 
+def tanks_in_garage(type, jid, nick, text):
+	text = text.strip()
+	if not text:
+		tmp_text = clantags.sub('', nick).strip().split(' ', 1)[0]
+		if re.match('[\da-zA-Z_].*?', tmp_text):
+			text = tmp_text
+	if text:
+		text = text.split(' ', 1)
+		if len(text) == 1:
+			name, tank = text[0], ''
+		else:
+			name, tank = text[0], text[1].lower()
+		try:
+			data = load_page('%s/2.0/account/list/?application_id=%s&search=%s&fields=id&limit=1' % (API_ADDR, APP_ID, name))
+			v = json.loads(data)
+			player_id = str(v['data'][0]['id'])
+			
+			data = load_page('%s/2.0/account/info/?application_id=%s&account_id=%s&fields=nickname' % (API_ADDR, APP_ID, player_id))
+			pdata = json.loads(data)
+			
+			data = load_page('%s/2.0/tanks/stats/?application_id=%s&account_id=%s&fields=all,tank_id,max_frags,max_xp,in_garage' % (API_ADDR, APP_ID, player_id))
+			vdata = json.loads(data)
+			
+			data = load_page('%s/2.0/account/tanks/?application_id=%s&account_id=%s&fields=mark_of_mastery,tank_id' % (API_ADDR, APP_ID, player_id))
+			vdata_old = json.loads(data)
+			vdata_old = dict([[i['tank_id'], i['mark_of_mastery']] for i in vdata_old['data'][player_id]])
+			
+			data = load_page('%s/wot/clan/membersinfo/?application_id=%s&member_id=%s' % (API_ADDR, APP_ID, player_id))
+			claninfo = json.loads(data)
+			
+			if claninfo['data'][player_id]:
+				clan_id = str(claninfo['data'][player_id]['clan_id'])
+				data = load_page('%s/2.0/clan/info//?application_id=%s&clan_id=%s&fields=abbreviation' % (API_ADDR, APP_ID, clan_id))
+				cdata = json.loads(data)
+				cname = cdata['data'][clan_id]['abbreviation']
+		except:
+			pdata = {'status': ''}
+		
+		if pdata['status'] == 'ok' and pdata['data'][player_id]:
+			wotname = pdata['data'][player_id]['nickname'] + ('[%s]' % cname if claninfo['data'][player_id] else '')
+			
+		if len(tank) == 1:
+			msg = L('Use more characters in the name of the tank','%s/%s'%(jid,nick))
+		else:
+			msg = '%s:' % wotname
+			tids = [tid for tid in tanks_data if tank in tanks_data[tid]['name'].lower() or tank in tanks_data[tid]['name_i18n'].lower()]
+			
+			tanks_ingrg = [[t['tank_id'], t['all']['battles'], t['all']['wins'], t['max_frags'], t['max_xp']] for t in vdata['data'][player_id] if str(t['tank_id']) in tids and t['in_garage']]
+			tanks_ingrg.sort(key=lambda x: -x[1])
+			
+			if tanks_ingrg:
+				msg += L(' founded %s tanks', '%s/%s'%(jid,nick)) % len(tanks_ingrg)
+				if len(tanks_ingrg) > 10:
+					msg += L('. Tanks that have the biggest amount of battles:','%s/%s'%(jid,nick))
+				else:
+					msg += ':'
+				for t in tanks_ingrg[:10]:
+					mom = [L('none','%s/%s'%(jid,nick)), L('3 class','%s/%s'%(jid,nick)), L('2 class','%s/%s'%(jid,nick)), L('1 class','%s/%s'%(jid,nick)), L('master','%s/%s'%(jid,nick))][vdata_old[t[0]]]
+					msg += L('\n%s - %s/%s (%s%%), max.frags - %s, max.exp. - %s, mastery: %s','%s/%s'%(jid,nick)) % (tanks_data[str(t[0])]['name_i18n'], t[2], t[1], round(100.0*t[2]/t[1], 2), t[3], t[4], mom)
+			else:
+				msg += L(' not founded tank','%s/%s'%(jid,nick))
+	send_msg(type,jid,nick,msg)
+				
+				
+				
+	
 def wotclan(type, jid, nick, text):
 	text = text.strip().upper()
 	try:
@@ -289,4 +355,5 @@ global execute
 
 execute = [(3, 'wot', wot, 2, 'World of Tanks - info about user. Usage: wot [nick [tank]]'),
 			(3, 'wotclan', wotclan, 2, 'World of Tanks - info about clan. Usage: wotclan clan'),
+			(3, 'tanks', tanks_in_garage, 2, 'World of Tanks - info about user\'s tanks. Usage: tanks [nick [tank]]'),
 			(3, 'wotoffers', wotoffers, 2, 'World of Tanks - info about offers. Usage: wotoffers [active|all] [real|prem|info]')]
