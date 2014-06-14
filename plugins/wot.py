@@ -59,9 +59,9 @@ def wot(type, jid, nick, text):
 		else:
 			name, tank = text[0], text[1].lower()
 		try:
-			data = load_page('%s/2.0/account/list/?application_id=%s&search=%s&fields=id&limit=1' % (API_ADDR, APP_ID, name))
+			data = load_page('%s/2.0/account/list/?application_id=%s&search=%s&fields=account_id&limit=1' % (API_ADDR, APP_ID, name))
 			v = json.loads(data)
-			player_id = str(v['data'][0]['id'])
+			player_id = str(v['data'][0]['account_id'])
 			
 			data = load_page('%s/2.0/tanks/stats/?application_id=%s&account_id=%s' % (API_ADDR, APP_ID, player_id))
 			vdata = json.loads(data)
@@ -101,10 +101,9 @@ def wot(type, jid, nick, text):
 							if str(t['tank_id']) in tids:
 								tank_win = t['all']['wins']
 								tank_battle = t['all']['battles']
-								mom = [L('none','%s/%s'%(jid,nick)), L('3 class','%s/%s'%(jid,nick)), L('2 class','%s/%s'%(jid,nick)), L('1 class','%s/%s'%(jid,nick)), L('master','%s/%s'%(jid,nick))][vdata_old[t['tank_id']]]
-								ingrg = [L('not in garage','%s/%s'%(jid,nick)), L('in garage','%s/%s'%(jid,nick))][t['in_garage']]
+								mom = [L('none','%s/%s'%(jid,nick)), L('3 class','%s/%s'%(jid,nick)), L('2 class','%s/%s'%(jid,nick)), L('1 class','%s/%s'%(jid,nick)), L('master','%s/%s'%(jid,nick))][t['mark_of_mastery']]
 								if tank_battle:
-									msg += L('\n%s (%s) - (%s/%s - %s%%), max.frags - %s, max.exp. - %s, mastery: %s','%s/%s'%(jid,nick)) % (tanks_data[str(t['tank_id'])]['name_i18n'], ingrg, tank_win, tank_battle, round(100.0*tank_win/tank_battle, 2), t['max_frags'], t['max_xp'], mom)
+									msg += L('\n%s (%s/%s - %s%%), mastery: %s','%s/%s'%(jid,nick)) % (tanks_data[str(t['tank_id'])]['name_i18n'], tank_win, tank_battle, round(100.0*tank_win/tank_battle, 2), mom)
 								else:
 									msg += '\n%s (%s/%s)' % (tanks_data[str(t['tank_id'])]['name_i18n'], tank_win, tank_battle)
 						if not msg.count('\n'):
@@ -156,46 +155,46 @@ def wot(type, jid, nick, text):
 						
 						er = DAMAGE * (10 / (TIER + 2)) * (0.23 + 2 * TIER / 100) + FRAGS * 250 + SPOT * 150 + math.log(CAP + 1) / math.log(1.732) * 150 + DEF * 150
 						
-						if er < 420:
+						if er < 350:
 							er_xvm = 0
 						else:
-							er_xvm = max(min(er*(er*(er*(er*(er*(4.5254e-17*er - 3.3131e-13) + 9.4164e-10) - 1.3227e-6) + 9.5664e-4) - 0.2598) + 13.23, 100), 0)
+							er_xvm = max(min(er*(er*(er*(er*(er*(3.388e-17*er - 2.469e-13) + 6.9335e-10) - 9.5342e-7) + 6.656e-4) -0.1485) - 0.85, 100), 0)
 						
 						msg += L('\nEfficiency rating: %s (XVM: %s)','%s/%s'%(jid,nick)) % (int(round(er)), round(er_xvm, 1))
 						
-						if er < 630:
+						if er < 610:
 							msg += L(' - bad player','%s/%s'%(jid,nick))
-						elif er < 860:
+						elif er < 850:
 							msg += L(' - player below average','%s/%s'%(jid,nick))
-						elif er < 1140:
+						elif er < 1145:
 							msg += L(' - average player','%s/%s'%(jid,nick))
-						elif er < 1460:
+						elif er < 1475:
 							msg += L(' - good player','%s/%s'%(jid,nick))
-						elif er < 1735:
+						elif er < 1775:
 							msg += L(' - great player','%s/%s'%(jid,nick))
-						elif er >= 1735:
+						elif er >= 1775:
 							msg += L(' - unicum','%s/%s'%(jid,nick))
 						
 						wn6 = (1240 - 1040 / math.pow((min(TIER, 6)), 0.164)) * FRAGS + DAMAGE * 530 / (184 * math.exp(0.24 * TIER) + 130) + SPOT * 125 + min(DEF, 2.2) * 100 + ((185 / (0.17 + math.exp((WINRATE * 100 - 35) * -0.134))) - 500) * 0.45 + (6 - min(TIER, 6)) * (-60)
 
-						if wn6 > 2160:
+						if wn6 > 2300:
 							wn6_xvm = 100
 						else:
-							wn6_xvm = max(min(wn6*(wn6*(wn6*(-1.268e-11*wn6 + 5.147e-8) - 6.418e-5) + 7.576e-2) - 7.25, 100), 0)
+							wn6_xvm = max(min(wn6*(wn6*(wn6*(wn6*(wn6*(4.66e-18*wn6 - 3.2413e-14) + 7.524e-11) - 6.516e-8) + 1.307e-5) + 5.153e-2) - 3.9, 100), 0)
 						
 						msg += L('\nWN6 rating: %s (XVM: %s)','%s/%s'%(jid,nick)) % (int(round(wn6)), round(wn6_xvm, 1))
 						
-						if wn6 < 425:
+						if wn6 < 410:
 							msg += L(' - bad player','%s/%s'%(jid,nick))
 						elif wn6 < 795:
 							msg += L(' - player below average','%s/%s'%(jid,nick))
-						elif wn6 < 1175:
+						elif wn6 < 1185:
 							msg += L(' - average player','%s/%s'%(jid,nick))
-						elif wn6 < 1570:
+						elif wn6 < 1585:
 							msg += L(' - good player','%s/%s'%(jid,nick))
-						elif wn6 < 1885:
+						elif wn6 < 1925:
 							msg += L(' - great player','%s/%s'%(jid,nick))
-						elif wn6 >= 1885:
+						elif wn6 >= 1925:
 							msg += L(' - unicum','%s/%s'%(jid,nick))
 						
 						msg += L('\nWG rating: %s','%s/%s'%(jid,nick)) % pdata['data'][player_id]['global_rating']
@@ -241,97 +240,34 @@ def wot(type, jid, nick, text):
 		msg = L('What?','%s/%s'%(jid,nick))
 	send_msg(type,jid,nick,msg)
 
-def tanks_in_garage(type, jid, nick, text):
-	text = text.strip()
-	if not text:
-		tmp_text = clantags.sub('', nick).strip().split(' ', 1)[0]
-		if re.match('[\da-zA-Z_].*?', tmp_text):
-			text = tmp_text
-	if text:
-		text = text.split(' ', 1)
-		if len(text) == 1:
-			name, tank = text[0], ''
-		else:
-			name, tank = text[0], text[1].lower()
-		try:
-			data = load_page('%s/2.0/account/list/?application_id=%s&search=%s&fields=id&limit=1' % (API_ADDR, APP_ID, name))
-			v = json.loads(data)
-			player_id = str(v['data'][0]['id'])
-			
-			data = load_page('%s/2.0/account/info/?application_id=%s&account_id=%s&fields=nickname' % (API_ADDR, APP_ID, player_id))
-			pdata = json.loads(data)
-			
-			data = load_page('%s/2.0/tanks/stats/?application_id=%s&account_id=%s&fields=all,tank_id,max_frags,max_xp,in_garage' % (API_ADDR, APP_ID, player_id))
-			vdata = json.loads(data)
-			
-			data = load_page('%s/2.0/account/tanks/?application_id=%s&account_id=%s&fields=mark_of_mastery,tank_id' % (API_ADDR, APP_ID, player_id))
-			vdata_old = json.loads(data)
-			vdata_old = dict([[i['tank_id'], i['mark_of_mastery']] for i in vdata_old['data'][player_id]])
-			
-			data = load_page('%s/wot/clan/membersinfo/?application_id=%s&member_id=%s' % (API_ADDR, APP_ID, player_id))
-			claninfo = json.loads(data)
-			
-			if claninfo['data'][player_id]:
-				clan_id = str(claninfo['data'][player_id]['clan_id'])
-				data = load_page('%s/2.0/clan/info//?application_id=%s&clan_id=%s&fields=abbreviation' % (API_ADDR, APP_ID, clan_id))
-				cdata = json.loads(data)
-				cname = cdata['data'][clan_id]['abbreviation']
-		except:
-			pdata = {'status': ''}
-		
-		if pdata['status'] == 'ok' and pdata['data'][player_id]:
-			wotname = pdata['data'][player_id]['nickname'] + ('[%s]' % cname if claninfo['data'][player_id] else '')
-			
-		if len(tank) == 1:
-			msg = L('Use more characters in the name of the tank','%s/%s'%(jid,nick))
-		else:
-			msg = '%s:' % wotname
-			tids = [tid for tid in tanks_data if tank in tanks_data[tid]['name'].lower() or tank in tanks_data[tid]['name_i18n'].lower()]
-			
-			tanks_ingrg = [[t['tank_id'], t['all']['battles'], t['all']['wins'], t['max_frags'], t['max_xp']] for t in vdata['data'][player_id] if str(t['tank_id']) in tids and t['in_garage']]
-			tanks_ingrg.sort(key=lambda x: -x[1])
-			
-			if tanks_ingrg:
-				msg += L(' founded %s tanks', '%s/%s'%(jid,nick)) % len(tanks_ingrg)
-				if len(tanks_ingrg) > 10:
-					msg += L('. Tanks that have the biggest amount of battles:','%s/%s'%(jid,nick))
-				else:
-					msg += ':'
-				for t in tanks_ingrg[:10]:
-					mom = [L('none','%s/%s'%(jid,nick)), L('3 class','%s/%s'%(jid,nick)), L('2 class','%s/%s'%(jid,nick)), L('1 class','%s/%s'%(jid,nick)), L('master','%s/%s'%(jid,nick))][vdata_old[t[0]]]
-					msg += L('\n%s - %s/%s (%s%%), max.frags - %s, max.exp. - %s, mastery: %s','%s/%s'%(jid,nick)) % (tanks_data[str(t[0])]['name_i18n'], t[2], t[1], round(100.0*t[2]/t[1], 2), t[3], t[4], mom)
-			else:
-				msg += L(' not founded tank','%s/%s'%(jid,nick))
-	send_msg(type,jid,nick,msg)
-				
-				
-				
-	
 def wotclan(type, jid, nick, text):
 	text = text.strip().upper()
-	try:
-		data = load_page('%s/2.0/clan/list/?application_id=%s&search=%s' % (API_ADDR, APP_ID, text))
-		data = json.loads(data)
-		claninfo = [i for i in data['data'] if i['abbreviation'] == text]
-		if claninfo:
-			claninfo = claninfo[0]
-			clid = claninfo['clan_id']
-			owner = claninfo['owner_name']
-			created_at = claninfo['created_at']
-			abbrev = claninfo['abbreviation']
-			data = load_page('%s/2.0/clan/info/?application_id=%s&clan_id=%s' % (API_ADDR, APP_ID, clid))
+	if text:
+		try:
+			data = load_page('%s/2.0/clan/list/?application_id=%s&search=%s' % (API_ADDR, APP_ID, text))
 			data = json.loads(data)
-			claninfo2 = data['data'][str(clid)]
-			msg = L('Name: %s [%s]','%s/%s'%(jid,nick)) % (claninfo2['name'], abbrev)
-			msg += L('\nOwner: %s','%s/%s'%(jid,nick)) % owner
-			msg += L('\nCreated at: %s','%s/%s'%(jid,nick)) % time.ctime(created_at)
-			msg += L('\nCount of members: %s','%s/%s'%(jid,nick)) % claninfo2['members_count']
-			msg += L('\nMotto: %s','%s/%s'%(jid,nick)) % claninfo2['motto']
-			msg += '\n%s' % claninfo2['description']
-		else:
-			msg = L('Clan not found','%s/%s'%(jid,nick))
-	except:
-		msg = L('Impossible to get info','%s/%s'%(jid,nick))
+			claninfo = [i for i in data['data'] if i['abbreviation'] == text]
+			if claninfo:
+				claninfo = claninfo[0]
+				clid = claninfo['clan_id']
+				owner = claninfo['owner_name']
+				created_at = claninfo['created_at']
+				abbrev = claninfo['abbreviation']
+				data = load_page('%s/2.0/clan/info/?application_id=%s&clan_id=%s' % (API_ADDR, APP_ID, clid))
+				data = json.loads(data)
+				claninfo2 = data['data'][str(clid)]
+				msg = L('Name: %s [%s]','%s/%s'%(jid,nick)) % (claninfo2['name'], abbrev)
+				msg += L('\nOwner: %s','%s/%s'%(jid,nick)) % owner
+				msg += L('\nCreated at: %s','%s/%s'%(jid,nick)) % time.ctime(created_at)
+				msg += L('\nCount of members: %s','%s/%s'%(jid,nick)) % claninfo2['members_count']
+				msg += L('\nMotto: %s','%s/%s'%(jid,nick)) % claninfo2['motto']
+				msg += '\n%s' % claninfo2['description']
+			else:
+				msg = L('Clan not found','%s/%s'%(jid,nick))
+		except:
+			msg = L('Impossible to get info','%s/%s'%(jid,nick))
+	else:
+		msg = L('What?','%s/%s'%(jid,nick))
 	send_msg(type,jid,nick,msg)
 
 def wotoffers(type, jid, nick, text):
@@ -355,5 +291,4 @@ global execute
 
 execute = [(3, 'wot', wot, 2, 'World of Tanks - info about user. Usage: wot [nick [tank]]'),
 			(3, 'wotclan', wotclan, 2, 'World of Tanks - info about clan. Usage: wotclan clan'),
-			(3, 'tanks', tanks_in_garage, 2, 'World of Tanks - info about user\'s tanks. Usage: tanks [nick [tank]]'),
 			(3, 'wotoffers', wotoffers, 2, 'World of Tanks - info about offers. Usage: wotoffers [active|all] [real|prem|info]')]
